@@ -1,0 +1,127 @@
+// VSE (Vulkan Simple Engine) Library
+// Copyright (c) 2018-2019, Igor Barinov
+// Licensed under CC BY 4.0
+#pragma once
+
+#include "Engine.h"
+#include "VulkanUtils.h"
+#include <vulkan/vulkan.h>
+#include <vector>
+#include <SDL2/SDL.h>
+
+namespace SVE
+{
+class VulkanMesh;
+
+class VulkanInstance
+{
+public:
+    VulkanInstance(SDL_Window* window, EngineSettings settings);
+    ~VulkanInstance();
+
+    const VulkanUtils& getVulkanUtils() const;
+
+    VkInstance getInstance() const;
+    VkPhysicalDevice getGPU() const;
+    VkDevice getLogicalDevice() const;
+    VkCommandPool getCommandPool() const;
+    VkRenderPass getRenderPass() const;
+    VkExtent2D getExtent() const;
+    VkQueue getGraphicsQueue() const;
+    size_t getSwapchainSize() const;
+    VkFramebuffer getFramebuffer(size_t index) const;
+    VkSemaphore* getImageAvailableSemaphore();
+
+    VkPipeline createPipeline(const VulkanMesh& vulkanMesh);
+    void waitAvailableFramebuffer();
+    void submitCommands(const std::vector<SubmitInfo>& submitList) const;
+    uint32_t getCurrentImageIndex() const;
+
+private:
+    // Vulkan objects creators and destroyers
+    void createInstance();
+    void deleteInstance();
+    void createDevice();
+    void deleteDevice();
+    void createSurface();
+    void deleteSurface();
+    void createSurfaceParameters();
+    void deleteSurfaceParameters();
+    void createSwapchain();
+    void deleteSwapchain();
+    void createImageViews();
+    void deleteImageViews();
+    void createRenderPass();
+    void deleteRenderPass();
+    void createCommandPool();
+    void deleteCommandPool();
+    void createMSAABuffer();
+    void deleteMSAABuffer();
+    void createDepthBuffer();
+    void deleteDepthBuffer();
+    void createFramebuffers();
+    void deleteFramebuffers();
+    void createSyncPrimitives();
+    void deleteSyncPrimitives();
+
+    void createDebugCallback();
+    void deleteDebugCallback();
+
+private:
+    // Utility functions
+    void addPlatformSpecificExtensions(std::vector<const char*>& extensionsList);
+    VkSampleCountFlagBits getMSAALevelsValue(int msaaLevels);
+    size_t getGPUIndex(std::vector<VkPhysicalDevice>& deviceList);
+
+    VkFormat findDepthFormat();
+
+private:
+    EngineSettings _engineSettings;
+    VulkanUtils _vulkanUtils;
+
+    SDL_Window *_window;
+    int _windowWidth;
+    int _windowHeight;
+
+    VkInstance _instance;
+    VkPhysicalDevice _gpu;
+    VkPhysicalDeviceProperties _gpuProps;
+    VkDevice _device;
+
+    VkDebugReportCallbackEXT _debugCallbackHandle;
+
+    VkSampleCountFlagBits _msaaSamples;
+
+    uint32_t _queueIndex;
+    VkQueue _queue;
+
+    VkSurfaceKHR _surface;
+    VkSurfaceFormatKHR _surfaceFormat;
+    VkSurfaceCapabilitiesKHR _surfaceCapabilities;
+
+    VkPresentModeKHR _presentMode;
+    VkExtent2D _extent;
+    VkSwapchainKHR _swapchain;
+    VkRenderPass _renderPass;
+
+    std::vector<VkImage> _swapchainImages;
+    std::vector<VkImageView> _swapchainImageViews;
+    std::vector<VkFramebuffer> _swapchainFramebuffers;
+
+    VkCommandPool _commandPool;
+
+    // color attachment for anti-aliasing
+    VkImage _colorImage;
+    VkDeviceMemory _colorImageMemory;
+    VkImageView _colorImageView;
+
+    VkImage _depthImage;
+    VkDeviceMemory _depthImageMemory;
+    VkImageView _depthImageView;
+
+    VkSemaphore _imageAvailableSemaphore;
+    std::vector<VkFence> _inFlightFences;
+    uint32_t _currentImageIndex;
+};
+
+} // namespace SVE
