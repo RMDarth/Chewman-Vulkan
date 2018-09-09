@@ -8,13 +8,24 @@ namespace SVE
 {
 
 SubmitInfo::SubmitInfo(VkSubmitInfo submitInfo)
-    : _submitInfo(std::move(submitInfo))
+    : _empty(false)
+    , _submitInfo(std::move(submitInfo))
 {
+}
 
+SubmitInfo::SubmitInfo()
+        : _empty(true)
+{
 }
 
 const VkSubmitInfo& SubmitInfo::getVulkanSubmitInfo() const
 {
     return _submitInfo;
 }
+
+bool SubmitInfo::isEmpty()
+{
+    return _empty;
+}
+
 } // namespace SVE

@@ -10,8 +10,6 @@
 #include "VulkanInstance.h"
 #include "VulkanUtils.h"
 #include "VulkanException.h"
-#include <chrono>
-#include <glm/gtc/matrix_transform.hpp>
 
 namespace SVE
 {
@@ -91,26 +89,6 @@ std::vector<VkVertexInputAttributeDescription> VulkanMesh::getAttributeDescripti
     //attributeDescriptions[2].offset = offsetof(Vertex, texCoord);
 
     return attributeDescriptions;
-}
-
-void VulkanMesh::updateMatrices(const glm::mat4& modelTransformation)
-{
-    // TODO: Refactor this method, time work shouldn't be here
-    static auto startTime = std::chrono::high_resolution_clock::now();
-
-    auto currentTime = std::chrono::high_resolution_clock::now();
-    float time = std::chrono::duration<float, std::chrono::seconds::period>(currentTime - startTime).count();
-
-    auto extent = _vulkanInstance->getExtent();
-
-    UniformData uniformData {};
-    uniformData.model = glm::rotate(glm::mat4(1.0f), time * glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-    uniformData.model = glm::rotate(uniformData.model, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-    uniformData.view = glm::lookAt(glm::vec3(200.0f, 200.0f, 200.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-    uniformData.projection = glm::perspective(glm::radians(45.0f), (float)extent.width / extent.height, 0.1f, 1000.0f);
-    uniformData.projection[1][1] *= -1; // because OpenGL use inverted Y axis
-
-    _material->getVulkanMaterial()->setUniformData(uniformData);
 }
 
 VkSubmitInfo VulkanMesh::createSubmitInfo()
@@ -206,6 +184,7 @@ void VulkanMesh::createCommandBuffers()
             throw std::runtime_error("Failed to begin recording Vulkan command buffer");
         }
 
+        // TODO: This should be moved to once-per-frame stage
         std::vector<VkClearValue> clearValues(2);
         clearValues[0].color = {0.0f, 0.0f, 0.0f, 1.0f};
         clearValues[1].depthStencil = {1.0f, 0};

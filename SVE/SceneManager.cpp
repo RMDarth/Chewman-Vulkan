@@ -8,11 +8,35 @@ namespace SVE
 
 SceneManager::SceneManager()
 {
-    _root = std::make_shared<SceneNode>("Root");
+    _root = std::make_shared<SceneNode>("root");
 }
 
 std::shared_ptr<SceneNode> SceneManager::getRootNode()
 {
     return _root;
 }
+
+std::shared_ptr<CameraNode> SceneManager::createMainCamera()
+{
+    _mainCamera = std::make_shared<CameraNode>();
+    _root->attachSceneNode(_mainCamera);
+
+    return _mainCamera;
+}
+
+std::shared_ptr<CameraNode> SceneManager::getMainCamera()
+{
+    return _mainCamera;
+}
+
+void SceneManager::setMainCamera(std::shared_ptr<CameraNode> cameraEntity)
+{
+    _mainCamera = cameraEntity;
+}
+
+std::shared_ptr<SceneNode> SceneManager::createSceneNode(std::string name)
+{
+    return std::make_shared<SceneNode>(name);
+}
+
 } // namespace SVE

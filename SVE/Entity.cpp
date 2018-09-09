@@ -4,17 +4,37 @@
 
 #include <utility>
 #include "Entity.h"
+#include "SceneNode.h"
 
 namespace SVE
 {
 
-const glm::mat4& Entity::getTransformation() const
+void Entity::setParent(std::shared_ptr<SceneNode> parent)
 {
-    return _transformation;
+    if (_parent)
+    {
+        _parent->detachEntity(shared_from_this());
+    }
+    _parent = std::move(parent);
 }
 
-void Entity::setTransformation(glm::mat4 transform)
+std::shared_ptr<SceneNode> Entity::getParent()
 {
-    _transformation = std::move(transform);
+    return _parent;
 }
+
+void Entity::detachFromParent()
+{
+    if (_parent)
+    {
+        _parent->detachEntity(shared_from_this());
+    }
+    _parent.reset();
+}
+
+void Entity::clearParent()
+{
+    _parent.reset();
+}
+
 } // namespace SVE

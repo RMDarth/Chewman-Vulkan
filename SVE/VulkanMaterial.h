@@ -17,16 +17,6 @@ class VulkanShaderInfo;
 class VulkanMaterial
 {
 public:
-    // TODO: Refactor this struct (probably each matrix should be used individually depending on material configuration)
-    // TODO: model matrix should be moved to mesh, view and projection - to camera
-    // TODO: material though should get all those matrices and bind them to configured uniforms
-    struct MatricesUBO
-    {
-        glm::mat4 model;
-        glm::mat4 view;
-        glm::mat4 projection;
-    };
-
     explicit VulkanMaterial(MaterialSettings materialSettings);
     ~VulkanMaterial();
 
@@ -38,7 +28,6 @@ public:
     void setUniformData(UniformData data) const;
 
 private:
-
     void createPipelineLayout();
     void deletePipelineLayout();
 

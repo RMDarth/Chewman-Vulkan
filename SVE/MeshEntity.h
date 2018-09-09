@@ -3,25 +3,27 @@
 // Licensed under CC BY 4.0
 #pragma once
 #include "Entity.h"
-#include "MeshSettings.h"
 #include <memory>
 
 namespace SVE
 {
-class VulkanMesh;
+class Mesh;
+class Material;
 
 class MeshEntity : public Entity
 {
 public:
-    // TODO: Remove this constructor, loading models should be done by special managers or functions
-    explicit MeshEntity(std::string modelFile);
-    explicit MeshEntity(MeshSettings meshSettings);
+    explicit MeshEntity(std::string name);
+    explicit MeshEntity(std::shared_ptr<Mesh> mesh);
     ~MeshEntity();
 
-    SubmitInfo render() const override;
+    void setMaterial(std::string materialName);
+
+    SubmitInfo render(const UniformData& data) const override;
 
 private:
-    std::unique_ptr<VulkanMesh> _vulkanMesh;
+    std::shared_ptr<Mesh> _mesh;
+    std::shared_ptr<Material> _material;
 };
 
 } // namespace SVE

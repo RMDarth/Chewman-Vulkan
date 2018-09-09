@@ -7,7 +7,10 @@
 #include "SVE/MaterialManager.h"
 #include "SVE/ShaderManager.h"
 #include "SVE/SceneManager.h"
+#include "SVE/MeshManager.h"
+#include "SVE/CameraNode.h"
 #include <vulkan/vulkan.h>
+#include <glm/gtc/matrix_transform.hpp>
 #include <memory>
 
 
@@ -33,6 +36,10 @@ int main(int argv, char** args)
     SVE::EngineSettings settings;
     settings.useValidation = true;
     SVE::Engine* engine = SVE::Engine::createInstance(window, settings);
+
+    auto camera = engine->getSceneManager()->createMainCamera();
+    camera->setNearFarPlane(0.1f, 1000.0f);
+    camera->setLookAt(glm::vec3(200.0f, 200.0f, 200.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
 
     SVE::ShaderSettings vertexShaderSettings {};
     vertexShaderSettings.name = "vertexShader";
@@ -63,8 +70,18 @@ int main(int argv, char** args)
     std::shared_ptr<SVE::Material> material = std::make_shared<SVE::Material>(materialSettings);
     engine->getMaterialManager()->registerMaterial(material);
 
-    std::shared_ptr<SVE::MeshEntity> meshEntity = std::make_shared<SVE::MeshEntity>("models/trashman.fbx");
+    std::shared_ptr<SVE::Mesh> mesh = std::make_shared<SVE::Mesh>("trashman", "models/trashman.fbx");
+    engine->getMeshManager()->registerMesh(mesh);
+
+    std::shared_ptr<SVE::Entity> meshEntity = std::make_shared<SVE::MeshEntity>("trashman");
     engine->getSceneManager()->getRootNode()->attachEntity(meshEntity);
+
+    auto newNode = engine->getSceneManager()->createSceneNode();
+    newNode->setNodeTransformation(glm::translate(glm::mat4(1), glm::vec3(50, 0, 0)));
+    engine->getSceneManager()->getRootNode()->attachSceneNode(newNode);
+
+    std::shared_ptr<SVE::Entity> meshEntity2 = std::make_shared<SVE::MeshEntity>("trashman");
+    //newNode->attachEntity(meshEntity2);
 
     //std::shared_ptr<Renderer> renderer = std::make_shared<VulkanRenderer>(window, true);
 

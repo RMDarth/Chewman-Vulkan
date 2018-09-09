@@ -4,9 +4,11 @@
 
 #include "Engine.h"
 #include "VulkanInstance.h"
+#include "VulkanException.h"
 #include "MaterialManager.h"
 #include "SceneManager.h"
 #include "ShaderManager.h"
+#include "MeshManager.h"
 #include "Entity.h"
 
 namespace SVE
@@ -43,6 +45,7 @@ Engine::Engine(SDL_Window* window, EngineSettings settings)
     , _materialManager(new MaterialManager())
     , _shaderManager(std::make_unique<ShaderManager>())
     , _sceneManager(new SceneManager())
+    , _meshManager(std::make_unique<MeshManager>())
 {
 
 }
@@ -64,25 +67,39 @@ SceneManager* Engine::getSceneManager()
     return _sceneManager.get();
 }
 
-void renderNode(std::shared_ptr<SceneNode> node, std::vector<SubmitInfo>& submitList)
+MeshManager* Engine::getMeshManager()
 {
+    return _meshManager.get();
+}
+
+void renderNode(std::shared_ptr<SceneNode> node, UniformData& uniformData, std::vector<SubmitInfo>& submitList)
+{
+    auto oldModel = uniformData.model;
+    uniformData.model *= node->getNodeTransformation();
     // render node
     for (auto& entity : node->getAttachedEntities())
     {
-        submitList.emplace_back(std::move(entity->render()));
+        auto submitInfo = entity->render(uniformData);
+        if (!submitInfo.isEmpty())
+            submitList.emplace_back(std::move(submitInfo));
     }
 
     for (auto& child : node->getChildren())
     {
-        renderNode(child, submitList);
+        renderNode(child, uniformData, submitList);
     }
+    uniformData.model = oldModel;
 }
 
 void Engine::renderFrame()
 {
+    auto mainCamera = _sceneManager->getMainCamera();
+    if (!mainCamera)
+        throw VulkanException("Camera not set");
+    UniformData uniformData = _sceneManager->getMainCamera()->fillUniformData();
     _vulkanInstance->waitAvailableFramebuffer();
     std::vector<SubmitInfo> submitList;
-    renderNode(_sceneManager->getRootNode(), submitList);
+    renderNode(_sceneManager->getRootNode(), uniformData, submitList);
     _vulkanInstance->submitCommands(submitList);
 }
 

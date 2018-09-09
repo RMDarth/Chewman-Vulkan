@@ -12,6 +12,7 @@ namespace SVE
 
 struct MeshSettings
 {
+    std::string name;
     std::vector<glm::vec3> vertexPosData;
     std::vector<glm::vec3> vertexColorData;
     std::vector<glm::vec2> vertexTexData;

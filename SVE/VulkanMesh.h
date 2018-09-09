@@ -24,7 +24,6 @@ public:
     std::vector<VkVertexInputBindingDescription> getBindingDescription() const;
     std::vector<VkVertexInputAttributeDescription> getAttributeDescriptions() const;
 
-    void updateMatrices(const glm::mat4& modelTransformation);
     VkSubmitInfo createSubmitInfo();
 
 private:

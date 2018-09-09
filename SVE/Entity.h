@@ -2,27 +2,30 @@
 // Copyright (c) 2018-2019, Igor Barinov
 // Licensed under CC BY 4.0
 #pragma once
-
-#include "Libs.h"
 #include "SubmitInfo.h"
+#include <memory>
 
 namespace SVE
 {
+struct UniformData;
+class SceneNode;
 
 // Base class for entities that can be attached to scene nodes
-class Entity
+class Entity : public std::enable_shared_from_this<Entity>
 {
 public:
     Entity() = default;
     virtual ~Entity() = default;
 
-    virtual SubmitInfo render() const = 0;
+    void setParent(std::shared_ptr<SceneNode> parent);
+    std::shared_ptr<SceneNode> getParent();
+    void detachFromParent();
+    void clearParent();
 
-    const glm::mat4& getTransformation() const;
-    void setTransformation(glm::mat4 transform);
+    virtual SubmitInfo render(const UniformData& data) const = 0;
 
 protected:
-    glm::mat4 _transformation = glm::mat4(1);
+    std::shared_ptr<SceneNode> _parent;
 };
 
 } // namespace SVE

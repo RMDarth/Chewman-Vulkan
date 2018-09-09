@@ -3,6 +3,7 @@
 // Licensed under CC BY 4.0
 #pragma once
 #include "SceneNode.h"
+#include "CameraNode.h"
 #include <memory>
 
 namespace SVE
@@ -15,8 +16,15 @@ public:
 
     std::shared_ptr<SceneNode> getRootNode();
 
+    std::shared_ptr<SceneNode> createSceneNode(std::string name = "");
+
+    std::shared_ptr<CameraNode> createMainCamera();
+    std::shared_ptr<CameraNode> getMainCamera();
+    void setMainCamera(std::shared_ptr<CameraNode> cameraEntity);
+
 private:
     std::shared_ptr<SceneNode> _root;
+    std::shared_ptr<CameraNode> _mainCamera;
 };
 
 } // namespace SVE

@@ -15,6 +15,7 @@ class VulkanInstance;
 class MaterialManager;
 class SceneManager;
 class ShaderManager;
+class MeshManager;
 class SceneNodel;
 
 class Engine
@@ -26,6 +27,7 @@ public:
 
     VulkanInstance* getVulkanInstance();
     MaterialManager* getMaterialManager();
+    MeshManager* getMeshManager();
     ShaderManager* getShaderManager();
     SceneManager* getSceneManager();
 
@@ -39,6 +41,7 @@ private:
     VulkanInstance* _vulkanInstance;
     std::unique_ptr<MaterialManager> _materialManager;
     std::unique_ptr<SceneManager> _sceneManager;
+    std::unique_ptr<MeshManager> _meshManager;
     std::unique_ptr<ShaderManager> _shaderManager;
 };
 

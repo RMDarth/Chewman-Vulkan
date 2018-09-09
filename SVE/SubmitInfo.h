@@ -11,9 +11,12 @@ class SubmitInfo
 {
 public:
     explicit SubmitInfo(VkSubmitInfo submitInfo);
+    SubmitInfo();
 
+    bool isEmpty();
     const VkSubmitInfo& getVulkanSubmitInfo() const;
 private:
+    bool _empty;
     VkSubmitInfo _submitInfo;
 };
 
