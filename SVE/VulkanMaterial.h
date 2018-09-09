@@ -7,10 +7,12 @@
 #include <vector>
 #include "Libs.h"
 #include "MaterialSettings.h"
+#include "ShaderSettings.h"
 
 namespace SVE
 {
 class VulkanUtils;
+class VulkanShaderInfo;
 
 class VulkanMaterial
 {
@@ -25,26 +27,23 @@ public:
         glm::mat4 projection;
     };
 
-    VulkanMaterial(MaterialSettings materialSettings);
+    explicit VulkanMaterial(MaterialSettings materialSettings);
     ~VulkanMaterial();
 
-    std::vector<VkPipelineShaderStageCreateInfo> createShaderStages() const;
-    void freeShaderModules() const;
     VkPipelineLayout getPipelineLayout() const;
-    VkDescriptorSet getDescriptorSet(size_t index) const;
+    std::vector<VkDescriptorSet> getDescriptorSets(size_t index) const;
+    std::vector<VkPipelineShaderStageCreateInfo> getShaderStages() const;
+    void freeShaderModules() const;
 
-    // TODO: Refactor this method to update individual matrix, or even move it to mesh
-    void updateMatrices(MatricesUBO matrices) const;
+    void setUniformData(UniformData data) const;
 
 private:
+
     void createPipelineLayout();
     void deletePipelineLayout();
 
-    void createDescriptorSetLayout();
-    void deleteDescriptorSetLayout();
-
-    void createTextureImage();
-    void deleteTextureImage();
+    void createTextureImages();
+    void deleteTextureImages();
     void createTextureImageView();
     void deleteTextureImageView();
     void createTextureSampler();
@@ -58,28 +57,38 @@ private:
     void createDescriptorSets();
     void deleteDescriptorSets();
 
-    VkShaderModule createShaderModule(const std::vector<char> &code) const;
+    std::vector<char> getUniformDataByType(const UniformData& data, UniformType type) const;
 
 private:
     MaterialSettings _materialSettings;
 
     VkDevice _device;
     const VulkanUtils& _vulkanUtils;
-    mutable std::vector<VkShaderModule> _shaderModules;
 
-    VkDescriptorSetLayout _descriptorSetLayout = VK_NULL_HANDLE;
+    VulkanShaderInfo* _vertexShader = nullptr;
+    VulkanShaderInfo* _fragmentShader = nullptr;
+    VulkanShaderInfo* _geometryShader = nullptr;
+    std::vector<VulkanShaderInfo*> _shaderList;
+
     VkPipelineLayout _pipelineLayout = VK_NULL_HANDLE;
 
-    uint32_t _mipLevels;
-    VkImage _textureImage;
-    VkDeviceMemory _textureImageMemory;
-    VkImageView _textureImageView;
-    VkSampler _textureSampler;
+    std::vector<uint32_t> _mipLevels;
+    std::vector<VkImage> _textureImages;
+    std::vector<VkDeviceMemory> _textureImageMemoryList;
+    std::vector<VkImageView> _textureImageViews;
+    std::vector<VkSampler> _textureSamplers;
+    std::vector<std::string> _textureNames;
 
-    std::vector<VkBuffer> _uniformBuffers;
+    std::vector<VkBuffer> _vertexUniformBuffers;
+    std::vector<VkBuffer> _fragmentUniformBuffer;
+    std::vector<VkBuffer> _geometryUniformBuffer;
     std::vector<VkDeviceMemory> _uniformBuffersMemory;
     VkDescriptorPool _descriptorPool;
-    std::vector<VkDescriptorSet> _descriptorSets;
+
+    std::vector<VkDescriptorSet> _vertexDescriptorSets;
+    std::vector<VkDescriptorSet> _fragmentDescriptorSets;
+    std::vector<VkDescriptorSet> _geometryDescriptorSets;
+
 };
 
 } // namespace SVE

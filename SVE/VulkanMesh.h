@@ -24,7 +24,7 @@ public:
     std::vector<VkVertexInputBindingDescription> getBindingDescription() const;
     std::vector<VkVertexInputAttributeDescription> getAttributeDescriptions() const;
 
-    void updateMatrices();
+    void updateMatrices(const glm::mat4& modelTransformation);
     VkSubmitInfo createSubmitInfo();
 
 private:
@@ -47,8 +47,6 @@ private:
             VkBuffer &buffer,
             VkDeviceMemory &deviceMemory,
             VkBufferUsageFlags usage);
-
-    void updateUniformBuffer(uint32_t currentImage);
 
 private:
     VulkanInstance* _vulkanInstance;

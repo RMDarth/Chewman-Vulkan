@@ -20,7 +20,10 @@ public:
     VkPipelineShaderStageCreateInfo createShaderStage();
     void freeShaderModule();
 
-    VkDescriptorSetLayout getDescriptorSetLayout();
+    size_t getShaderUniformsSize() const;
+    const ShaderSettings& getShaderSettings() const;
+
+    VkDescriptorSetLayout getDescriptorSetLayout() const;
 private:
     void createDescriptorSetLayout();
     void deleteDescriptorSetLayout();
@@ -31,8 +34,7 @@ private:
     VkDevice _device;
     ShaderSettings _shaderSettings;
     VkShaderStageFlagBits _shaderStage;
-    mutable VkShaderModule _shaderModule;
-    std::map<std::string, int> _samplerBindingMap;
+    VkShaderModule _shaderModule;
 
     VkDescriptorSetLayout _descriptorSetLayout;
     VkDescriptorPool _descriptorPool;

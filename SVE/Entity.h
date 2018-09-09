@@ -3,6 +3,7 @@
 // Licensed under CC BY 4.0
 #pragma once
 
+#include "Libs.h"
 #include "SubmitInfo.h"
 
 namespace SVE
@@ -12,8 +13,16 @@ namespace SVE
 class Entity
 {
 public:
-    virtual SubmitInfo render() const = 0;
+    Entity() = default;
     virtual ~Entity() = default;
+
+    virtual SubmitInfo render() const = 0;
+
+    const glm::mat4& getTransformation() const;
+    void setTransformation(glm::mat4 transform);
+
+protected:
+    glm::mat4 _transformation = glm::mat4(1);
 };
 
 } // namespace SVE

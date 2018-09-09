@@ -93,9 +93,24 @@ std::vector<VkVertexInputAttributeDescription> VulkanMesh::getAttributeDescripti
     return attributeDescriptions;
 }
 
-void VulkanMesh::updateMatrices()
+void VulkanMesh::updateMatrices(const glm::mat4& modelTransformation)
 {
-    updateUniformBuffer(_vulkanInstance->getCurrentImageIndex());
+    // TODO: Refactor this method, time work shouldn't be here
+    static auto startTime = std::chrono::high_resolution_clock::now();
+
+    auto currentTime = std::chrono::high_resolution_clock::now();
+    float time = std::chrono::duration<float, std::chrono::seconds::period>(currentTime - startTime).count();
+
+    auto extent = _vulkanInstance->getExtent();
+
+    UniformData uniformData {};
+    uniformData.model = glm::rotate(glm::mat4(1.0f), time * glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+    uniformData.model = glm::rotate(uniformData.model, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+    uniformData.view = glm::lookAt(glm::vec3(200.0f, 200.0f, 200.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+    uniformData.projection = glm::perspective(glm::radians(45.0f), (float)extent.width / extent.height, 0.1f, 1000.0f);
+    uniformData.projection[1][1] *= -1; // because OpenGL use inverted Y axis
+
+    _material->getVulkanMaterial()->setUniformData(uniformData);
 }
 
 VkSubmitInfo VulkanMesh::createSubmitInfo()
@@ -210,14 +225,14 @@ void VulkanMesh::createCommandBuffers()
         std::vector<VkDeviceSize> offsets(_vertexBufferList.size());
         vkCmdBindVertexBuffers(_commandBuffers[i], 0, _vertexBufferList.size(), _vertexBufferList.data(), offsets.data());
         vkCmdBindIndexBuffer(_commandBuffers[i], _indexBuffer, 0, VK_INDEX_TYPE_UINT32);
-        auto descriptorSet = _material->getVulkanMaterial()->getDescriptorSet(i);
+        auto descriptorSets = _material->getVulkanMaterial()->getDescriptorSets(i);
         vkCmdBindDescriptorSets(
                 _commandBuffers[i],
                 VK_PIPELINE_BIND_POINT_GRAPHICS,
                 _material->getVulkanMaterial()->getPipelineLayout(),
                 0,
-                1,
-                &descriptorSet, 0, nullptr);
+                descriptorSets.size(),
+                descriptorSets.data(), 0, nullptr);
 
         vkCmdDrawIndexed(_commandBuffers[i], _meshSettings.indexData.size(), 1, 0, 0, 0);
         vkCmdEndRenderPass(_commandBuffers[i]);
@@ -301,26 +316,6 @@ void VulkanMesh::deleteSemaphores()
     {
         vkDestroySemaphore(_vulkanInstance->getLogicalDevice(), _renderFinishedSemaphore[i], nullptr);
     }
-}
-
-void VulkanMesh::updateUniformBuffer(uint32_t currentImage)
-{
-    // TODO: Refactor this method, time work shouldn't be here
-    static auto startTime = std::chrono::high_resolution_clock::now();
-
-    auto currentTime = std::chrono::high_resolution_clock::now();
-    float time = std::chrono::duration<float, std::chrono::seconds::period>(currentTime - startTime).count();
-
-    auto extent = _vulkanInstance->getExtent();
-
-    VulkanMaterial::MatricesUBO matrices {};
-    matrices.model = glm::rotate(glm::mat4(1.0f), time * glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-    matrices.model = glm::rotate(matrices.model, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-    matrices.view = glm::lookAt(glm::vec3(200.0f, 200.0f, 200.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-    matrices.projection = glm::perspective(glm::radians(45.0f), (float)extent.width / extent.height, 0.1f, 1000.0f);
-    matrices.projection[1][1] *= -1; // because OpenGL use inverted Y axis
-
-    _material->getVulkanMaterial()->updateMatrices(matrices);
 }
 
 } // namespace SVE

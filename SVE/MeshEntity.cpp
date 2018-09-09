@@ -39,7 +39,10 @@ MeshEntity::MeshEntity(std::string modelFile)
     MeshSettings meshSettings {};
 
     // TODO: fix it
-    meshSettings.materialName = "material";
+    aiString name;
+    scene->mMaterials[0]->Get(AI_MATKEY_NAME, name);
+
+    meshSettings.materialName = name.C_Str();
     for (auto i = 0u; i < scene->mNumMeshes; i++)
     {
         const auto* mesh = scene->mMeshes[i];
@@ -70,7 +73,7 @@ MeshEntity::~MeshEntity() = default;
 
 SubmitInfo MeshEntity::render() const
 {
-    _vulkanMesh->updateMatrices();
+    _vulkanMesh->updateMatrices(_transformation);
     return SubmitInfo(_vulkanMesh->createSubmitInfo());
 }
 

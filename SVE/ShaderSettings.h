@@ -4,6 +4,8 @@
 #pragma once
 #include <vector>
 #include <string>
+#include <map>
+#include "Libs.h"
 
 namespace SVE
 {
@@ -26,6 +28,15 @@ enum class ShaderType : uint8_t
     GeometryShader
 };
 
+struct UniformData
+{
+    glm::mat4 model;
+    glm::mat4 view;
+    glm::mat4 projection;
+    glm::vec3 cameraPos;
+    glm::vec3 lightPos;
+};
+
 struct UniformInfo
 {
     UniformType uniformType;
@@ -42,5 +53,7 @@ struct ShaderSettings
 
     std::string entryPoint = "main";
 };
+
+const std::map<UniformType, size_t>& getUniformSizeMap();
 
 } // namespace SVE

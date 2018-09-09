@@ -72,7 +72,28 @@ VkPipelineShaderStageCreateInfo VulkanShaderInfo::createShaderStage()
     return shaderStageInfo;
 }
 
-VkDescriptorSetLayout VulkanShaderInfo::getDescriptorSetLayout()
+void VulkanShaderInfo::freeShaderModule()
+{
+    vkDestroyShaderModule(_device, _shaderModule, nullptr);
+}
+
+size_t VulkanShaderInfo::getShaderUniformsSize() const
+{
+    size_t size = 0;
+    const auto& sizeMap = getUniformSizeMap();
+    for (const auto& info : _shaderSettings.uniformList)
+    {
+        size += sizeMap.at(info.uniformType);
+    }
+    return size;
+}
+
+const ShaderSettings& VulkanShaderInfo::getShaderSettings() const
+{
+    return _shaderSettings;
+}
+
+VkDescriptorSetLayout VulkanShaderInfo::getDescriptorSetLayout() const
 {
     return _descriptorSetLayout;
 }
@@ -81,7 +102,7 @@ void VulkanShaderInfo::createDescriptorSetLayout()
 {
     std::vector<VkDescriptorSetLayoutBinding> descriptorList;
     uint32_t bindingNum = 0;
-    for (auto i = 0u; i < _shaderSettings.uniformList.size(); i++)
+    if (!_shaderSettings.uniformList.empty())
     {
         VkDescriptorSetLayoutBinding uboLayoutBinding{};
         uboLayoutBinding.binding = bindingNum; // binding in shader
@@ -104,7 +125,6 @@ void VulkanShaderInfo::createDescriptorSetLayout()
         samplerLayoutBinding.pImmutableSamplers = nullptr;
 
         descriptorList.push_back(samplerLayoutBinding);
-        _samplerBindingMap[_shaderSettings.samplerNamesList[i]] = bindingNum;
         bindingNum++;
     }
 
@@ -146,5 +166,6 @@ VkShaderModule VulkanShaderInfo::createShaderModule(const std::vector<char> &cod
 
     return shaderModule;
 }
+
 
 } // namespace SVE

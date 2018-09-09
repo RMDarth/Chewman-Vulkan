@@ -20,6 +20,7 @@ struct MaterialSettings
 
     std::string vertexShaderName;
     std::string fragmentShaderName;
+    std::string geometryShaderName;
 
     std::vector<TextureInfo> textures;
 };

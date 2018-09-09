@@ -180,7 +180,7 @@ VkSemaphore* VulkanInstance::getImageAvailableSemaphore()
 
 VkPipeline VulkanInstance::createPipeline(const VulkanMesh& vulkanMesh)
 {
-    std::vector<VkPipelineShaderStageCreateInfo> shaderStages = vulkanMesh.getMaterial()->createShaderStages();
+    std::vector<VkPipelineShaderStageCreateInfo> shaderStages = vulkanMesh.getMaterial()->getShaderStages();
 
     // Triangle data setup
     auto bindingDescriptions = vulkanMesh.getBindingDescription();

@@ -5,6 +5,7 @@
 #include "SVE/Material.h"
 #include "SVE/MeshEntity.h"
 #include "SVE/MaterialManager.h"
+#include "SVE/ShaderManager.h"
 #include "SVE/SceneManager.h"
 #include <vulkan/vulkan.h>
 #include <memory>
@@ -33,8 +34,32 @@ int main(int argv, char** args)
     settings.useValidation = true;
     SVE::Engine* engine = SVE::Engine::createInstance(window, settings);
 
+    SVE::ShaderSettings vertexShaderSettings {};
+    vertexShaderSettings.name = "vertexShader";
+    vertexShaderSettings.filename = "shaders/vert.spv";
+    vertexShaderSettings.shaderType = SVE::ShaderType::VertexShader;
+    vertexShaderSettings.uniformList.push_back({SVE::UniformType::ModelMatrix});
+    vertexShaderSettings.uniformList.push_back({SVE::UniformType::ViewMatrix});
+    vertexShaderSettings.uniformList.push_back({SVE::UniformType::ProjectionMatrix});
+
+    std::shared_ptr<SVE::ShaderInfo> vertexShader = std::make_shared<SVE::ShaderInfo>(vertexShaderSettings);
+    engine->getShaderManager()->registerShader(vertexShader);
+
+    SVE::ShaderSettings fragmentShaderSettings {};
+    fragmentShaderSettings.name = "fragmentShader";
+    fragmentShaderSettings.filename = "shaders/frag.spv";
+    fragmentShaderSettings.shaderType = SVE::ShaderType::FragmentShader;
+    fragmentShaderSettings.samplerNamesList.emplace_back("texSampler");
+
+    std::shared_ptr<SVE::ShaderInfo> fragmentShader = std::make_shared<SVE::ShaderInfo>(fragmentShaderSettings);
+    engine->getShaderManager()->registerShader(fragmentShader);
+
     SVE::MaterialSettings materialSettings;
-    materialSettings.name = "material";
+    materialSettings.name = "Material #2";
+    materialSettings.vertexShaderName = "vertexShader";
+    materialSettings.fragmentShaderName = "fragmentShader";
+    materialSettings.textures.push_back({"texSampler", "textures/trashman_tex.png"});
+
     std::shared_ptr<SVE::Material> material = std::make_shared<SVE::Material>(materialSettings);
     engine->getMaterialManager()->registerMaterial(material);
 
