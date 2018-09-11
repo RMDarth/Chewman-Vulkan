@@ -37,4 +37,9 @@ void Entity::clearParent()
     _parent.reset();
 }
 
+void Entity::setMaterial(const std::string& materialName)
+{
+    // default do nothing
+}
+
 } // namespace SVE

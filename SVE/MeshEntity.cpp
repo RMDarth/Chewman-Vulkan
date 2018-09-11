@@ -22,21 +22,25 @@ MeshEntity::MeshEntity(std::shared_ptr<Mesh> mesh)
     : _mesh(mesh)
     , _material(Engine::getInstance()->getMaterialManager()->getMaterial(mesh->getDefaultMaterialName()))
 {
-
+    _materialIndex = _material->getVulkanMaterial()->getNewInstance();
 }
 
 MeshEntity::~MeshEntity() = default;
 
-SubmitInfo MeshEntity::render(const UniformData& data) const
-{
-    _material->getVulkanMaterial()->setUniformData(data);
-    return SubmitInfo(_mesh->getVulkanMesh()->createSubmitInfo());
-}
-
-void MeshEntity::setMaterial(std::string materialName)
+void MeshEntity::setMaterial(const std::string& materialName)
 {
     _material = Engine::getInstance()->getMaterialManager()->getMaterial(materialName);
+    _materialIndex = _material->getVulkanMaterial()->getNewInstance();
 }
 
+void MeshEntity::updateUniforms(const UniformData& data) const
+{
+    _material->getVulkanMaterial()->setUniformData(_materialIndex, data);
+}
+
+void MeshEntity::applyDrawingCommands(uint32_t bufferIndex) const
+{
+    _mesh->getVulkanMesh()->applyDrawingCommands(bufferIndex, _material->getVulkanMaterial(), _materialIndex);
+}
 
 } // namespace SVE

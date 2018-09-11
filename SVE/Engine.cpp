@@ -72,35 +72,59 @@ MeshManager* Engine::getMeshManager()
     return _meshManager.get();
 }
 
-void renderNode(std::shared_ptr<SceneNode> node, UniformData& uniformData, std::vector<SubmitInfo>& submitList)
+void createNodeDrawCommands(std::shared_ptr<SceneNode> node, uint32_t bufferIndex)
 {
-    auto oldModel = uniformData.model;
-    uniformData.model *= node->getNodeTransformation();
-    // render node
     for (auto& entity : node->getAttachedEntities())
     {
-        auto submitInfo = entity->render(uniformData);
-        if (!submitInfo.isEmpty())
-            submitList.emplace_back(std::move(submitInfo));
+        entity->applyDrawingCommands(bufferIndex);
     }
 
     for (auto& child : node->getChildren())
     {
-        renderNode(child, uniformData, submitList);
+        createNodeDrawCommands(child, bufferIndex);
     }
+}
+
+void updateNode(const std::shared_ptr<SceneNode>& node, UniformData& uniformData)
+{
+    auto oldModel = uniformData.model;
+    uniformData.model *= node->getNodeTransformation();
+
+    // update uniforms
+    for (auto& entity : node->getAttachedEntities())
+    {
+        entity->updateUniforms(uniformData);
+    }
+
+    for (auto& child : node->getChildren())
+    {
+        updateNode(child, uniformData);
+    }
+
     uniformData.model = oldModel;
 }
 
 void Engine::renderFrame()
 {
+    if (_sceneManager->isCommandBufferUpdateQueued())
+    {
+        _vulkanInstance->reallocateCommandBuffers();
+        for (auto i = 0u; i < _vulkanInstance->getSwapchainSize(); ++i)
+        {
+            _vulkanInstance->startRenderCommandBufferCreation(i);
+            createNodeDrawCommands(_sceneManager->getRootNode(), i);
+            _vulkanInstance->endRenderCommandBufferCreation(i);
+        }
+        _sceneManager->dequeueCommandBufferUpdate();
+    }
+
     auto mainCamera = _sceneManager->getMainCamera();
     if (!mainCamera)
         throw VulkanException("Camera not set");
     UniformData uniformData = _sceneManager->getMainCamera()->fillUniformData();
     _vulkanInstance->waitAvailableFramebuffer();
-    std::vector<SubmitInfo> submitList;
-    renderNode(_sceneManager->getRootNode(), uniformData, submitList);
-    _vulkanInstance->submitCommands(submitList);
+    updateNode(_sceneManager->getRootNode(), uniformData);
+    _vulkanInstance->submitCommands();
 }
 
 } // namespace SVE

@@ -98,6 +98,76 @@ VkDescriptorSetLayout VulkanShaderInfo::getDescriptorSetLayout() const
     return _descriptorSetLayout;
 }
 
+std::vector<VkVertexInputBindingDescription> VulkanShaderInfo::getBindingDescription() const
+{
+    std::vector<VkVertexInputBindingDescription> bindingDescriptions;
+    uint32_t binding = 0;
+
+    if (_shaderSettings.vertexInfo.vertexDataFlags & VertexInfo::Position)
+    {
+        VkVertexInputBindingDescription positionBinding {};
+        positionBinding.binding = binding++;
+        positionBinding.stride = sizeof(glm::vec3);
+        positionBinding.inputRate = VK_VERTEX_INPUT_RATE_VERTEX; // per vertex or per instance
+        bindingDescriptions.push_back(positionBinding);
+    }
+
+    if (_shaderSettings.vertexInfo.vertexDataFlags & VertexInfo::Color)
+    {
+        VkVertexInputBindingDescription colorBinding {};
+        colorBinding.binding = binding++;
+        colorBinding.stride = sizeof(glm::vec3);
+        colorBinding.inputRate = VK_VERTEX_INPUT_RATE_VERTEX; // per vertex or per instance
+        bindingDescriptions.push_back(colorBinding);
+    }
+
+    if (_shaderSettings.vertexInfo.vertexDataFlags & VertexInfo::TexCoord)
+    {
+        VkVertexInputBindingDescription texCoordBinding {};
+        texCoordBinding.binding = binding++;
+        texCoordBinding.stride = sizeof(glm::vec2);
+        texCoordBinding.inputRate = VK_VERTEX_INPUT_RATE_VERTEX; // per vertex or per instance
+        bindingDescriptions.push_back(texCoordBinding);
+    }
+
+    return bindingDescriptions;
+}
+
+std::vector<VkVertexInputAttributeDescription> VulkanShaderInfo::getAttributeDescriptions() const
+{
+    std::vector<VkVertexInputAttributeDescription> attributeDescriptions;
+    uint32_t bindingAndLoc = 0;
+
+    if (_shaderSettings.vertexInfo.vertexDataFlags & VertexInfo::Position)
+    {
+        VkVertexInputAttributeDescription vertexAttrib {};
+        vertexAttrib.binding = bindingAndLoc;
+        vertexAttrib.location = bindingAndLoc++;
+        vertexAttrib.format = VK_FORMAT_R32G32B32_SFLOAT;
+        attributeDescriptions.push_back(vertexAttrib);
+    }
+
+    if (_shaderSettings.vertexInfo.vertexDataFlags & VertexInfo::Color)
+    {
+        VkVertexInputAttributeDescription colorAttrib {};
+        colorAttrib.binding = bindingAndLoc;
+        colorAttrib.location = bindingAndLoc++;
+        colorAttrib.format = VK_FORMAT_R32G32B32_SFLOAT;
+        attributeDescriptions.push_back(colorAttrib);
+    }
+
+    if (_shaderSettings.vertexInfo.vertexDataFlags & VertexInfo::TexCoord)
+    {
+        VkVertexInputAttributeDescription texCoordAttrib {};
+        texCoordAttrib.binding = bindingAndLoc;
+        texCoordAttrib.location = bindingAndLoc++;
+        texCoordAttrib.format = VK_FORMAT_R32G32_SFLOAT;
+        attributeDescriptions.push_back(texCoordAttrib);
+    }
+
+    return attributeDescriptions;
+}
+
 void VulkanShaderInfo::createDescriptorSetLayout()
 {
     std::vector<VkDescriptorSetLayoutBinding> descriptorList;

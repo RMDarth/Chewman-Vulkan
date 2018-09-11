@@ -2,7 +2,6 @@
 // Copyright (c) 2018-2019, Igor Barinov
 // Licensed under CC BY 4.0
 #pragma once
-#include "SubmitInfo.h"
 #include <memory>
 
 namespace SVE
@@ -22,7 +21,10 @@ public:
     void detachFromParent();
     void clearParent();
 
-    virtual SubmitInfo render(const UniformData& data) const = 0;
+    virtual void setMaterial(const std::string& materialName);
+
+    virtual void updateUniforms(const UniformData& data) const = 0;
+    virtual void applyDrawingCommands(uint32_t bufferIndex) const = 0;
 
 protected:
     std::shared_ptr<SceneNode> _parent;

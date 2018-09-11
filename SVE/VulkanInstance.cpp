@@ -143,9 +143,9 @@ VkDevice VulkanInstance::getLogicalDevice() const
     return _device;
 }
 
-VkCommandPool VulkanInstance::getCommandPool() const
+VkCommandPool VulkanInstance::getCommandPool(uint32_t index) const
 {
-    return _commandPool;
+    return _commandPools[index];
 }
 
 VkRenderPass VulkanInstance::getRenderPass() const
@@ -156,6 +156,11 @@ VkRenderPass VulkanInstance::getRenderPass() const
 VkExtent2D VulkanInstance::getExtent() const
 {
     return _extent;
+}
+
+VkSampleCountFlagBits VulkanInstance::getMSAASamples() const
+{
+    return _msaaSamples;
 }
 
 VkQueue VulkanInstance::getGraphicsQueue() const
@@ -178,127 +183,9 @@ VkSemaphore* VulkanInstance::getImageAvailableSemaphore()
     return &_imageAvailableSemaphore;
 }
 
-VkPipeline VulkanInstance::createPipeline(const VulkanMesh& vulkanMesh)
+const std::vector<VkCommandBuffer>& VulkanInstance::getCommandBuffersList()
 {
-    std::vector<VkPipelineShaderStageCreateInfo> shaderStages = vulkanMesh.getMaterial()->getShaderStages();
-
-    // Triangle data setup
-    auto bindingDescriptions = vulkanMesh.getBindingDescription();
-    auto attributeDescriptions = vulkanMesh.getAttributeDescriptions();
-    VkPipelineVertexInputStateCreateInfo vertexInputStateCreateInfo{};
-    vertexInputStateCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
-    vertexInputStateCreateInfo.vertexBindingDescriptionCount = bindingDescriptions.size();
-    vertexInputStateCreateInfo.pVertexBindingDescriptions = bindingDescriptions.data();
-    vertexInputStateCreateInfo.vertexAttributeDescriptionCount = attributeDescriptions.size();
-    vertexInputStateCreateInfo.pVertexAttributeDescriptions = attributeDescriptions.data();
-
-    VkPipelineInputAssemblyStateCreateInfo inputAssemblyCreateInfo{};
-    inputAssemblyCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
-    inputAssemblyCreateInfo.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
-    inputAssemblyCreateInfo.primitiveRestartEnable = VK_FALSE;
-
-    // Viewport
-    VkViewport viewport;
-    viewport.x = 0.0f;
-    viewport.y = 0.0f;
-    viewport.width = (float) _extent.width;
-    viewport.height = (float) _extent.height;
-    viewport.minDepth = 0.0f;
-    viewport.maxDepth = 1.0f;
-
-    VkRect2D scissor{};
-    scissor.offset = {0, 0};
-    scissor.extent = _extent;
-
-    VkPipelineViewportStateCreateInfo viewportCreateInfo{};
-    viewportCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
-    viewportCreateInfo.viewportCount = 1;
-    viewportCreateInfo.pViewports = &viewport;
-    viewportCreateInfo.scissorCount = 1; // should be the same as viewport count
-    viewportCreateInfo.pScissors = &scissor;
-
-    // Rasterizer
-    VkPipelineRasterizationStateCreateInfo rasterizationCreateInfo{};
-    rasterizationCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
-    rasterizationCreateInfo.depthClampEnable = VK_FALSE; // clamp objects beyond near and far plane to the edges
-    rasterizationCreateInfo.rasterizerDiscardEnable = VK_FALSE;
-    rasterizationCreateInfo.polygonMode = VK_POLYGON_MODE_FILL;
-    rasterizationCreateInfo.lineWidth = 1.0f;
-    rasterizationCreateInfo.cullMode = VK_CULL_MODE_BACK_BIT;
-    rasterizationCreateInfo.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
-    rasterizationCreateInfo.depthBiasEnable = VK_FALSE; // for altering depth (used in shadow mapping)
-
-    // Multisampling
-    VkPipelineMultisampleStateCreateInfo multisampleCreateInfo{};
-    multisampleCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
-    multisampleCreateInfo.sampleShadingEnable = VK_FALSE;
-    multisampleCreateInfo.rasterizationSamples = _msaaSamples;
-    multisampleCreateInfo.minSampleShading = 1.0f;
-    multisampleCreateInfo.pSampleMask = nullptr;
-    multisampleCreateInfo.alphaToCoverageEnable = VK_FALSE;
-    multisampleCreateInfo.alphaToOneEnable = VK_FALSE;
-
-    // Depth and stencil
-    VkPipelineDepthStencilStateCreateInfo depthStencilCreateInfo {};
-    depthStencilCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
-    depthStencilCreateInfo.depthTestEnable = VK_TRUE;
-    depthStencilCreateInfo.depthWriteEnable = VK_TRUE;
-    depthStencilCreateInfo.depthCompareOp = VK_COMPARE_OP_LESS;
-    depthStencilCreateInfo.depthBoundsTestEnable = VK_FALSE;
-    depthStencilCreateInfo.stencilTestEnable = VK_FALSE;
-
-    // Blending
-    VkPipelineColorBlendAttachmentState colorBlendAttachment{};
-    colorBlendAttachment.colorWriteMask =
-            VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
-    colorBlendAttachment.blendEnable = VK_FALSE;
-    colorBlendAttachment.srcColorBlendFactor = VK_BLEND_FACTOR_ONE;
-    colorBlendAttachment.dstColorBlendFactor = VK_BLEND_FACTOR_ZERO;
-    colorBlendAttachment.colorBlendOp = VK_BLEND_OP_ADD;
-    colorBlendAttachment.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
-    colorBlendAttachment.dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
-    colorBlendAttachment.alphaBlendOp = VK_BLEND_OP_ADD;
-
-    VkPipelineColorBlendStateCreateInfo blendingCreateInfo{};
-    blendingCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
-    blendingCreateInfo.logicOpEnable = VK_FALSE;
-    blendingCreateInfo.logicOp = VK_LOGIC_OP_COPY;
-    blendingCreateInfo.attachmentCount = 1;
-    blendingCreateInfo.pAttachments = &colorBlendAttachment;
-    //blendingCreateInfo.blendConstants[0] = 0.0f;
-
-    // Pipeline layout
-    auto pipelineLayout = vulkanMesh.getMaterial()->getPipelineLayout();
-
-    // Finally create pipeline
-    VkPipeline pipeline;
-    VkGraphicsPipelineCreateInfo pipelineCreateInfo{};
-    pipelineCreateInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
-    pipelineCreateInfo.stageCount = shaderStages.size();
-    pipelineCreateInfo.pStages = shaderStages.data();
-    pipelineCreateInfo.pVertexInputState = &vertexInputStateCreateInfo;
-    pipelineCreateInfo.pInputAssemblyState = &inputAssemblyCreateInfo;
-    pipelineCreateInfo.pViewportState = &viewportCreateInfo;
-    pipelineCreateInfo.pRasterizationState = &rasterizationCreateInfo;
-    pipelineCreateInfo.pMultisampleState = &multisampleCreateInfo;
-    pipelineCreateInfo.pDepthStencilState = &depthStencilCreateInfo;
-    pipelineCreateInfo.pColorBlendState = &blendingCreateInfo;
-    pipelineCreateInfo.pDynamicState = nullptr;
-    pipelineCreateInfo.layout = pipelineLayout;
-    pipelineCreateInfo.renderPass = _renderPass;
-    pipelineCreateInfo.subpass = 0;
-    pipelineCreateInfo.basePipelineHandle = VK_NULL_HANDLE; // no deriving from other pipeline
-    pipelineCreateInfo.basePipelineIndex = -1;
-
-    if (vkCreateGraphicsPipelines(_device, VK_NULL_HANDLE, 1, &pipelineCreateInfo, nullptr, &pipeline) !=
-        VK_SUCCESS)
-    {
-        throw VulkanException("Can't create Vulkan Graphics Pipeline");
-    }
-
-    vulkanMesh.getMaterial()->freeShaderModules();
-
-    return pipeline;
+    return _commandBuffers;
 }
 
 void VulkanInstance::waitAvailableFramebuffer()
@@ -329,27 +216,30 @@ void VulkanInstance::waitAvailableFramebuffer()
     }
 }
 
-void VulkanInstance::submitCommands(const std::vector<SubmitInfo>& submitList) const
+void VulkanInstance::submitCommands() const
 {
-    std::vector<VkSubmitInfo> vkSubmitList;
-    std::vector<VkSemaphore> vkSemaphoresList;
-    for (auto& info : submitList)
-    {
-        auto si = info.getVulkanSubmitInfo();
-        vkSemaphoresList.push_back(*si.pSignalSemaphores);
-        vkSubmitList.emplace_back(std::move(si));
-    }
+    static VkPipelineStageFlags waitStages[] = {VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT};
+    VkSubmitInfo submitInfo{};
+    submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+    submitInfo.waitSemaphoreCount = 1;
+    submitInfo.pWaitSemaphores = &_imageAvailableSemaphore;
+    submitInfo.pWaitDstStageMask = waitStages; // should be same size as wait semaphores
+    submitInfo.commandBufferCount = 1;
+    submitInfo.pCommandBuffers = &_commandBuffers[_currentImageIndex]; // command buffer to submit (should be the one with current swap chain image attachment)
+    submitInfo.signalSemaphoreCount = 1;
+    submitInfo.pSignalSemaphores = &_renderFinishedSemaphore;
+
 
     vkResetFences(_device, 1, &_inFlightFences[_currentImageIndex]);
-    if (vkQueueSubmit(_queue, vkSubmitList.size(), vkSubmitList.data(), _inFlightFences[_currentImageIndex]) != VK_SUCCESS)
+    if (vkQueueSubmit(_queue, 1, &submitInfo, _inFlightFences[_currentImageIndex]) != VK_SUCCESS)
     {
         throw VulkanException("Can't submit Vulkan command buffers to queue");
     }
 
     VkPresentInfoKHR presentInfo{};
     presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
-    presentInfo.waitSemaphoreCount = vkSemaphoresList.size();
-    presentInfo.pWaitSemaphores = vkSemaphoresList.data();
+    presentInfo.waitSemaphoreCount = 1;
+    presentInfo.pWaitSemaphores = &_renderFinishedSemaphore;
     presentInfo.swapchainCount = 1;
     presentInfo.pSwapchains = &_swapchain;
     presentInfo.pImageIndices = &_currentImageIndex;
@@ -367,6 +257,68 @@ void VulkanInstance::submitCommands(const std::vector<SubmitInfo>& submitList) c
 uint32_t VulkanInstance::getCurrentImageIndex() const
 {
     return _currentImageIndex;
+}
+
+void VulkanInstance::reallocateCommandBuffers()
+{
+    _currentPool = (_currentPool + 1) % _commandPools.size();
+
+    if (vkResetCommandPool(_device, _commandPools[_currentPool], VK_COMMAND_POOL_RESET_RELEASE_RESOURCES_BIT) != VK_SUCCESS)
+    {
+        throw std::runtime_error("Can't reset Vulkan Command Pool");
+    }
+
+    VkCommandBufferAllocateInfo commandBufferAllocateInfo{};
+    commandBufferAllocateInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+    commandBufferAllocateInfo.commandPool = _commandPools[_currentPool];
+    commandBufferAllocateInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+    commandBufferAllocateInfo.commandBufferCount = (uint32_t) _commandBuffers.size();
+
+    if (vkAllocateCommandBuffers(_device, &commandBufferAllocateInfo, _commandBuffers.data()) != VK_SUCCESS)
+    {
+        throw std::runtime_error("Can't create Vulkan Command Buffers");
+    }
+}
+
+void VulkanInstance::startRenderCommandBufferCreation(uint32_t index)
+{
+    VkCommandBufferBeginInfo beginInfo{};
+    beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+    beginInfo.flags = VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT;
+    beginInfo.pInheritanceInfo = nullptr;
+
+    // TODO: Instead of single command buffer recreation for every object, secondary buffers can be used
+    // start recording
+    if (vkBeginCommandBuffer(_commandBuffers[index], &beginInfo) != VK_SUCCESS)
+    {
+        throw std::runtime_error("Failed to begin recording Vulkan command buffer");
+    }
+
+    std::vector<VkClearValue> clearValues(2);
+    clearValues[0].color = {0.0f, 0.0f, 0.0f, 1.0f};
+    clearValues[1].depthStencil = {1.0f, 0};
+
+    VkRenderPassBeginInfo renderPassBeginInfo{};
+    renderPassBeginInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+    renderPassBeginInfo.renderPass = _renderPass;
+    renderPassBeginInfo.framebuffer = _swapchainFramebuffers[index];
+    renderPassBeginInfo.renderArea.offset = {0, 0};
+    renderPassBeginInfo.renderArea.extent = _extent;
+    renderPassBeginInfo.clearValueCount = clearValues.size();
+    renderPassBeginInfo.pClearValues = clearValues.data();
+
+    vkCmdBeginRenderPass(_commandBuffers[index], &renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
+}
+
+void VulkanInstance::endRenderCommandBufferCreation(uint32_t index)
+{
+    vkCmdEndRenderPass(_commandBuffers[index]);
+
+    // finish recording
+    if (vkEndCommandBuffer(_commandBuffers[index]) != VK_SUCCESS)
+    {
+        throw std::runtime_error("Failed to record Vulkan command buffer");
+    }
 }
 
 void VulkanInstance::createInstance()
@@ -761,19 +713,29 @@ void VulkanInstance::deleteRenderPass()
 
 void VulkanInstance::createCommandPool()
 {
-    VkCommandPoolCreateInfo poolCreateInfo{};
-    poolCreateInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
-    poolCreateInfo.queueFamilyIndex = _queueIndex;
+    _commandPools.resize(_swapchainImages.size());
 
-    if (vkCreateCommandPool(_device, &poolCreateInfo, nullptr, &_commandPool) != VK_SUCCESS)
+    for (auto& commandPool : _commandPools)
     {
-        throw VulkanException("Can't create Vulkan Command Pool");
+        VkCommandPoolCreateInfo poolCreateInfo{};
+        poolCreateInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
+        poolCreateInfo.queueFamilyIndex = _queueIndex;
+
+        if (vkCreateCommandPool(_device, &poolCreateInfo, nullptr, &commandPool) != VK_SUCCESS)
+        {
+            throw VulkanException("Can't create Vulkan Command Pool");
+        }
     }
+
+    _commandBuffers.resize(_swapchainImages.size());
 }
 
 void VulkanInstance::deleteCommandPool()
 {
-    vkDestroyCommandPool(_device, _commandPool, nullptr);
+    for (auto commandPool : _commandPools)
+    {
+        vkDestroyCommandPool(_device, commandPool, nullptr);
+    }
 }
 
 void VulkanInstance::createMSAABuffer()
@@ -891,6 +853,11 @@ void VulkanInstance::createSyncPrimitives()
     {
         throw std::runtime_error("Failed to create Vulkan semaphore");
     }
+    if (vkCreateSemaphore(_device, &semaphoreCreateInfo, nullptr, &_renderFinishedSemaphore) != VK_SUCCESS)
+    {
+        throw std::runtime_error("Failed to create Vulkan semaphore");
+    }
+
 
     VkFenceCreateInfo fenceCreateInfo{};
     fenceCreateInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
@@ -908,6 +875,7 @@ void VulkanInstance::createSyncPrimitives()
 void VulkanInstance::deleteSyncPrimitives()
 {
     vkDestroySemaphore(_device, _imageAvailableSemaphore, nullptr);
+    vkDestroySemaphore(_device, _renderFinishedSemaphore, nullptr);
     for (auto i = 0u; i < _swapchainImages.size(); i++)
     {
         vkDestroyFence(_device, _inFlightFences[i], nullptr);
@@ -1001,5 +969,4 @@ VkFormat VulkanInstance::findDepthFormat()
             VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT
     );
 }
-
 } // namespace SVE

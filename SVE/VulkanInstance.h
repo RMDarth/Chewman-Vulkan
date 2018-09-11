@@ -24,18 +24,24 @@ public:
     VkInstance getInstance() const;
     VkPhysicalDevice getGPU() const;
     VkDevice getLogicalDevice() const;
-    VkCommandPool getCommandPool() const;
+    VkCommandPool getCommandPool(uint32_t index) const;
     VkRenderPass getRenderPass() const;
     VkExtent2D getExtent() const;
+    VkSampleCountFlagBits getMSAASamples() const;
     VkQueue getGraphicsQueue() const;
     size_t getSwapchainSize() const;
     VkFramebuffer getFramebuffer(size_t index) const;
     VkSemaphore* getImageAvailableSemaphore();
+    const std::vector<VkCommandBuffer>& getCommandBuffersList();
 
-    VkPipeline createPipeline(const VulkanMesh& vulkanMesh);
     void waitAvailableFramebuffer();
-    void submitCommands(const std::vector<SubmitInfo>& submitList) const;
+    void submitCommands() const;
     uint32_t getCurrentImageIndex() const;
+
+    void reallocateCommandBuffers();
+    void startRenderCommandBufferCreation(uint32_t index);
+    void endRenderCommandBufferCreation(uint32_t index);
+
 
 private:
     // Vulkan objects creators and destroyers
@@ -108,7 +114,9 @@ private:
     std::vector<VkImageView> _swapchainImageViews;
     std::vector<VkFramebuffer> _swapchainFramebuffers;
 
-    VkCommandPool _commandPool;
+    uint32_t _currentPool;
+    std::vector<VkCommandPool> _commandPools;
+    std::vector<VkCommandBuffer> _commandBuffers;
 
     // color attachment for anti-aliasing
     VkImage _colorImage;
@@ -120,6 +128,7 @@ private:
     VkImageView _depthImageView;
 
     VkSemaphore _imageAvailableSemaphore;
+    VkSemaphore _renderFinishedSemaphore;
     std::vector<VkFence> _inFlightFences;
     uint32_t _currentImageIndex;
 };

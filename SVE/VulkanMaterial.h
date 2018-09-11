@@ -13,6 +13,7 @@ namespace SVE
 {
 class VulkanUtils;
 class VulkanShaderInfo;
+class VulkanInstance;
 
 class VulkanMaterial
 {
@@ -20,16 +21,21 @@ public:
     explicit VulkanMaterial(MaterialSettings materialSettings);
     ~VulkanMaterial();
 
+    VkPipeline getPipeline() const;
     VkPipelineLayout getPipelineLayout() const;
-    std::vector<VkDescriptorSet> getDescriptorSets(size_t index) const;
-    std::vector<VkPipelineShaderStageCreateInfo> getShaderStages() const;
-    void freeShaderModules() const;
 
-    void setUniformData(UniformData data) const;
+    std::vector<VkDescriptorSet> getDescriptorSets(uint32_t materialIndex, size_t index) const;
+
+    uint32_t getNewInstance();
+
+    void setUniformData(uint32_t materialIndex, UniformData data) const;
 
 private:
     void createPipelineLayout();
     void deletePipelineLayout();
+
+    void createPipeline();
+    void deletePipeline();
 
     void createTextureImages();
     void deleteTextureImages();
@@ -51,6 +57,7 @@ private:
 private:
     MaterialSettings _materialSettings;
 
+    VulkanInstance* _vulkanInstance;
     VkDevice _device;
     const VulkanUtils& _vulkanUtils;
 
@@ -60,6 +67,7 @@ private:
     std::vector<VulkanShaderInfo*> _shaderList;
 
     VkPipelineLayout _pipelineLayout = VK_NULL_HANDLE;
+    VkPipeline _pipeline;
 
     std::vector<uint32_t> _mipLevels;
     std::vector<VkImage> _textureImages;
@@ -68,16 +76,20 @@ private:
     std::vector<VkSampler> _textureSamplers;
     std::vector<std::string> _textureNames;
 
-    std::vector<VkBuffer> _vertexUniformBuffers;
-    std::vector<VkBuffer> _fragmentUniformBuffer;
-    std::vector<VkBuffer> _geometryUniformBuffer;
-    std::vector<VkDeviceMemory> _uniformBuffersMemory;
-    VkDescriptorPool _descriptorPool;
+    struct PerInstanceData
+    {
+        std::vector<VkBuffer> vertexUniformBuffers;
+        std::vector<VkBuffer> fragmentUniformBuffer;
+        std::vector<VkBuffer> geometryUniformBuffer;
+        std::vector<VkDeviceMemory> uniformBuffersMemory;
 
-    std::vector<VkDescriptorSet> _vertexDescriptorSets;
-    std::vector<VkDescriptorSet> _fragmentDescriptorSets;
-    std::vector<VkDescriptorSet> _geometryDescriptorSets;
+        VkDescriptorPool descriptorPool;
 
+        std::vector<VkDescriptorSet> vertexDescriptorSets;
+        std::vector<VkDescriptorSet> fragmentDescriptorSets;
+        std::vector<VkDescriptorSet> geometryDescriptorSets;
+    };
+    std::vector<PerInstanceData> _instanceData;
 };
 
 } // namespace SVE

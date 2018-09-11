@@ -8,7 +8,6 @@
 
 namespace SVE
 {
-class Material;
 class VulkanMaterial;
 class VulkanInstance;
 class VulkanUtils;
@@ -19,25 +18,11 @@ public:
     explicit VulkanMesh(MeshSettings meshSettings);
     ~VulkanMesh();
 
-    VulkanMaterial* getMaterial() const;
-
-    std::vector<VkVertexInputBindingDescription> getBindingDescription() const;
-    std::vector<VkVertexInputAttributeDescription> getAttributeDescriptions() const;
-
-    VkSubmitInfo createSubmitInfo();
+    void applyDrawingCommands(uint32_t bufferIndex, VulkanMaterial* material, uint32_t materialIndex);
 
 private:
-    void createGraphicsPipeline();
-    void deleteGraphicsPipeline();
-
     void createGeometryBuffers();
     void deleteGeometryBuffers();
-
-    void createCommandBuffers();
-    void deleteCommandBuffers();
-
-    void createSemaphores();
-    void deleteSemaphores();
 
 private:
     template <typename T>
@@ -52,18 +37,11 @@ private:
     const VulkanUtils& _vulkanUtils;
 
     MeshSettings _meshSettings;
-    std::shared_ptr<Material> _material;
-
-    VkPipeline _pipeline;
 
     std::vector<VkBuffer> _vertexBufferList;
     std::vector<VkDeviceMemory> _vertexBufferMemoryList;
     VkBuffer _indexBuffer = VK_NULL_HANDLE;
     VkDeviceMemory _indexBufferMemory = VK_NULL_HANDLE;
-
-    std::vector<VkCommandBuffer> _commandBuffers;
-
-    std::vector<VkSemaphore> _renderFinishedSemaphore;
 };
 
 } // namespace SVE

@@ -39,4 +39,19 @@ std::shared_ptr<SceneNode> SceneManager::createSceneNode(std::string name)
     return std::make_shared<SceneNode>(name);
 }
 
+void SceneManager::queueCommandBuffersUpdate()
+{
+    _recreateCommandBuffers = true;
+}
+
+void SceneManager::dequeueCommandBufferUpdate()
+{
+    _recreateCommandBuffers = false;
+}
+
+bool SceneManager::isCommandBufferUpdateQueued()
+{
+    return _recreateCommandBuffers;
+}
+
 } // namespace SVE

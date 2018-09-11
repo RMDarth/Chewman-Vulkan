@@ -22,7 +22,12 @@ public:
     std::shared_ptr<CameraNode> getMainCamera();
     void setMainCamera(std::shared_ptr<CameraNode> cameraEntity);
 
+    void queueCommandBuffersUpdate();
+    void dequeueCommandBufferUpdate();
+    bool isCommandBufferUpdateQueued();
+
 private:
+    bool _recreateCommandBuffers = true;
     std::shared_ptr<SceneNode> _root;
     std::shared_ptr<CameraNode> _mainCamera;
 };

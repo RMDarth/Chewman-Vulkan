@@ -43,11 +43,23 @@ struct UniformInfo
     int uniformIndex = 0;
 };
 
+struct VertexInfo
+{
+    enum VertexDataType
+    {
+        Position =  1 << 0,
+        Color =     1 << 1,
+        TexCoord =  1 << 2,
+    };
+    int vertexDataFlags = Position | Color | TexCoord;
+};
+
 struct ShaderSettings
 {
     std::string name;
     std::string filename;
     ShaderType shaderType;
+    VertexInfo vertexInfo;
     std::vector<UniformInfo> uniformList;
     std::vector<std::string> samplerNamesList;
 

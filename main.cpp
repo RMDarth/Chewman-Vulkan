@@ -12,6 +12,20 @@
 #include <vulkan/vulkan.h>
 #include <glm/gtc/matrix_transform.hpp>
 #include <memory>
+#include <chrono>
+
+void updateNode(std::shared_ptr<SVE::SceneNode>& node)
+{
+    static auto startTime = std::chrono::high_resolution_clock::now();
+
+    auto currentTime = std::chrono::high_resolution_clock::now();
+    float time = std::chrono::duration<float, std::chrono::seconds::period>(currentTime - startTime).count();
+
+
+    auto nodeTransform = glm::rotate(glm::mat4(1.0f), time * glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+    nodeTransform = glm::rotate(nodeTransform, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+    node->setNodeTransformation(nodeTransform);
+}
 
 
 int main(int argv, char** args)
@@ -37,51 +51,75 @@ int main(int argv, char** args)
     settings.useValidation = true;
     SVE::Engine* engine = SVE::Engine::createInstance(window, settings);
 
+    // create camera
     auto camera = engine->getSceneManager()->createMainCamera();
     camera->setNearFarPlane(0.1f, 1000.0f);
     camera->setLookAt(glm::vec3(200.0f, 200.0f, 200.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
 
-    SVE::ShaderSettings vertexShaderSettings {};
-    vertexShaderSettings.name = "vertexShader";
-    vertexShaderSettings.filename = "shaders/vert.spv";
-    vertexShaderSettings.shaderType = SVE::ShaderType::VertexShader;
-    vertexShaderSettings.uniformList.push_back({SVE::UniformType::ModelMatrix});
-    vertexShaderSettings.uniformList.push_back({SVE::UniformType::ViewMatrix});
-    vertexShaderSettings.uniformList.push_back({SVE::UniformType::ProjectionMatrix});
+    // Create shaders
+    {
+        SVE::ShaderSettings vertexShaderSettings{};
+        vertexShaderSettings.name = "vertexShader";
+        vertexShaderSettings.filename = "shaders/vert.spv";
+        vertexShaderSettings.shaderType = SVE::ShaderType::VertexShader;
+        vertexShaderSettings.uniformList.push_back({SVE::UniformType::ModelMatrix});
+        vertexShaderSettings.uniformList.push_back({SVE::UniformType::ViewMatrix});
+        vertexShaderSettings.uniformList.push_back({SVE::UniformType::ProjectionMatrix});
 
-    std::shared_ptr<SVE::ShaderInfo> vertexShader = std::make_shared<SVE::ShaderInfo>(vertexShaderSettings);
-    engine->getShaderManager()->registerShader(vertexShader);
+        std::shared_ptr<SVE::ShaderInfo> vertexShader = std::make_shared<SVE::ShaderInfo>(vertexShaderSettings);
+        engine->getShaderManager()->registerShader(vertexShader);
 
-    SVE::ShaderSettings fragmentShaderSettings {};
-    fragmentShaderSettings.name = "fragmentShader";
-    fragmentShaderSettings.filename = "shaders/frag.spv";
-    fragmentShaderSettings.shaderType = SVE::ShaderType::FragmentShader;
-    fragmentShaderSettings.samplerNamesList.emplace_back("texSampler");
+        SVE::ShaderSettings fragmentShaderSettings{};
+        fragmentShaderSettings.name = "fragmentShader";
+        fragmentShaderSettings.filename = "shaders/frag.spv";
+        fragmentShaderSettings.shaderType = SVE::ShaderType::FragmentShader;
+        fragmentShaderSettings.samplerNamesList.emplace_back("texSampler");
 
-    std::shared_ptr<SVE::ShaderInfo> fragmentShader = std::make_shared<SVE::ShaderInfo>(fragmentShaderSettings);
-    engine->getShaderManager()->registerShader(fragmentShader);
+        std::shared_ptr<SVE::ShaderInfo> fragmentShader = std::make_shared<SVE::ShaderInfo>(fragmentShaderSettings);
+        engine->getShaderManager()->registerShader(fragmentShader);
+    }
 
-    SVE::MaterialSettings materialSettings;
-    materialSettings.name = "Material #2";
-    materialSettings.vertexShaderName = "vertexShader";
-    materialSettings.fragmentShaderName = "fragmentShader";
-    materialSettings.textures.push_back({"texSampler", "textures/trashman_tex.png"});
+    // Create materials
+    {
+        SVE::MaterialSettings materialSettings;
+        materialSettings.name = "Material #2";
+        materialSettings.vertexShaderName = "vertexShader";
+        materialSettings.fragmentShaderName = "fragmentShader";
+        materialSettings.textures.push_back({"texSampler", "textures/trashman_tex.png"});
 
-    std::shared_ptr<SVE::Material> material = std::make_shared<SVE::Material>(materialSettings);
-    engine->getMaterialManager()->registerMaterial(material);
+        std::shared_ptr<SVE::Material> material = std::make_shared<SVE::Material>(materialSettings);
+        engine->getMaterialManager()->registerMaterial(material);
+    }
+    {
+        SVE::MaterialSettings materialSettings;
+        materialSettings.name = "Blue";
+        materialSettings.vertexShaderName = "vertexShader";
+        materialSettings.fragmentShaderName = "fragmentShader";
+        materialSettings.textures.push_back({"texSampler", "textures/trashantiman_tex.png"});
 
+        std::shared_ptr<SVE::Material> material = std::make_shared<SVE::Material>(materialSettings);
+        engine->getMaterialManager()->registerMaterial(material);
+    }
+
+
+    // create mesh
     std::shared_ptr<SVE::Mesh> mesh = std::make_shared<SVE::Mesh>("trashman", "models/trashman.fbx");
     engine->getMeshManager()->registerMesh(mesh);
 
-    std::shared_ptr<SVE::Entity> meshEntity = std::make_shared<SVE::MeshEntity>("trashman");
-    engine->getSceneManager()->getRootNode()->attachEntity(meshEntity);
-
+    // create nodes
     auto newNode = engine->getSceneManager()->createSceneNode();
-    newNode->setNodeTransformation(glm::translate(glm::mat4(1), glm::vec3(50, 0, 0)));
+    auto newNode2 = engine->getSceneManager()->createSceneNode();
     engine->getSceneManager()->getRootNode()->attachSceneNode(newNode);
+    engine->getSceneManager()->getRootNode()->attachSceneNode(newNode2);
 
+    // create entities
+    std::shared_ptr<SVE::Entity> meshEntity = std::make_shared<SVE::MeshEntity>("trashman");
     std::shared_ptr<SVE::Entity> meshEntity2 = std::make_shared<SVE::MeshEntity>("trashman");
-    //newNode->attachEntity(meshEntity2);
+    meshEntity2->setMaterial("Blue");
+
+    // configure and attach objects to nodes
+    newNode->attachEntity(meshEntity);
+    newNode2->setNodeTransformation(glm::translate(glm::mat4(1), glm::vec3(50, 0, 0)));
 
     //std::shared_ptr<Renderer> renderer = std::make_shared<VulkanRenderer>(window, true);
 
@@ -112,6 +150,18 @@ int main(int argv, char** args)
                     skiprendering = false;
                 }
             }
+            if (event.type == SDL_KEYUP)
+            {
+                if (event.key.keysym.sym == SDLK_SPACE)
+                {
+                    if (newNode2->getAttachedEntities().size() == 0)
+                    {
+                        newNode2->attachEntity(meshEntity2);
+                    } else {
+                        newNode2->detachEntity(meshEntity2);
+                    }
+                }
+            }
         }
 
         SDL_Delay(2);
@@ -119,6 +169,8 @@ int main(int argv, char** args)
         {
             engine->renderFrame();
             //renderer->drawFrame();
+
+            updateNode(newNode);
         }
     }
 

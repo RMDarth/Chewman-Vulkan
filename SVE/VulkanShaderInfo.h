@@ -20,6 +20,9 @@ public:
     VkPipelineShaderStageCreateInfo createShaderStage();
     void freeShaderModule();
 
+    std::vector<VkVertexInputBindingDescription> getBindingDescription() const;
+    std::vector<VkVertexInputAttributeDescription> getAttributeDescriptions() const;
+
     size_t getShaderUniformsSize() const;
     const ShaderSettings& getShaderSettings() const;
 
@@ -37,7 +40,6 @@ private:
     VkShaderModule _shaderModule;
 
     VkDescriptorSetLayout _descriptorSetLayout;
-    VkDescriptorPool _descriptorPool;
 };
 
 } // namespace SVE
