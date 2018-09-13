@@ -85,6 +85,7 @@ size_t VulkanShaderInfo::getShaderUniformsSize() const
     {
         size += sizeMap.at(info.uniformType);
     }
+
     return size;
 }
 
@@ -130,6 +131,15 @@ std::vector<VkVertexInputBindingDescription> VulkanShaderInfo::getBindingDescrip
         bindingDescriptions.push_back(texCoordBinding);
     }
 
+    if (_shaderSettings.vertexInfo.vertexDataFlags & VertexInfo::Normal)
+    {
+        VkVertexInputBindingDescription normalBinding {};
+        normalBinding.binding = binding++;
+        normalBinding.stride = sizeof(glm::vec3);
+        normalBinding.inputRate = VK_VERTEX_INPUT_RATE_VERTEX; // per vertex or per instance
+        bindingDescriptions.push_back(normalBinding);
+    }
+
     return bindingDescriptions;
 }
 
@@ -165,6 +175,15 @@ std::vector<VkVertexInputAttributeDescription> VulkanShaderInfo::getAttributeDes
         attributeDescriptions.push_back(texCoordAttrib);
     }
 
+    if (_shaderSettings.vertexInfo.vertexDataFlags & VertexInfo::Normal)
+    {
+        VkVertexInputAttributeDescription normalAttrib {};
+        normalAttrib.binding = bindingAndLoc;
+        normalAttrib.location = bindingAndLoc++;
+        normalAttrib.format = VK_FORMAT_R32G32B32_SFLOAT;
+        attributeDescriptions.push_back(normalAttrib);
+    }
+
     return attributeDescriptions;
 }
 
@@ -172,19 +191,6 @@ void VulkanShaderInfo::createDescriptorSetLayout()
 {
     std::vector<VkDescriptorSetLayoutBinding> descriptorList;
     uint32_t bindingNum = 0;
-    if (!_shaderSettings.uniformList.empty())
-    {
-        VkDescriptorSetLayoutBinding uboLayoutBinding{};
-        uboLayoutBinding.binding = bindingNum; // binding in shader
-        uboLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-        uboLayoutBinding.descriptorCount = 1;
-        uboLayoutBinding.stageFlags = _shaderStage;
-        uboLayoutBinding.pImmutableSamplers = nullptr; // used for image sampling
-
-        descriptorList.push_back(uboLayoutBinding);
-        bindingNum++;
-    }
-
     for (auto i = 0u; i < _shaderSettings.samplerNamesList.size(); i++)
     {
         VkDescriptorSetLayoutBinding samplerLayoutBinding {};
@@ -196,6 +202,18 @@ void VulkanShaderInfo::createDescriptorSetLayout()
 
         descriptorList.push_back(samplerLayoutBinding);
         bindingNum++;
+    }
+
+    if (!_shaderSettings.uniformList.empty())
+    {
+        VkDescriptorSetLayoutBinding uboLayoutBinding{};
+        uboLayoutBinding.binding = bindingNum; // binding in shader
+        uboLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+        uboLayoutBinding.descriptorCount = 1;
+        uboLayoutBinding.stageFlags = _shaderStage;
+        uboLayoutBinding.pImmutableSamplers = nullptr; // used for image sampling
+
+        descriptorList.push_back(uboLayoutBinding);
     }
 
     VkDescriptorSetLayoutCreateInfo descriptorSetLayoutCreateInfo {};

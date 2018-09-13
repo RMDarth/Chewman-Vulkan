@@ -20,16 +20,20 @@ public:
     void setAspectRatio(float aspectRatio);
 
     const glm::mat4& getProjectionMatrix();
+    const glm::mat4& getViewMatrix();
 
     void setLookAt(glm::vec3 pos, glm::vec3 target, glm::vec3 up);
 
-    UniformData fillUniformData();
+    void fillUniformData(UniformData& data);
+
+    void setNodeTransformation(glm::mat4 transform) override;
 private:
-    void createMatrix();
+    void createProjectionMatrix();
 
 private:
     CameraSettings _cameraSettings;
     glm::mat4 _projection;
+    glm::mat4 _view;
 };
 
 } // namespace SVE

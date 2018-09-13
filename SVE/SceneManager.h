@@ -8,6 +8,8 @@
 
 namespace SVE
 {
+class LightNode;
+class LightSettings;
 
 class SceneManager
 {
@@ -22,6 +24,10 @@ public:
     std::shared_ptr<CameraNode> getMainCamera();
     void setMainCamera(std::shared_ptr<CameraNode> cameraEntity);
 
+    // TODO: Support multiple lights
+    std::shared_ptr<LightNode> createLight(LightSettings lightSettings);
+    std::shared_ptr<LightNode> getLight();
+
     void queueCommandBuffersUpdate();
     void dequeueCommandBufferUpdate();
     bool isCommandBufferUpdateQueued();
@@ -30,6 +36,7 @@ private:
     bool _recreateCommandBuffers = true;
     std::shared_ptr<SceneNode> _root;
     std::shared_ptr<CameraNode> _mainCamera;
+    std::shared_ptr<LightNode> _lightNode;
 };
 
 } // namespace SVE

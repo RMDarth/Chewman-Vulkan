@@ -10,6 +10,7 @@
 #include "ShaderManager.h"
 #include "MeshManager.h"
 #include "Entity.h"
+#include "LightNode.h"
 
 namespace SVE
 {
@@ -121,7 +122,10 @@ void Engine::renderFrame()
     auto mainCamera = _sceneManager->getMainCamera();
     if (!mainCamera)
         throw VulkanException("Camera not set");
-    UniformData uniformData = _sceneManager->getMainCamera()->fillUniformData();
+    UniformData uniformData;
+    _sceneManager->getMainCamera()->fillUniformData(uniformData);
+    if (_sceneManager->getLight())
+        _sceneManager->getLight()->fillUniformData(uniformData);
     _vulkanInstance->waitAvailableFramebuffer();
     updateNode(_sceneManager->getRootNode(), uniformData);
     _vulkanInstance->submitCommands();

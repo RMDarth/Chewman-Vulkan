@@ -14,8 +14,13 @@ const std::map<UniformType, size_t>& getUniformSizeMap()
             { UniformType::ViewMatrix, sizeof(glm::mat4) },
             { UniformType::ProjectionMatrix, sizeof(glm::mat4) },
             { UniformType::ModelViewProjectionMatrix, sizeof(glm::mat4) },
-            { UniformType::CameraPosition, sizeof(glm::vec3) },
-            { UniformType::LightPosition, sizeof(glm::vec3) }
+            { UniformType::CameraPosition, sizeof(glm::vec4) },
+            { UniformType::LightPosition, sizeof(glm::vec4) },
+            { UniformType::LightColor, sizeof(glm::vec4) },
+            { UniformType::LightAmbient, sizeof(float) },
+            { UniformType::LightDiffuse, sizeof(float) },
+            { UniformType::LightSpecular, sizeof(float) },
+            { UniformType::LightShininess, sizeof(float) }
     };
     return uniformSizeMap;
 }

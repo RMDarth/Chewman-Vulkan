@@ -52,12 +52,13 @@ Mesh::Mesh(const std::string& name, const std::string& modelFile)
         meshSettings.vertexPosData.reserve(meshSettings.vertexPosData.size() + mesh->mNumVertices);
         meshSettings.vertexColorData.reserve(meshSettings.vertexColorData.size() + mesh->mNumVertices);
         meshSettings.vertexTexData.reserve(meshSettings.vertexTexData.size() + mesh->mNumVertices);
+        meshSettings.vertexNormalData.reserve(meshSettings.vertexNormalData.size() + mesh->mNumVertices);
         for (auto v = 0u; v < mesh->mNumVertices; v++)
         {
             meshSettings.vertexPosData.emplace_back(mesh->mVertices[v].x, mesh->mVertices[v].y, mesh->mVertices[v].z);
             meshSettings.vertexColorData.emplace_back(1.0f, 1.0f, 1.0f);
             meshSettings.vertexTexData.emplace_back(mesh->mTextureCoords[0][v].x, 1.0f - mesh->mTextureCoords[0][v].y);
-
+            meshSettings.vertexNormalData.emplace_back(mesh->mNormals[v].x, mesh->mNormals[v].y, mesh->mNormals[v].z);
         }
         meshSettings.indexData.reserve(meshSettings.indexData.size() + mesh->mNumFaces * 3);
         for (auto f = 0u; f < mesh->mNumFaces; f++)

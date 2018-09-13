@@ -22,7 +22,7 @@ MeshEntity::MeshEntity(std::shared_ptr<Mesh> mesh)
     : _mesh(mesh)
     , _material(Engine::getInstance()->getMaterialManager()->getMaterial(mesh->getDefaultMaterialName()))
 {
-    _materialIndex = _material->getVulkanMaterial()->getNewInstance();
+    _materialIndex = _material->getVulkanMaterial()->getInstanceForEntity(this);
 }
 
 MeshEntity::~MeshEntity() = default;
@@ -30,7 +30,7 @@ MeshEntity::~MeshEntity() = default;
 void MeshEntity::setMaterial(const std::string& materialName)
 {
     _material = Engine::getInstance()->getMaterialManager()->getMaterial(materialName);
-    _materialIndex = _material->getVulkanMaterial()->getNewInstance();
+    _materialIndex = _material->getVulkanMaterial()->getInstanceForEntity(this);
 }
 
 void MeshEntity::updateUniforms(const UniformData& data) const

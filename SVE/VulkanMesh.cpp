@@ -76,6 +76,16 @@ void VulkanMesh::createGeometryBuffers()
                               _vertexBufferMemoryList.back(),
                               VK_BUFFER_USAGE_VERTEX_BUFFER_BIT);
     }
+
+    if (!_meshSettings.vertexNormalData.empty())
+    {
+        _vertexBufferList.push_back(VK_NULL_HANDLE);
+        _vertexBufferMemoryList.push_back(VK_NULL_HANDLE);
+        createOptimizedBuffer(_meshSettings.vertexNormalData,
+                              _vertexBufferList.back(),
+                              _vertexBufferMemoryList.back(),
+                              VK_BUFFER_USAGE_VERTEX_BUFFER_BIT);
+    }
     
     createOptimizedBuffer(_meshSettings.indexData, _indexBuffer, _indexBufferMemory, VK_BUFFER_USAGE_INDEX_BUFFER_BIT);
 }
@@ -85,11 +95,16 @@ void VulkanMesh::deleteGeometryBuffers()
     vkDestroyBuffer(_vulkanInstance->getLogicalDevice(), _indexBuffer, nullptr);
     vkFreeMemory(_vulkanInstance->getLogicalDevice(), _indexBufferMemory, nullptr);
 
-    if (!_meshSettings.vertexPosData.empty())
+    for (auto& buffer : _vertexBufferList)
     {
-        vkDestroyBuffer(_vulkanInstance->getLogicalDevice(), _vertexBufferList[0], nullptr);
-        vkFreeMemory(_vulkanInstance->getLogicalDevice(), _vertexBufferMemoryList[0], nullptr);
+        vkDestroyBuffer(_vulkanInstance->getLogicalDevice(), buffer, nullptr);
     }
+    for (auto& memory : _vertexBufferMemoryList)
+    {
+        vkFreeMemory(_vulkanInstance->getLogicalDevice(), memory, nullptr);
+    }
+
+
 }
 
 // This method will create fast GPU-local buffer (using transitional temporary CPU visible buffer)

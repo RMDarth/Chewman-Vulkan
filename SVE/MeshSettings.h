@@ -16,6 +16,7 @@ struct MeshSettings
     std::vector<glm::vec3> vertexPosData;
     std::vector<glm::vec3> vertexColorData;
     std::vector<glm::vec2> vertexTexData;
+    std::vector<glm::vec3> vertexNormalData;
     std::vector<uint32_t> indexData;
 
     std::string materialName;

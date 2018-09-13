@@ -6,6 +6,7 @@
 #include <string>
 #include <map>
 #include "Libs.h"
+#include "LightSettings.h"
 
 namespace SVE
 {
@@ -17,7 +18,12 @@ enum class UniformType : uint8_t
     ProjectionMatrix,
     ModelViewProjectionMatrix,
     CameraPosition,
-    LightPosition
+    LightPosition,
+    LightColor,
+    LightAmbient,
+    LightDiffuse,
+    LightSpecular,
+    LightShininess
     // TODO: Add light, material properties, time, other matrices types etc.
 };
 
@@ -33,8 +39,9 @@ struct UniformData
     glm::mat4 model;
     glm::mat4 view;
     glm::mat4 projection;
-    glm::vec3 cameraPos;
-    glm::vec3 lightPos;
+    glm::vec4 cameraPos;
+    glm::vec4 lightPos;
+    LightSettings lightSettings;
 };
 
 struct UniformInfo
@@ -50,8 +57,9 @@ struct VertexInfo
         Position =  1 << 0,
         Color =     1 << 1,
         TexCoord =  1 << 2,
+        Normal =    1 << 3,
     };
-    int vertexDataFlags = Position | Color | TexCoord;
+    int vertexDataFlags = Position | Color | TexCoord | Normal;
 };
 
 struct ShaderSettings

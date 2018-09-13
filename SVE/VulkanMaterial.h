@@ -14,6 +14,7 @@ namespace SVE
 class VulkanUtils;
 class VulkanShaderInfo;
 class VulkanInstance;
+class Entity;
 
 class VulkanMaterial
 {
@@ -26,7 +27,7 @@ public:
 
     std::vector<VkDescriptorSet> getDescriptorSets(uint32_t materialIndex, size_t index) const;
 
-    uint32_t getNewInstance();
+    uint32_t getInstanceForEntity(Entity* entity);
 
     void setUniformData(uint32_t materialIndex, UniformData data) const;
 
@@ -89,6 +90,8 @@ private:
         std::vector<VkDescriptorSet> fragmentDescriptorSets;
         std::vector<VkDescriptorSet> geometryDescriptorSets;
     };
+
+    std::map<Entity*, uint32_t> _entityInstanceMap;
     std::vector<PerInstanceData> _instanceData;
 };
 

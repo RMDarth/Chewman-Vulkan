@@ -6,6 +6,7 @@
 #include "VulkanInstance.h"
 #include "ShaderManager.h"
 #include "ShaderInfo.h"
+#include "Entity.h"
 #include "Engine.h"
 #include <fstream>
 #include <algorithm>
@@ -89,17 +90,31 @@ std::vector<VkDescriptorSet> VulkanMaterial::getDescriptorSets(uint32_t material
     return sets;
 }
 
+uint32_t VulkanMaterial::getInstanceForEntity(Entity* entity)
+{
+    auto instanceIter = _entityInstanceMap.find(entity);
+    if (instanceIter != _entityInstanceMap.end())
+        return instanceIter->second;
+
+    createUniformBuffers();
+    createDescriptorPool();
+    createDescriptorSets();
+    _entityInstanceMap[entity] = _instanceData.size() - 1;
+    return _instanceData.size() - 1;
+}
+
 void VulkanMaterial::setUniformData(uint32_t materialIndex, UniformData uniformData) const
 {
-    uint32_t imageIndex = _vulkanInstance->getCurrentImageIndex();
+    auto swapchainSize = _vulkanInstance->getSwapchainSize();
+    auto imageIndex = _vulkanInstance->getCurrentImageIndex();
     for (auto i = 0u; i < _shaderList.size(); i++)
     {
         size_t uniformSize = _shaderList[i]->getShaderUniformsSize();
         if (uniformSize == 0)
             continue;
         const auto& shaderSettings = _shaderList[i]->getShaderSettings();
-        void* data;
-        vkMapMemory(_device,  _instanceData[materialIndex].uniformBuffersMemory[imageIndex], 0, uniformSize, 0, &data);
+        void* data = nullptr;
+        vkMapMemory(_device,  _instanceData[materialIndex].uniformBuffersMemory[swapchainSize * i + imageIndex], 0, uniformSize, 0, &data);
         char* mappedData = reinterpret_cast<char*>(data);
         for (auto r = 0u; r < shaderSettings.uniformList.size(); r++)
         {
@@ -107,7 +122,7 @@ void VulkanMaterial::setUniformData(uint32_t materialIndex, UniformData uniformD
             memcpy(mappedData, uniformBytes.data(), uniformBytes.size());
             mappedData += uniformBytes.size();
         }
-        vkUnmapMemory(_device, _instanceData[materialIndex].uniformBuffersMemory[imageIndex]);
+        vkUnmapMemory(_device, _instanceData[materialIndex].uniformBuffersMemory[swapchainSize * i + imageIndex]);
     }
 }
 
@@ -489,7 +504,7 @@ void VulkanMaterial::createDescriptorPool()
 
     std::vector<VkDescriptorPoolSize> poolSizes(2);
     poolSizes[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-    poolSizes[0].descriptorCount = instance.vertexUniformBuffers.size() + instance.fragmentUniformBuffer.size() + instance.geometryUniformBuffer.size();;
+    poolSizes[0].descriptorCount = instance.vertexUniformBuffers.size() + instance.fragmentUniformBuffer.size() + instance.geometryUniformBuffer.size();
     poolSizes[1].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
     poolSizes[1].descriptorCount = swapchainSize * _materialSettings.textures.size();
 
@@ -572,21 +587,10 @@ void VulkanMaterial::createDescriptorSets()
                 imageInfoList.push_back(imageInfo);
             }
 
+
             std::vector<VkWriteDescriptorSet> descriptorWrites;
             auto bindingIndex = 0u;
-            if (!shaderBuffers.empty())
-            {
-                VkWriteDescriptorSet uniformsBuffer {};
-                uniformsBuffer.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-                uniformsBuffer.dstSet = descriptorSets[i];
-                uniformsBuffer.dstBinding = bindingIndex;
-                uniformsBuffer.dstArrayElement = 0;
-                uniformsBuffer.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-                uniformsBuffer.descriptorCount = 1;
-                uniformsBuffer.pBufferInfo = &bufferInfo;
-                descriptorWrites.push_back(uniformsBuffer);
-                bindingIndex++;
-            }
+            // Add texture samplers
             if (!imageInfoList.empty())
             {
                 VkWriteDescriptorSet imagesBuffer {};
@@ -598,6 +602,20 @@ void VulkanMaterial::createDescriptorSets()
                 imagesBuffer.descriptorCount = imageInfoList.size();
                 imagesBuffer.pImageInfo = imageInfoList.data();
                 descriptorWrites.push_back(imagesBuffer);
+                bindingIndex++;
+            }
+            // Add uniforms
+            if (!shaderBuffers.empty())
+            {
+                VkWriteDescriptorSet uniformsBuffer {};
+                uniformsBuffer.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+                uniformsBuffer.dstSet = descriptorSets[i];
+                uniformsBuffer.dstBinding = bindingIndex;
+                uniformsBuffer.dstArrayElement = 0;
+                uniformsBuffer.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+                uniformsBuffer.descriptorCount = 1;
+                uniformsBuffer.pBufferInfo = &bufferInfo;
+                descriptorWrites.push_back(uniformsBuffer);
             }
 
             vkUpdateDescriptorSets(_device, descriptorWrites.size(), descriptorWrites.data(), 0, nullptr);
@@ -616,7 +634,7 @@ void VulkanMaterial::deleteDescriptorSets()
 
 std::vector<char> VulkanMaterial::getUniformDataByType(const UniformData& data, UniformType type) const
 {
-    std::vector<char> bytes;
+    const auto& sizeMap = getUniformSizeMap();
     switch (type)
     {
         case UniformType::ModelMatrix:
@@ -648,19 +666,36 @@ std::vector<char> VulkanMaterial::getUniformDataByType(const UniformData& data, 
         case UniformType::LightPosition:
         {
             const char* byteData = reinterpret_cast<const char*>(&data.lightPos);
-            return std::vector<char>(byteData, byteData + sizeof(data.lightPos));
+            return std::vector<char>(byteData, byteData + sizeMap.at(type));
+        }
+        case UniformType::LightColor:
+        {
+            const char* byteData = reinterpret_cast<const char*>(&data.lightSettings.lightColor);
+            return std::vector<char>(byteData, byteData + sizeMap.at(type));
+        }
+        case UniformType::LightAmbient:
+        {
+            const char* byteData = reinterpret_cast<const char*>(&data.lightSettings.ambientStrength);
+            return std::vector<char>(byteData, byteData + sizeof(data.lightSettings.ambientStrength));
+        }
+        case UniformType::LightDiffuse:
+        {
+            const char* byteData = reinterpret_cast<const char*>(&data.lightSettings.diffuseStrength);
+            return std::vector<char>(byteData, byteData + sizeof(data.lightSettings.diffuseStrength));
+        }
+        case UniformType::LightSpecular:
+        {
+            const char* byteData = reinterpret_cast<const char*>(&data.lightSettings.specularStrength);
+            return std::vector<char>(byteData, byteData + sizeof(data.lightSettings.specularStrength));
+        }
+        case UniformType::LightShininess:
+        {
+            const char* byteData = reinterpret_cast<const char*>(&data.lightSettings.shininess);
+            return std::vector<char>(byteData, byteData + sizeof(data.lightSettings.shininess));
         }
     }
 
     throw VulkanException("Unsupported uniform type");
-}
-
-uint32_t VulkanMaterial::getNewInstance()
-{
-    createUniformBuffers();
-    createDescriptorPool();
-    createDescriptorSets();
-    return _instanceData.size() - 1;
 }
 
 } // namespace SVE

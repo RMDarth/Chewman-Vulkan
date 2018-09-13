@@ -2,6 +2,7 @@
 // Copyright (c) 2018-2019, Igor Barinov
 // Licensed under CC BY 4.0
 #include "SceneManager.h"
+#include "LightNode.h"
 
 namespace SVE
 {
@@ -32,6 +33,19 @@ std::shared_ptr<CameraNode> SceneManager::getMainCamera()
 void SceneManager::setMainCamera(std::shared_ptr<CameraNode> cameraEntity)
 {
     _mainCamera = cameraEntity;
+}
+
+std::shared_ptr<LightNode> SceneManager::createLight(LightSettings lightSettings)
+{
+    _lightNode = std::make_shared<LightNode>(lightSettings);
+    _root->attachSceneNode(_lightNode);
+
+    return _lightNode;
+}
+
+std::shared_ptr<LightNode> SceneManager::getLight()
+{
+    return _lightNode;
 }
 
 std::shared_ptr<SceneNode> SceneManager::createSceneNode(std::string name)

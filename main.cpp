@@ -9,6 +9,7 @@
 #include "SVE/SceneManager.h"
 #include "SVE/MeshManager.h"
 #include "SVE/CameraNode.h"
+#include "SVE/LightNode.h"
 #include <vulkan/vulkan.h>
 #include <glm/gtc/matrix_transform.hpp>
 #include <memory>
@@ -20,7 +21,6 @@ void updateNode(std::shared_ptr<SVE::SceneNode>& node)
 
     auto currentTime = std::chrono::high_resolution_clock::now();
     float time = std::chrono::duration<float, std::chrono::seconds::period>(currentTime - startTime).count();
-
 
     auto nodeTransform = glm::rotate(glm::mat4(1.0f), time * glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
     nodeTransform = glm::rotate(nodeTransform, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
@@ -56,6 +56,16 @@ int main(int argv, char** args)
     camera->setNearFarPlane(0.1f, 1000.0f);
     camera->setLookAt(glm::vec3(200.0f, 200.0f, 200.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
 
+    // create light
+    SVE::LightSettings lightSettings {};
+    lightSettings.diffuseStrength = 1.0f;
+    lightSettings.specularStrength = 0.5f;
+    lightSettings.ambientStrength = 0.0f;
+    lightSettings.shininess = 16;
+    lightSettings.lightColor = glm::vec3(1.0f, 1.0f, 1.0f);
+    auto light = engine->getSceneManager()->createLight(lightSettings);
+    light->setNodeTransformation(glm::translate(glm::mat4(1), glm::vec3(200, 200, 200)));
+
     // Create shaders
     {
         SVE::ShaderSettings vertexShaderSettings{};
@@ -74,6 +84,14 @@ int main(int argv, char** args)
         fragmentShaderSettings.filename = "shaders/frag.spv";
         fragmentShaderSettings.shaderType = SVE::ShaderType::FragmentShader;
         fragmentShaderSettings.samplerNamesList.emplace_back("texSampler");
+        // set light uniforms
+        fragmentShaderSettings.uniformList.push_back({SVE::UniformType::LightPosition});
+        fragmentShaderSettings.uniformList.push_back({SVE::UniformType::LightColor});
+        fragmentShaderSettings.uniformList.push_back({SVE::UniformType::CameraPosition});
+        fragmentShaderSettings.uniformList.push_back({SVE::UniformType::LightAmbient});
+        fragmentShaderSettings.uniformList.push_back({SVE::UniformType::LightDiffuse});
+        fragmentShaderSettings.uniformList.push_back({SVE::UniformType::LightSpecular});
+        fragmentShaderSettings.uniformList.push_back({SVE::UniformType::LightShininess});
 
         std::shared_ptr<SVE::ShaderInfo> fragmentShader = std::make_shared<SVE::ShaderInfo>(fragmentShaderSettings);
         engine->getShaderManager()->registerShader(fragmentShader);
@@ -107,9 +125,11 @@ int main(int argv, char** args)
     engine->getMeshManager()->registerMesh(mesh);
 
     // create nodes
+    auto newNodeMid = engine->getSceneManager()->createSceneNode();
     auto newNode = engine->getSceneManager()->createSceneNode();
     auto newNode2 = engine->getSceneManager()->createSceneNode();
-    engine->getSceneManager()->getRootNode()->attachSceneNode(newNode);
+    engine->getSceneManager()->getRootNode()->attachSceneNode(newNodeMid);
+    newNodeMid->attachSceneNode(newNode);
     engine->getSceneManager()->getRootNode()->attachSceneNode(newNode2);
 
     // create entities
@@ -125,8 +145,10 @@ int main(int argv, char** args)
 
     bool quit = false;
     bool skiprendering = false;
+    auto prevTime = std::chrono::high_resolution_clock::now();
+    decltype(prevTime) curTime;
     while(!quit) {
-
+        curTime = std::chrono::high_resolution_clock::now();
         SDL_Event event;
         while( SDL_PollEvent(&event) ) {
             if(event.type == SDL_QUIT)
@@ -162,9 +184,18 @@ int main(int argv, char** args)
                     }
                 }
             }
+            if (event.type == SDL_KEYDOWN)
+            {
+                if (event.key.keysym.sym == SDLK_a)
+                {
+                    newNodeMid->setNodeTransformation(glm::translate(newNodeMid->getNodeTransformation(), glm::vec3(-1, 0, 0)));
+                }
+            }
         }
+        auto duration = std::chrono::duration<float, std::chrono::seconds::period>(curTime - prevTime).count();
+        //std::cout << 1/duration << std::endl;
 
-        SDL_Delay(2);
+        SDL_Delay(1);
         if (!skiprendering)
         {
             engine->renderFrame();
@@ -172,6 +203,7 @@ int main(int argv, char** args)
 
             updateNode(newNode);
         }
+        prevTime = curTime;
     }
 
     //renderer->finishRendering();

@@ -30,7 +30,7 @@ public:
     const std::list<std::shared_ptr<SceneNode>>& getChildren() const;
 
     const glm::mat4& getNodeTransformation() const;
-    void setNodeTransformation(glm::mat4 transform);
+    virtual void setNodeTransformation(glm::mat4 transform);
 
     glm::mat4 getTotalTransformation() const;
 
