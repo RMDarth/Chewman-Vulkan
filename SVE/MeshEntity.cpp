@@ -22,7 +22,8 @@ MeshEntity::MeshEntity(std::shared_ptr<Mesh> mesh)
     : _mesh(mesh)
     , _material(Engine::getInstance()->getMaterialManager()->getMaterial(mesh->getDefaultMaterialName()))
 {
-    _materialIndex = _material->getVulkanMaterial()->getInstanceForEntity(this);
+    if (_material)
+        _materialIndex = _material->getVulkanMaterial()->getInstanceForEntity(this);
 }
 
 MeshEntity::~MeshEntity() = default;
@@ -35,7 +36,9 @@ void MeshEntity::setMaterial(const std::string& materialName)
 
 void MeshEntity::updateUniforms(const UniformData& data) const
 {
-    _material->getVulkanMaterial()->setUniformData(_materialIndex, data);
+    UniformData newData = data;
+    _mesh->updateUniformDataBones(newData, Engine::getInstance()->getTime());
+    _material->getVulkanMaterial()->setUniformData(_materialIndex, newData);
 }
 
 void MeshEntity::applyDrawingCommands(uint32_t bufferIndex) const

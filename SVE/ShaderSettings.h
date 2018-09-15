@@ -23,7 +23,8 @@ enum class UniformType : uint8_t
     LightAmbient,
     LightDiffuse,
     LightSpecular,
-    LightShininess
+    LightShininess,
+    BoneMatrices
     // TODO: Add light, material properties, time, other matrices types etc.
 };
 
@@ -42,6 +43,7 @@ struct UniformData
     glm::vec4 cameraPos;
     glm::vec4 lightPos;
     LightSettings lightSettings;
+    std::vector<glm::mat4> bones;
 };
 
 struct UniformInfo
@@ -54,12 +56,14 @@ struct VertexInfo
 {
     enum VertexDataType
     {
-        Position =  1 << 0,
-        Color =     1 << 1,
-        TexCoord =  1 << 2,
-        Normal =    1 << 3,
+        Position =      1 << 0,
+        Color =         1 << 1,
+        TexCoord =      1 << 2,
+        Normal =        1 << 3,
+        BoneWeights =   1 << 4,
+        BoneIds =       1 << 5
     };
-    int vertexDataFlags = Position | Color | TexCoord | Normal;
+    int vertexDataFlags = Position | Color | TexCoord | Normal | BoneWeights | BoneIds; // TODO: remove bones
 };
 
 struct ShaderSettings
@@ -70,6 +74,7 @@ struct ShaderSettings
     VertexInfo vertexInfo;
     std::vector<UniformInfo> uniformList;
     std::vector<std::string> samplerNamesList;
+    uint32_t maxBonesSize;
 
     std::string entryPoint = "main";
 };

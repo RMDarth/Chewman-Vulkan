@@ -103,7 +103,7 @@ uint32_t VulkanMaterial::getInstanceForEntity(Entity* entity)
     return _instanceData.size() - 1;
 }
 
-void VulkanMaterial::setUniformData(uint32_t materialIndex, UniformData uniformData) const
+void VulkanMaterial::setUniformData(uint32_t materialIndex, const UniformData& uniformData) const
 {
     auto swapchainSize = _vulkanInstance->getSwapchainSize();
     auto imageIndex = _vulkanInstance->getCurrentImageIndex();
@@ -692,6 +692,11 @@ std::vector<char> VulkanMaterial::getUniformDataByType(const UniformData& data, 
         {
             const char* byteData = reinterpret_cast<const char*>(&data.lightSettings.shininess);
             return std::vector<char>(byteData, byteData + sizeof(data.lightSettings.shininess));
+        }
+        case UniformType::BoneMatrices:
+        {
+            const char* byteData = reinterpret_cast<const char*>(data.bones.data());
+            return std::vector<char>(byteData, byteData + sizeMap.at(type) * data.bones.size());
         }
     }
 

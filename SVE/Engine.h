@@ -31,6 +31,8 @@ public:
     ShaderManager* getShaderManager();
     SceneManager* getSceneManager();
 
+    float getTime();
+
     void renderFrame();
 
 private:

@@ -29,7 +29,7 @@ public:
 
     uint32_t getInstanceForEntity(Entity* entity);
 
-    void setUniformData(uint32_t materialIndex, UniformData data) const;
+    void setUniformData(uint32_t materialIndex, const UniformData& data) const;
 
 private:
     void createPipelineLayout();

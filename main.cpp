@@ -23,7 +23,7 @@ void updateNode(std::shared_ptr<SVE::SceneNode>& node)
     float time = std::chrono::duration<float, std::chrono::seconds::period>(currentTime - startTime).count();
 
     auto nodeTransform = glm::rotate(glm::mat4(1.0f), time * glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-    nodeTransform = glm::rotate(nodeTransform, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+    nodeTransform = glm::rotate(nodeTransform, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
     node->setNodeTransformation(nodeTransform);
 }
 
@@ -53,8 +53,8 @@ int main(int argv, char** args)
 
     // create camera
     auto camera = engine->getSceneManager()->createMainCamera();
-    camera->setNearFarPlane(0.1f, 1000.0f);
-    camera->setLookAt(glm::vec3(200.0f, 200.0f, 200.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+    camera->setNearFarPlane(0.1f, 10000.0f);
+    camera->setLookAt(glm::vec3(5.0f, 5.0f, -5.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
 
     // create light
     SVE::LightSettings lightSettings {};
@@ -64,7 +64,7 @@ int main(int argv, char** args)
     lightSettings.shininess = 16;
     lightSettings.lightColor = glm::vec3(1.0f, 1.0f, 1.0f);
     auto light = engine->getSceneManager()->createLight(lightSettings);
-    light->setNodeTransformation(glm::translate(glm::mat4(1), glm::vec3(200, 200, 200)));
+    light->setNodeTransformation(glm::translate(glm::mat4(1), glm::vec3(200, 200, -200)));
 
     // Create shaders
     {
@@ -75,6 +75,8 @@ int main(int argv, char** args)
         vertexShaderSettings.uniformList.push_back({SVE::UniformType::ModelMatrix});
         vertexShaderSettings.uniformList.push_back({SVE::UniformType::ViewMatrix});
         vertexShaderSettings.uniformList.push_back({SVE::UniformType::ProjectionMatrix});
+        vertexShaderSettings.uniformList.push_back({SVE::UniformType::BoneMatrices});
+        vertexShaderSettings.maxBonesSize = 64;
 
         std::shared_ptr<SVE::ShaderInfo> vertexShader = std::make_shared<SVE::ShaderInfo>(vertexShaderSettings);
         engine->getShaderManager()->registerShader(vertexShader);
@@ -100,7 +102,7 @@ int main(int argv, char** args)
     // Create materials
     {
         SVE::MaterialSettings materialSettings;
-        materialSettings.name = "Material #2";
+        materialSettings.name = "Yellow";
         materialSettings.vertexShaderName = "vertexShader";
         materialSettings.fragmentShaderName = "fragmentShader";
         materialSettings.textures.push_back({"texSampler", "textures/trashman_tex.png"});
@@ -121,7 +123,7 @@ int main(int argv, char** args)
 
 
     // create mesh
-    std::shared_ptr<SVE::Mesh> mesh = std::make_shared<SVE::Mesh>("trashman", "models/trashman.fbx");
+    std::shared_ptr<SVE::Mesh> mesh = std::make_shared<SVE::Mesh>("trashman", "models/trashman.dae");
     engine->getMeshManager()->registerMesh(mesh);
 
     // create nodes
@@ -135,6 +137,7 @@ int main(int argv, char** args)
     // create entities
     std::shared_ptr<SVE::Entity> meshEntity = std::make_shared<SVE::MeshEntity>("trashman");
     std::shared_ptr<SVE::Entity> meshEntity2 = std::make_shared<SVE::MeshEntity>("trashman");
+    meshEntity->setMaterial("Yellow");
     meshEntity2->setMaterial("Blue");
 
     // configure and attach objects to nodes

@@ -11,6 +11,7 @@
 #include "MeshManager.h"
 #include "Entity.h"
 #include "LightNode.h"
+#include <chrono>
 
 namespace SVE
 {
@@ -48,7 +49,7 @@ Engine::Engine(SDL_Window* window, EngineSettings settings)
     , _sceneManager(new SceneManager())
     , _meshManager(std::make_unique<MeshManager>())
 {
-
+    getTime();
 }
 
 Engine::~Engine() = default;
@@ -129,6 +130,14 @@ void Engine::renderFrame()
     _vulkanInstance->waitAvailableFramebuffer();
     updateNode(_sceneManager->getRootNode(), uniformData);
     _vulkanInstance->submitCommands();
+}
+
+float Engine::getTime()
+{
+    static auto startTime = std::chrono::high_resolution_clock::now();
+
+    auto currentTime = std::chrono::high_resolution_clock::now();
+    return std::chrono::duration<float, std::chrono::seconds::period>(currentTime - startTime).count();
 }
 
 } // namespace SVE

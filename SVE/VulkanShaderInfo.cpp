@@ -83,7 +83,13 @@ size_t VulkanShaderInfo::getShaderUniformsSize() const
     const auto& sizeMap = getUniformSizeMap();
     for (const auto& info : _shaderSettings.uniformList)
     {
-        size += sizeMap.at(info.uniformType);
+        if (info.uniformType == UniformType::BoneMatrices)
+        {
+            size += sizeMap.at(info.uniformType) * _shaderSettings.maxBonesSize;
+        } else
+        {
+            size += sizeMap.at(info.uniformType);
+        }
     }
 
     return size;
@@ -118,7 +124,7 @@ std::vector<VkVertexInputBindingDescription> VulkanShaderInfo::getBindingDescrip
         VkVertexInputBindingDescription colorBinding {};
         colorBinding.binding = binding++;
         colorBinding.stride = sizeof(glm::vec3);
-        colorBinding.inputRate = VK_VERTEX_INPUT_RATE_VERTEX; // per vertex or per instance
+        colorBinding.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
         bindingDescriptions.push_back(colorBinding);
     }
 
@@ -127,7 +133,7 @@ std::vector<VkVertexInputBindingDescription> VulkanShaderInfo::getBindingDescrip
         VkVertexInputBindingDescription texCoordBinding {};
         texCoordBinding.binding = binding++;
         texCoordBinding.stride = sizeof(glm::vec2);
-        texCoordBinding.inputRate = VK_VERTEX_INPUT_RATE_VERTEX; // per vertex or per instance
+        texCoordBinding.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
         bindingDescriptions.push_back(texCoordBinding);
     }
 
@@ -136,8 +142,26 @@ std::vector<VkVertexInputBindingDescription> VulkanShaderInfo::getBindingDescrip
         VkVertexInputBindingDescription normalBinding {};
         normalBinding.binding = binding++;
         normalBinding.stride = sizeof(glm::vec3);
-        normalBinding.inputRate = VK_VERTEX_INPUT_RATE_VERTEX; // per vertex or per instance
+        normalBinding.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
         bindingDescriptions.push_back(normalBinding);
+    }
+
+    if (_shaderSettings.vertexInfo.vertexDataFlags & VertexInfo::BoneWeights)
+    {
+        VkVertexInputBindingDescription boneWeightBinding {};
+        boneWeightBinding.binding = binding++;
+        boneWeightBinding.stride = sizeof(glm::vec4);
+        boneWeightBinding.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+        bindingDescriptions.push_back(boneWeightBinding);
+    }
+
+    if (_shaderSettings.vertexInfo.vertexDataFlags & VertexInfo::BoneIds)
+    {
+        VkVertexInputBindingDescription boneIdsBinding {};
+        boneIdsBinding.binding = binding++;
+        boneIdsBinding.stride = sizeof(glm::ivec4);
+        boneIdsBinding.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+        bindingDescriptions.push_back(boneIdsBinding);
     }
 
     return bindingDescriptions;
@@ -182,6 +206,24 @@ std::vector<VkVertexInputAttributeDescription> VulkanShaderInfo::getAttributeDes
         normalAttrib.location = bindingAndLoc++;
         normalAttrib.format = VK_FORMAT_R32G32B32_SFLOAT;
         attributeDescriptions.push_back(normalAttrib);
+    }
+
+    if (_shaderSettings.vertexInfo.vertexDataFlags & VertexInfo::BoneWeights)
+    {
+        VkVertexInputAttributeDescription boneWeightAttrib {};
+        boneWeightAttrib.binding = bindingAndLoc;
+        boneWeightAttrib.location = bindingAndLoc++;
+        boneWeightAttrib.format = VK_FORMAT_R32G32B32A32_SFLOAT;
+        attributeDescriptions.push_back(boneWeightAttrib);
+    }
+
+    if (_shaderSettings.vertexInfo.vertexDataFlags & VertexInfo::BoneIds)
+    {
+        VkVertexInputAttributeDescription boneIndexAttrib {};
+        boneIndexAttrib.binding = bindingAndLoc;
+        boneIndexAttrib.location = bindingAndLoc++;
+        boneIndexAttrib.format = VK_FORMAT_R32G32B32A32_SINT;
+        attributeDescriptions.push_back(boneIndexAttrib);
     }
 
     return attributeDescriptions;
