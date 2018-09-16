@@ -43,7 +43,10 @@ SVE::VulkanMaterial::VulkanMaterial(MaterialSettings materialSettings)
     createPipelineLayout();
     createPipeline();
 
-    createTextureImages();
+    if (_materialSettings.isCubemap)
+        createCubemapTextureImages();
+    else
+        createTextureImages();
     createTextureImageView();
     createTextureSampler();
 
@@ -177,7 +180,12 @@ void VulkanMaterial::createPipeline()
     rasterizationCreateInfo.rasterizerDiscardEnable = VK_FALSE;
     rasterizationCreateInfo.polygonMode = VK_POLYGON_MODE_FILL;
     rasterizationCreateInfo.lineWidth = 1.0f;
-    rasterizationCreateInfo.cullMode = VK_CULL_MODE_BACK_BIT;
+
+    if (!_materialSettings.invertCullFace)
+        rasterizationCreateInfo.cullMode = VK_CULL_MODE_FRONT_BIT;
+    else
+        rasterizationCreateInfo.cullMode = VK_CULL_MODE_BACK_BIT;
+
     rasterizationCreateInfo.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
     rasterizationCreateInfo.depthBiasEnable = VK_FALSE; // for altering depth (used in shadow mapping)
 
@@ -194,10 +202,16 @@ void VulkanMaterial::createPipeline()
     // Depth and stencil
     VkPipelineDepthStencilStateCreateInfo depthStencilCreateInfo {};
     depthStencilCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
-    depthStencilCreateInfo.depthTestEnable = VK_TRUE;
-    depthStencilCreateInfo.depthWriteEnable = VK_TRUE;
-    depthStencilCreateInfo.depthCompareOp = VK_COMPARE_OP_LESS;
-    depthStencilCreateInfo.depthBoundsTestEnable = VK_FALSE;
+    if (_materialSettings.useDepthTest)
+    {
+        depthStencilCreateInfo.depthTestEnable = VK_TRUE;
+        depthStencilCreateInfo.depthWriteEnable = VK_TRUE;
+        depthStencilCreateInfo.depthCompareOp = VK_COMPARE_OP_LESS;
+        depthStencilCreateInfo.depthBoundsTestEnable = VK_FALSE;
+    } else {
+        depthStencilCreateInfo.depthTestEnable = VK_FALSE;
+        depthStencilCreateInfo.depthWriteEnable = VK_FALSE;
+    }
     depthStencilCreateInfo.stencilTestEnable = VK_FALSE;
 
     // Blending
@@ -301,7 +315,7 @@ void VulkanMaterial::createTextureImages()
         // Load image pixel data
         int texWidth, texHeight, texChannels;
         stbi_uc* pixels = stbi_load(_materialSettings.textures[i].filename.c_str(), &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
-        VkDeviceSize imageSize = texWidth * texHeight * 4;
+        VkDeviceSize imageSize = static_cast<VkDeviceSize>(texWidth * texHeight * 4);
 
         _mipLevels[i] = static_cast<uint32_t>(std::floor(std::log2(std::max(texWidth, texHeight)))) + 1;
 
@@ -329,8 +343,8 @@ void VulkanMaterial::createTextureImages()
         stbi_image_free(pixels);
 
         // Create texture image which will be used in shaders
-        _vulkanUtils.createImage(texWidth,
-                                 texHeight,
+        _vulkanUtils.createImage(static_cast<uint32_t>(texWidth),
+                                 static_cast<uint32_t>(texHeight),
                                  _mipLevels[i],
                                  VK_SAMPLE_COUNT_1_BIT,
                                  VK_FORMAT_R8G8B8A8_UNORM,
@@ -353,12 +367,7 @@ void VulkanMaterial::createTextureImages()
                                        _textureImages[i],
                                        static_cast<uint32_t>(texWidth),
                                        static_cast<uint32_t>(texHeight));
-        // Transition image layout from transfer destination to optimal for shader usage
-        /*transitionImageLayout(_textureImage,
-                              VK_FORMAT_R8G8B8A8_UNORM,
-                              {VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_ACCESS_TRANSFER_WRITE_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT},
-                              {VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_ACCESS_SHADER_READ_BIT, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT},
-                              _mipLevels);*/
+
         _vulkanUtils.generateMipmaps(_textureImages[i], VK_FORMAT_R8G8B8A8_UNORM, texWidth, texHeight, _mipLevels[i]);
 
         // Free temporary buffer
@@ -367,6 +376,134 @@ void VulkanMaterial::createTextureImages()
 
         _textureNames[i] = _materialSettings.textures[i].samplerName;
     }
+}
+
+void VulkanMaterial::createCubemapTextureImages()
+{
+    size_t imageCount = _materialSettings.textures.size();
+    if (imageCount != 6)
+        throw VulkanException("Incorrect cube map configuration (need 6 images)");
+
+    _textureImages.resize(1);
+    _textureImageMemoryList.resize(1);
+    _textureNames.resize(1);
+    std::vector<stbi_uc*> pixelsData;
+    VkDeviceSize imageSize = 0;
+    int texWidth = 0, texHeight = 0, texChannels;
+    for (auto i = 0u; i < imageCount; i++)
+    {
+        // Load image pixel data
+        //stbi_set_flip_vertically_on_load(true);
+        stbi_uc* pixels = stbi_load(_materialSettings.textures[i].filename.c_str(), &texWidth, &texHeight, &texChannels,
+                                    STBI_rgb_alpha);
+        stbi_set_flip_vertically_on_load(false);
+        imageSize += static_cast<VkDeviceSize>(texWidth * texHeight * 4);
+
+        if (!pixels)
+        {
+            throw VulkanException("Can't load texture " + _materialSettings.textures[i].filename);
+        }
+        pixelsData.push_back(pixels);
+    }
+    auto singleImageSize = static_cast<VkDeviceSize>(texWidth * texHeight * 4);
+
+    //_mipLevels.push_back(static_cast<uint32_t>(std::floor(std::log2(std::max(texWidth, texHeight)))) + 1);
+    _mipLevels.push_back(1);
+
+    // Create temporary buffer to hold pixel data
+    VkBuffer stagingBuffer;
+    VkDeviceMemory stagingBufferMemory;
+    _vulkanUtils.createBuffer(imageSize,
+                              VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
+                              VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+                              stagingBuffer,
+                              stagingBufferMemory);
+
+    // Copy pixel data into temporary buffer
+    void* data;
+    vkMapMemory(_device, stagingBufferMemory, 0, imageSize, 0, &data);
+    char* mappedData = reinterpret_cast<char*>(data);
+    for (auto i = 0u; i < pixelsData.size(); i++)
+    {
+        memcpy(mappedData, pixelsData[i], singleImageSize);
+        mappedData += singleImageSize;
+    }
+    vkUnmapMemory(_device, stagingBufferMemory);
+
+    // Free pixel data
+    for (auto i = 0u; i < imageCount; i++)
+        stbi_image_free(pixelsData[i]);
+
+    // Create texture image which will be used in shaders
+    _vulkanUtils.createCubeImage(static_cast<uint32_t>(texWidth),
+                                 static_cast<uint32_t>(texHeight),
+                                 _mipLevels[0],
+                                 VK_FORMAT_R8G8B8A8_UNORM,
+                                 VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT |
+                                 VK_IMAGE_USAGE_SAMPLED_BIT,
+                                 VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+                                 _textureImages[0],
+                                 _textureImageMemoryList[0]);
+
+    // Transition layout of the image to be optimal as a transfer destination
+    _vulkanUtils.transitionImageLayout(
+            _textureImages[0],
+            VK_FORMAT_R8G8B8A8_UNORM,
+            {VK_IMAGE_LAYOUT_UNDEFINED, 0, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT},
+            {VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_ACCESS_TRANSFER_WRITE_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT},
+            _mipLevels[0],
+            VK_IMAGE_ASPECT_COLOR_BIT,
+            6);
+
+
+    // Copy image data from buffer to image
+    auto commandBuffer = _vulkanUtils.beginRecordingCommands();
+    std::vector<VkBufferImageCopy> bufferCopyRegions;
+    uint32_t offset = 0;
+    for (auto i = 0u; i < 6; i++)
+    {
+        VkBufferImageCopy bufferCopyRegion = {};
+        bufferCopyRegion.imageSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+        bufferCopyRegion.imageSubresource.mipLevel = 0;
+        bufferCopyRegion.imageSubresource.baseArrayLayer = i;
+        bufferCopyRegion.imageSubresource.layerCount = 1;
+        bufferCopyRegion.imageExtent.width = static_cast<uint32_t>(texWidth);
+        bufferCopyRegion.imageExtent.height = static_cast<uint32_t>(texHeight);
+        bufferCopyRegion.imageExtent.depth = 1;
+        bufferCopyRegion.bufferOffset = offset;
+
+        bufferCopyRegions.push_back(bufferCopyRegion);
+
+        // Increase offset into staging buffer for next level / face
+        offset += texWidth * texHeight * 4;
+    }
+
+    vkCmdCopyBufferToImage(commandBuffer,
+                           stagingBuffer,
+                           _textureImages[0],
+                           VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+                           bufferCopyRegions.size(),
+                           bufferCopyRegions.data());
+
+    _vulkanUtils.endRecordingAndSubmitCommands(commandBuffer);
+
+    _vulkanUtils.transitionImageLayout(
+         _textureImages[0],
+         VK_FORMAT_R8G8B8A8_UNORM,
+         {VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_ACCESS_TRANSFER_WRITE_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT},
+         {VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_ACCESS_SHADER_READ_BIT, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT},
+         _mipLevels[0],
+         VK_IMAGE_ASPECT_COLOR_BIT,
+         6);
+
+    //_vulkanUtils.generateMipmaps(_textureImages[i], VK_FORMAT_R8G8B8A8_UNORM, texWidth, texHeight, _mipLevels[i]);
+
+    // Free temporary buffer
+    vkDestroyBuffer(_device, stagingBuffer, nullptr);
+    vkFreeMemory(_device, stagingBufferMemory, nullptr);
+
+    _textureNames[0] = _materialSettings.textures[0].samplerName;
+
 }
 
 void VulkanMaterial::deleteTextureImages()
@@ -383,7 +520,13 @@ void VulkanMaterial::createTextureImageView()
     _textureImageViews.resize(_textureImages.size());
     for (auto i = 0; i < _textureImages.size(); i++)
     {
-        _textureImageViews[i] = _vulkanUtils.createImageView(_textureImages[i], VK_FORMAT_R8G8B8A8_UNORM, _mipLevels[i]);
+        _textureImageViews[i] = _vulkanUtils.createImageView(
+                _textureImages[i],
+                VK_FORMAT_R8G8B8A8_UNORM,
+                _mipLevels[i],
+                VK_IMAGE_ASPECT_COLOR_BIT,
+                _materialSettings.isCubemap ? VK_IMAGE_VIEW_TYPE_CUBE : VK_IMAGE_VIEW_TYPE_2D,
+                _materialSettings.isCubemap ? 6 : 1);
     }
 }
 

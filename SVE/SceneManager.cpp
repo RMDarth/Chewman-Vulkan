@@ -3,6 +3,7 @@
 // Licensed under CC BY 4.0
 #include "SceneManager.h"
 #include "LightNode.h"
+#include "Skybox.h"
 
 namespace SVE
 {
@@ -53,6 +54,21 @@ std::shared_ptr<SceneNode> SceneManager::createSceneNode(std::string name)
     return std::make_shared<SceneNode>(name);
 }
 
+void SceneManager::setSkybox(const std::string& materialName)
+{
+    _skybox = std::make_shared<Skybox>(materialName);
+}
+
+void SceneManager::setSkybox(std::shared_ptr<Skybox> skybox)
+{
+    _skybox = skybox;
+}
+
+std::shared_ptr<Skybox> SceneManager::getSkybox()
+{
+    return _skybox;
+}
+
 void SceneManager::queueCommandBuffersUpdate()
 {
     _recreateCommandBuffers = true;
@@ -67,5 +83,6 @@ bool SceneManager::isCommandBufferUpdateQueued()
 {
     return _recreateCommandBuffers;
 }
+
 
 } // namespace SVE

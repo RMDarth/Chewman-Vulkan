@@ -23,6 +23,9 @@ struct MaterialSettings
     std::string geometryShaderName;
 
     std::vector<TextureInfo> textures;
+    bool isCubemap = false;
+    bool useDepthTest = true;
+    bool invertCullFace = false;
 };
 
 } // namespace SVE

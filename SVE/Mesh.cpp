@@ -51,8 +51,8 @@ Mesh::Mesh(const std::string& name, const std::string& modelFile)
     MeshSettings meshSettings {};
 
     //Assimp::Importer importer;
-    meshSettings.animation2 = std::make_shared<AnimationSettings2>();
-    auto& importer = meshSettings.animation2->importer;
+    meshSettings.animation = std::make_shared<AnimationSettings>();
+    auto& importer = meshSettings.animation->importer;
 
     std::map<std::string, uint32_t> boneMap;
 
@@ -108,16 +108,13 @@ Mesh::Mesh(const std::string& name, const std::string& modelFile)
             meshSettings.boneNum = mesh->mNumBones;
             meshSettings.vertexBoneIndexData.resize(mesh->mNumVertices);
             meshSettings.vertexBoneWeightData.resize(mesh->mNumVertices);
-            meshSettings.boneOffset.resize(mesh->mNumBones);
-            meshSettings.animation2->boneOffset.resize(mesh->mNumBones);
-            meshSettings.globalInverse = glm::inverse(glm::transpose(glm::make_mat4(&scene->mRootNode->mTransformation.a1)));
+            meshSettings.animation->boneOffset.resize(mesh->mNumBones);
 
             for (auto r = 0u; r < mesh->mNumBones; r++)
             {
                 auto* boneInfo = mesh->mBones[r];
                 boneMap[boneInfo->mName.C_Str()] = r;
-                meshSettings.animation2->boneOffset[r] = boneInfo->mOffsetMatrix;
-                meshSettings.boneOffset[r] = glm::transpose(glm::make_mat4(&boneInfo->mOffsetMatrix.a1));
+                meshSettings.animation->boneOffset[r] = boneInfo->mOffsetMatrix;
                 for (auto w = 0u; w < boneInfo->mNumWeights; w++)
                 {
                     auto weight = boneInfo->mWeights[w];
@@ -140,83 +137,11 @@ Mesh::Mesh(const std::string& name, const std::string& modelFile)
 
     if (scene->mNumAnimations > 0)
     {
-        // TODO: Support loading several animations
-        auto animation = scene->mAnimations[0];
-        AnimationSettings animationSettings;
-
-        animationSettings.duration = (float)animation->mDuration;
-        animationSettings.rootNodeAnimation = std::make_shared<BoneInfo>();
-        std::map<std::string, std::shared_ptr<BoneInfo>> boneInfoMap;
-
-        // go through all bones, set their ids. children and default transform
-        std::stack<std::pair<aiNode*, std::shared_ptr<BoneInfo>>> s;
-        s.push({scene->mRootNode, animationSettings.rootNodeAnimation});
-        boneMap[scene->mRootNode->mName.C_Str()] = meshSettings.boneNum;
-        animationSettings.rootNodeAnimation->boneId = meshSettings.boneNum;
-        animationSettings.rootNodeAnimation->transform = glm::transpose(glm::make_mat4(&scene->mRootNode->mTransformation.a1));
-        boneInfoMap[scene->mRootNode->mName.C_Str()] = animationSettings.rootNodeAnimation;
-        while (!s.empty())
-        {
-            auto nodePair = s.top();
-            s.pop();
-            auto* node = nodePair.first;
-            auto boneInfo = nodePair.second;
-
-            for (auto r = 0u; r < node->mNumChildren; r++)
-            {
-                auto boneName = fixAssimpBoneName(node->mChildren[r]->mName.C_Str());
-
-                auto childInfo = std::make_shared<BoneInfo>();
-                childInfo->boneId = boneMap.find(boneName) != boneMap.end() ? boneMap[boneName] : -1;
-                if (childInfo->boneId == -1)
-                    std::cout << boneName << std::endl;
-                childInfo->transform = glm::transpose(glm::make_mat4(&node->mChildren[r]->mTransformation.a1));
-                boneInfoMap[node->mChildren[r]->mName.C_Str()] = childInfo;
-                boneInfo->children.push_back(childInfo);
-                s.push({node->mChildren[r], childInfo});
-            }
-        }
-
-        int keyPoints = animation->mNumChannels;
-        for (auto i = 0u; i < keyPoints; i++)
-        {
-            auto channel = animation->mChannels[i];
-            std::string nodeName = channel->mNodeName.C_Str();
-
-            if (boneInfoMap.find(nodeName) == boneInfoMap.end())
-                continue;
-
-            auto boneInfo = boneInfoMap.at(nodeName);
-
-            if (channel->mNumPositionKeys > 0)
-            {
-                for (auto r = 0u; r < channel->mNumPositionKeys; r++)
-                {
-                    auto translate = channel->mPositionKeys[r].mValue;
-                    boneInfo->positionData.push_back(glm::vec3(translate.x, translate.y, translate.z));
-                    boneInfo->positionTime.push_back((float) channel->mPositionKeys[r].mTime);
-                }
-            }
-            if (channel->mNumRotationKeys > 0)
-            {
-                for (auto r = 0u; r < channel->mNumRotationKeys; r++)
-                {
-                    auto rotateMatrix = channel->mRotationKeys[r].mValue.GetMatrix();
-                    auto glmMatrix = glm::transpose(glm::make_mat3(&rotateMatrix.a1));
-                    boneInfo->rotationData.push_back(glm::toQuat(glmMatrix));
-                    boneInfo->rotationTime.push_back((float) channel->mRotationKeys[r].mTime);
-                }
-            }
-        }
-
-        meshSettings.animation = animationSettings;
-
-        meshSettings.animation2->animation = scene->mAnimations[0];
-        meshSettings.animation2->rootNode = scene->mRootNode;
-        meshSettings.animation2->globalInverse = scene->mRootNode->mTransformation;
-        meshSettings.animation2->globalInverse.Inverse();
-        meshSettings.animation2->boneMap = boneMap;
-        meshSettings.animation2->duration = (float)animation->mDuration;
+        meshSettings.animation->animations = scene->mAnimations;
+        meshSettings.animation->rootNode = scene->mRootNode;
+        meshSettings.animation->globalInverse = scene->mRootNode->mTransformation;
+        meshSettings.animation->globalInverse.Inverse();
+        meshSettings.animation->boneMap = boneMap;
     }
 
     _meshSettings = meshSettings;
@@ -243,7 +168,7 @@ VulkanMesh* Mesh::getVulkanMesh()
 void Mesh::updateUniformDataBones(UniformData& data, float time) const
 {
     //data.bones = getTransforms(_meshSettings, _meshSettings.animation, time);
-    data.bones = getTransforms2(_meshSettings, time);
+    data.bones = getAnimationTransforms(_meshSettings, 0, time);
 }
 
 } // namespace SVE

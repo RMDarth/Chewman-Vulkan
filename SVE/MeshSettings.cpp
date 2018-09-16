@@ -13,65 +13,7 @@ namespace SVE
 namespace
 {
 
-void iterateBones(
-        std::vector<glm::mat4>& boneData,
-        const MeshSettings& meshSettings,
-        const AnimationSettings& settings,
-        std::shared_ptr<BoneInfo> boneInfo,
-        glm::mat4 parentTransform,
-        float time)
-{
-    glm::mat4 result(1);
-    bool changed = false;
-
-    auto nextPosIter = std::upper_bound(boneInfo->positionTime.begin(), boneInfo->positionTime.end(), time);
-    if (nextPosIter != boneInfo->positionTime.end() && nextPosIter != boneInfo->positionTime.begin())
-    {
-        changed = true;
-        auto nextPos = std::distance(boneInfo->positionTime.begin(), nextPosIter);
-        auto prevPos = nextPos - 1;
-
-        float timeInterpolate = (time - boneInfo->positionTime[prevPos]) /
-                                (boneInfo->positionTime[nextPos] - boneInfo->positionTime[prevPos]);
-        glm::translate(
-                result,
-                glm::mix(boneInfo->positionData[prevPos], boneInfo->positionData[nextPos], timeInterpolate));
-    }
-
-    // get rotation
-    auto nextRotIter = std::upper_bound(boneInfo->rotationTime.begin(), boneInfo->rotationTime.end(), time);
-    if (nextRotIter != boneInfo->rotationTime.end() && nextRotIter != boneInfo->rotationTime.begin())
-    {
-        changed = true;
-        auto nextRot = std::distance(boneInfo->rotationTime.begin(), nextRotIter);
-        auto prevRot = nextRot - 1;
-
-        float timeInterpolate = (time - boneInfo->rotationTime[prevRot]) /
-                                (boneInfo->rotationTime[nextRot] - boneInfo->rotationTime[prevRot]);
-        result = result * glm::mat4_cast(
-                glm::slerp(boneInfo->rotationData[prevRot], boneInfo->rotationData[nextRot],
-                           timeInterpolate)) ;
-    }
-
-    //if (!changed)
-    {
-        result = boneInfo->transform;
-    }
-
-    result = result * parentTransform;
-
-    if (boneInfo->boneId < meshSettings.boneNum && boneInfo->boneId >= 0)
-    {
-        boneData[boneInfo->boneId] = meshSettings.boneOffset[boneInfo->boneId] * result * meshSettings.globalInverse;
-    }
-
-    for (const auto& childBone : boneInfo->children)
-    {
-        iterateBones(boneData, meshSettings, settings, childBone, result, time);
-    }
-}
-
-const aiNodeAnim* findNodeAnim(const aiAnimation* animation, const std::string nodeName)
+const aiNodeAnim* findAnimNode(const aiAnimation* animation, const std::string nodeName)
 {
     for (uint32_t i = 0; i < animation->mNumChannels; i++)
     {
@@ -85,28 +27,28 @@ const aiNodeAnim* findNodeAnim(const aiAnimation* animation, const std::string n
 }
 
 // Returns a 4x4 matrix with interpolated translation between current and next frame
-aiMatrix4x4 interpolateTranslation(float time, const aiNodeAnim* pNodeAnim)
+aiMatrix4x4 interpolateTranslation(float time, const aiNodeAnim* animNode)
 {
     aiVector3D translation;
 
-    if (pNodeAnim->mNumPositionKeys == 1)
+    if (animNode->mNumPositionKeys == 1)
     {
-        translation = pNodeAnim->mPositionKeys[0].mValue;
+        translation = animNode->mPositionKeys[0].mValue;
     }
     else
     {
         uint32_t frameIndex = 0;
-        for (uint32_t i = 0; i < pNodeAnim->mNumPositionKeys - 1; i++)
+        for (uint32_t i = 0; i < animNode->mNumPositionKeys - 1; i++)
         {
-            if (time < (float)pNodeAnim->mPositionKeys[i + 1].mTime)
+            if (time < (float)animNode->mPositionKeys[i + 1].mTime)
             {
                 frameIndex = i;
                 break;
             }
         }
 
-        aiVectorKey currentFrame = pNodeAnim->mPositionKeys[frameIndex];
-        aiVectorKey nextFrame = pNodeAnim->mPositionKeys[(frameIndex + 1) % pNodeAnim->mNumPositionKeys];
+        aiVectorKey currentFrame = animNode->mPositionKeys[frameIndex];
+        aiVectorKey nextFrame = animNode->mPositionKeys[(frameIndex + 1) % animNode->mNumPositionKeys];
 
         float delta = (time - (float)currentFrame.mTime) / (float)(nextFrame.mTime - currentFrame.mTime);
 
@@ -122,28 +64,28 @@ aiMatrix4x4 interpolateTranslation(float time, const aiNodeAnim* pNodeAnim)
 }
 
 // Returns a 4x4 matrix with interpolated rotation between current and next frame
-aiMatrix4x4 interpolateRotation(float time, const aiNodeAnim* pNodeAnim)
+aiMatrix4x4 interpolateRotation(float time, const aiNodeAnim* animNode)
 {
     aiQuaternion rotation;
 
-    if (pNodeAnim->mNumRotationKeys == 1)
+    if (animNode->mNumRotationKeys == 1)
     {
-        rotation = pNodeAnim->mRotationKeys[0].mValue;
+        rotation = animNode->mRotationKeys[0].mValue;
     }
     else
     {
         uint32_t frameIndex = 0;
-        for (uint32_t i = 0; i < pNodeAnim->mNumRotationKeys - 1; i++)
+        for (uint32_t i = 0; i < animNode->mNumRotationKeys - 1; i++)
         {
-            if (time < (float)pNodeAnim->mRotationKeys[i + 1].mTime)
+            if (time < (float)animNode->mRotationKeys[i + 1].mTime)
             {
                 frameIndex = i;
                 break;
             }
         }
 
-        aiQuatKey currentFrame = pNodeAnim->mRotationKeys[frameIndex];
-        aiQuatKey nextFrame = pNodeAnim->mRotationKeys[(frameIndex + 1) % pNodeAnim->mNumRotationKeys];
+        aiQuatKey currentFrame = animNode->mRotationKeys[frameIndex];
+        aiQuatKey nextFrame = animNode->mRotationKeys[(frameIndex + 1) % animNode->mNumRotationKeys];
 
         float delta = (time - (float)currentFrame.mTime) / (float)(nextFrame.mTime - currentFrame.mTime);
 
@@ -160,28 +102,28 @@ aiMatrix4x4 interpolateRotation(float time, const aiNodeAnim* pNodeAnim)
 
 
 // Returns a 4x4 matrix with interpolated scaling between current and next frame
-aiMatrix4x4 interpolateScale(float time, const aiNodeAnim* pNodeAnim)
+aiMatrix4x4 interpolateScale(float time, const aiNodeAnim* animNode)
 {
     aiVector3D scale;
 
-    if (pNodeAnim->mNumScalingKeys == 1)
+    if (animNode->mNumScalingKeys == 1)
     {
-        scale = pNodeAnim->mScalingKeys[0].mValue;
+        scale = animNode->mScalingKeys[0].mValue;
     }
     else
     {
         uint32_t frameIndex = 0;
-        for (uint32_t i = 0; i < pNodeAnim->mNumScalingKeys - 1; i++)
+        for (uint32_t i = 0; i < animNode->mNumScalingKeys - 1; i++)
         {
-            if (time < (float)pNodeAnim->mScalingKeys[i + 1].mTime)
+            if (time < (float)animNode->mScalingKeys[i + 1].mTime)
             {
                 frameIndex = i;
                 break;
             }
         }
 
-        aiVectorKey currentFrame = pNodeAnim->mScalingKeys[frameIndex];
-        aiVectorKey nextFrame = pNodeAnim->mScalingKeys[(frameIndex + 1) % pNodeAnim->mNumScalingKeys];
+        aiVectorKey currentFrame = animNode->mScalingKeys[frameIndex];
+        aiVectorKey nextFrame = animNode->mScalingKeys[(frameIndex + 1) % animNode->mNumScalingKeys];
 
         float delta = (time - (float)currentFrame.mTime) / (float)(nextFrame.mTime - currentFrame.mTime);
 
@@ -196,73 +138,66 @@ aiMatrix4x4 interpolateScale(float time, const aiNodeAnim* pNodeAnim)
     return mat;
 }
 
-void iterateBones2(std::vector<glm::mat4>& boneData, float time, const MeshSettings& meshSettings, const aiNode* pNode, const aiMatrix4x4& ParentTransform)
+void iterateBones(
+        std::vector<glm::mat4>& boneData,
+        float time,
+        const std::shared_ptr<AnimationSettings>& animationSettings,
+        const uint32_t animationId,
+        const aiNode* node,
+        const aiMatrix4x4& parentTransform)
 {
-    auto animationSettings = meshSettings.animation2;
-    std::string NodeName(pNode->mName.data);
+    std::string nodeName(node->mName.data);
 
-    aiMatrix4x4 NodeTransformation(pNode->mTransformation);
+    aiMatrix4x4 nodeTransformation(node->mTransformation);
 
-    const aiNodeAnim* pNodeAnim = findNodeAnim(animationSettings->animation, NodeName);
+    const auto* animNode = findAnimNode(animationSettings->animations[animationId], nodeName);
 
-    if (pNodeAnim)
+    if (animNode)
     {
         // Get interpolated matrices between current and next frame
-        aiMatrix4x4 matScale = interpolateScale(time, pNodeAnim);
-        aiMatrix4x4 matRotation = interpolateRotation(time, pNodeAnim);
-        aiMatrix4x4 matTranslation = interpolateTranslation(time, pNodeAnim);
+        aiMatrix4x4 matScale = interpolateScale(time, animNode);
+        aiMatrix4x4 matRotation = interpolateRotation(time, animNode);
+        aiMatrix4x4 matTranslation = interpolateTranslation(time, animNode);
 
-        NodeTransformation = matTranslation * matRotation * matScale;
+        nodeTransformation = matTranslation * matRotation * matScale;
     }
 
-    aiMatrix4x4 GlobalTransformation = ParentTransform * NodeTransformation;
+    aiMatrix4x4 globalTransformation = parentTransform * nodeTransformation;
 
-    if (animationSettings->boneMap.find(NodeName) != animationSettings->boneMap.end())
+    if (animationSettings->boneMap.find(nodeName) != animationSettings->boneMap.end())
     {
-        uint32_t BoneIndex = meshSettings.animation2->boneMap.at(NodeName);
-        if (BoneIndex < boneData.size() && BoneIndex >= 0)
+        uint32_t boneIndex = animationSettings->boneMap.at(nodeName);
+        if (boneIndex < boneData.size() && boneIndex >= 0)
         {
             auto finalTransform =
-                    animationSettings->globalInverse * GlobalTransformation * animationSettings->boneOffset[BoneIndex];
-            boneData[BoneIndex] = glm::transpose(glm::make_mat4(&finalTransform.a1));
+                    animationSettings->globalInverse * globalTransformation * animationSettings->boneOffset[boneIndex];
+            boneData[boneIndex] = glm::transpose(glm::make_mat4(&finalTransform.a1));
         }
     }
 
-    for (uint32_t i = 0; i < pNode->mNumChildren; i++)
+    for (uint32_t i = 0; i < node->mNumChildren; i++)
     {
-        iterateBones2(boneData, time, meshSettings, pNode->mChildren[i], GlobalTransformation);
+        iterateBones(boneData, time, animationSettings, animationId, node->mChildren[i], globalTransformation);
     }
 }
 
 } // anon namespace
 
-std::vector<glm::mat4> getTransforms(const MeshSettings& meshSettings, const AnimationSettings& settings, float time)
+
+std::vector<glm::mat4> getAnimationTransforms(const MeshSettings& meshSettings, uint32_t animationId, float time)
 {
     // TODO: Only for looped anims
-    while (time > settings.duration)
+    auto duration = meshSettings.animation->animations[animationId]->mDuration;
+    if (duration > 0)
     {
-        time -= settings.duration;
-    }
-
-    std::vector<glm::mat4> result(meshSettings.boneNum, glm::mat4(1));
-    iterateBones(result, meshSettings, settings, settings.rootNodeAnimation, glm::mat4(1), time);
-
-    return result;
-}
-
-std::vector<glm::mat4> getTransforms2(const MeshSettings& meshSettings, float time)
-{
-    // TODO: Only for looped anims
-    if (meshSettings.animation2->duration > 0)
-    {
-        while (time > meshSettings.animation2->duration)
+        while (time > duration)
         {
-            time -= meshSettings.animation2->duration;
+            time -= duration;
         }
     }
 
     std::vector<glm::mat4> result(meshSettings.boneNum, glm::mat4(1));
-    iterateBones2(result, time, meshSettings, meshSettings.animation2->rootNode, aiMatrix4x4());
+    iterateBones(result, time, meshSettings.animation, animationId, meshSettings.animation->rootNode, aiMatrix4x4());
 
     return result;
 }

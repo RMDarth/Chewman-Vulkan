@@ -43,10 +43,21 @@ public:
                      VkMemoryPropertyFlags properties,
                      VkImage& image,
                      VkDeviceMemory& imageMemory) const;
+    void createCubeImage(uint32_t width,
+                         uint32_t height,
+                         uint32_t mipLevels,
+                         VkFormat format,
+                         VkImageUsageFlags usage,
+                         VkMemoryPropertyFlags properties,
+                         VkImage& image,
+                         VkDeviceMemory& imageMemory) const;
+
     VkImageView createImageView(VkImage image,
                                 VkFormat format,
                                 uint32_t mipLevels,
-                                VkImageAspectFlags aspectFlags = VK_IMAGE_ASPECT_COLOR_BIT) const;
+                                VkImageAspectFlags aspectFlags = VK_IMAGE_ASPECT_COLOR_BIT,
+                                VkImageViewType imageType = VK_IMAGE_VIEW_TYPE_2D,
+                                uint32_t layersCount = 1) const;
 
     void generateMipmaps(VkImage image,
                          VkFormat imageFormat,
@@ -62,7 +73,8 @@ public:
                                ImageLayoutState oldLayoutState,
                                ImageLayoutState newLayoutState,
                                uint32_t mipLevels,
-                               VkImageAspectFlags aspectFlags = VK_IMAGE_ASPECT_COLOR_BIT) const;
+                               VkImageAspectFlags aspectFlags = VK_IMAGE_ASPECT_COLOR_BIT,
+                               uint32_t layersCount = 1) const;
 
     uint32_t findVulkanMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties) const;
     VkFormat findSupportedFormat(const std::vector<VkFormat>& candidates,

@@ -39,6 +39,7 @@ private:
     void deletePipeline();
 
     void createTextureImages();
+    void createCubemapTextureImages();
     void deleteTextureImages();
     void createTextureImageView();
     void deleteTextureImageView();
@@ -54,6 +55,7 @@ private:
     void deleteDescriptorSets();
 
     std::vector<char> getUniformDataByType(const UniformData& data, UniformType type) const;
+
 
 private:
     MaterialSettings _materialSettings;

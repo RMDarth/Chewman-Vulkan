@@ -2,7 +2,7 @@
 #extension GL_ARB_separate_shader_objects : enable
 
 layout(set = 1, binding = 0) uniform sampler2D texSampler;
-layout (set = 1, binding = 1) uniform UBO
+layout(set = 1, binding = 1) uniform UBO
 {
     vec4 lightPos;
 	vec4 lightColor;

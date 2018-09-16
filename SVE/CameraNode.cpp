@@ -61,7 +61,7 @@ void CameraNode::createProjectionMatrix()
                                     _cameraSettings.aspectRatio,
                                     _cameraSettings.nearPlane,
                                     _cameraSettings.farPlane);
-    //_projection[1][1] *= -1;
+    _projection[1][1] *= -1;
 }
 
 const glm::mat4& CameraNode::getViewMatrix()

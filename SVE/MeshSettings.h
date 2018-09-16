@@ -9,45 +9,16 @@
 #include <map>
 #include <memory>
 
-// TODO: Revise
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
-
 
 namespace SVE
 {
 
-template <typename T>
-using AnimData = std::vector<T>;
-
-struct BoneInfo
-{
-    int boneId;
-
-    AnimData<glm::vec3> positionData;
-    AnimData<float> positionTime;
-    AnimData<glm::quat> rotationData;
-    AnimData<float> rotationTime;
-    AnimData<glm::vec3> scaleData;
-    AnimData<float> scaleTime;
-    glm::mat4 transform;
-
-    std::vector<std::shared_ptr<BoneInfo>> children;
-};
-
 struct AnimationSettings
 {
-    float duration;
-
-    std::shared_ptr<BoneInfo> rootNodeAnimation;
-};
-
-struct AnimationSettings2
-{
-    float duration;
-
     Assimp::Importer importer;
-    aiAnimation* animation;
+    aiAnimation** animations;
     aiNode* rootNode;
     std::vector<aiMatrix4x4> boneOffset;
     aiMatrix4x4 globalInverse;
@@ -67,16 +38,11 @@ struct MeshSettings
     uint32_t boneNum;
     std::vector<glm::ivec4> vertexBoneIndexData;
     std::vector<glm::vec4> vertexBoneWeightData;
-    std::vector<glm::mat4> boneOffset;
-    glm::mat4 globalInverse;
-    AnimationSettings animation;
-    std::shared_ptr<AnimationSettings2> animation2;
+    std::shared_ptr<AnimationSettings> animation;
 
     std::string materialName;
 };
 
-std::vector<glm::mat4> getTransforms(const MeshSettings& meshSettings, const AnimationSettings& settings, float time);
-
-std::vector<glm::mat4> getTransforms2(const MeshSettings& meshSettings, float time);
+std::vector<glm::mat4> getAnimationTransforms(const MeshSettings& meshSettings, uint32_t animationId, float time);
 
 } // namespace SVE

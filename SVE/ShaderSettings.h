@@ -74,7 +74,7 @@ struct ShaderSettings
     VertexInfo vertexInfo;
     std::vector<UniformInfo> uniformList;
     std::vector<std::string> samplerNamesList;
-    uint32_t maxBonesSize;
+    uint32_t maxBonesSize = 0;
 
     std::string entryPoint = "main";
 };

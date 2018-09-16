@@ -10,6 +10,7 @@ namespace SVE
 {
 class LightNode;
 class LightSettings;
+class Skybox;
 
 class SceneManager
 {
@@ -28,6 +29,10 @@ public:
     std::shared_ptr<LightNode> createLight(LightSettings lightSettings);
     std::shared_ptr<LightNode> getLight();
 
+    void setSkybox(const std::string& materialName);
+    void setSkybox(std::shared_ptr<Skybox> skybox);
+    std::shared_ptr<Skybox> getSkybox();
+
     void queueCommandBuffersUpdate();
     void dequeueCommandBufferUpdate();
     bool isCommandBufferUpdateQueued();
@@ -37,6 +42,7 @@ private:
     std::shared_ptr<SceneNode> _root;
     std::shared_ptr<CameraNode> _mainCamera;
     std::shared_ptr<LightNode> _lightNode;
+    std::shared_ptr<Skybox> _skybox;
 };
 
 } // namespace SVE

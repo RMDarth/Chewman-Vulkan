@@ -11,6 +11,7 @@
 #include "MeshManager.h"
 #include "Entity.h"
 #include "LightNode.h"
+#include "Skybox.h"
 #include <chrono>
 
 namespace SVE
@@ -108,18 +109,24 @@ void updateNode(const std::shared_ptr<SceneNode>& node, UniformData& uniformData
 
 void Engine::renderFrame()
 {
+    auto skybox = _sceneManager->getSkybox();
+
+    // update command buffers if scene changed
     if (_sceneManager->isCommandBufferUpdateQueued())
     {
         _vulkanInstance->reallocateCommandBuffers();
         for (auto i = 0u; i < _vulkanInstance->getSwapchainSize(); ++i)
         {
             _vulkanInstance->startRenderCommandBufferCreation(i);
+            if (skybox)
+                skybox->applyDrawingCommands(i);
             createNodeDrawCommands(_sceneManager->getRootNode(), i);
             _vulkanInstance->endRenderCommandBufferCreation(i);
         }
         _sceneManager->dequeueCommandBufferUpdate();
     }
 
+    // Fill uniform data (from camera and lights)
     auto mainCamera = _sceneManager->getMainCamera();
     if (!mainCamera)
         throw VulkanException("Camera not set");
@@ -128,7 +135,13 @@ void Engine::renderFrame()
     if (_sceneManager->getLight())
         _sceneManager->getLight()->fillUniformData(uniformData);
     _vulkanInstance->waitAvailableFramebuffer();
+
+    // update uniforms
+    if (skybox)
+        skybox->updateUniforms(uniformData);
     updateNode(_sceneManager->getRootNode(), uniformData);
+
+    // submit command buffers
     _vulkanInstance->submitCommands();
 }
 

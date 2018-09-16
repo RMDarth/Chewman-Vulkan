@@ -145,15 +145,63 @@ void VulkanUtils::createImage(uint32_t width,
     vkBindImageMemory(_vulkanInstance->getLogicalDevice(), image, imageMemory, 0);
 }
 
+void VulkanUtils::createCubeImage(uint32_t width,
+                                  uint32_t height,
+                                  uint32_t mipLevels,
+                                  VkFormat format,
+                                  VkImageUsageFlags usage,
+                                  VkMemoryPropertyFlags properties,
+                                  VkImage& image,
+                                  VkDeviceMemory& imageMemory) const
+{
+    VkImageCreateInfo imageCreateInfo {};
+    imageCreateInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
+    imageCreateInfo.flags = VK_IMAGE_CREATE_CUBE_COMPATIBLE_BIT;
+    imageCreateInfo.imageType = VK_IMAGE_TYPE_2D;
+    imageCreateInfo.extent.width = width;
+    imageCreateInfo.extent.height = height;
+    imageCreateInfo.extent.depth = 1;
+    imageCreateInfo.mipLevels = mipLevels;
+    imageCreateInfo.arrayLayers = 6;
+    imageCreateInfo.format = format;
+    imageCreateInfo.tiling = VK_IMAGE_TILING_OPTIMAL;
+    imageCreateInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+    imageCreateInfo.usage = usage;
+    imageCreateInfo.samples = VK_SAMPLE_COUNT_1_BIT;
+    imageCreateInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+
+    if (vkCreateImage(_vulkanInstance->getLogicalDevice(), &imageCreateInfo, nullptr, &image) != VK_SUCCESS)
+    {
+        throw VulkanException("Can't create Vulkan cubemap image");
+    }
+
+    VkMemoryRequirements memoryRequirements;
+    vkGetImageMemoryRequirements(_vulkanInstance->getLogicalDevice(), image, &memoryRequirements);
+
+    VkMemoryAllocateInfo allocInfo {};
+    allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+    allocInfo.allocationSize = memoryRequirements.size;
+    allocInfo.memoryTypeIndex = findVulkanMemoryType(memoryRequirements.memoryTypeBits, properties);
+
+    if (vkAllocateMemory(_vulkanInstance->getLogicalDevice(), &allocInfo, nullptr, &imageMemory) != VK_SUCCESS)
+    {
+        throw VulkanException("Can't allocate Vulkan image memory");
+    }
+
+    vkBindImageMemory(_vulkanInstance->getLogicalDevice(), image, imageMemory, 0);
+}
+
 VkImageView VulkanUtils::createImageView(VkImage image,
                                         VkFormat format,
                                         uint32_t mipLevels,
-                                        VkImageAspectFlags aspectFlags) const
+                                        VkImageAspectFlags aspectFlags,
+                                        VkImageViewType imageType,
+                                        uint32_t layersCount) const
 {
     VkImageViewCreateInfo imageViewCreateInfo{};
     imageViewCreateInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
     imageViewCreateInfo.image = image;
-    imageViewCreateInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
+    imageViewCreateInfo.viewType = imageType;
     imageViewCreateInfo.format = format;
     imageViewCreateInfo.components = {VK_COMPONENT_SWIZZLE_IDENTITY,
                                       VK_COMPONENT_SWIZZLE_IDENTITY,
@@ -163,7 +211,7 @@ VkImageView VulkanUtils::createImageView(VkImage image,
     imageViewCreateInfo.subresourceRange.baseMipLevel = 0;
     imageViewCreateInfo.subresourceRange.levelCount = mipLevels;
     imageViewCreateInfo.subresourceRange.baseArrayLayer = 0;
-    imageViewCreateInfo.subresourceRange.layerCount = 1;
+    imageViewCreateInfo.subresourceRange.layerCount = layersCount;
 
     VkImageView imageView = VK_NULL_HANDLE;
     if (vkCreateImageView(_vulkanInstance->getLogicalDevice(), &imageViewCreateInfo, nullptr, &imageView) != VK_SUCCESS)
@@ -317,7 +365,8 @@ void VulkanUtils::transitionImageLayout(VkImage image,
                                        ImageLayoutState oldLayoutState,
                                        ImageLayoutState newLayoutState,
                                        uint32_t mipLevels,
-                                       VkImageAspectFlags aspectFlags) const
+                                       VkImageAspectFlags aspectFlags,
+                                       uint32_t layersCount) const
 {
     // Layout transition can be achieved using memory barriers (which used for pipeline syncronization).
     // Memory barriers are pipeline command, which should be submitted to queue.
@@ -335,7 +384,7 @@ void VulkanUtils::transitionImageLayout(VkImage image,
     barrier.subresourceRange.baseMipLevel = 0;
     barrier.subresourceRange.levelCount = mipLevels;
     barrier.subresourceRange.baseArrayLayer = 0;
-    barrier.subresourceRange.layerCount = 1;
+    barrier.subresourceRange.layerCount = layersCount;
     barrier.srcAccessMask = oldLayoutState.accessFlags;
     barrier.dstAccessMask = newLayoutState.accessFlags;
 

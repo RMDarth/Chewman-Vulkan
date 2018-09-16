@@ -22,9 +22,33 @@ void updateNode(std::shared_ptr<SVE::SceneNode>& node)
     auto currentTime = std::chrono::high_resolution_clock::now();
     float time = std::chrono::duration<float, std::chrono::seconds::period>(currentTime - startTime).count();
 
-    auto nodeTransform = glm::rotate(glm::mat4(1.0f), time * glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-    nodeTransform = glm::rotate(nodeTransform, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+    auto nodeTransform = glm::rotate(glm::mat4(1.0f), time * glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+    //nodeTransform = glm::rotate(nodeTransform, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
     node->setNodeTransformation(nodeTransform);
+}
+
+void moveCamera(SDL_Keycode keycode, std::shared_ptr<SVE::CameraNode>& camera)
+{
+    auto nodeTransformation = camera->getNodeTransformation();
+    switch (keycode)
+    {
+        case SDLK_a:
+            nodeTransformation = nodeTransformation * glm::rotate(glm::mat4(1.0f), glm::radians(2.0f), glm::vec3(0, 1, 0));
+            camera->setNodeTransformation(nodeTransformation);
+            //camera->setNodeTransformation(glm::translate(camera->getNodeTransformation(), glm::vec3(-0.1, 0, 0)));
+            break;
+        case SDLK_d:
+            nodeTransformation = nodeTransformation * glm::rotate(glm::mat4(1.0f), glm::radians(-2.0f), glm::vec3(0, 1, 0));
+            camera->setNodeTransformation(nodeTransformation);
+            //camera->setNodeTransformation(glm::translate(camera->getNodeTransformation(), glm::vec3(0.1, 0, 0)));
+            break;
+        case SDLK_w:
+            camera->setNodeTransformation(glm::translate(camera->getNodeTransformation(), glm::vec3(0, 0.1, 0)));
+            break;
+        case SDLK_s:
+            camera->setNodeTransformation(glm::translate(camera->getNodeTransformation(), glm::vec3(0, -0.1, 0)));
+            break;
+    }
 }
 
 
@@ -34,7 +58,7 @@ int main(int argv, char** args)
     SDL_Init(SDL_INIT_VIDEO);
 
     window = SDL_CreateWindow(
-            "Chewman",
+            "Chewman Vulkan",
             SDL_WINDOWPOS_CENTERED,
             SDL_WINDOWPOS_CENTERED,
             800,
@@ -53,8 +77,8 @@ int main(int argv, char** args)
 
     // create camera
     auto camera = engine->getSceneManager()->createMainCamera();
-    camera->setNearFarPlane(0.1f, 10000.0f);
-    camera->setLookAt(glm::vec3(5.0f, 5.0f, -5.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+    camera->setNearFarPlane(0.1f, 200.0f);
+    camera->setLookAt(glm::vec3(5.0f, 5.0f, 5.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 
     // create light
     SVE::LightSettings lightSettings {};
@@ -99,6 +123,29 @@ int main(int argv, char** args)
         engine->getShaderManager()->registerShader(fragmentShader);
     }
 
+    // Create skybox shaders
+    {
+        SVE::ShaderSettings vertexShaderSettings{};
+        vertexShaderSettings.name = "skyboxVertexShader";
+        vertexShaderSettings.filename = "shaders/skybox.vert.spv";
+        vertexShaderSettings.shaderType = SVE::ShaderType::VertexShader;
+        vertexShaderSettings.uniformList.push_back({SVE::UniformType::ModelMatrix});
+        vertexShaderSettings.uniformList.push_back({SVE::UniformType::ViewMatrix});
+        vertexShaderSettings.uniformList.push_back({SVE::UniformType::ProjectionMatrix});
+
+        std::shared_ptr<SVE::ShaderInfo> vertexShader = std::make_shared<SVE::ShaderInfo>(vertexShaderSettings);
+        engine->getShaderManager()->registerShader(vertexShader);
+
+        SVE::ShaderSettings fragmentShaderSettings{};
+        fragmentShaderSettings.name = "skyboxFragmentShader";
+        fragmentShaderSettings.filename = "shaders/skybox.frag.spv";
+        fragmentShaderSettings.shaderType = SVE::ShaderType::FragmentShader;
+        fragmentShaderSettings.samplerNamesList.emplace_back("samplerCubeMap");
+
+        std::shared_ptr<SVE::ShaderInfo> fragmentShader = std::make_shared<SVE::ShaderInfo>(fragmentShaderSettings);
+        engine->getShaderManager()->registerShader(fragmentShader);
+    }
+
     // Create materials
     {
         SVE::MaterialSettings materialSettings;
@@ -106,7 +153,7 @@ int main(int argv, char** args)
         materialSettings.vertexShaderName = "vertexShader";
         materialSettings.fragmentShaderName = "fragmentShader";
         materialSettings.textures.push_back({"texSampler", "textures/trashman_tex.png"});
-
+        //materialSettings.invertCullFace = true;
         std::shared_ptr<SVE::Material> material = std::make_shared<SVE::Material>(materialSettings);
         engine->getMaterialManager()->registerMaterial(material);
     }
@@ -120,7 +167,35 @@ int main(int argv, char** args)
         std::shared_ptr<SVE::Material> material = std::make_shared<SVE::Material>(materialSettings);
         engine->getMaterialManager()->registerMaterial(material);
     }
+    {
+        SVE::MaterialSettings materialSettings;
+        materialSettings.name = "Skybox";
+        materialSettings.vertexShaderName = "skyboxVertexShader";
+        materialSettings.fragmentShaderName = "skyboxFragmentShader";
+        materialSettings.textures = std::vector<SVE::TextureInfo> {
+                /*{"samplerCubeMap", "textures/skybox/test/num_rt.png"},
+                {"samplerCubeMap", "textures/skybox/test/num_lf.png"},
+                {"samplerCubeMap", "textures/skybox/test/num_up.png"},
+                {"samplerCubeMap", "textures/skybox/test/num_dn.png"},
+                {"samplerCubeMap", "textures/skybox/test/num_ft.png"},
+                {"samplerCubeMap", "textures/skybox/test/num_bk.png"}*/
+                {"samplerCubeMap", "textures/skybox/blood_rt.png"},
+                {"samplerCubeMap", "textures/skybox/blood_lf.png"},
+                {"samplerCubeMap", "textures/skybox/blood_up.png"},
+                {"samplerCubeMap", "textures/skybox/blood_dn.png"},
+                {"samplerCubeMap", "textures/skybox/blood_bk.png"},
+                {"samplerCubeMap", "textures/skybox/blood_ft.png"}
+        };
+        materialSettings.isCubemap = true;
+        materialSettings.invertCullFace = true;
+        materialSettings.useDepthTest = false;
 
+        std::shared_ptr<SVE::Material> material = std::make_shared<SVE::Material>(materialSettings);
+        engine->getMaterialManager()->registerMaterial(material);
+    }
+
+    // create skybox
+    engine->getSceneManager()->setSkybox("Skybox");
 
     // create mesh
     std::shared_ptr<SVE::Mesh> mesh = std::make_shared<SVE::Mesh>("trashman", "models/trashman.dae");
@@ -189,10 +264,11 @@ int main(int argv, char** args)
             }
             if (event.type == SDL_KEYDOWN)
             {
-                if (event.key.keysym.sym == SDLK_a)
+                moveCamera(event.key.keysym.sym, camera);
+                /*if (event.key.keysym.sym == SDLK_a)
                 {
                     newNodeMid->setNodeTransformation(glm::translate(newNodeMid->getNodeTransformation(), glm::vec3(-1, 0, 0)));
-                }
+                }*/
             }
         }
         auto duration = std::chrono::duration<float, std::chrono::seconds::period>(curTime - prevTime).count();
