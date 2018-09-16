@@ -27,7 +27,10 @@ const std::string &Material::getName()
     return _name;
 }
 
-
+void Material::resetPipeline()
+{
+    _vulkanMaterial->resetPipeline();
+}
 
 
 } // namespace SVE

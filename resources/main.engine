@@ -1,4 +1,5 @@
 {
     "applicationName": "Chewman Vulkan",
-    "useValidation": true
+    "useValidation": true,
+    "gpuIndex": "best"
 }

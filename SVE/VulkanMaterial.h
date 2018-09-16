@@ -25,6 +25,8 @@ public:
     VkPipeline getPipeline() const;
     VkPipelineLayout getPipelineLayout() const;
 
+    void resetPipeline();
+
     std::vector<VkDescriptorSet> getDescriptorSets(uint32_t materialIndex, size_t index) const;
 
     uint32_t getInstanceForEntity(Entity* entity);

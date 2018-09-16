@@ -21,5 +21,13 @@ std::shared_ptr<Material> SVE::MaterialManager::getMaterial(const std::string& n
     return materialIter->second;
 }
 
+void MaterialManager::resetPipelines()
+{
+    for (auto& material : _materialMap)
+    {
+        material.second->resetPipeline();
+    }
+}
+
 
 } // namespace SVE

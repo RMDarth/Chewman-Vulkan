@@ -33,6 +33,9 @@ public:
     SceneManager* getSceneManager();
     ResourceManager* getResourceManager();
 
+    void resizeWindow();
+    void finishRendering();
+
     float getTime();
 
     void renderFrame();

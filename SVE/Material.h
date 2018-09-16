@@ -19,6 +19,7 @@ public:
 
     const std::string& getName();
     VulkanMaterial* getVulkanMaterial();
+    void resetPipeline();
 
 private:
     std::string _name;

@@ -1,14 +1,10 @@
 #include <iostream>
 #include "SDL2/SDL.h"
 #include "SVE/Engine.h"
-#include "SVE/Material.h"
-#include "SVE/MeshEntity.h"
-#include "SVE/MaterialManager.h"
-#include "SVE/ShaderManager.h"
 #include "SVE/SceneManager.h"
-#include "SVE/MeshManager.h"
 #include "SVE/CameraNode.h"
 #include "SVE/LightNode.h"
+#include "SVE/MeshEntity.h"
 #include "SVE/ResourceManager.h"
 #include <vulkan/vulkan.h>
 #include <glm/gtc/matrix_transform.hpp>
@@ -23,7 +19,6 @@ void updateNode(std::shared_ptr<SVE::SceneNode>& node)
     float time = std::chrono::duration<float, std::chrono::seconds::period>(currentTime - startTime).count();
 
     auto nodeTransform = glm::rotate(glm::mat4(1.0f), time * glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-    //nodeTransform = glm::rotate(nodeTransform, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
     node->setNodeTransformation(nodeTransform);
 }
 
@@ -105,8 +100,6 @@ int main(int argv, char** args)
     newNode->attachEntity(meshEntity);
     newNode2->setNodeTransformation(glm::translate(glm::mat4(1), glm::vec3(1, 0, 0)));
 
-    //std::shared_ptr<Renderer> renderer = std::make_shared<VulkanRenderer>(window, true);
-
     bool quit = false;
     bool skiprendering = false;
     auto prevTime = std::chrono::high_resolution_clock::now();
@@ -123,7 +116,8 @@ int main(int argv, char** args)
             {
                 if (event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED)
                 {
-                    //if (!skiprendering)
+                    if (!skiprendering)
+                        engine->resizeWindow();
                     //    renderer->resizeWindow();
                 }
                 if (event.window.event == SDL_WINDOWEVENT_MINIMIZED)
@@ -164,15 +158,13 @@ int main(int argv, char** args)
         if (!skiprendering)
         {
             engine->renderFrame();
-            //renderer->drawFrame();
 
             updateNode(newNode);
         }
         prevTime = curTime;
     }
 
-    //renderer->finishRendering();
-    //renderer.reset();
+    engine->finishRendering();
 
     SDL_DestroyWindow(window);
     SDL_Quit();

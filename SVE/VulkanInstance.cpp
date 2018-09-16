@@ -122,6 +122,35 @@ VulkanInstance::~VulkanInstance()
     deleteInstance();
 }
 
+void VulkanInstance::resizeWindow()
+{
+    finishRendering();
+
+    deleteFramebuffers();
+    deleteDepthBuffer();
+    deleteMSAABuffer();
+    deleteCommandPool();
+    deleteRenderPass();
+    deleteImageViews();
+    deleteSwapchain();
+    deleteSurfaceParameters();
+
+    createSurfaceParameters();
+    createSwapchain();
+    createImageViews();
+    createRenderPass();
+    createCommandPool();
+    createMSAABuffer();
+    createDepthBuffer();
+    createFramebuffers();
+}
+
+void VulkanInstance::finishRendering() const
+{
+    vkDeviceWaitIdle(_device);
+}
+
+
 const VulkanUtils& VulkanInstance::getVulkanUtils() const
 {
     return _vulkanUtils;
@@ -969,4 +998,5 @@ VkFormat VulkanInstance::findDepthFormat()
             VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT
     );
 }
+
 } // namespace SVE

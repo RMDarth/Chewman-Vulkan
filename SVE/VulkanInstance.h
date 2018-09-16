@@ -21,6 +21,9 @@ public:
 
     const VulkanUtils& getVulkanUtils() const;
 
+    void resizeWindow();
+    void finishRendering() const;
+
     VkInstance getInstance() const;
     VkPhysicalDevice getGPU() const;
     VkDevice getLogicalDevice() const;
@@ -41,7 +44,6 @@ public:
     void reallocateCommandBuffers();
     void startRenderCommandBufferCreation(uint32_t index);
     void endRenderCommandBufferCreation(uint32_t index);
-
 
 private:
     // Vulkan objects creators and destroyers

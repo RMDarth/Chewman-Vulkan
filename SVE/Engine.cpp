@@ -98,6 +98,21 @@ MeshManager* Engine::getMeshManager()
     return _meshManager.get();
 }
 
+
+void Engine::resizeWindow()
+{
+    _sceneManager->queueCommandBuffersUpdate();
+    _vulkanInstance->resizeWindow();
+    _materialManager->resetPipelines();
+    _sceneManager->getMainCamera()->setAspectRatio(
+            (float)_vulkanInstance->getExtent().width / _vulkanInstance->getExtent().height);
+}
+
+void Engine::finishRendering()
+{
+    _vulkanInstance->finishRendering();
+}
+
 void createNodeDrawCommands(std::shared_ptr<SceneNode> node, uint32_t bufferIndex)
 {
     for (auto& entity : node->getAttachedEntities())

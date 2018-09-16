@@ -79,6 +79,13 @@ VkPipelineLayout VulkanMaterial::getPipelineLayout() const
     return _pipelineLayout;
 }
 
+void VulkanMaterial::resetPipeline()
+{
+    deletePipeline();
+
+    createPipeline();
+}
+
 std::vector<VkDescriptorSet> VulkanMaterial::getDescriptorSets(uint32_t materialIndex, size_t index) const
 {
     std::vector<VkDescriptorSet> sets;
