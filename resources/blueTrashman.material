@@ -1,0 +1,11 @@
+{
+    "name": "Blue",
+    "vertexShaderName": "vertexShader",
+    "fragmentShaderName": "fragmentShader",
+    "textures": [
+        {
+            "samplerName": "texSampler",
+            "filename": "textures/trashantiman_tex.png"
+        }
+    ]
+}

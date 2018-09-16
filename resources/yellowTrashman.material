@@ -1,0 +1,11 @@
+{
+    "name": "Yellow",
+    "vertexShaderName": "vertexShader",
+    "fragmentShaderName": "fragmentShader",
+    "textures": [
+        {
+            "samplerName": "texSampler",
+            "filename": "textures/trashman_tex.png"
+        }
+    ]
+}

@@ -1,0 +1,34 @@
+{
+    "name": "Skybox",
+    "vertexShaderName": "skyboxVertexShader",
+    "fragmentShaderName": "skyboxFragmentShader",
+    "textures": [
+        {
+            "samplerName": "samplerCubeMap",
+            "filename": "textures/skybox/blood_rt.png"
+        },
+        {
+            "samplerName": "samplerCubeMap",
+            "filename": "textures/skybox/blood_lf.png"
+        },
+        {
+            "samplerName": "samplerCubeMap",
+            "filename": "textures/skybox/blood_up.png"
+        },
+        {
+            "samplerName": "samplerCubeMap",
+            "filename": "textures/skybox/blood_dn.png"
+        },
+        {
+            "samplerName": "samplerCubeMap",
+            "filename": "textures/skybox/blood_bk.png"
+        },
+        {
+            "samplerName": "samplerCubeMap",
+            "filename": "textures/skybox/blood_ft.png"
+        }
+    ],
+    "isCubemap": true,
+    "invertCullFace": true,
+    "useDepthTest": false
+}

@@ -25,6 +25,11 @@ struct AnimationSettings
     std::map<std::string, uint32_t> boneMap;
 };
 
+struct MeshLoadSettings
+{
+    std::string name;
+    std::string filename;
+};
 
 struct MeshSettings
 {

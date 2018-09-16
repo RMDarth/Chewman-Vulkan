@@ -1,3 +1,5 @@
+#include <utility>
+
 // VSE (Vulkan Simple Engine) Library
 // Copyright (c) 2018-2019, Igor Barinov
 // Licensed under CC BY 4.0
@@ -9,6 +11,7 @@
 #include "SceneManager.h"
 #include "ShaderManager.h"
 #include "MeshManager.h"
+#include "ResourceManager.h"
 #include "Entity.h"
 #include "LightNode.h"
 #include "Skybox.h"
@@ -28,7 +31,21 @@ Engine* Engine::createInstance(SDL_Window* window, EngineSettings settings)
 {
     if (_engineInstance == nullptr)
     {
-        _engineInstance = new Engine(window, settings);
+        _engineInstance = new Engine(window, std::move(settings));
+    }
+    return _engineInstance;
+}
+
+Engine* Engine::createInstance(SDL_Window* window, const std::string& settingsPath)
+{
+    if (_engineInstance == nullptr)
+    {
+        auto data = ResourceManager::getLoadDataFromFolder(settingsPath);
+        if (data.engine.empty())
+        {
+            throw VulkanException("Can't find SVE configuration file");
+        }
+        _engineInstance = new Engine(window, data.engine.front());
     }
     return _engineInstance;
 }
@@ -49,6 +66,7 @@ Engine::Engine(SDL_Window* window, EngineSettings settings)
     , _shaderManager(std::make_unique<ShaderManager>())
     , _sceneManager(new SceneManager())
     , _meshManager(std::make_unique<MeshManager>())
+    , _resourceManager(std::make_unique<ResourceManager>())
 {
     getTime();
 }
@@ -68,6 +86,11 @@ ShaderManager* Engine::getShaderManager()
 SceneManager* Engine::getSceneManager()
 {
     return _sceneManager.get();
+}
+
+ResourceManager* Engine::getResourceManager()
+{
+    return _resourceManager.get();
 }
 
 MeshManager* Engine::getMeshManager()

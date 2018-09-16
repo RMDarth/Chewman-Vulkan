@@ -15,4 +15,14 @@ public:
     explicit VulkanException(const std::string& error);
 };
 
+class RapidJsonException : public VulkanException
+{
+public:
+    RapidJsonException()
+            : VulkanException("Error parsing resource")
+    {}
+};
+
+#define RAPIDJSON_ASSERT(x) if(!(x)) throw SVE::RapidJsonException();
+
 } // namespace SVE

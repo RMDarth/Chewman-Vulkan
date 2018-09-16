@@ -16,11 +16,12 @@ class MaterialManager;
 class SceneManager;
 class ShaderManager;
 class MeshManager;
-class SceneNodel;
+class ResourceManager;
 
 class Engine
 {
 public:
+    static Engine* createInstance(SDL_Window* window, const std::string& settingsPath);
     static Engine* createInstance(SDL_Window* window, EngineSettings settings);
     static Engine* getInstance();
     ~Engine();
@@ -30,6 +31,7 @@ public:
     MeshManager* getMeshManager();
     ShaderManager* getShaderManager();
     SceneManager* getSceneManager();
+    ResourceManager* getResourceManager();
 
     float getTime();
 
@@ -45,6 +47,7 @@ private:
     std::unique_ptr<SceneManager> _sceneManager;
     std::unique_ptr<MeshManager> _meshManager;
     std::unique_ptr<ShaderManager> _shaderManager;
+    std::unique_ptr<ResourceManager> _resourceManager;
 };
 
 } // namespace SVE

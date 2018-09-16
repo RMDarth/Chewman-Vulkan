@@ -327,7 +327,7 @@ void VulkanInstance::createInstance()
     appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
     appInfo.apiVersion = VK_MAKE_VERSION(1, 0, 3);
     appInfo.applicationVersion = VK_MAKE_VERSION(1, 0, 0);
-    appInfo.pApplicationName = _engineSettings.applicationName;
+    appInfo.pApplicationName = _engineSettings.applicationName.c_str();
 
     VkInstanceCreateInfo instanceInfo{};
     instanceInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;

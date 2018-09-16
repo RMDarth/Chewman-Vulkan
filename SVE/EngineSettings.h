@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include <cstdint>
+#include <string>
 
 namespace SVE
 {
@@ -19,7 +19,7 @@ struct EngineSettings
         BestAvailable
     };
 
-    const char* applicationName = "VulkanApp";
+    std::string applicationName = "VulkanApp";
     int gpuIndex = BEST_GPU_AVAILABLE;
     PresentMode presentMode = PresentMode::BestAvailable;
     int MSAALevel = BEST_MSAA_AVAILABLE;

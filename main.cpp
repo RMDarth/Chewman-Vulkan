@@ -1,6 +1,5 @@
 #include <iostream>
 #include "SDL2/SDL.h"
-#include "VulkanRenderer.h"
 #include "SVE/Engine.h"
 #include "SVE/Material.h"
 #include "SVE/MeshEntity.h"
@@ -10,6 +9,7 @@
 #include "SVE/MeshManager.h"
 #include "SVE/CameraNode.h"
 #include "SVE/LightNode.h"
+#include "SVE/ResourceManager.h"
 #include <vulkan/vulkan.h>
 #include <glm/gtc/matrix_transform.hpp>
 #include <memory>
@@ -71,135 +71,21 @@ int main(int argv, char** args)
         return 1;
     }
 
-    SVE::EngineSettings settings;
-    settings.useValidation = true;
-    SVE::Engine* engine = SVE::Engine::createInstance(window, settings);
+    SVE::Engine* engine = SVE::Engine::createInstance(window, "resources/main.engine");
+
+    // load resources
+    engine->getResourceManager()->loadFolder("resources");
+
+    // configure light
+    engine->getSceneManager()->getLight()->setNodeTransformation(glm::translate(glm::mat4(1), glm::vec3(200, 200, -200)));
 
     // create camera
     auto camera = engine->getSceneManager()->createMainCamera();
     camera->setNearFarPlane(0.1f, 200.0f);
     camera->setLookAt(glm::vec3(5.0f, 5.0f, 5.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 
-    // create light
-    SVE::LightSettings lightSettings {};
-    lightSettings.diffuseStrength = 1.0f;
-    lightSettings.specularStrength = 0.5f;
-    lightSettings.ambientStrength = 0.0f;
-    lightSettings.shininess = 16;
-    lightSettings.lightColor = glm::vec3(1.0f, 1.0f, 1.0f);
-    auto light = engine->getSceneManager()->createLight(lightSettings);
-    light->setNodeTransformation(glm::translate(glm::mat4(1), glm::vec3(200, 200, -200)));
-
-    // Create shaders
-    {
-        SVE::ShaderSettings vertexShaderSettings{};
-        vertexShaderSettings.name = "vertexShader";
-        vertexShaderSettings.filename = "shaders/vert.spv";
-        vertexShaderSettings.shaderType = SVE::ShaderType::VertexShader;
-        vertexShaderSettings.uniformList.push_back({SVE::UniformType::ModelMatrix});
-        vertexShaderSettings.uniformList.push_back({SVE::UniformType::ViewMatrix});
-        vertexShaderSettings.uniformList.push_back({SVE::UniformType::ProjectionMatrix});
-        vertexShaderSettings.uniformList.push_back({SVE::UniformType::BoneMatrices});
-        vertexShaderSettings.maxBonesSize = 64;
-
-        std::shared_ptr<SVE::ShaderInfo> vertexShader = std::make_shared<SVE::ShaderInfo>(vertexShaderSettings);
-        engine->getShaderManager()->registerShader(vertexShader);
-
-        SVE::ShaderSettings fragmentShaderSettings{};
-        fragmentShaderSettings.name = "fragmentShader";
-        fragmentShaderSettings.filename = "shaders/frag.spv";
-        fragmentShaderSettings.shaderType = SVE::ShaderType::FragmentShader;
-        fragmentShaderSettings.samplerNamesList.emplace_back("texSampler");
-        // set light uniforms
-        fragmentShaderSettings.uniformList.push_back({SVE::UniformType::LightPosition});
-        fragmentShaderSettings.uniformList.push_back({SVE::UniformType::LightColor});
-        fragmentShaderSettings.uniformList.push_back({SVE::UniformType::CameraPosition});
-        fragmentShaderSettings.uniformList.push_back({SVE::UniformType::LightAmbient});
-        fragmentShaderSettings.uniformList.push_back({SVE::UniformType::LightDiffuse});
-        fragmentShaderSettings.uniformList.push_back({SVE::UniformType::LightSpecular});
-        fragmentShaderSettings.uniformList.push_back({SVE::UniformType::LightShininess});
-
-        std::shared_ptr<SVE::ShaderInfo> fragmentShader = std::make_shared<SVE::ShaderInfo>(fragmentShaderSettings);
-        engine->getShaderManager()->registerShader(fragmentShader);
-    }
-
-    // Create skybox shaders
-    {
-        SVE::ShaderSettings vertexShaderSettings{};
-        vertexShaderSettings.name = "skyboxVertexShader";
-        vertexShaderSettings.filename = "shaders/skybox.vert.spv";
-        vertexShaderSettings.shaderType = SVE::ShaderType::VertexShader;
-        vertexShaderSettings.uniformList.push_back({SVE::UniformType::ModelMatrix});
-        vertexShaderSettings.uniformList.push_back({SVE::UniformType::ViewMatrix});
-        vertexShaderSettings.uniformList.push_back({SVE::UniformType::ProjectionMatrix});
-
-        std::shared_ptr<SVE::ShaderInfo> vertexShader = std::make_shared<SVE::ShaderInfo>(vertexShaderSettings);
-        engine->getShaderManager()->registerShader(vertexShader);
-
-        SVE::ShaderSettings fragmentShaderSettings{};
-        fragmentShaderSettings.name = "skyboxFragmentShader";
-        fragmentShaderSettings.filename = "shaders/skybox.frag.spv";
-        fragmentShaderSettings.shaderType = SVE::ShaderType::FragmentShader;
-        fragmentShaderSettings.samplerNamesList.emplace_back("samplerCubeMap");
-
-        std::shared_ptr<SVE::ShaderInfo> fragmentShader = std::make_shared<SVE::ShaderInfo>(fragmentShaderSettings);
-        engine->getShaderManager()->registerShader(fragmentShader);
-    }
-
-    // Create materials
-    {
-        SVE::MaterialSettings materialSettings;
-        materialSettings.name = "Yellow";
-        materialSettings.vertexShaderName = "vertexShader";
-        materialSettings.fragmentShaderName = "fragmentShader";
-        materialSettings.textures.push_back({"texSampler", "textures/trashman_tex.png"});
-        //materialSettings.invertCullFace = true;
-        std::shared_ptr<SVE::Material> material = std::make_shared<SVE::Material>(materialSettings);
-        engine->getMaterialManager()->registerMaterial(material);
-    }
-    {
-        SVE::MaterialSettings materialSettings;
-        materialSettings.name = "Blue";
-        materialSettings.vertexShaderName = "vertexShader";
-        materialSettings.fragmentShaderName = "fragmentShader";
-        materialSettings.textures.push_back({"texSampler", "textures/trashantiman_tex.png"});
-
-        std::shared_ptr<SVE::Material> material = std::make_shared<SVE::Material>(materialSettings);
-        engine->getMaterialManager()->registerMaterial(material);
-    }
-    {
-        SVE::MaterialSettings materialSettings;
-        materialSettings.name = "Skybox";
-        materialSettings.vertexShaderName = "skyboxVertexShader";
-        materialSettings.fragmentShaderName = "skyboxFragmentShader";
-        materialSettings.textures = std::vector<SVE::TextureInfo> {
-                /*{"samplerCubeMap", "textures/skybox/test/num_rt.png"},
-                {"samplerCubeMap", "textures/skybox/test/num_lf.png"},
-                {"samplerCubeMap", "textures/skybox/test/num_up.png"},
-                {"samplerCubeMap", "textures/skybox/test/num_dn.png"},
-                {"samplerCubeMap", "textures/skybox/test/num_ft.png"},
-                {"samplerCubeMap", "textures/skybox/test/num_bk.png"}*/
-                {"samplerCubeMap", "textures/skybox/blood_rt.png"},
-                {"samplerCubeMap", "textures/skybox/blood_lf.png"},
-                {"samplerCubeMap", "textures/skybox/blood_up.png"},
-                {"samplerCubeMap", "textures/skybox/blood_dn.png"},
-                {"samplerCubeMap", "textures/skybox/blood_bk.png"},
-                {"samplerCubeMap", "textures/skybox/blood_ft.png"}
-        };
-        materialSettings.isCubemap = true;
-        materialSettings.invertCullFace = true;
-        materialSettings.useDepthTest = false;
-
-        std::shared_ptr<SVE::Material> material = std::make_shared<SVE::Material>(materialSettings);
-        engine->getMaterialManager()->registerMaterial(material);
-    }
-
     // create skybox
     engine->getSceneManager()->setSkybox("Skybox");
-
-    // create mesh
-    std::shared_ptr<SVE::Mesh> mesh = std::make_shared<SVE::Mesh>("trashman", "models/trashman.dae");
-    engine->getMeshManager()->registerMesh(mesh);
 
     // create nodes
     auto newNodeMid = engine->getSceneManager()->createSceneNode();
@@ -217,7 +103,7 @@ int main(int argv, char** args)
 
     // configure and attach objects to nodes
     newNode->attachEntity(meshEntity);
-    newNode2->setNodeTransformation(glm::translate(glm::mat4(1), glm::vec3(50, 0, 0)));
+    newNode2->setNodeTransformation(glm::translate(glm::mat4(1), glm::vec3(1, 0, 0)));
 
     //std::shared_ptr<Renderer> renderer = std::make_shared<VulkanRenderer>(window, true);
 
