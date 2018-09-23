@@ -25,6 +25,7 @@ struct MaterialSettings
     std::vector<TextureInfo> textures;
     bool isCubemap = false;
     bool useDepthTest = true;
+    bool useDepthBias = false;
     bool invertCullFace = false;
 };
 

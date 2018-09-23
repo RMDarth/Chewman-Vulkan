@@ -1,7 +1,7 @@
 {
     "name": "Blue",
-    "vertexShaderName": "vertexShader",
-    "fragmentShaderName": "fragmentShader",
+    "vertexShaderName": "bonesPhongVertexShader",
+    "fragmentShaderName": "phongFragmentShader",
     "textures": [
         {
             "samplerName": "texSampler",

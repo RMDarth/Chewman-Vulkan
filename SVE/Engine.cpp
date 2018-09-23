@@ -6,6 +6,7 @@
 
 #include "Engine.h"
 #include "VulkanInstance.h"
+#include "VulkanShadowMap.h"
 #include "VulkanException.h"
 #include "MaterialManager.h"
 #include "SceneManager.h"
@@ -15,6 +16,7 @@
 #include "Entity.h"
 #include "LightNode.h"
 #include "Skybox.h"
+#include "ShadowMap.h"
 #include <chrono>
 
 namespace SVE
@@ -46,6 +48,9 @@ Engine* Engine::createInstance(SDL_Window* window, const std::string& settingsPa
             throw VulkanException("Can't find SVE configuration file");
         }
         _engineInstance = new Engine(window, data.engine.front());
+
+        // TODO: Revise shadowmap creation sequence
+        _engineInstance->getSceneManager()->initShadowMap();
     }
     return _engineInstance;
 }
@@ -117,7 +122,7 @@ void createNodeDrawCommands(std::shared_ptr<SceneNode> node, uint32_t bufferInde
 {
     for (auto& entity : node->getAttachedEntities())
     {
-        entity->applyDrawingCommands(bufferIndex);
+        entity->applyDrawingCommands(bufferIndex, bufferIndex != SHADOWMAP_BUFFER_INDEX);
     }
 
     for (auto& child : node->getChildren())
@@ -126,7 +131,7 @@ void createNodeDrawCommands(std::shared_ptr<SceneNode> node, uint32_t bufferInde
     }
 }
 
-void updateNode(const std::shared_ptr<SceneNode>& node, UniformData& uniformData)
+void updateNode(const std::shared_ptr<SceneNode>& node, UniformData& uniformData, bool shadow)
 {
     auto oldModel = uniformData.model;
     uniformData.model *= node->getNodeTransformation();
@@ -134,12 +139,12 @@ void updateNode(const std::shared_ptr<SceneNode>& node, UniformData& uniformData
     // update uniforms
     for (auto& entity : node->getAttachedEntities())
     {
-        entity->updateUniforms(uniformData);
+        entity->updateUniforms(uniformData, shadow);
     }
 
     for (auto& child : node->getChildren())
     {
-        updateNode(child, uniformData);
+        updateNode(child, uniformData, shadow);
     }
 
     uniformData.model = oldModel;
@@ -153,11 +158,21 @@ void Engine::renderFrame()
     if (_sceneManager->isCommandBufferUpdateQueued())
     {
         _vulkanInstance->reallocateCommandBuffers();
+
+        auto shadowMap = _sceneManager->getShadowMap();
+        if (shadowMap->isEnabled())
+        {
+            shadowMap->getVulkanShadowMap()->reallocateCommandBuffers();
+            shadowMap->getVulkanShadowMap()->startRenderCommandBufferCreation();
+            createNodeDrawCommands(_sceneManager->getRootNode(), SHADOWMAP_BUFFER_INDEX);
+            shadowMap->getVulkanShadowMap()->endRenderCommandBufferCreation();
+        }
+
         for (auto i = 0u; i < _vulkanInstance->getSwapchainSize(); ++i)
         {
             _vulkanInstance->startRenderCommandBufferCreation(i);
             if (skybox)
-                skybox->applyDrawingCommands(i);
+                skybox->applyDrawingCommands(i, true);
             createNodeDrawCommands(_sceneManager->getRootNode(), i);
             _vulkanInstance->endRenderCommandBufferCreation(i);
         }
@@ -176,11 +191,19 @@ void Engine::renderFrame()
 
     // update uniforms
     if (skybox)
-        skybox->updateUniforms(uniformData);
-    updateNode(_sceneManager->getRootNode(), uniformData);
+        skybox->updateUniforms(uniformData, false);
+
 
     // submit command buffers
-    _vulkanInstance->submitCommands();
+    auto view = uniformData.view;
+    uniformData.view = _sceneManager->getLight()->getViewMatrix();
+    updateNode(_sceneManager->getRootNode(), uniformData, true);
+    _vulkanInstance->submitCommands(VulkanInstance::CommandsType::ShadowPass);
+
+    uniformData.view = view;
+    updateNode(_sceneManager->getRootNode(), uniformData, false);
+    _vulkanInstance->submitCommands(VulkanInstance::CommandsType::MainPass);
+    _vulkanInstance->renderCommands();
 }
 
 float Engine::getTime()
@@ -189,6 +212,11 @@ float Engine::getTime()
 
     auto currentTime = std::chrono::high_resolution_clock::now();
     return std::chrono::duration<float, std::chrono::seconds::period>(currentTime - startTime).count();
+}
+
+bool Engine::isShadowMappingEnabled() const
+{
+    return _sceneManager->getShadowMap()->isEnabled();
 }
 
 } // namespace SVE

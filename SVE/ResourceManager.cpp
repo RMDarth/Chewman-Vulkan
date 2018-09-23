@@ -79,6 +79,7 @@ std::vector<UniformInfo> getUniformInfoList(rj::Document& document)
             {"LightDiffuse",              UniformType::LightDiffuse},
             {"LightSpecular",             UniformType::LightSpecular},
             {"LightShininess",            UniformType::LightShininess},
+            {"LightViewProjection",       UniformType::LightViewProjection},
             {"BoneMatrices",              UniformType::BoneMatrices},
     };
 
@@ -165,7 +166,9 @@ std::vector<TextureInfo> getTextureInfos(const cppfs::FilePath& directory, rj::D
     for (auto& item : list)
     {
         TextureInfo textureInfo {};
-        textureInfo.filename = directory.resolve(item["filename"].GetString()).fullPath();
+        // TODO: Revise shadowmap settings (move it to texture type instead of filename)
+        std::string filename = item["filename"].GetString();
+        textureInfo.filename = filename == "shadowmap" ? "shadowmap" : directory.resolve(item["filename"].GetString()).fullPath();
         textureInfo.samplerName = item["samplerName"].GetString();
 
         textureInfosList.push_back(std::move(textureInfo));
@@ -183,6 +186,7 @@ MaterialSettings loadMaterial(const cppfs::FilePath& directory, const std::strin
     materialSettings.name = document["name"].GetString();
     setOptional(materialSettings.invertCullFace = document["invertCullFace"].GetBool());
     setOptional(materialSettings.useDepthTest = document["useDepthTest"].GetBool());
+    setOptional(materialSettings.useDepthBias = document["useDepthBias"].GetBool());
     setOptional(materialSettings.isCubemap = document["isCubemap"].GetBool());
     setOptional(materialSettings.fragmentShaderName = document["fragmentShaderName"].GetString());
     setOptional(materialSettings.geometryShaderName = document["geometryShaderName"].GetString());

@@ -168,7 +168,8 @@ VulkanMesh* Mesh::getVulkanMesh()
 void Mesh::updateUniformDataBones(UniformData& data, float time) const
 {
     //data.bones = getTransforms(_meshSettings, _meshSettings.animation, time);
-    data.bones = getAnimationTransforms(_meshSettings, 0, time);
+    if (_meshSettings.boneNum > 0)
+        data.bones = getAnimationTransforms(_meshSettings, 0, time);
 }
 
 } // namespace SVE

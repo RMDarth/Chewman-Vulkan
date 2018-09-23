@@ -1,0 +1,6 @@
+{
+    "name": "SimpleDepth",
+    "vertexShaderName": "simpleDepthVertexShader",
+    "fragmentShaderName": "simpleDepthFragmentShader",
+    "useDepthBias": true
+}

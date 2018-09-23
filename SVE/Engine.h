@@ -36,6 +36,8 @@ public:
     void resizeWindow();
     void finishRendering();
 
+    bool isShadowMappingEnabled() const;
+
     float getTime();
 
     void renderFrame();

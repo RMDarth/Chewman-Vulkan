@@ -6,6 +6,9 @@
 #include "VulkanInstance.h"
 #include "ShaderManager.h"
 #include "ShaderInfo.h"
+#include "SceneManager.h"
+#include "ShadowMap.h"
+#include "VulkanShadowMap.h"
 #include "Entity.h"
 #include "Engine.h"
 #include <fstream>
@@ -79,6 +82,24 @@ VkPipelineLayout VulkanMaterial::getPipelineLayout() const
     return _pipelineLayout;
 }
 
+void VulkanMaterial::applyDrawingCommands(uint32_t bufferIndex, uint32_t materialIndex)
+{
+    auto commandBuffer = _vulkanInstance->getCommandBuffer(bufferIndex);
+    vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, _pipeline);
+
+    if (bufferIndex > _vulkanInstance->getSwapchainSize())
+        bufferIndex = 0;
+
+    auto descriptorSets = getDescriptorSets(materialIndex, bufferIndex);
+    vkCmdBindDescriptorSets(
+            commandBuffer,
+            VK_PIPELINE_BIND_POINT_GRAPHICS,
+            _pipelineLayout,
+            0,
+            descriptorSets.size(),
+            descriptorSets.data(), 0, nullptr);
+}
+
 void VulkanMaterial::resetPipeline()
 {
     deletePipeline();
@@ -111,6 +132,14 @@ uint32_t VulkanMaterial::getInstanceForEntity(Entity* entity)
     createDescriptorSets();
     _entityInstanceMap[entity] = _instanceData.size() - 1;
     return _instanceData.size() - 1;
+}
+
+bool VulkanMaterial::isSkeletal() const
+{
+    if (!_vertexShader)
+        return false;
+
+    return _vertexShader->getShaderSettings().maxBonesSize > 0;
 }
 
 void VulkanMaterial::setUniformData(uint32_t materialIndex, const UniformData& uniformData) const
@@ -194,7 +223,7 @@ void VulkanMaterial::createPipeline()
         rasterizationCreateInfo.cullMode = VK_CULL_MODE_BACK_BIT;
 
     rasterizationCreateInfo.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
-    rasterizationCreateInfo.depthBiasEnable = VK_FALSE; // for altering depth (used in shadow mapping)
+    rasterizationCreateInfo.depthBiasEnable = _materialSettings.useDepthBias ? VK_TRUE : VK_FALSE; // for altering depth (used in shadow mapping)
 
     // Multisampling
     VkPipelineMultisampleStateCreateInfo multisampleCreateInfo{};
@@ -241,6 +270,13 @@ void VulkanMaterial::createPipeline()
     blendingCreateInfo.pAttachments = &colorBlendAttachment;
     //blendingCreateInfo.blendConstants[0] = 0.0f;
 
+    std::vector<VkDynamicState> dynamicStateList = { VK_DYNAMIC_STATE_VIEWPORT, VK_DYNAMIC_STATE_SCISSOR };
+
+    VkPipelineDynamicStateCreateInfo dynamicStateCreateInfo {};
+    dynamicStateCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
+    dynamicStateCreateInfo.dynamicStateCount = dynamicStateList.size();
+    dynamicStateCreateInfo.pDynamicStates = dynamicStateList.data();
+
     // Finally create pipeline
     VkGraphicsPipelineCreateInfo pipelineCreateInfo{};
     pipelineCreateInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
@@ -253,7 +289,7 @@ void VulkanMaterial::createPipeline()
     pipelineCreateInfo.pMultisampleState = &multisampleCreateInfo;
     pipelineCreateInfo.pDepthStencilState = &depthStencilCreateInfo;
     pipelineCreateInfo.pColorBlendState = &blendingCreateInfo;
-    pipelineCreateInfo.pDynamicState = nullptr;
+    pipelineCreateInfo.pDynamicState = &dynamicStateCreateInfo;
     pipelineCreateInfo.layout = _pipelineLayout;
     pipelineCreateInfo.renderPass = _vulkanInstance->getRenderPass();
     pipelineCreateInfo.subpass = 0;
@@ -314,11 +350,28 @@ void VulkanMaterial::createTextureImages()
 {
     size_t imageCount = _materialSettings.textures.size();
     _mipLevels.resize(imageCount);
+    _textureExternal.resize(imageCount);
     _textureImages.resize(imageCount);
     _textureImageMemoryList.resize(imageCount);
     _textureNames.resize(imageCount);
+    _textureImageViews.resize(imageCount);
+    _textureSamplers.resize(imageCount);
     for (auto i = 0u; i < imageCount; i++)
     {
+        _textureNames[i] = _materialSettings.textures[i].samplerName;
+
+        // TODO: Revise shadowmap settings (move it to texture type instead of filename)
+        if (_materialSettings.textures[i].filename == "shadowmap")
+        {
+            _textureExternal[i] = true;
+            auto shadowMap = Engine::getInstance()->getSceneManager()->getShadowMap()->getVulkanShadowMap();
+            _textureImageViews[i] = shadowMap->getShadowMapImageView();
+            _textureSamplers[i] = shadowMap->getShadowMapSampler();
+            continue;
+        } else {
+            _textureExternal[i] = false;
+        }
+
         // Load image pixel data
         int texWidth, texHeight, texChannels;
         stbi_uc* pixels = stbi_load(_materialSettings.textures[i].filename.c_str(), &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
@@ -381,7 +434,7 @@ void VulkanMaterial::createTextureImages()
         vkDestroyBuffer(_device, stagingBuffer, nullptr);
         vkFreeMemory(_device, stagingBufferMemory, nullptr);
 
-        _textureNames[i] = _materialSettings.textures[i].samplerName;
+
     }
 }
 
@@ -394,6 +447,9 @@ void VulkanMaterial::createCubemapTextureImages()
     _textureImages.resize(1);
     _textureImageMemoryList.resize(1);
     _textureNames.resize(1);
+    _textureExternal.resize(1);
+    _textureImageViews.resize(1);
+    _textureSamplers.resize(1);
     std::vector<stbi_uc*> pixelsData;
     VkDeviceSize imageSize = 0;
     int texWidth = 0, texHeight = 0, texChannels;
@@ -510,6 +566,7 @@ void VulkanMaterial::createCubemapTextureImages()
     vkFreeMemory(_device, stagingBufferMemory, nullptr);
 
     _textureNames[0] = _materialSettings.textures[0].samplerName;
+    _textureExternal[0] = false;
 
 }
 
@@ -517,6 +574,9 @@ void VulkanMaterial::deleteTextureImages()
 {
     for (auto i = 0u; i < _textureImages.size(); i++)
     {
+        if (_textureExternal[i])
+            continue;
+
         vkDestroyImage(_device, _textureImages[i], nullptr);
         vkFreeMemory(_device, _textureImageMemoryList[i], nullptr);
     }
@@ -524,9 +584,11 @@ void VulkanMaterial::deleteTextureImages()
 
 void VulkanMaterial::createTextureImageView()
 {
-    _textureImageViews.resize(_textureImages.size());
     for (auto i = 0; i < _textureImages.size(); i++)
     {
+        if (_textureExternal[i])
+            continue;
+
         _textureImageViews[i] = _vulkanUtils.createImageView(
                 _textureImages[i],
                 VK_FORMAT_R8G8B8A8_UNORM,
@@ -541,16 +603,19 @@ void VulkanMaterial::deleteTextureImageView()
 {
     for (auto i = 0; i < _textureImageViews.size(); i++)
     {
+        if (_textureExternal[i])
+            continue;
         vkDestroyImageView(_device, _textureImageViews[i], nullptr);
     }
 }
 
 void VulkanMaterial::createTextureSampler()
 {
-    _textureSamplers.resize(_textureImages.size());
-
     for (auto i = 0; i < _textureImages.size(); i++)
     {
+        if (_textureExternal[i])
+            continue;
+
         VkSamplerCreateInfo samplerCreateInfo{};
         samplerCreateInfo.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
         samplerCreateInfo.magFilter = VK_FILTER_LINEAR;
@@ -578,8 +643,11 @@ void VulkanMaterial::createTextureSampler()
 
 void VulkanMaterial::deleteTextureSampler()
 {
-    for (auto i = 0; i < _textureImages.size(); i++)
+    for (auto i = 0; i < _textureSamplers.size(); i++)
     {
+        if (_textureExternal[i])
+            continue;
+
         vkDestroySampler(_device, _textureSamplers[i], nullptr);
     }
 }
@@ -718,11 +786,11 @@ void VulkanMaterial::createDescriptorSets()
             }
 
             std::vector<VkDescriptorImageInfo> imageInfoList;
-            for (auto r = 0u; r < shaderInfo->getShaderSettings().samplerNamesList.size(); r++)
+            for (const auto& samplerName : shaderInfo->getShaderSettings().samplerNamesList)
             {
                 auto iter = std::find(_textureNames.cbegin(),
                                       _textureNames.cend(),
-                                      shaderInfo->getShaderSettings().samplerNamesList[r]);
+                                      samplerName);
                 if (iter == _textureNames.end())
                 {
                     throw VulkanException("Incorrect sampler name in material configuration");
@@ -752,7 +820,7 @@ void VulkanMaterial::createDescriptorSets()
                 imagesBuffer.descriptorCount = imageInfoList.size();
                 imagesBuffer.pImageInfo = imageInfoList.data();
                 descriptorWrites.push_back(imagesBuffer);
-                bindingIndex++;
+                bindingIndex += imageInfoList.size();
             }
             // Add uniforms
             if (!shaderBuffers.empty())
@@ -842,6 +910,11 @@ std::vector<char> VulkanMaterial::getUniformDataByType(const UniformData& data, 
         {
             const char* byteData = reinterpret_cast<const char*>(&data.lightSettings.shininess);
             return std::vector<char>(byteData, byteData + sizeof(data.lightSettings.shininess));
+        }
+        case UniformType::LightViewProjection:
+        {
+            const char* byteData = reinterpret_cast<const char*>(&data.lightViewProjection);
+            return std::vector<char>(byteData, byteData + sizeof(data.lightViewProjection));
         }
         case UniformType::BoneMatrices:
         {

@@ -79,12 +79,14 @@ Skybox::Skybox(const std::string& materialName)
 
 Skybox::~Skybox() = default;
 
-void Skybox::applyDrawingCommands(uint32_t bufferIndex) const
+void Skybox::applyDrawingCommands(uint32_t bufferIndex, bool applyMaterial) const
 {
-    _mesh->getVulkanMesh()->applyDrawingCommands(bufferIndex, _material->getVulkanMaterial(), _materialIndex);
+    if (applyMaterial)
+        _material->getVulkanMaterial()->applyDrawingCommands(bufferIndex, _materialIndex);
+    _mesh->getVulkanMesh()->applyDrawingCommands(bufferIndex);
 }
 
-void Skybox::updateUniforms(const UniformData& data) const
+void Skybox::updateUniforms(const UniformData& data, bool shadow) const
 {
     _material->getVulkanMaterial()->setUniformData(_materialIndex, data);
 }

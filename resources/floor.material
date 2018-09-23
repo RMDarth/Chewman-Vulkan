@@ -1,0 +1,15 @@
+{
+    "name": "Floor",
+    "vertexShaderName": "phongShadowVertexShader",
+    "fragmentShaderName": "phongShadowFragmentShader",
+    "textures": [
+        {
+            "samplerName": "diffuseTex",
+            "filename": "textures/trashantiman_tex.png"
+        },
+        {
+            "samplerName": "shadowTex",
+            "filename": "shadowmap"
+        }
+    ]
+}

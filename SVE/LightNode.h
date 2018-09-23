@@ -13,6 +13,8 @@ class LightNode : public SceneNode
 public:
     explicit LightNode(LightSettings lightSettings);
 
+    glm::mat4 getViewMatrix();
+
     const LightSettings& getLightSettings();
 
     void fillUniformData(UniformData& data);

@@ -26,22 +26,13 @@ VulkanMesh::~VulkanMesh()
     deleteGeometryBuffers();
 }
 
-void VulkanMesh::applyDrawingCommands(uint32_t bufferIndex, VulkanMaterial* material, uint32_t materialIndex)
+void VulkanMesh::applyDrawingCommands(uint32_t bufferIndex)
 {
-    auto commandBuffer = _vulkanInstance->getCommandBuffersList()[bufferIndex];
-    vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, material->getPipeline());
+    auto commandBuffer = _vulkanInstance->getCommandBuffer(bufferIndex);
 
     std::vector<VkDeviceSize> offsets(_vertexBufferList.size());
     vkCmdBindVertexBuffers(commandBuffer, 0, _vertexBufferList.size(), _vertexBufferList.data(), offsets.data());
     vkCmdBindIndexBuffer(commandBuffer, _indexBuffer, 0, VK_INDEX_TYPE_UINT32);
-    auto descriptorSets = material->getDescriptorSets(materialIndex, bufferIndex);
-    vkCmdBindDescriptorSets(
-            commandBuffer,
-            VK_PIPELINE_BIND_POINT_GRAPHICS,
-            material->getPipelineLayout(),
-            0,
-            descriptorSets.size(),
-            descriptorSets.data(), 0, nullptr);
 
     vkCmdDrawIndexed(commandBuffer, _meshSettings.indexData.size(), 1, 0, 0, 0);
 }

@@ -202,6 +202,20 @@ size_t VulkanInstance::getSwapchainSize() const
     return _swapchainImages.size();
 }
 
+VkFormat VulkanInstance::getSurfaceColorFormat() const
+{
+    return _surfaceFormat.format;
+}
+
+VkFormat VulkanInstance::getDepthFormat() const
+{
+    return _vulkanUtils.findSupportedFormat(
+            {VK_FORMAT_D32_SFLOAT, VK_FORMAT_D32_SFLOAT_S8_UINT, VK_FORMAT_D24_UNORM_S8_UINT},
+            VK_IMAGE_TILING_OPTIMAL,
+            VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT
+    );
+}
+
 VkFramebuffer VulkanInstance::getFramebuffer(size_t index) const
 {
     return _swapchainFramebuffers[index];
@@ -212,6 +226,38 @@ VkSemaphore* VulkanInstance::getImageAvailableSemaphore()
     return &_imageAvailableSemaphore;
 }
 
+VkCommandBuffer VulkanInstance::createCommandBuffer(uint32_t commandPool, uint32_t bufferIndex)
+{
+    VkCommandBufferAllocateInfo commandBufferAllocateInfo{};
+    commandBufferAllocateInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+    commandBufferAllocateInfo.commandPool = _commandPools[commandPool];
+    commandBufferAllocateInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+    commandBufferAllocateInfo.commandBufferCount = 1;
+
+    VkCommandBuffer buffer;
+    if (vkAllocateCommandBuffers(_device, &commandBufferAllocateInfo, &buffer) != VK_SUCCESS)
+    {
+        throw VulkanException("Can't create Vulkan Command Buffers");
+    }
+
+    _externalBufferMap[bufferIndex] = buffer;
+    return buffer;
+}
+
+VkCommandBuffer VulkanInstance::getCommandBuffer(uint32_t index)
+{
+    if (index < _commandBuffers.size())
+    {
+        return _commandBuffers[index];
+    }
+
+    auto externalBufferIter = _externalBufferMap.find(index);
+    if (externalBufferIter == _externalBufferMap.end())
+        throw VulkanException("Command Buffer not found");
+
+    return externalBufferIter->second;
+}
+
 const std::vector<VkCommandBuffer>& VulkanInstance::getCommandBuffersList()
 {
     return _commandBuffers;
@@ -219,12 +265,6 @@ const std::vector<VkCommandBuffer>& VulkanInstance::getCommandBuffersList()
 
 void VulkanInstance::waitAvailableFramebuffer()
 {
-    /*vkWaitForFences(_device,
-                    _inFlightFences.size(),
-                    _inFlightFences.data(),
-                    VK_FALSE,
-                    std::numeric_limits<uint64_t>::max());*/
-
     // acquire image
     auto result = vkAcquireNextImageKHR(_device, _swapchain, std::numeric_limits<uint64_t>::max(),
                                         _imageAvailableSemaphore, VK_NULL_HANDLE, &_currentImageIndex);
@@ -234,6 +274,8 @@ void VulkanInstance::waitAvailableFramebuffer()
                     &_inFlightFences[_currentImageIndex],
                     VK_TRUE,
                     std::numeric_limits<uint64_t>::max());
+
+    _currentWaitSemaphore = _imageAvailableSemaphore;
 
     if (result == VK_ERROR_OUT_OF_DATE_KHR)
     {
@@ -245,30 +287,64 @@ void VulkanInstance::waitAvailableFramebuffer()
     }
 }
 
-void VulkanInstance::submitCommands() const
+void VulkanInstance::submitCommands(CommandsType commandsType) const
 {
     static VkPipelineStageFlags waitStages[] = {VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT};
-    VkSubmitInfo submitInfo{};
-    submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-    submitInfo.waitSemaphoreCount = 1;
-    submitInfo.pWaitSemaphores = &_imageAvailableSemaphore;
-    submitInfo.pWaitDstStageMask = waitStages; // should be same size as wait semaphores
-    submitInfo.commandBufferCount = 1;
-    submitInfo.pCommandBuffers = &_commandBuffers[_currentImageIndex]; // command buffer to submit (should be the one with current swap chain image attachment)
-    submitInfo.signalSemaphoreCount = 1;
-    submitInfo.pSignalSemaphores = &_renderFinishedSemaphore;
 
-
-    vkResetFences(_device, 1, &_inFlightFences[_currentImageIndex]);
-    if (vkQueueSubmit(_queue, 1, &submitInfo, _inFlightFences[_currentImageIndex]) != VK_SUCCESS)
+    if (commandsType == CommandsType::ShadowPass)
     {
-        throw VulkanException("Can't submit Vulkan command buffers to queue");
+        auto shadowMapIter = _externalBufferMap.find(SHADOWMAP_BUFFER_INDEX);
+        if (shadowMapIter != _externalBufferMap.end())
+        {
+            VkSubmitInfo submitInfo{};
+            submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+            submitInfo.waitSemaphoreCount = 1;
+            submitInfo.pWaitSemaphores = &_currentWaitSemaphore;
+            submitInfo.pWaitDstStageMask = waitStages;
+            submitInfo.commandBufferCount = 1;
+            submitInfo.pCommandBuffers = &shadowMapIter->second;
+            submitInfo.signalSemaphoreCount = 1;
+            submitInfo.pSignalSemaphores = &_shadowMapReadySemaphore;
+
+            auto result = vkQueueSubmit(_queue, 1, &submitInfo, VK_NULL_HANDLE);
+            if (result != VK_SUCCESS)
+            {
+                throw VulkanException("Can't submit Vulkan command buffers to queue");
+            }
+
+            _currentWaitSemaphore = _shadowMapReadySemaphore;
+        }
     }
 
+    if (commandsType == CommandsType::MainPass)
+    {
+        VkSubmitInfo submitInfo{};
+        submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+        submitInfo.waitSemaphoreCount = 1;
+        submitInfo.pWaitSemaphores = &_currentWaitSemaphore;
+        submitInfo.pWaitDstStageMask = waitStages; // should be same size as wait semaphores
+        submitInfo.commandBufferCount = 1;
+        submitInfo.pCommandBuffers = &_commandBuffers[_currentImageIndex]; // command buffer to submit (should be the one with current swap chain image attachment)
+        submitInfo.signalSemaphoreCount = 1;
+        submitInfo.pSignalSemaphores = &_renderFinishedSemaphore;
+
+        vkResetFences(_device, 1, &_inFlightFences[_currentImageIndex]);
+        if (vkQueueSubmit(_queue, 1, &submitInfo, _inFlightFences[_currentImageIndex]) != VK_SUCCESS)
+        {
+            throw VulkanException("Can't submit Vulkan command buffers to queue");
+        }
+
+        _currentWaitSemaphore = _renderFinishedSemaphore;
+    }
+
+}
+
+void VulkanInstance::renderCommands() const
+{
     VkPresentInfoKHR presentInfo{};
     presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
     presentInfo.waitSemaphoreCount = 1;
-    presentInfo.pWaitSemaphores = &_renderFinishedSemaphore;
+    presentInfo.pWaitSemaphores = &_currentWaitSemaphore;
     presentInfo.swapchainCount = 1;
     presentInfo.pSwapchains = &_swapchain;
     presentInfo.pImageIndices = &_currentImageIndex;
@@ -294,8 +370,9 @@ void VulkanInstance::reallocateCommandBuffers()
 
     if (vkResetCommandPool(_device, _commandPools[_currentPool], VK_COMMAND_POOL_RESET_RELEASE_RESOURCES_BIT) != VK_SUCCESS)
     {
-        throw std::runtime_error("Can't reset Vulkan Command Pool");
+        throw VulkanException("Can't reset Vulkan Command Pool");
     }
+    _externalBufferMap.clear();
 
     VkCommandBufferAllocateInfo commandBufferAllocateInfo{};
     commandBufferAllocateInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
@@ -305,7 +382,7 @@ void VulkanInstance::reallocateCommandBuffers()
 
     if (vkAllocateCommandBuffers(_device, &commandBufferAllocateInfo, _commandBuffers.data()) != VK_SUCCESS)
     {
-        throw std::runtime_error("Can't create Vulkan Command Buffers");
+        throw VulkanException("Can't create Vulkan Command Buffers");
     }
 }
 
@@ -316,8 +393,8 @@ void VulkanInstance::startRenderCommandBufferCreation(uint32_t index)
     beginInfo.flags = VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT;
     beginInfo.pInheritanceInfo = nullptr;
 
-    // TODO: Instead of single command buffer recreation for every object, secondary buffers can be used
-    // start recording
+    // TODO: Instead of single command buffer recreation for every object, secondary buffers can be used.
+    // Start recording
     if (vkBeginCommandBuffer(_commandBuffers[index], &beginInfo) != VK_SUCCESS)
     {
         throw std::runtime_error("Failed to begin recording Vulkan command buffer");
@@ -337,6 +414,22 @@ void VulkanInstance::startRenderCommandBufferCreation(uint32_t index)
     renderPassBeginInfo.pClearValues = clearValues.data();
 
     vkCmdBeginRenderPass(_commandBuffers[index], &renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
+
+    VkViewport viewport;
+    viewport.x = 0.0f;
+    viewport.y = 0.0f;
+    viewport.width = (float) _extent.width;
+    viewport.height = (float) _extent.height;
+    viewport.minDepth = 0.0f;
+    viewport.maxDepth = 1.0f;
+
+    vkCmdSetViewport(_commandBuffers[index], 0, 1, &viewport);
+
+    VkRect2D scissor{};
+    scissor.offset = {0, 0};
+    scissor.extent = _extent;
+
+    vkCmdSetScissor(_commandBuffers[index], 0, 1, &scissor);
 }
 
 void VulkanInstance::endRenderCommandBufferCreation(uint32_t index)
@@ -519,7 +612,7 @@ void VulkanInstance::deleteSurface()
 void VulkanInstance::createSurfaceParameters()
 {
     // check present support
-    VkBool32 presentSupported = false;
+    VkBool32 presentSupported = VK_FALSE;
     vkGetPhysicalDeviceSurfaceSupportKHR(_gpu, _queueIndex, _surface, &presentSupported);
     if (!presentSupported)
     {
@@ -682,7 +775,7 @@ void VulkanInstance::createRenderPass()
     colorAttachmentResolve.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR; // to present in swapchain
 
     VkAttachmentDescription depthAttachment {};
-    depthAttachment.format = findDepthFormat();
+    depthAttachment.format = getDepthFormat();
     depthAttachment.samples = _msaaSamples;
     depthAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
     depthAttachment.storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
@@ -782,7 +875,7 @@ void VulkanInstance::createMSAABuffer()
             VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
             _colorImage,
             _colorImageMemory);
-    _colorImageView = _vulkanUtils.createImageView(_colorImage, colorFormat, VK_IMAGE_ASPECT_COLOR_BIT, 1);
+    _colorImageView = _vulkanUtils.createImageView(_colorImage, colorFormat, 1, VK_IMAGE_ASPECT_COLOR_BIT);
 
     _vulkanUtils.transitionImageLayout(
             _colorImage,
@@ -803,7 +896,7 @@ void VulkanInstance::deleteMSAABuffer()
 
 void VulkanInstance::createDepthBuffer()
 {
-    VkFormat depthFormat = findDepthFormat();
+    VkFormat depthFormat = getDepthFormat();
     VkImageAspectFlags aspectFlags = VK_IMAGE_ASPECT_DEPTH_BIT;
 
     if (depthFormat == VK_FORMAT_D32_SFLOAT_S8_UINT || depthFormat == VK_FORMAT_D24_UNORM_S8_UINT)
@@ -886,6 +979,10 @@ void VulkanInstance::createSyncPrimitives()
     {
         throw std::runtime_error("Failed to create Vulkan semaphore");
     }
+    if (vkCreateSemaphore(_device, &semaphoreCreateInfo, nullptr, &_shadowMapReadySemaphore) != VK_SUCCESS)
+    {
+        throw std::runtime_error("Failed to create Vulkan semaphore");
+    }
 
 
     VkFenceCreateInfo fenceCreateInfo{};
@@ -905,6 +1002,7 @@ void VulkanInstance::deleteSyncPrimitives()
 {
     vkDestroySemaphore(_device, _imageAvailableSemaphore, nullptr);
     vkDestroySemaphore(_device, _renderFinishedSemaphore, nullptr);
+    vkDestroySemaphore(_device, _shadowMapReadySemaphore, nullptr);
     for (auto i = 0u; i < _swapchainImages.size(); i++)
     {
         vkDestroyFence(_device, _inFlightFences[i], nullptr);
@@ -988,15 +1086,6 @@ size_t VulkanInstance::getGPUIndex(std::vector<VkPhysicalDevice>& deviceList)
     } else {
         return static_cast<size_t>(_engineSettings.gpuIndex);
     }
-}
-
-VkFormat VulkanInstance::findDepthFormat()
-{
-    return _vulkanUtils.findSupportedFormat(
-            {VK_FORMAT_D32_SFLOAT, VK_FORMAT_D32_SFLOAT_S8_UINT, VK_FORMAT_D24_UNORM_S8_UINT},
-            VK_IMAGE_TILING_OPTIMAL,
-            VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT
-    );
 }
 
 } // namespace SVE

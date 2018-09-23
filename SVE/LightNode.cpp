@@ -4,6 +4,8 @@
 #include "LightNode.h"
 #include "ShaderSettings.h"
 
+#include <glm/gtc/matrix_transform.hpp>
+
 namespace SVE
 {
 
@@ -20,8 +22,17 @@ const LightSettings& LightNode::getLightSettings()
 
 void LightNode::fillUniformData(UniformData& data)
 {
-    data.lightPos = getTotalTransformation()[3];
+    auto model = getTotalTransformation();
+    data.lightPos = model[3];
+    // TODO: Light should have it's own projection matrix
+    data.lightViewProjection = data.projection * getViewMatrix();
     data.lightSettings = _lightSettings;
+}
+
+glm::mat4 LightNode::getViewMatrix()
+{
+    auto model = getTotalTransformation();
+    return glm::lookAt(glm::vec3(model[3]), glm::vec3(0, 0, 0), glm::vec3(0.0f, 1.0f, 0.0f));
 }
 
 

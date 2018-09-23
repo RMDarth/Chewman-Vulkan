@@ -23,7 +23,9 @@ MeshEntity::MeshEntity(std::shared_ptr<Mesh> mesh)
     , _material(Engine::getInstance()->getMaterialManager()->getMaterial(mesh->getDefaultMaterialName()))
 {
     if (_material)
-        _materialIndex = _material->getVulkanMaterial()->getInstanceForEntity(this);
+    {
+        setupMaterial();
+    }
 }
 
 MeshEntity::~MeshEntity() = default;
@@ -31,19 +33,49 @@ MeshEntity::~MeshEntity() = default;
 void MeshEntity::setMaterial(const std::string& materialName)
 {
     _material = Engine::getInstance()->getMaterialManager()->getMaterial(materialName);
-    _materialIndex = _material->getVulkanMaterial()->getInstanceForEntity(this);
+    setupMaterial();
 }
 
-void MeshEntity::updateUniforms(const UniformData& data) const
+void MeshEntity::updateUniforms(const UniformData& data, bool shadow) const
 {
     UniformData newData = data;
     _mesh->updateUniformDataBones(newData, Engine::getInstance()->getTime());
-    _material->getVulkanMaterial()->setUniformData(_materialIndex, newData);
+    if (!shadow)
+    {
+        _material->getVulkanMaterial()->setUniformData(_materialIndex, newData);
+    } else
+    {
+        if (_shadowMaterial)
+            _shadowMaterial->getVulkanMaterial()->setUniformData(_shadowMaterialIndex, newData);
+    }
 }
 
-void MeshEntity::applyDrawingCommands(uint32_t bufferIndex) const
+void MeshEntity::applyDrawingCommands(uint32_t bufferIndex, bool applyMaterial) const
 {
-    _mesh->getVulkanMesh()->applyDrawingCommands(bufferIndex, _material->getVulkanMaterial(), _materialIndex);
+    if (!applyMaterial)
+    {
+        if (_shadowMaterial)
+            _shadowMaterial->getVulkanMaterial()->applyDrawingCommands(bufferIndex, _shadowMaterialIndex);
+    } else {
+        _material->getVulkanMaterial()->applyDrawingCommands(bufferIndex, _materialIndex);
+    }
+
+    _mesh->getVulkanMesh()->applyDrawingCommands(bufferIndex);
+}
+
+void MeshEntity::setupMaterial()
+{
+    _materialIndex = _material->getVulkanMaterial()->getInstanceForEntity(this);
+
+    if (Engine::getInstance()->isShadowMappingEnabled())
+    {
+        if (_material->getVulkanMaterial()->isSkeletal())
+            _shadowMaterial = Engine::getInstance()->getMaterialManager()->getMaterial("SimpleSkeletalDepth");
+        else
+            _shadowMaterial = Engine::getInstance()->getMaterialManager()->getMaterial("SimpleDepth");
+
+        _shadowMaterialIndex = _shadowMaterial->getVulkanMaterial()->getInstanceForEntity(this);
+    }
 }
 
 } // namespace SVE

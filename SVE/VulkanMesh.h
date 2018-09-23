@@ -18,7 +18,7 @@ public:
     explicit VulkanMesh(MeshSettings meshSettings);
     ~VulkanMesh();
 
-    void applyDrawingCommands(uint32_t bufferIndex, VulkanMaterial* material, uint32_t materialIndex);
+    void applyDrawingCommands(uint32_t bufferIndex);
 
 private:
     void createGeometryBuffers();

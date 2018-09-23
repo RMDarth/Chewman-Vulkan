@@ -1,5 +1,5 @@
 {
-    "name": "fragmentShader",
+    "name": "phongFragmentShader",
     "filename": "shaders/phong.frag.spv",
     "shaderType": "FragmentShader",
     "samplerNamesList": [

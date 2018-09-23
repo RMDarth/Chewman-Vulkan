@@ -11,6 +11,7 @@ namespace SVE
 class LightNode;
 class LightSettings;
 class Skybox;
+class ShadowMap;
 
 class SceneManager
 {
@@ -33,6 +34,11 @@ public:
     void setSkybox(std::shared_ptr<Skybox> skybox);
     std::shared_ptr<Skybox> getSkybox();
 
+    void setShadowMap(std::shared_ptr<ShadowMap> shadowMap);
+    void initShadowMap();
+    void createShadowMap(std::string materialName = "SimpleDepth");
+    std::shared_ptr<ShadowMap> getShadowMap();
+
     void queueCommandBuffersUpdate();
     void dequeueCommandBufferUpdate();
     bool isCommandBufferUpdateQueued();
@@ -43,6 +49,7 @@ private:
     std::shared_ptr<CameraNode> _mainCamera;
     std::shared_ptr<LightNode> _lightNode;
     std::shared_ptr<Skybox> _skybox;
+    std::shared_ptr<ShadowMap> _shadowmap;
 };
 
 } // namespace SVE

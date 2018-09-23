@@ -25,11 +25,14 @@ public:
     VkPipeline getPipeline() const;
     VkPipelineLayout getPipelineLayout() const;
 
+    void applyDrawingCommands(uint32_t bufferIndex, uint32_t materialIndex);
+
     void resetPipeline();
 
     std::vector<VkDescriptorSet> getDescriptorSets(uint32_t materialIndex, size_t index) const;
 
     uint32_t getInstanceForEntity(Entity* entity);
+    bool isSkeletal() const;
 
     void setUniformData(uint32_t materialIndex, const UniformData& data) const;
 
@@ -80,6 +83,7 @@ private:
     std::vector<VkImageView> _textureImageViews;
     std::vector<VkSampler> _textureSamplers;
     std::vector<std::string> _textureNames;
+    std::vector<bool> _textureExternal;
 
     struct PerInstanceData
     {

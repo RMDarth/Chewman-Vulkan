@@ -18,8 +18,8 @@ public:
     explicit Skybox(const std::string& materialName);
     ~Skybox() override;
 
-    void applyDrawingCommands(uint32_t bufferIndex) const override;
-    void updateUniforms(const UniformData& data) const override;
+    void applyDrawingCommands(uint32_t bufferIndex, bool applyMaterial) const override;
+    void updateUniforms(const UniformData& data, bool shadow) const override;
 
 private:
     std::shared_ptr<Mesh> _mesh;

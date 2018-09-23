@@ -24,7 +24,8 @@ enum class UniformType : uint8_t
     LightDiffuse,
     LightSpecular,
     LightShininess,
-    BoneMatrices
+    LightViewProjection,
+    BoneMatrices,
     // TODO: Add light, material properties, time, other matrices types etc.
 };
 
@@ -40,6 +41,7 @@ struct UniformData
     glm::mat4 model;
     glm::mat4 view;
     glm::mat4 projection;
+    glm::mat4 lightViewProjection;
     glm::vec4 cameraPos;
     glm::vec4 lightPos;
     LightSettings lightSettings;

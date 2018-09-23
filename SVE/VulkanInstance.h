@@ -8,14 +8,24 @@
 #include <vulkan/vulkan.h>
 #include <vector>
 #include <SDL2/SDL.h>
+#include <map>
 
 namespace SVE
 {
 class VulkanMesh;
 
+static const uint32_t SHADOWMAP_BUFFER_INDEX = 100;
+
 class VulkanInstance
 {
 public:
+    enum class CommandsType : uint8_t
+    {
+        ReflectionPass,
+        ShadowPass,
+        MainPass
+    };
+
     VulkanInstance(SDL_Window* window, EngineSettings settings);
     ~VulkanInstance();
 
@@ -33,12 +43,19 @@ public:
     VkSampleCountFlagBits getMSAASamples() const;
     VkQueue getGraphicsQueue() const;
     size_t getSwapchainSize() const;
+    VkFormat getSurfaceColorFormat() const;
+    VkFormat getDepthFormat() const;
     VkFramebuffer getFramebuffer(size_t index) const;
     VkSemaphore* getImageAvailableSemaphore();
+
+    VkCommandBuffer createCommandBuffer(uint32_t commandPool, uint32_t bufferIndex);
+    VkCommandBuffer getCommandBuffer(uint32_t index);
+
     const std::vector<VkCommandBuffer>& getCommandBuffersList();
 
     void waitAvailableFramebuffer();
-    void submitCommands() const;
+    void submitCommands(CommandsType commandsType) const;
+    void renderCommands() const;
     uint32_t getCurrentImageIndex() const;
 
     void reallocateCommandBuffers();
@@ -81,8 +98,6 @@ private:
     VkSampleCountFlagBits getMSAALevelsValue(int msaaLevels);
     size_t getGPUIndex(std::vector<VkPhysicalDevice>& deviceList);
 
-    VkFormat findDepthFormat();
-
 private:
     EngineSettings _engineSettings;
     VulkanUtils _vulkanUtils;
@@ -119,6 +134,7 @@ private:
     uint32_t _currentPool;
     std::vector<VkCommandPool> _commandPools;
     std::vector<VkCommandBuffer> _commandBuffers;
+    std::map<uint32_t, VkCommandBuffer> _externalBufferMap;
 
     // color attachment for anti-aliasing
     VkImage _colorImage;
@@ -129,8 +145,13 @@ private:
     VkDeviceMemory _depthImageMemory;
     VkImageView _depthImageView;
 
+    VkSemaphore _shadowMapReadySemaphore;
     VkSemaphore _imageAvailableSemaphore;
     VkSemaphore _renderFinishedSemaphore;
+
+    // TODO: Meh... mutable
+    mutable VkSemaphore _currentWaitSemaphore;
+
     std::vector<VkFence> _inFlightFences;
     uint32_t _currentImageIndex;
 };
