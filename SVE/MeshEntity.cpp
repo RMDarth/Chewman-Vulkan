@@ -36,17 +36,16 @@ void MeshEntity::setMaterial(const std::string& materialName)
     setupMaterial();
 }
 
-void MeshEntity::updateUniforms(const UniformData& data, bool shadow) const
+void MeshEntity::updateUniforms(const UniformData& data, const UniformData& shadowData) const
 {
     UniformData newData = data;
     _mesh->updateUniformDataBones(newData, Engine::getInstance()->getTime());
-    if (!shadow)
+    _material->getVulkanMaterial()->setUniformData(_materialIndex, newData);
+    if (_shadowMaterial)
     {
-        _material->getVulkanMaterial()->setUniformData(_materialIndex, newData);
-    } else
-    {
-        if (_shadowMaterial)
-            _shadowMaterial->getVulkanMaterial()->setUniformData(_shadowMaterialIndex, newData);
+        UniformData newShadowData = shadowData;
+        newShadowData.bones = std::move(newData.bones);
+        _shadowMaterial->getVulkanMaterial()->setUniformData(_shadowMaterialIndex, newShadowData);
     }
 }
 

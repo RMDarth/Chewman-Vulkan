@@ -23,8 +23,8 @@ public:
 
     virtual void setMaterial(const std::string& materialName);
 
-    // TODO: Refactor interface
-    virtual void updateUniforms(const UniformData& data, bool shadow) const = 0;
+    // TODO: indstead of 2 uniforms it probably should be either a single structure with inner objects for shadows, main or reflection matrices
+    virtual void updateUniforms(const UniformData& data, const UniformData& shadowData) const = 0;
     virtual void applyDrawingCommands(uint32_t bufferIndex, bool applyMaterial) const = 0;
 
 protected:

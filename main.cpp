@@ -31,20 +31,16 @@ void moveCamera(SDL_Keycode keycode, std::shared_ptr<SVE::CameraNode>& camera)
     switch (keycode)
     {
         case SDLK_a:
-            //nodeTransformation = nodeTransformation * glm::rotate(glm::mat4(1.0f), glm::radians(2.0f), glm::vec3(0, 1, 0));
-            //camera->setNodeTransformation(nodeTransformation);
-            camera->setNodeTransformation(glm::translate(camera->getNodeTransformation(), glm::vec3(-0.1, 0, 0)));
+            camera->setNodeTransformation(camera->getNodeTransformation() * glm::translate(glm::mat4(1), glm::vec3(-0.1, 0, 0)));
             break;
         case SDLK_d:
-           // nodeTransformation = nodeTransformation * glm::rotate(glm::mat4(1.0f), glm::radians(-2.0f), glm::vec3(0, 1, 0));
-            //camera->setNodeTransformation(nodeTransformation);
-            camera->setNodeTransformation(glm::translate(camera->getNodeTransformation(), glm::vec3(0.1, 0, 0)));
+            camera->setNodeTransformation(camera->getNodeTransformation() * glm::translate(glm::mat4(1), glm::vec3(0.1, 0, 0)));
             break;
         case SDLK_w:
-            camera->setNodeTransformation(glm::translate(camera->getNodeTransformation(), glm::vec3(0, 0.1, 0)));
+            camera->setNodeTransformation(camera->getNodeTransformation() * glm::translate(glm::mat4(1), glm::vec3(0, 0, -0.2f)));
             break;
         case SDLK_s:
-            camera->setNodeTransformation(glm::translate(camera->getNodeTransformation(), glm::vec3(0, -0.1, 0)));
+            camera->setNodeTransformation(camera->getNodeTransformation() * glm::translate(glm::mat4(1), glm::vec3(0, 0, 0.2f)));
             break;
     }
 }
@@ -127,6 +123,9 @@ int runGame()
     SVE::Engine* engine = SVE::Engine::createInstance(window, "resources/main.engine");
 
     // load resources
+    engine->getResourceManager()->loadFolder("resources/shaders");
+    engine->getResourceManager()->loadFolder("resources/materials");
+    engine->getResourceManager()->loadFolder("resources/models");
     engine->getResourceManager()->loadFolder("resources");
 
     // configure light
@@ -134,11 +133,11 @@ int runGame()
 
     // create camera
     auto camera = engine->getSceneManager()->createMainCamera();
-    camera->setNearFarPlane(0.1f, 200.0f);
+    camera->setNearFarPlane(0.1f, 50.0f);
     camera->setLookAt(glm::vec3(5.0f, 5.0f, 5.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 
     // create shadowmap
-    engine->getSceneManager()->createShadowMap();
+    engine->getSceneManager()->enableShadowMap();
 
     // create skybox
     engine->getSceneManager()->setSkybox("Skybox");
@@ -169,7 +168,7 @@ int runGame()
 
     // configure and attach objects to nodes
     newNode->attachEntity(meshEntity);
-    newNode2->setNodeTransformation(glm::translate(glm::mat4(1), glm::vec3(1, 0, 0)));
+    newNode2->setNodeTransformation(glm::translate(glm::mat4(1), glm::vec3(2, 0, 0)));
     floorNode->attachEntity(floorEntity);
 
     bool quit = false;

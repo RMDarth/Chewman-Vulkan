@@ -16,7 +16,7 @@ public:
     ~ShadowMap();
 
     VulkanShadowMap* getVulkanShadowMap();
-    void setMaterial(std::string materialName);
+    void enableShadowMap();
     bool isEnabled();
 
 private:

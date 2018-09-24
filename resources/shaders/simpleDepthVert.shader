@@ -1,6 +1,6 @@
 {
-    "name": "phongVertexShader",
-    "filename": "shaders/phong.vert.spv",
+    "name": "simpleDepthVertexShader",
+    "filename": "glsl/simpleDepth.vert.spv",
     "shaderType": "VertexShader",
     "uniformList": [
         { "uniformType": "ModelMatrix" },

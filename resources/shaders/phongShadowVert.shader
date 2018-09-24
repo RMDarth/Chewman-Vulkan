@@ -1,6 +1,6 @@
 {
     "name": "phongShadowVertexShader",
-    "filename": "shaders/phongShadowMap.vert.spv",
+    "filename": "glsl/phongShadowMap.vert.spv",
     "shaderType": "VertexShader",
     "uniformList": [
         { "uniformType": "ModelMatrix" },

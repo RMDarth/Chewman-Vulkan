@@ -1,6 +1,6 @@
 {
     "name": "shadowMapRenderFragmentShader",
-    "filename": "shaders/shadowMapRender.frag.spv",
+    "filename": "glsl/shadowMapRender.frag.spv",
     "shaderType": "FragmentShader",
     "samplerNamesList": [
         "texSampler"

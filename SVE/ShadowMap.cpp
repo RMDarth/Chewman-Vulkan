@@ -20,10 +20,9 @@ VulkanShadowMap* ShadowMap::getVulkanShadowMap()
     return _vulkanShadowMap.get();
 }
 
-void ShadowMap::setMaterial(std::string materialName)
+void ShadowMap::enableShadowMap()
 {
     _isEnabled = true;
-    _vulkanShadowMap->setMaterial(materialName);
 }
 
 bool ShadowMap::isEnabled()

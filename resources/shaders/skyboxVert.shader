@@ -1,6 +1,6 @@
 {
-    "name": "simpleDepthVertexShader",
-    "filename": "shaders/simpleDepth.vert.spv",
+    "name": "skyboxVertexShader",
+    "filename": "glsl/skybox.vert.spv",
     "shaderType": "VertexShader",
     "uniformList": [
         { "uniformType": "ModelMatrix" },

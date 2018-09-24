@@ -187,6 +187,7 @@ MaterialSettings loadMaterial(const cppfs::FilePath& directory, const std::strin
     setOptional(materialSettings.invertCullFace = document["invertCullFace"].GetBool());
     setOptional(materialSettings.useDepthTest = document["useDepthTest"].GetBool());
     setOptional(materialSettings.useDepthBias = document["useDepthBias"].GetBool());
+    setOptional(materialSettings.useMultisampling = document["useMultisampling"].GetBool());
     setOptional(materialSettings.isCubemap = document["isCubemap"].GetBool());
     setOptional(materialSettings.fragmentShaderName = document["fragmentShaderName"].GetString());
     setOptional(materialSettings.geometryShaderName = document["geometryShaderName"].GetString());

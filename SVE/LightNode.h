@@ -13,14 +13,22 @@ class LightNode : public SceneNode
 public:
     explicit LightNode(LightSettings lightSettings);
 
-    glm::mat4 getViewMatrix();
+    const glm::mat4& getViewMatrix();
+    const glm::mat4& getProjectionMatrix();
 
     const LightSettings& getLightSettings();
+    void fillUniformData(UniformData& data, bool asViewSource);
 
-    void fillUniformData(UniformData& data);
+    void setNodeTransformation(glm::mat4 transform) override;
+
+private:
+    void createViewMatrix();
+    void createProjectionMatrix();
 
 private:
     LightSettings _lightSettings;
+    glm::mat4 _viewMatrix;
+    glm::mat4 _projectionMatrix;
 
 };
 

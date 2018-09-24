@@ -86,7 +86,7 @@ void Skybox::applyDrawingCommands(uint32_t bufferIndex, bool applyMaterial) cons
     _mesh->getVulkanMesh()->applyDrawingCommands(bufferIndex);
 }
 
-void Skybox::updateUniforms(const UniformData& data, bool shadow) const
+void Skybox::updateUniforms(const UniformData& data, const UniformData& shadowData) const
 {
     _material->getVulkanMaterial()->setUniformData(_materialIndex, data);
 }

@@ -212,7 +212,7 @@ void VulkanMaterial::createPipeline()
     // Rasterizer
     VkPipelineRasterizationStateCreateInfo rasterizationCreateInfo{};
     rasterizationCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
-    rasterizationCreateInfo.depthClampEnable = VK_FALSE; // clamp objects beyond near and far plane to the edges
+    rasterizationCreateInfo.depthClampEnable = VK_TRUE; // clamp objects beyond near and far plane to the edges
     rasterizationCreateInfo.rasterizerDiscardEnable = VK_FALSE;
     rasterizationCreateInfo.polygonMode = VK_POLYGON_MODE_FILL;
     rasterizationCreateInfo.lineWidth = 1.0f;
@@ -229,7 +229,9 @@ void VulkanMaterial::createPipeline()
     VkPipelineMultisampleStateCreateInfo multisampleCreateInfo{};
     multisampleCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
     multisampleCreateInfo.sampleShadingEnable = VK_FALSE;
-    multisampleCreateInfo.rasterizationSamples = _vulkanInstance->getMSAASamples();
+    multisampleCreateInfo.rasterizationSamples = _materialSettings.useMultisampling
+                                                                ? _vulkanInstance->getMSAASamples()
+                                                                : VK_SAMPLE_COUNT_1_BIT;
     multisampleCreateInfo.minSampleShading = 1.0f;
     multisampleCreateInfo.pSampleMask = nullptr;
     multisampleCreateInfo.alphaToCoverageEnable = VK_FALSE;
@@ -270,7 +272,7 @@ void VulkanMaterial::createPipeline()
     blendingCreateInfo.pAttachments = &colorBlendAttachment;
     //blendingCreateInfo.blendConstants[0] = 0.0f;
 
-    std::vector<VkDynamicState> dynamicStateList = { VK_DYNAMIC_STATE_VIEWPORT, VK_DYNAMIC_STATE_SCISSOR };
+    std::vector<VkDynamicState> dynamicStateList = { VK_DYNAMIC_STATE_VIEWPORT, VK_DYNAMIC_STATE_SCISSOR, VK_DYNAMIC_STATE_DEPTH_BIAS };
 
     VkPipelineDynamicStateCreateInfo dynamicStateCreateInfo {};
     dynamicStateCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;

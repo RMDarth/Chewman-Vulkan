@@ -22,20 +22,6 @@ layout(location = 4) in vec4 fragLightSpacePos;
 
 layout(location = 0) out vec4 outColor;
 
-float textureProj(vec4 P, vec2 off)
-{
-	float shadow = 1.0;
-	vec4 shadowCoord = P / P.w;
-	if ( shadowCoord.z > -1.0 && shadowCoord.z < 1.0 )
-	{
-		float dist = texture( shadowTex, shadowCoord.st + off ).r;
-		if ( shadowCoord.w > 0.0 && dist < shadowCoord.z )
-		{
-			shadow = ubo.ambientStrength;
-		}
-	}
-	return shadow;
-}
 
 float computeShadowFactor(vec4 lightSpacePos)
 {
@@ -48,14 +34,16 @@ float computeShadowFactor(vec4 lightSpacePos)
    if (abs(lightSpaceReal.x) > 1.0 ||
        abs(lightSpaceReal.y) > 1.0 ||
        abs(lightSpaceReal.z) > 1.0)
-      return 0.0;
+      return 0.1;
 
    // Translate from NDC to shadow map space (Vulkan's Z is already in [0..1])
    vec2 shadowMapCoord = lightSpaceReal.xy * 0.5 + 0.5;
 
    // Check if the sample is in the light or in the shadow
-   if (lightSpaceReal.z > texture(shadowTex, shadowMapCoord.xy).x)
-      return 0.0; // In the shadow
+    if (lightSpaceReal.z > texture(shadowTex, shadowMapCoord.xy).x)
+         return 0.1; // In the shadow
+
+   return 1.0;
 
    // In the light
    return 1.0;
@@ -78,6 +66,7 @@ void main() {
     float spec = pow(max(dot(viewDir, reflectDir), 0.0), ubo.shininess);
     vec3 specular = ubo.specularStrength * spec * ubo.lightColor.rgb;
 
-    vec3 result = (ambient + diffuse + specular) * fragColor * texture(diffuseTex, fragTexCoord).rgb * textureProj(fragLightSpacePos / fragLightSpacePos.w, vec2(0.0)); // * computeShadowFactor(fragLightSpacePos);
+    //vec3 result = vec3(computeShadowFactor(fragLightSpacePos));
+    vec3 result = (ambient + diffuse + specular) * fragColor * texture(diffuseTex, fragTexCoord).rgb * computeShadowFactor(fragLightSpacePos);
     outColor = vec4(result, 1.0);
 }

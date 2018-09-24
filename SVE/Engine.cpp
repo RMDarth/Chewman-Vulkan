@@ -109,6 +109,7 @@ void Engine::resizeWindow()
     _sceneManager->queueCommandBuffersUpdate();
     _vulkanInstance->resizeWindow();
     _materialManager->resetPipelines();
+
     _sceneManager->getMainCamera()->setAspectRatio(
             (float)_vulkanInstance->getExtent().width / _vulkanInstance->getExtent().height);
 }
@@ -131,23 +132,25 @@ void createNodeDrawCommands(std::shared_ptr<SceneNode> node, uint32_t bufferInde
     }
 }
 
-void updateNode(const std::shared_ptr<SceneNode>& node, UniformData& uniformData, bool shadow)
+void updateNode(const std::shared_ptr<SceneNode>& node, UniformData& uniformData, UniformData& uniformShadowData)
 {
     auto oldModel = uniformData.model;
     uniformData.model *= node->getNodeTransformation();
+    uniformShadowData.model = uniformData.model;
 
     // update uniforms
     for (auto& entity : node->getAttachedEntities())
     {
-        entity->updateUniforms(uniformData, shadow);
+        entity->updateUniforms(uniformData, uniformShadowData);
     }
 
     for (auto& child : node->getChildren())
     {
-        updateNode(child, uniformData, shadow);
+        updateNode(child, uniformData, uniformShadowData);
     }
 
     uniformData.model = oldModel;
+    uniformShadowData.model = oldModel;
 }
 
 void Engine::renderFrame()
@@ -185,24 +188,23 @@ void Engine::renderFrame()
         throw VulkanException("Camera not set");
     UniformData uniformData;
     _sceneManager->getMainCamera()->fillUniformData(uniformData);
+    UniformData shadowUniformData = uniformData;
     if (_sceneManager->getLight())
-        _sceneManager->getLight()->fillUniformData(uniformData);
+    {
+        _sceneManager->getLight()->fillUniformData(uniformData, false);
+        _sceneManager->getLight()->fillUniformData(shadowUniformData, true);
+    }
     _vulkanInstance->waitAvailableFramebuffer();
 
     // update uniforms
     if (skybox)
-        skybox->updateUniforms(uniformData, false);
+        skybox->updateUniforms(uniformData, shadowUniformData);
 
 
     // submit command buffers
-    auto view = uniformData.view;
-    uniformData.view = _sceneManager->getLight()->getViewMatrix();
-    updateNode(_sceneManager->getRootNode(), uniformData, true);
-    _vulkanInstance->submitCommands(VulkanInstance::CommandsType::ShadowPass);
-
-    uniformData.view = view;
-    updateNode(_sceneManager->getRootNode(), uniformData, false);
-    _vulkanInstance->submitCommands(VulkanInstance::CommandsType::MainPass);
+    updateNode(_sceneManager->getRootNode(), uniformData, shadowUniformData);
+    _vulkanInstance->submitCommands(CommandsType::ShadowPass);
+    _vulkanInstance->submitCommands(CommandsType::MainPass);
     _vulkanInstance->renderCommands();
 }
 

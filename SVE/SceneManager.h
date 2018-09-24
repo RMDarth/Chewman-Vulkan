@@ -36,7 +36,7 @@ public:
 
     void setShadowMap(std::shared_ptr<ShadowMap> shadowMap);
     void initShadowMap();
-    void createShadowMap(std::string materialName = "SimpleDepth");
+    void enableShadowMap();
     std::shared_ptr<ShadowMap> getShadowMap();
 
     void queueCommandBuffersUpdate();

@@ -1,6 +1,6 @@
 {
-    "name": "skyboxVertexShader",
-    "filename": "shaders/skybox.vert.spv",
+    "name": "phongVertexShader",
+    "filename": "glsl/phong.vert.spv",
     "shaderType": "VertexShader",
     "uniformList": [
         { "uniformType": "ModelMatrix" },

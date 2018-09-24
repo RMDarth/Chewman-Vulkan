@@ -2,5 +2,6 @@
     "name": "SimpleSkeletalDepth",
     "vertexShaderName": "simpleSkeletalDepthVertexShader",
     "fragmentShaderName": "simpleDepthFragmentShader",
-    "useDepthBias": true
+    "useDepthBias": true,
+    "useMultisampling": false
 }

@@ -80,9 +80,9 @@ void SceneManager::initShadowMap()
     _shadowmap = std::make_shared<ShadowMap>();
 }
 
-void SceneManager::createShadowMap(std::string materialName)
+void SceneManager::enableShadowMap()
 {
-    _shadowmap->setMaterial(materialName);
+    _shadowmap->enableShadowMap();
 }
 
 std::shared_ptr<ShadowMap> SceneManager::getShadowMap()

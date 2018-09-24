@@ -1,6 +1,6 @@
 {
     "name": "skyboxFragmentShader",
-    "filename": "shaders/skybox.frag.spv",
+    "filename": "glsl/skybox.frag.spv",
     "shaderType": "FragmentShader",
     "samplerNamesList": [
         "samplerCubeMap"

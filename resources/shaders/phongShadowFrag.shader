@@ -1,6 +1,6 @@
 {
     "name": "phongShadowFragmentShader",
-    "filename": "shaders/phongShadowMap.frag.spv",
+    "filename": "glsl/phongShadowMap.frag.spv",
     "shaderType": "FragmentShader",
     "samplerNamesList": [
         "diffuseTex",

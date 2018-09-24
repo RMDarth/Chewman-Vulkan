@@ -1,6 +1,6 @@
 {
     "name": "phongFragmentShader",
-    "filename": "shaders/phong.frag.spv",
+    "filename": "glsl/phong.frag.spv",
     "shaderType": "FragmentShader",
     "samplerNamesList": [
         "texSampler"

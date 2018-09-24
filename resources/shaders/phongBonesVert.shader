@@ -1,6 +1,6 @@
 {
-    "name": "simpleSkeletalDepthVertexShader",
-    "filename": "shaders/simpleSkeletalDepth.vert.spv",
+    "name": "bonesPhongVertexShader",
+    "filename": "glsl/skeletalPhong.vert.spv",
     "shaderType": "VertexShader",
     "uniformList": [
         { "uniformType": "ModelMatrix" },

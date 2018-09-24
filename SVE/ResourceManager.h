@@ -34,7 +34,7 @@ public:
     const std::vector<std::string> getFolderList() const;
 
 private:
-    enum class ResourceType
+    enum class ResourceType : uint8_t
     {
         Engine,
         Shader,

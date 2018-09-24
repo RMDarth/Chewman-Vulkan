@@ -16,16 +16,16 @@ class VulkanMesh;
 
 static const uint32_t SHADOWMAP_BUFFER_INDEX = 100;
 
+enum class CommandsType : uint8_t
+{
+    ReflectionPass,
+    ShadowPass,
+    MainPass
+};
+
 class VulkanInstance
 {
 public:
-    enum class CommandsType : uint8_t
-    {
-        ReflectionPass,
-        ShadowPass,
-        MainPass
-    };
-
     VulkanInstance(SDL_Window* window, EngineSettings settings);
     ~VulkanInstance();
 

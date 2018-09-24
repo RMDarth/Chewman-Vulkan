@@ -5,7 +5,7 @@
     "textures": [
         {
             "samplerName": "diffuseTex",
-            "filename": "textures/trashantiman_tex.png"
+            "filename": "textures/trashfloor.png"
         },
         {
             "samplerName": "shadowTex",

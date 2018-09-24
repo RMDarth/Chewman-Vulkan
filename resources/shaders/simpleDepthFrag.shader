@@ -1,5 +1,5 @@
 {
     "name": "simpleDepthFragmentShader",
-    "filename": "shaders/simpleDepth.frag.spv",
+    "filename": "glsl/simpleDepth.frag.spv",
     "shaderType": "FragmentShader"
 }

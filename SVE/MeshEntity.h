@@ -19,7 +19,7 @@ public:
 
     void setMaterial(const std::string& materialName) override;
 
-    void updateUniforms(const UniformData& data, bool shadow) const override;
+    void updateUniforms(const UniformData& data, const UniformData& shadowData) const override;
     void applyDrawingCommands(uint32_t bufferIndex, bool applyMaterial) const override;
 
 private:

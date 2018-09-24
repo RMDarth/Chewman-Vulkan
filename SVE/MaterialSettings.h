@@ -27,6 +27,7 @@ struct MaterialSettings
     bool useDepthTest = true;
     bool useDepthBias = false;
     bool invertCullFace = false;
+    bool useMultisampling = true;
 };
 
 } // namespace SVE
