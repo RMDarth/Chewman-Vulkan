@@ -12,6 +12,7 @@ class LightNode;
 class LightSettings;
 class Skybox;
 class ShadowMap;
+class Water;
 
 class SceneManager
 {
@@ -39,6 +40,9 @@ public:
     void enableShadowMap();
     std::shared_ptr<ShadowMap> getShadowMap();
 
+    std::shared_ptr<Water> createWater(float height);
+    std::shared_ptr<Water> getWater();
+
     void queueCommandBuffersUpdate();
     void dequeueCommandBufferUpdate();
     bool isCommandBufferUpdateQueued();
@@ -50,6 +54,7 @@ private:
     std::shared_ptr<LightNode> _lightNode;
     std::shared_ptr<Skybox> _skybox;
     std::shared_ptr<ShadowMap> _shadowmap;
+    std::shared_ptr<Water> _water;
 };
 
 } // namespace SVE

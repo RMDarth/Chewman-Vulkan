@@ -6,6 +6,7 @@
         { "uniformType": "ModelMatrix" },
         { "uniformType": "ViewMatrix" },
         { "uniformType": "ProjectionMatrix" },
+        { "uniformType": "ClipPlane" },
         { "uniformType": "BoneMatrices" }
     ],
     "maxBonesSize": 64

@@ -10,6 +10,7 @@
 #include "Material.h"
 #include "VulkanMaterial.h"
 #include "VulkanMesh.h"
+#include "Utils.h"
 
 namespace SVE
 {
@@ -86,9 +87,9 @@ void Skybox::applyDrawingCommands(uint32_t bufferIndex, bool applyMaterial) cons
     _mesh->getVulkanMesh()->applyDrawingCommands(bufferIndex);
 }
 
-void Skybox::updateUniforms(const UniformData& data, const UniformData& shadowData) const
+void Skybox::updateUniforms(UniformDataList uniformDataList) const
 {
-    _material->getVulkanMaterial()->setUniformData(_materialIndex, data);
+    _material->getVulkanMaterial()->setUniformData(_materialIndex, *uniformDataList[toInt(CommandsType::MainPass)]);
 }
 
 

@@ -9,3 +9,7 @@ e:\Projects\VulkanSDK\1.1.77.0\Bin32\glslangValidator.exe -V simpleDepth.frag -o
 e:\Projects\VulkanSDK\1.1.77.0\Bin32\glslangValidator.exe -V phongShadowMap.vert -o phongShadowMap.vert.spv
 e:\Projects\VulkanSDK\1.1.77.0\Bin32\glslangValidator.exe -V phongShadowMap.frag -o phongShadowMap.frag.spv
 e:\Projects\VulkanSDK\1.1.77.0\Bin32\glslangValidator.exe -V shadowMapRender.frag -o shadowMapRender.frag.spv
+e:\Projects\VulkanSDK\1.1.77.0\Bin32\glslangValidator.exe -V phongWater.vert -o phongWater.vert.spv
+e:\Projects\VulkanSDK\1.1.77.0\Bin32\glslangValidator.exe -V phongWater.frag -o phongWater.frag.spv
+e:\Projects\VulkanSDK\1.1.77.0\Bin32\glslangValidator.exe -V phongWaterShadow.vert -o phongWaterShadow.vert.spv
+e:\Projects\VulkanSDK\1.1.77.0\Bin32\glslangValidator.exe -V phongWaterShadow.frag -o phongWaterShadow.frag.spv

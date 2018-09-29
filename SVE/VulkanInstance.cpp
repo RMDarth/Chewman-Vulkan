@@ -293,7 +293,7 @@ void VulkanInstance::submitCommands(CommandsType commandsType) const
 
     if (commandsType == CommandsType::ShadowPass)
     {
-        auto shadowMapIter = _externalBufferMap.find(SHADOWMAP_BUFFER_INDEX);
+        auto shadowMapIter = _externalBufferMap.find(BUFFER_INDEX_SHADOWMAP);
         if (shadowMapIter != _externalBufferMap.end())
         {
             VkSubmitInfo submitInfo{};
@@ -313,6 +313,31 @@ void VulkanInstance::submitCommands(CommandsType commandsType) const
             }
 
             _currentWaitSemaphore = _shadowMapReadySemaphore;
+        }
+    }
+
+    if (commandsType == CommandsType::ReflectionPass)
+    {
+        auto waterReflectionIter = _externalBufferMap.find(BUFFER_INDEX_WATER_REFLECTION);
+        if (waterReflectionIter != _externalBufferMap.end())
+        {
+            VkSubmitInfo submitInfo{};
+            submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+            submitInfo.waitSemaphoreCount = 1;
+            submitInfo.pWaitSemaphores = &_currentWaitSemaphore;
+            submitInfo.pWaitDstStageMask = waitStages;
+            submitInfo.commandBufferCount = 1;
+            submitInfo.pCommandBuffers = &waterReflectionIter->second;
+            submitInfo.signalSemaphoreCount = 1;
+            submitInfo.pSignalSemaphores = &_waterReflectionReadySemaphore;
+
+            auto result = vkQueueSubmit(_queue, 1, &submitInfo, VK_NULL_HANDLE);
+            if (result != VK_SUCCESS)
+            {
+                throw VulkanException("Can't submit Vulkan command buffers to queue");
+            }
+
+            _currentWaitSemaphore = _waterReflectionReadySemaphore;
         }
     }
 
@@ -397,7 +422,7 @@ void VulkanInstance::startRenderCommandBufferCreation(uint32_t index)
     // Start recording
     if (vkBeginCommandBuffer(_commandBuffers[index], &beginInfo) != VK_SUCCESS)
     {
-        throw std::runtime_error("Failed to begin recording Vulkan command buffer");
+        throw VulkanException("Failed to begin recording Vulkan command buffer");
     }
 
     std::vector<VkClearValue> clearValues(2);
@@ -439,7 +464,7 @@ void VulkanInstance::endRenderCommandBufferCreation(uint32_t index)
     // finish recording
     if (vkEndCommandBuffer(_commandBuffers[index]) != VK_SUCCESS)
     {
-        throw std::runtime_error("Failed to record Vulkan command buffer");
+        throw VulkanException("Failed to record Vulkan command buffer");
     }
 }
 
@@ -546,6 +571,7 @@ void VulkanInstance::createDevice()
     // TODO: move filtering method to EngineSettings
     VkPhysicalDeviceFeatures deviceFeatures {};
     deviceFeatures.samplerAnisotropy = VK_TRUE;
+    deviceFeatures.shaderClipDistance = VK_TRUE;
 
     VkDeviceCreateInfo deviceCreateInfo{};
     deviceCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
@@ -980,6 +1006,14 @@ void VulkanInstance::createSyncPrimitives()
         throw std::runtime_error("Failed to create Vulkan semaphore");
     }
     if (vkCreateSemaphore(_device, &semaphoreCreateInfo, nullptr, &_shadowMapReadySemaphore) != VK_SUCCESS)
+    {
+        throw std::runtime_error("Failed to create Vulkan semaphore");
+    }
+    if (vkCreateSemaphore(_device, &semaphoreCreateInfo, nullptr, &_waterReflectionReadySemaphore) != VK_SUCCESS)
+    {
+        throw std::runtime_error("Failed to create Vulkan semaphore");
+    }
+    if (vkCreateSemaphore(_device, &semaphoreCreateInfo, nullptr, &_waterRefractionReadySemaphore) != VK_SUCCESS)
     {
         throw std::runtime_error("Failed to create Vulkan semaphore");
     }

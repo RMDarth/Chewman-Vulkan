@@ -14,6 +14,11 @@
 #include <memory>
 #include <chrono>
 
+// Thanks to:
+// Karl "ThinMatrix" for his video blogs on OpenGL techniques
+// Niko Kauppi for his Vulkan video tutorials
+// Alexander Overvoorde for his Vulkan tutorial website (https://vulkan-tutorial.com)
+
 void updateNode(std::shared_ptr<SVE::SceneNode>& node)
 {
     static auto startTime = std::chrono::high_resolution_clock::now();
@@ -27,42 +32,47 @@ void updateNode(std::shared_ptr<SVE::SceneNode>& node)
 
 void moveCamera(SDL_Keycode keycode, std::shared_ptr<SVE::CameraNode>& camera)
 {
-    auto nodeTransformation = camera->getNodeTransformation();
+    auto pos = camera->getPosition();
+    auto yawPitchRoll = camera->getYawPitchRoll();
     switch (keycode)
     {
         case SDLK_a:
-            camera->setNodeTransformation(camera->getNodeTransformation() * glm::translate(glm::mat4(1), glm::vec3(-0.1, 0, 0)));
+            camera->movePosition(glm::vec3(-0.15f,0,0));
             break;
         case SDLK_d:
-            camera->setNodeTransformation(camera->getNodeTransformation() * glm::translate(glm::mat4(1), glm::vec3(0.1, 0, 0)));
+            camera->movePosition(glm::vec3(0.15f,0,0));
             break;
         case SDLK_w:
-            camera->setNodeTransformation(camera->getNodeTransformation() * glm::translate(glm::mat4(1), glm::vec3(0, 0, -0.2f)));
+            camera->movePosition(glm::vec3(0,0,-0.15f));
             break;
         case SDLK_s:
-            camera->setNodeTransformation(camera->getNodeTransformation() * glm::translate(glm::mat4(1), glm::vec3(0, 0, 0.2f)));
+            camera->movePosition(glm::vec3(0,0,0.15f));
             break;
     }
 }
 
 void moveCamera(SDL_MouseMotionEvent& event, std::shared_ptr<SVE::CameraNode>& camera)
 {
-    auto nodeTransformation = camera->getNodeTransformation();
-    nodeTransformation = nodeTransformation * glm::rotate(glm::mat4(1.0f), glm::radians(-event.xrel * 0.4f), glm::vec3(0, 1, 0));
-    nodeTransformation = nodeTransformation * glm::rotate(glm::mat4(1.0f), glm::radians(-event.yrel * 0.4f), glm::vec3(1, 0, 0));
-    camera->setNodeTransformation(nodeTransformation);
+    //auto nodeTransformation = camera->getNodeTransformation();
+    //nodeTransformation = nodeTransformation * glm::rotate(glm::mat4(1.0f), glm::radians(-event.xrel * 0.4f), glm::vec3(0, 1, 0));
+    //nodeTransformation = nodeTransformation * glm::rotate(glm::mat4(1.0f), glm::radians(-event.yrel * 0.4f), glm::vec3(1, 0, 0));
+    //camera->setNodeTransformation(nodeTransformation);
+    auto yawPitchRoll = camera->getYawPitchRoll();
+    yawPitchRoll.x += glm::radians(-event.xrel * 0.4f);
+    yawPitchRoll.y += glm::radians(-event.yrel * 0.4f);
+    camera->setYawPitchRoll(yawPitchRoll);
 }
 
 SVE::MeshSettings constructPlane(std::string name, glm::vec3 center, float width, float height, glm::vec3 normal)
 {
     std::vector<glm::vec3> points =
             {
-                    {-1.0f,  1.0f, 0.0f},
-                    {-1.0f, -1.0f, 0.0f},
-                    {1.0f, -1.0f, 0.0f},
-                    {1.0f, -1.0f, 0.0f},
-                    {1.0f,  1.0f, 0.0f},
-                    {-1.0f,  1.0f, 0.0f},
+                    {-1.0f,  0.0f,  1.0f},
+                    {-1.0f,  0.0f, -1.0f},
+                    {1.0f,   0.0f, -1.0f},
+                    {1.0f,   0.0f, -1.0f},
+                    {1.0f,   0.0f, 1.0f},
+                    {-1.0f,  0.0f, 1.0f},
             };
     std::vector<glm::vec2> texCoords =
             {
@@ -80,8 +90,8 @@ SVE::MeshSettings constructPlane(std::string name, glm::vec3 center, float width
     uint32_t currentIndex = 0;
     for (auto& point : points)
     {
-        auto mat = glm::orientation(glm::vec3(0.0f, 0.0f, 1.0f), normal);
-        mat = mat * glm::scale(glm::mat4(1), glm::vec3(width, height, 0));
+        //auto mat = glm::orientation(glm::vec3(0.0f, 0.0f, 1.0f), normal);
+        auto mat = glm::mat4(1) * glm::scale(glm::mat4(1), glm::vec3(width, 0, height));
         point = glm::vec3(mat * glm::vec4(point, 1.0f));
         point += center;
 
@@ -129,15 +139,20 @@ int runGame()
     engine->getResourceManager()->loadFolder("resources");
 
     // configure light
-    engine->getSceneManager()->getLight()->setNodeTransformation(glm::translate(glm::mat4(1), glm::vec3(5, 5, -5)));
+    engine->getSceneManager()->getLight()->setNodeTransformation(glm::translate(glm::mat4(1), glm::vec3(5, 5, 5)));
 
     // create camera
     auto camera = engine->getSceneManager()->createMainCamera();
     camera->setNearFarPlane(0.1f, 50.0f);
-    camera->setLookAt(glm::vec3(5.0f, 5.0f, 5.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+    camera->setPosition(glm::vec3(5.0f, 5.0f, 5.0f));
+    camera->setYawPitchRoll(glm::vec3(0.0f, glm::degrees(-30.0f), 0.0f));
+    //camera->setLookAt(glm::vec3(5.0f, 5.0f, 5.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 
     // create shadowmap
     engine->getSceneManager()->enableShadowMap();
+
+    // init water
+    //engine->getSceneManager()->getWater()->setHeight(0.0f);
 
     // create skybox
     engine->getSceneManager()->setSkybox("Skybox");
@@ -145,31 +160,45 @@ int runGame()
     // create floor
     auto meshSettings = constructPlane("Floor", glm::vec3(0, 0, 0), 10.0f, 10.0f, glm::vec3(0.0f, 1.0f, 0.0f));
     meshSettings.materialName = "Floor";
-    auto mesh = std::make_shared<SVE::Mesh>(std::move(meshSettings));
+    auto mesh = std::make_shared<SVE::Mesh>(meshSettings);
     engine->getMeshManager()->registerMesh(mesh);
+
+    meshSettings.name = "Floor2";
+    meshSettings.materialName = "WaterReflection";
+    auto mesh2 = std::make_shared<SVE::Mesh>(meshSettings);
+    engine->getMeshManager()->registerMesh(mesh2);
 
     // create nodes
     auto newNodeMid = engine->getSceneManager()->createSceneNode();
     auto newNode = engine->getSceneManager()->createSceneNode();
     auto newNode2 = engine->getSceneManager()->createSceneNode();
     auto floorNode = engine->getSceneManager()->createSceneNode();
+    auto waterNode = engine->getSceneManager()->createSceneNode();
     engine->getSceneManager()->getRootNode()->attachSceneNode(newNodeMid);
     newNodeMid->attachSceneNode(newNode);
     engine->getSceneManager()->getRootNode()->attachSceneNode(newNode2);
     engine->getSceneManager()->getRootNode()->attachSceneNode(floorNode);
+    engine->getSceneManager()->getRootNode()->attachSceneNode(waterNode);
 
     // create entities
     std::shared_ptr<SVE::Entity> meshEntity = std::make_shared<SVE::MeshEntity>("trashman");
     std::shared_ptr<SVE::Entity> meshEntity2 = std::make_shared<SVE::MeshEntity>("trashman");
     std::shared_ptr<SVE::Entity> floorEntity = std::make_shared<SVE::MeshEntity>("Floor");
-    // floorEntity->setMaterial("Floor");
+    std::shared_ptr<SVE::Entity> waterEntity = std::make_shared<SVE::MeshEntity>("Floor2");
+    waterEntity->setMaterial("WaterReflection");
+    //floorEntity->setMaterial("Floor");
     meshEntity->setMaterial("Yellow");
     meshEntity2->setMaterial("Blue");
 
     // configure and attach objects to nodes
     newNode->attachEntity(meshEntity);
-    newNode2->setNodeTransformation(glm::translate(glm::mat4(1), glm::vec3(2, 0, 0)));
+    newNode2->setNodeTransformation(glm::translate(glm::mat4(1), glm::vec3(-9, 0, 0)));
+
     floorNode->attachEntity(floorEntity);
+    floorNode->setNodeTransformation(glm::translate(glm::mat4(1), glm::vec3(-20, 0, 0)));
+    waterNode->setNodeTransformation(glm::translate(glm::mat4(1), glm::vec3(0, 0, 0)));
+    waterNode->attachEntity(waterEntity);
+
 
     bool quit = false;
     bool skipRendering = false;

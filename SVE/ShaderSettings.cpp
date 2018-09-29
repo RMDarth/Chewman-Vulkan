@@ -22,7 +22,9 @@ const std::map<UniformType, size_t>& getUniformSizeMap()
             { UniformType::LightSpecular, sizeof(float) },
             { UniformType::LightShininess, sizeof(float) },
             { UniformType::LightViewProjection, sizeof(glm::mat4) },
-            { UniformType::BoneMatrices, sizeof(glm::mat4) }
+            { UniformType::BoneMatrices, sizeof(glm::mat4) },
+            { UniformType::ClipPlane, sizeof(glm::vec4) },
+            { UniformType::Time, sizeof(float) },
     };
     return uniformSizeMap;
 }

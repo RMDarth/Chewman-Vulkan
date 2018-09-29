@@ -18,6 +18,14 @@ class ShaderManager;
 class MeshManager;
 class ResourceManager;
 
+enum class CommandsType : uint8_t
+{
+    MainPass = 0,
+    ShadowPass,
+    ReflectionPass,
+    RefractionPass
+};
+
 class Engine
 {
 public:
@@ -37,7 +45,9 @@ public:
     void finishRendering();
 
     bool isShadowMappingEnabled() const;
+    bool isWaterEnabled() const;
 
+    CommandsType getPassType() const;
     float getTime();
 
     void renderFrame();
@@ -48,6 +58,7 @@ private:
 private:
     static Engine* _engineInstance;
     VulkanInstance* _vulkanInstance;
+    CommandsType _commandsType = CommandsType::MainPass;
     std::unique_ptr<MaterialManager> _materialManager;
     std::unique_ptr<SceneManager> _sceneManager;
     std::unique_ptr<MeshManager> _meshManager;

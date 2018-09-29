@@ -19,7 +19,7 @@ public:
 
     void setMaterial(const std::string& materialName) override;
 
-    void updateUniforms(const UniformData& data, const UniformData& shadowData) const override;
+    void updateUniforms(UniformDataList uniformDataList) const override;
     void applyDrawingCommands(uint32_t bufferIndex, bool applyMaterial) const override;
 
 private:
@@ -28,8 +28,10 @@ private:
 private:
     std::shared_ptr<Mesh> _mesh;
     std::shared_ptr<Material> _material;
+    bool _waterMaterial = false;
 
     uint32_t _materialIndex;
+    uint32_t _reflectionMaterialIndex;
 
     std::shared_ptr<Material> _shadowMaterial;
     uint32_t _shadowMaterialIndex;

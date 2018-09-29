@@ -5,6 +5,7 @@
 #include "LightNode.h"
 #include "ShadowMap.h"
 #include "Skybox.h"
+#include "Water.h"
 
 namespace SVE
 {
@@ -88,6 +89,17 @@ void SceneManager::enableShadowMap()
 std::shared_ptr<ShadowMap> SceneManager::getShadowMap()
 {
     return _shadowmap;
+}
+
+std::shared_ptr<Water> SceneManager::createWater(float height)
+{
+    _water = std::make_shared<Water>(height);
+    return _water;
+}
+
+std::shared_ptr<Water> SceneManager::getWater()
+{
+    return _water;
 }
 
 void SceneManager::queueCommandBuffersUpdate()

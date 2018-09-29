@@ -1,5 +1,7 @@
 {
     "applicationName": "Chewman Vulkan",
     "useValidation": true,
-    "gpuIndex": "best"
+    "gpuIndex": "best",
+    "initShadows": true,
+    "initWater": true
 }

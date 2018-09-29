@@ -17,7 +17,7 @@ class VulkanInstance;
 class VulkanShadowMap
 {
 public:
-    explicit VulkanShadowMap();
+    VulkanShadowMap();
     ~VulkanShadowMap();
 
     void setLight(std::shared_ptr<LightNode> light);

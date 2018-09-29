@@ -69,5 +69,5 @@ add_executable(Chewman
         SVE/VulkanShadowMap.cpp
         SVE/VulkanShadowMap.h
         SVE/ShadowMap.cpp
-        SVE/ShadowMap.h)
+        SVE/ShadowMap.h SVE/VulkanWater.cpp SVE/VulkanWater.h SVE/Water.cpp SVE/Water.h SVE/Utils.h)
 target_link_libraries(Chewman mingw32 SDL2main SDL2 vulkan-1.lib libassimp libcppfsd)

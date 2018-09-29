@@ -19,7 +19,7 @@ public:
     ~Skybox() override;
 
     void applyDrawingCommands(uint32_t bufferIndex, bool applyMaterial) const override;
-    void updateUniforms(const UniformData& data, const UniformData& shadowData) const override;
+    void updateUniforms(UniformDataList uniformDataList) const override;
 
 private:
     std::shared_ptr<Mesh> _mesh;

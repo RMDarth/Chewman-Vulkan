@@ -8,6 +8,8 @@
 #include "ShaderSettings.h"
 
 #include <utility>
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/gtx/euler_angles.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
 namespace SVE
@@ -71,6 +73,11 @@ const glm::mat4& CameraNode::getViewMatrix()
 
 void CameraNode::fillUniformData(UniformData& data)
 {
+    auto cameraPos = glm::yawPitchRoll(_yawPitchRoll.x, _yawPitchRoll.y + 3.14f, _yawPitchRoll.z);
+    cameraPos = glm::translate(glm::mat4(1), _position) * cameraPos;
+    _view = glm::inverse(cameraPos);
+    SceneNode::setNodeTransformation(cameraPos);
+
     data.projection = _projection;
     data.view = _view;
     data.model = glm::mat4(1);
@@ -79,14 +86,46 @@ void CameraNode::fillUniformData(UniformData& data)
 
 void CameraNode::setLookAt(glm::vec3 pos, glm::vec3 target,  glm::vec3 up)
 {
-    _view = glm::lookAt(pos, target, up);
-    SceneNode::setNodeTransformation(glm::inverse(_view));
+    auto view = glm::lookAt(pos, target, up);
+    SceneNode::setNodeTransformation(glm::inverse(view));
+    _position = pos;
+    //glm::transpose(view);
+    _yawPitchRoll.x = atan2f(view[1][0], view[0][0]);
+    _yawPitchRoll.y= atan2f(view[2][0], sqrtf(view[2][1] * view[2][1] + view[2][2] * view[2][2])) + 3.14f;
+    //_yawPitchRoll.z= atan2(view[2][1],view[2][2]);
+
 }
 
 void CameraNode::setNodeTransformation(glm::mat4 transform)
 {
     _view = glm::inverse(transform);
     SceneNode::setNodeTransformation(transform);
+}
+
+void CameraNode::setPosition(glm::vec3 pos)
+{
+    _position = pos;
+}
+
+glm::vec3 CameraNode::getPosition()
+{
+    return _position;
+}
+
+void CameraNode::setYawPitchRoll(glm::vec3 yawPitchRoll)
+{
+    _yawPitchRoll = yawPitchRoll;
+}
+
+glm::vec3 CameraNode::getYawPitchRoll()
+{
+    return _yawPitchRoll;
+}
+
+void CameraNode::movePosition(glm::vec3 deltaPos)
+{
+    auto cameraPos = glm::yawPitchRoll(_yawPitchRoll.x, _yawPitchRoll.y + 3.14f, _yawPitchRoll.z);
+    _position += glm::vec3(cameraPos * glm::vec4(deltaPos, 0));
 }
 
 

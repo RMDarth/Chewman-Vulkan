@@ -14,13 +14,11 @@ namespace SVE
 {
 class VulkanMesh;
 
-static const uint32_t SHADOWMAP_BUFFER_INDEX = 100;
-
-enum class CommandsType : uint8_t
+enum BufferIndex
 {
-    ReflectionPass,
-    ShadowPass,
-    MainPass
+    BUFFER_INDEX_SHADOWMAP = 100,
+    BUFFER_INDEX_WATER_REFLECTION = 101,
+    BUFFER_INDEX_WATER_REFRACTION = 102,
 };
 
 class VulkanInstance
@@ -146,6 +144,8 @@ private:
     VkImageView _depthImageView;
 
     VkSemaphore _shadowMapReadySemaphore;
+    VkSemaphore _waterReflectionReadySemaphore;
+    VkSemaphore _waterRefractionReadySemaphore;
     VkSemaphore _imageAvailableSemaphore;
     VkSemaphore _renderFinishedSemaphore;
 

@@ -61,6 +61,8 @@ EngineSettings loadEngine(const std::string& data)
                        : throw VulkanException("Incorrect MSAA level"))
                 : document["MSAALevel"].GetInt());
     setOptional(engineSettings.applicationName = document["applicationName"].GetString());
+    setOptional(engineSettings.initShadows = document["initShadows"].GetBool());
+    setOptional(engineSettings.initWater = document["initWater"].GetBool());
 
     return engineSettings;
 }
@@ -81,6 +83,8 @@ std::vector<UniformInfo> getUniformInfoList(rj::Document& document)
             {"LightShininess",            UniformType::LightShininess},
             {"LightViewProjection",       UniformType::LightViewProjection},
             {"BoneMatrices",              UniformType::BoneMatrices},
+            {"ClipPlane",                 UniformType::ClipPlane},
+            {"Time",                      UniformType::Time},
     };
 
     std::vector<UniformInfo> uniformList;
@@ -168,7 +172,8 @@ std::vector<TextureInfo> getTextureInfos(const cppfs::FilePath& directory, rj::D
         TextureInfo textureInfo {};
         // TODO: Revise shadowmap settings (move it to texture type instead of filename)
         std::string filename = item["filename"].GetString();
-        textureInfo.filename = filename == "shadowmap" ? "shadowmap" : directory.resolve(item["filename"].GetString()).fullPath();
+        textureInfo.filename = filename == "shadowmap" ? "shadowmap" :
+                                    filename == "reflection" ? "reflection" : directory.resolve(item["filename"].GetString()).fullPath();
         textureInfo.samplerName = item["samplerName"].GetString();
 
         textureInfosList.push_back(std::move(textureInfo));

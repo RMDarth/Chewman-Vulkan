@@ -6,8 +6,7 @@ layout (set = 0, binding = 0) uniform UBO
 	mat4 model;
 	mat4 view;
 	mat4 projection;
-	mat4 lightViewProjection;
-	vec4 clipPlane;
+    mat4 lightViewProjection;
 } uniforms;
 
 layout (location = 0) in vec3 inPosition;
@@ -19,23 +18,23 @@ layout(location = 0) out vec3 fragColor;
 layout(location = 1) out vec2 fragTexCoord;
 layout(location = 2) out vec3 fragNormal;
 layout(location = 3) out vec3 fragPos;
-layout(location = 4) out vec4 fragLightSpacePos;
+layout(location = 4) out vec4 fragClipPosition;
+layout(location = 5) out vec4 fragLightSpacePos;
 
 out gl_PerVertex {
     vec4 gl_Position;
-    float gl_ClipDistance[];
 };
 
 void main() {
     vec4 worldPos = uniforms.model * vec4(inPosition, 1.0);
+    fragClipPosition = uniforms.projection * uniforms.view * worldPos;
 
-    gl_Position = uniforms.projection * uniforms.view * worldPos;
-    gl_ClipDistance[0] = dot(worldPos, uniforms.clipPlane);
+    gl_Position = fragClipPosition;
+
     fragColor = inColor;
     fragTexCoord = inTexCoord;
-
     fragPos = vec3(worldPos);
-    fragNormal = vec3(transpose(inverse(uniforms.model)) * vec4(inNormal, 1.0));
+    fragNormal = vec3(transpose(inverse(uniforms.model))  * vec4(inNormal, 1.0));
 
-    fragLightSpacePos =  uniforms.lightViewProjection * worldPos;
+    fragLightSpacePos = uniforms.lightViewProjection * worldPos;
 }

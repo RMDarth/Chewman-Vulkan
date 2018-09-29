@@ -1,6 +1,6 @@
 // VSE (Vulkan Simple Engine) Library
 // Copyright (c) 2018-2019, Igor Barinov
-// Licensed under CC BY 4.0#include "VulkanMaterial.h"
+// Licensed under CC BY 4.0
 #include "VulkanMaterial.h"
 #include "VulkanException.h"
 #include "VulkanInstance.h"
@@ -9,6 +9,8 @@
 #include "SceneManager.h"
 #include "ShadowMap.h"
 #include "VulkanShadowMap.h"
+#include "Water.h"
+#include "VulkanWater.h"
 #include "Entity.h"
 #include "Engine.h"
 #include <fstream>
@@ -121,16 +123,25 @@ std::vector<VkDescriptorSet> VulkanMaterial::getDescriptorSets(uint32_t material
     return sets;
 }
 
-uint32_t VulkanMaterial::getInstanceForEntity(Entity* entity)
+uint32_t VulkanMaterial::getInstanceForEntity(Entity* entity, uint32_t index)
 {
     auto instanceIter = _entityInstanceMap.find(entity);
     if (instanceIter != _entityInstanceMap.end())
-        return instanceIter->second;
+    {
+        if (instanceIter->second.size() > index)
+            return instanceIter->second[index];
+
+        if (index > instanceIter->second.size())
+            throw VulkanException("Incorrect entity material index");
+        instanceIter->second.push_back(0);
+    } else {
+        _entityInstanceMap[entity] = std::vector<uint32_t>(1);
+    }
 
     createUniformBuffers();
     createDescriptorPool();
     createDescriptorSets();
-    _entityInstanceMap[entity] = _instanceData.size() - 1;
+    _entityInstanceMap[entity][index] = _instanceData.size() - 1;
     return _instanceData.size() - 1;
 }
 
@@ -258,7 +269,7 @@ void VulkanMaterial::createPipeline()
             VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
     colorBlendAttachment.blendEnable = VK_FALSE;
     colorBlendAttachment.srcColorBlendFactor = VK_BLEND_FACTOR_ONE;
-    colorBlendAttachment.dstColorBlendFactor = VK_BLEND_FACTOR_ZERO;
+    colorBlendAttachment.dstColorBlendFactor = VK_BLEND_FACTOR_DST_ALPHA;
     colorBlendAttachment.colorBlendOp = VK_BLEND_OP_ADD;
     colorBlendAttachment.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
     colorBlendAttachment.dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
@@ -369,6 +380,13 @@ void VulkanMaterial::createTextureImages()
             auto shadowMap = Engine::getInstance()->getSceneManager()->getShadowMap()->getVulkanShadowMap();
             _textureImageViews[i] = shadowMap->getShadowMapImageView();
             _textureSamplers[i] = shadowMap->getShadowMapSampler();
+            continue;
+        } else if (_materialSettings.textures[i].filename == "reflection")
+        {
+            _textureExternal[i] = true;
+            auto water = Engine::getInstance()->getSceneManager()->getWater()->getVulkanWater();
+            _textureImageViews[i] = water->getImageView(VulkanWater::PassType::Reflection);
+            _textureSamplers[i] = water->getSampler(VulkanWater::PassType::Reflection);
             continue;
         } else {
             _textureExternal[i] = false;
@@ -922,6 +940,16 @@ std::vector<char> VulkanMaterial::getUniformDataByType(const UniformData& data, 
         {
             const char* byteData = reinterpret_cast<const char*>(data.bones.data());
             return std::vector<char>(byteData, byteData + sizeMap.at(type) * data.bones.size());
+        }
+        case UniformType::ClipPlane:
+        {
+            const char* byteData = reinterpret_cast<const char*>(&data.clipPlane);
+            return std::vector<char>(byteData, byteData + sizeof(data.clipPlane));
+        }
+        case UniformType::Time:
+        {
+            const char* byteData = reinterpret_cast<const char*>(&data.time);
+            return std::vector<char>(byteData, byteData + sizeof(data.time));
         }
     }
 

@@ -7,6 +7,7 @@
 #include "Engine.h"
 #include "VulkanInstance.h"
 #include "VulkanShadowMap.h"
+#include "VulkanWater.h"
 #include "VulkanException.h"
 #include "MaterialManager.h"
 #include "SceneManager.h"
@@ -17,6 +18,8 @@
 #include "LightNode.h"
 #include "Skybox.h"
 #include "ShadowMap.h"
+#include "Water.h"
+#include "Utils.h"
 #include <chrono>
 
 namespace SVE
@@ -47,10 +50,15 @@ Engine* Engine::createInstance(SDL_Window* window, const std::string& settingsPa
         {
             throw VulkanException("Can't find SVE configuration file");
         }
-        _engineInstance = new Engine(window, data.engine.front());
+
+        auto settings = data.engine.front();
+        _engineInstance = new Engine(window, settings);
 
         // TODO: Revise shadowmap creation sequence
-        _engineInstance->getSceneManager()->initShadowMap();
+        if (settings.initShadows)
+            _engineInstance->getSceneManager()->initShadowMap();
+        if (settings.initWater)
+            _engineInstance->getSceneManager()->createWater(0);
     }
     return _engineInstance;
 }
@@ -119,11 +127,11 @@ void Engine::finishRendering()
     _vulkanInstance->finishRendering();
 }
 
-void createNodeDrawCommands(std::shared_ptr<SceneNode> node, uint32_t bufferIndex)
+void createNodeDrawCommands(const std::shared_ptr<SceneNode>& node, uint32_t bufferIndex)
 {
     for (auto& entity : node->getAttachedEntities())
     {
-        entity->applyDrawingCommands(bufferIndex, bufferIndex != SHADOWMAP_BUFFER_INDEX);
+        entity->applyDrawingCommands(bufferIndex, bufferIndex != BUFFER_INDEX_SHADOWMAP);
     }
 
     for (auto& child : node->getChildren())
@@ -132,25 +140,26 @@ void createNodeDrawCommands(std::shared_ptr<SceneNode> node, uint32_t bufferInde
     }
 }
 
-void updateNode(const std::shared_ptr<SceneNode>& node, UniformData& uniformData, UniformData& uniformShadowData)
+void updateNode(const std::shared_ptr<SceneNode>& node, UniformDataList& uniformDataList)
 {
-    auto oldModel = uniformData.model;
-    uniformData.model *= node->getNodeTransformation();
-    uniformShadowData.model = uniformData.model;
+    auto oldModel = uniformDataList[toInt(CommandsType::MainPass)]->model;
+    uniformDataList[toInt(CommandsType::MainPass)]->model *= node->getNodeTransformation();
+    uniformDataList[toInt(CommandsType::ShadowPass)]->model = uniformDataList[toInt(CommandsType::MainPass)]->model;
+    uniformDataList[toInt(CommandsType::ReflectionPass)]->model = uniformDataList[toInt(CommandsType::MainPass)]->model;
 
     // update uniforms
     for (auto& entity : node->getAttachedEntities())
     {
-        entity->updateUniforms(uniformData, uniformShadowData);
+        entity->updateUniforms(uniformDataList);
     }
 
     for (auto& child : node->getChildren())
     {
-        updateNode(child, uniformData, uniformShadowData);
+        updateNode(child, uniformDataList);
     }
 
-    uniformData.model = oldModel;
-    uniformShadowData.model = oldModel;
+    for (auto i = 0u; i < 4; i++)
+        uniformDataList[i]->model = oldModel;
 }
 
 void Engine::renderFrame()
@@ -162,15 +171,35 @@ void Engine::renderFrame()
     {
         _vulkanInstance->reallocateCommandBuffers();
 
+        _commandsType = CommandsType::ShadowPass;
         auto shadowMap = _sceneManager->getShadowMap();
         if (shadowMap->isEnabled())
         {
             shadowMap->getVulkanShadowMap()->reallocateCommandBuffers();
             shadowMap->getVulkanShadowMap()->startRenderCommandBufferCreation();
-            createNodeDrawCommands(_sceneManager->getRootNode(), SHADOWMAP_BUFFER_INDEX);
+            createNodeDrawCommands(_sceneManager->getRootNode(), BUFFER_INDEX_SHADOWMAP);
             shadowMap->getVulkanShadowMap()->endRenderCommandBufferCreation();
         }
 
+        if (auto water = _sceneManager->getWater())
+        {
+            water->getVulkanWater()->reallocateCommandBuffers();
+            _commandsType = CommandsType::ReflectionPass;
+            water->getVulkanWater()->startRenderCommandBufferCreation(VulkanWater::PassType::Reflection);
+            if (skybox)
+                skybox->applyDrawingCommands(BUFFER_INDEX_WATER_REFLECTION, true);
+            createNodeDrawCommands(_sceneManager->getRootNode(), BUFFER_INDEX_WATER_REFLECTION);
+            water->getVulkanWater()->endRenderCommandBufferCreation(VulkanWater::PassType::Reflection);
+
+            _commandsType = CommandsType::RefractionPass;
+            water->getVulkanWater()->startRenderCommandBufferCreation(VulkanWater::PassType::Refraction);
+            if (skybox)
+                skybox->applyDrawingCommands(BUFFER_INDEX_WATER_REFLECTION, true);
+            createNodeDrawCommands(_sceneManager->getRootNode(), BUFFER_INDEX_WATER_REFRACTION);
+            water->getVulkanWater()->endRenderCommandBufferCreation(VulkanWater::PassType::Refraction);
+        }
+
+        _commandsType = CommandsType::MainPass;
         for (auto i = 0u; i < _vulkanInstance->getSwapchainSize(); ++i)
         {
             _vulkanInstance->startRenderCommandBufferCreation(i);
@@ -185,25 +214,49 @@ void Engine::renderFrame()
     // Fill uniform data (from camera and lights)
     auto mainCamera = _sceneManager->getMainCamera();
     if (!mainCamera)
-        throw VulkanException("Camera not set");
-    UniformData uniformData;
-    _sceneManager->getMainCamera()->fillUniformData(uniformData);
-    UniformData shadowUniformData = uniformData;
+        throw VulkanException("Camera not set");\
+    UniformDataList uniformDataList(4);
+    for (auto i = 0; i < 4; i++)
+    {
+        uniformDataList[i] = std::make_shared<UniformData>();
+    }
+    auto mainUniform = uniformDataList[toInt(CommandsType::MainPass)];
+
+    mainUniform->clipPlane = glm::vec4(0.0, 1.0, 0.0, 500);
+    mainUniform->time = getTime();
+    _sceneManager->getMainCamera()->fillUniformData(*mainUniform);
+
+    for (auto i = 1; i < 4; i++)
+    {
+        *uniformDataList[i] = *uniformDataList[0];
+    }
     if (_sceneManager->getLight())
     {
-        _sceneManager->getLight()->fillUniformData(uniformData, false);
-        _sceneManager->getLight()->fillUniformData(shadowUniformData, true);
+        for (auto i = 0; i < 4; i++)
+        {
+            _sceneManager->getLight()->fillUniformData(*uniformDataList[i], i == toInt(CommandsType::ShadowPass));
+        }
+    }
+    if (auto water = _sceneManager->getWater())
+    {
+        water->getVulkanWater()->fillUniformData(*uniformDataList[toInt(CommandsType::ReflectionPass)],
+                                                 VulkanWater::PassType::Reflection);
     }
     _vulkanInstance->waitAvailableFramebuffer();
 
     // update uniforms
     if (skybox)
-        skybox->updateUniforms(uniformData, shadowUniformData);
-
+        skybox->updateUniforms(uniformDataList);
 
     // submit command buffers
-    updateNode(_sceneManager->getRootNode(), uniformData, shadowUniformData);
+    updateNode(_sceneManager->getRootNode(), uniformDataList);
     _vulkanInstance->submitCommands(CommandsType::ShadowPass);
+    if (auto water = _sceneManager->getWater())
+    {
+        _vulkanInstance->submitCommands(CommandsType::ReflectionPass);
+        //_vulkanInstance->submitCommands(CommandsType::RefractionPass);
+    }
+
     _vulkanInstance->submitCommands(CommandsType::MainPass);
     _vulkanInstance->renderCommands();
 }
@@ -216,9 +269,19 @@ float Engine::getTime()
     return std::chrono::duration<float, std::chrono::seconds::period>(currentTime - startTime).count();
 }
 
+CommandsType Engine::getPassType() const
+{
+    return _commandsType;
+}
+
 bool Engine::isShadowMappingEnabled() const
 {
     return _sceneManager->getShadowMap()->isEnabled();
+}
+
+bool Engine::isWaterEnabled() const
+{
+    return _sceneManager->getWater() != nullptr;
 }
 
 } // namespace SVE

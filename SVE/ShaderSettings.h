@@ -26,6 +26,8 @@ enum class UniformType : uint8_t
     LightShininess,
     LightViewProjection,
     BoneMatrices,
+    ClipPlane,
+    Time
     // TODO: Add light, material properties, time, other matrices types etc.
 };
 
@@ -44,6 +46,8 @@ struct UniformData
     glm::mat4 lightViewProjection;
     glm::vec4 cameraPos;
     glm::vec4 lightPos;
+    glm::vec4 clipPlane;  // (Nx, Ny, Nz, DistanceFromOrigin)
+    float time;
     LightSettings lightSettings;
     std::vector<glm::mat4> bones;
 };

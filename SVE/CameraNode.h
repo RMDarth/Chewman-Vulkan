@@ -24,6 +24,12 @@ public:
 
     void setLookAt(glm::vec3 pos, glm::vec3 target, glm::vec3 up);
 
+    void setPosition(glm::vec3 pos);
+    void movePosition(glm::vec3 deltaPos);
+    glm::vec3 getPosition();
+    void setYawPitchRoll(glm::vec3 yawPitchRoll);
+    glm::vec3 getYawPitchRoll();
+
     void fillUniformData(UniformData& data);
 
     void setNodeTransformation(glm::mat4 transform) override;
@@ -32,6 +38,8 @@ private:
 
 private:
     CameraSettings _cameraSettings;
+    glm::vec3 _yawPitchRoll;
+    glm::vec3 _position;
     glm::mat4 _projection;
     glm::mat4 _view;
 };
