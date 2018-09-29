@@ -341,6 +341,31 @@ void VulkanInstance::submitCommands(CommandsType commandsType) const
         }
     }
 
+    if (commandsType == CommandsType::RefractionPass)
+    {
+        auto waterReflectionIter = _externalBufferMap.find(BUFFER_INDEX_WATER_REFRACTION);
+        if (waterReflectionIter != _externalBufferMap.end())
+        {
+            VkSubmitInfo submitInfo{};
+            submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+            submitInfo.waitSemaphoreCount = 1;
+            submitInfo.pWaitSemaphores = &_currentWaitSemaphore;
+            submitInfo.pWaitDstStageMask = waitStages;
+            submitInfo.commandBufferCount = 1;
+            submitInfo.pCommandBuffers = &waterReflectionIter->second;
+            submitInfo.signalSemaphoreCount = 1;
+            submitInfo.pSignalSemaphores = &_waterRefractionReadySemaphore;
+
+            auto result = vkQueueSubmit(_queue, 1, &submitInfo, VK_NULL_HANDLE);
+            if (result != VK_SUCCESS)
+            {
+                throw VulkanException("Can't submit Vulkan command buffers to queue");
+            }
+
+            _currentWaitSemaphore = _waterRefractionReadySemaphore;
+        }
+    }
+
     if (commandsType == CommandsType::MainPass)
     {
         VkSubmitInfo submitInfo{};

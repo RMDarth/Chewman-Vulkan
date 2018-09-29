@@ -37,10 +37,17 @@ void MeshEntity::setMaterial(const std::string& materialName)
     if (materialName == "WaterReflection")
     {
         _waterMaterial = true;
+        _castShadows = false;
     }
     _material = Engine::getInstance()->getMaterialManager()->getMaterial(materialName);
     setupMaterial();
 }
+
+void MeshEntity::setCastShadows(bool castShadows)
+{
+    _castShadows = castShadows;
+}
+
 
 void MeshEntity::updateUniforms(UniformDataList uniformDataList) const
 {
@@ -60,6 +67,10 @@ void MeshEntity::updateUniforms(UniformDataList uniformDataList) const
         UniformData newReflectionData = *uniformDataList[toInt(CommandsType::ReflectionPass)];
         newReflectionData.bones = newData.bones;
         _material->getVulkanMaterial()->setUniformData(_reflectionMaterialIndex, newReflectionData);
+
+        /*UniformData newRefractionData = *uniformDataList[toInt(CommandsType::ReflectionPass)];
+        newRefractionData.bones = newData.bones;
+        _material->getVulkanMaterial()->setUniformData(_reflectionMaterialIndex, newReflectionData);*/
     }
 }
 
@@ -71,11 +82,18 @@ void MeshEntity::applyDrawingCommands(uint32_t bufferIndex, bool applyMaterial) 
             return;
         _material->getVulkanMaterial()->applyDrawingCommands(bufferIndex, _reflectionMaterialIndex);
 
-    } else
+    } else if (Engine::getInstance()->getPassType() == CommandsType::RefractionPass)
+    {
+        if (_waterMaterial)
+            return;
+
+        _material->getVulkanMaterial()->applyDrawingCommands(bufferIndex, _materialIndex);
+    }
+    else
     {
         if (!applyMaterial)
         {
-            if (_shadowMaterial)
+            if (_shadowMaterial && _castShadows)
                 _shadowMaterial->getVulkanMaterial()->applyDrawingCommands(bufferIndex, _shadowMaterialIndex);
         }
         else

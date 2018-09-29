@@ -172,8 +172,22 @@ std::vector<TextureInfo> getTextureInfos(const cppfs::FilePath& directory, rj::D
         TextureInfo textureInfo {};
         // TODO: Revise shadowmap settings (move it to texture type instead of filename)
         std::string filename = item["filename"].GetString();
-        textureInfo.filename = filename == "shadowmap" ? "shadowmap" :
-                                    filename == "reflection" ? "reflection" : directory.resolve(item["filename"].GetString()).fullPath();
+
+        static const std::vector<std::string> usedNames = {
+                "shadowmap",
+                "reflection",
+                "refraction"
+        };
+
+        textureInfo.filename = directory.resolve(filename).fullPath();
+        for (auto& name : usedNames)
+        {
+            if (name == filename)
+            {
+                textureInfo.filename = name;
+                break;
+            }
+        }
         textureInfo.samplerName = item["samplerName"].GetString();
 
         textureInfosList.push_back(std::move(textureInfo));

@@ -64,8 +64,8 @@ void main() {
     float spec = pow(max(dot(viewDir, reflectDir), 0.0), ubo.shininess);
     vec3 specular = ubo.specularStrength * spec * ubo.lightColor.rgb;
 
-    //vec3 result = vec3(computeShadowFactor(fragLightSpacePos));
-    vec3 result = (ambient + diffuse + specular) * fragColor * texture(diffuseTex, fragTexCoord).rgb * computeShadowFactor(fragLightSpacePos);
-    //vec3 result = vec3(diffuse);
+
+    //vec3 result = (ambient + diffuse + specular) * fragColor * texture(diffuseTex, fragTexCoord).rgb * computeShadowFactor(fragLightSpacePos);
+    vec3 result = vec3(texture(diffuseTex, fragTexCoord).rgb) * computeShadowFactor(fragLightSpacePos) ;
     outColor = vec4(result, 1.0);
 }

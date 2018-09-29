@@ -26,6 +26,8 @@ enum class CommandsType : uint8_t
     RefractionPass
 };
 
+static const uint8_t PassCount = 4;
+
 class Engine
 {
 public:

@@ -1,0 +1,15 @@
+{
+    "name": "Terrain",
+    "vertexShaderName": "phongShadowVertexShader",
+    "fragmentShaderName": "phongShadowFragmentShader",
+    "textures": [
+        {
+            "samplerName": "diffuseTex",
+            "filename": "textures/terrain.jpg"
+        },
+        {
+            "samplerName": "shadowTex",
+            "filename": "shadowmap"
+        }
+    ]
+}

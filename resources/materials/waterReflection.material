@@ -8,6 +8,10 @@
             "filename": "reflection"
         },
         {
+            "samplerName": "refractionSampler",
+            "filename": "refraction"
+        },
+        {
             "samplerName": "dudvSampler",
             "filename": "textures/water/waterDUDV.png"
         },

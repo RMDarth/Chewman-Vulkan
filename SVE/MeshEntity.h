@@ -18,6 +18,7 @@ public:
     ~MeshEntity();
 
     void setMaterial(const std::string& materialName) override;
+    void setCastShadows(bool castShadows);
 
     void updateUniforms(UniformDataList uniformDataList) const override;
     void applyDrawingCommands(uint32_t bufferIndex, bool applyMaterial) const override;
@@ -29,6 +30,7 @@ private:
     std::shared_ptr<Mesh> _mesh;
     std::shared_ptr<Material> _material;
     bool _waterMaterial = false;
+    bool _castShadows = true;
 
     uint32_t _materialIndex;
     uint32_t _reflectionMaterialIndex;

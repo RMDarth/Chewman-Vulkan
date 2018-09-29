@@ -144,8 +144,8 @@ void updateNode(const std::shared_ptr<SceneNode>& node, UniformDataList& uniform
 {
     auto oldModel = uniformDataList[toInt(CommandsType::MainPass)]->model;
     uniformDataList[toInt(CommandsType::MainPass)]->model *= node->getNodeTransformation();
-    uniformDataList[toInt(CommandsType::ShadowPass)]->model = uniformDataList[toInt(CommandsType::MainPass)]->model;
-    uniformDataList[toInt(CommandsType::ReflectionPass)]->model = uniformDataList[toInt(CommandsType::MainPass)]->model;
+    for (auto i = 1u; i < PassCount; i++)
+        uniformDataList[i]->model = uniformDataList[toInt(CommandsType::MainPass)]->model;
 
     // update uniforms
     for (auto& entity : node->getAttachedEntities())
@@ -158,7 +158,7 @@ void updateNode(const std::shared_ptr<SceneNode>& node, UniformDataList& uniform
         updateNode(child, uniformDataList);
     }
 
-    for (auto i = 0u; i < 4; i++)
+    for (auto i = 0u; i < PassCount; i++)
         uniformDataList[i]->model = oldModel;
 }
 
@@ -194,7 +194,7 @@ void Engine::renderFrame()
             _commandsType = CommandsType::RefractionPass;
             water->getVulkanWater()->startRenderCommandBufferCreation(VulkanWater::PassType::Refraction);
             if (skybox)
-                skybox->applyDrawingCommands(BUFFER_INDEX_WATER_REFLECTION, true);
+                skybox->applyDrawingCommands(BUFFER_INDEX_WATER_REFRACTION, true);
             createNodeDrawCommands(_sceneManager->getRootNode(), BUFFER_INDEX_WATER_REFRACTION);
             water->getVulkanWater()->endRenderCommandBufferCreation(VulkanWater::PassType::Refraction);
         }
@@ -216,7 +216,7 @@ void Engine::renderFrame()
     if (!mainCamera)
         throw VulkanException("Camera not set");\
     UniformDataList uniformDataList(4);
-    for (auto i = 0; i < 4; i++)
+    for (auto i = 0; i < PassCount; i++)
     {
         uniformDataList[i] = std::make_shared<UniformData>();
     }
@@ -226,13 +226,13 @@ void Engine::renderFrame()
     mainUniform->time = getTime();
     _sceneManager->getMainCamera()->fillUniformData(*mainUniform);
 
-    for (auto i = 1; i < 4; i++)
+    for (auto i = 1; i < PassCount; i++)
     {
         *uniformDataList[i] = *uniformDataList[0];
     }
     if (_sceneManager->getLight())
     {
-        for (auto i = 0; i < 4; i++)
+        for (auto i = 0; i < PassCount; i++)
         {
             _sceneManager->getLight()->fillUniformData(*uniformDataList[i], i == toInt(CommandsType::ShadowPass));
         }
@@ -241,6 +241,8 @@ void Engine::renderFrame()
     {
         water->getVulkanWater()->fillUniformData(*uniformDataList[toInt(CommandsType::ReflectionPass)],
                                                  VulkanWater::PassType::Reflection);
+        water->getVulkanWater()->fillUniformData(*uniformDataList[toInt(CommandsType::RefractionPass)],
+                                                 VulkanWater::PassType::Refraction);
     }
     _vulkanInstance->waitAvailableFramebuffer();
 
@@ -254,7 +256,7 @@ void Engine::renderFrame()
     if (auto water = _sceneManager->getWater())
     {
         _vulkanInstance->submitCommands(CommandsType::ReflectionPass);
-        //_vulkanInstance->submitCommands(CommandsType::RefractionPass);
+        _vulkanInstance->submitCommands(CommandsType::RefractionPass);
     }
 
     _vulkanInstance->submitCommands(CommandsType::MainPass);

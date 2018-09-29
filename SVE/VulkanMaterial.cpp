@@ -388,6 +388,13 @@ void VulkanMaterial::createTextureImages()
             _textureImageViews[i] = water->getImageView(VulkanWater::PassType::Reflection);
             _textureSamplers[i] = water->getSampler(VulkanWater::PassType::Reflection);
             continue;
+        } else if (_materialSettings.textures[i].filename == "refraction")
+        {
+            _textureExternal[i] = true;
+            auto water = Engine::getInstance()->getSceneManager()->getWater()->getVulkanWater();
+            _textureImageViews[i] = water->getImageView(VulkanWater::PassType::Refraction);
+            _textureSamplers[i] = water->getSampler(VulkanWater::PassType::Refraction);
+            continue;
         } else {
             _textureExternal[i] = false;
         }
