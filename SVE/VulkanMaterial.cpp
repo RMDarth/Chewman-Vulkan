@@ -13,6 +13,7 @@
 #include "VulkanWater.h"
 #include "Entity.h"
 #include "Engine.h"
+
 #include <fstream>
 #include <algorithm>
 #define STB_IMAGE_IMPLEMENTATION
@@ -21,6 +22,38 @@
 
 namespace SVE
 {
+namespace
+{
+VkSamplerAddressMode getAddressMode(TextureAddressMode mode)
+{
+    static const std::map<TextureAddressMode, VkSamplerAddressMode> addressModeMap {
+            { TextureAddressMode::Repeat,               VK_SAMPLER_ADDRESS_MODE_REPEAT },
+            { TextureAddressMode::MirroredRepeat,       VK_SAMPLER_ADDRESS_MODE_MIRRORED_REPEAT },
+            { TextureAddressMode::ClampToEdge,          VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE },
+            { TextureAddressMode::ClampToBorder,        VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER },
+            { TextureAddressMode::MirrorClampToEdge,    VK_SAMPLER_ADDRESS_MODE_MIRROR_CLAMP_TO_EDGE },
+    };
+
+    return addressModeMap.at(mode);
+}
+
+VkBorderColor getBorderColor(TextureBorderColor color)
+{
+    switch (color)
+    {
+        case TextureBorderColor::TransparentBlack:
+            return VK_BORDER_COLOR_FLOAT_TRANSPARENT_BLACK;
+        case TextureBorderColor::SolidBlack:
+            return VK_BORDER_COLOR_FLOAT_OPAQUE_BLACK;
+        case TextureBorderColor::SolidWhite:
+            return VK_BORDER_COLOR_FLOAT_OPAQUE_WHITE;
+    }
+
+    throw VulkanException("Unsupported texture border color");
+}
+
+} // anon namespace
+
 SVE::VulkanMaterial::VulkanMaterial(MaterialSettings materialSettings)
     : _materialSettings(std::move(materialSettings))
     , _vulkanInstance(Engine::getInstance()->getVulkanInstance())
@@ -373,28 +406,36 @@ void VulkanMaterial::createTextureImages()
     {
         _textureNames[i] = _materialSettings.textures[i].samplerName;
 
-        // TODO: Revise shadowmap settings (move it to texture type instead of filename)
-        if (_materialSettings.textures[i].filename == "shadowmap")
+        if (_materialSettings.textures[i].textureType != TextureType::ImageFile)
         {
             _textureExternal[i] = true;
-            auto shadowMap = Engine::getInstance()->getSceneManager()->getShadowMap()->getVulkanShadowMap();
-            _textureImageViews[i] = shadowMap->getShadowMapImageView();
-            _textureSamplers[i] = shadowMap->getShadowMapSampler();
-            continue;
-        } else if (_materialSettings.textures[i].filename == "reflection")
-        {
-            _textureExternal[i] = true;
-            auto water = Engine::getInstance()->getSceneManager()->getWater()->getVulkanWater();
-            _textureImageViews[i] = water->getImageView(VulkanWater::PassType::Reflection);
-            _textureSamplers[i] = water->getSampler(VulkanWater::PassType::Reflection);
-            continue;
-        } else if (_materialSettings.textures[i].filename == "refraction")
-        {
-            _textureExternal[i] = true;
-            auto water = Engine::getInstance()->getSceneManager()->getWater()->getVulkanWater();
-            _textureImageViews[i] = water->getImageView(VulkanWater::PassType::Refraction);
-            _textureSamplers[i] = water->getSampler(VulkanWater::PassType::Refraction);
-            continue;
+
+            switch (_materialSettings.textures[i].textureType)
+            {
+                case TextureType::ShadowMap:
+                {
+                    auto shadowMap = Engine::getInstance()->getSceneManager()->getShadowMap()->getVulkanShadowMap();
+                    _textureImageViews[i] = shadowMap->getShadowMapImageView();
+                    _textureSamplers[i] = shadowMap->getShadowMapSampler();
+                    continue;
+                }
+                case TextureType::Reflection:
+                {
+                    auto water = Engine::getInstance()->getSceneManager()->getWater()->getVulkanWater();
+                    _textureImageViews[i] = water->getImageView(VulkanWater::PassType::Reflection);
+                    _textureSamplers[i] = water->getSampler(VulkanWater::PassType::Reflection);
+                    continue;
+                }
+                case TextureType::Refraction:
+                {
+                    auto water = Engine::getInstance()->getSceneManager()->getWater()->getVulkanWater();
+                    _textureImageViews[i] = water->getImageView(VulkanWater::PassType::Refraction);
+                    _textureSamplers[i] = water->getSampler(VulkanWater::PassType::Refraction);
+                    continue;
+                }
+                case TextureType::ImageFile:
+                    throw VulkanException("Image file is not external image in material");
+            }
         } else {
             _textureExternal[i] = false;
         }
@@ -460,8 +501,6 @@ void VulkanMaterial::createTextureImages()
         // Free temporary buffer
         vkDestroyBuffer(_device, stagingBuffer, nullptr);
         vkFreeMemory(_device, stagingBufferMemory, nullptr);
-
-
     }
 }
 
@@ -647,9 +686,12 @@ void VulkanMaterial::createTextureSampler()
         samplerCreateInfo.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
         samplerCreateInfo.magFilter = VK_FILTER_LINEAR;
         samplerCreateInfo.minFilter = VK_FILTER_LINEAR;
-        samplerCreateInfo.addressModeU = VK_SAMPLER_ADDRESS_MODE_REPEAT;
-        samplerCreateInfo.addressModeV = VK_SAMPLER_ADDRESS_MODE_REPEAT;
-        samplerCreateInfo.addressModeW = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+
+        auto addressMode = getAddressMode(_materialSettings.textures[i].textureAddressMode);
+        samplerCreateInfo.addressModeU = addressMode;
+        samplerCreateInfo.addressModeV = addressMode;
+        samplerCreateInfo.addressModeW = addressMode;
+        samplerCreateInfo.borderColor = getBorderColor(_materialSettings.textures[i].textureBorderColor);
         samplerCreateInfo.anisotropyEnable = VK_TRUE;
         samplerCreateInfo.maxAnisotropy = 16;
         samplerCreateInfo.borderColor = VK_BORDER_COLOR_INT_OPAQUE_BLACK;

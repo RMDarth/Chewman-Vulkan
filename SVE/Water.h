@@ -12,7 +12,7 @@ class VulkanWater;
 class Water
 {
 public:
-    Water(float height);
+    explicit Water(float height);
     ~Water();
 
     VulkanWater* getVulkanWater();

@@ -28,7 +28,7 @@ enum class UniformType : uint8_t
     BoneMatrices,
     ClipPlane,
     Time
-    // TODO: Add light, material properties, time, other matrices types etc.
+    // TODO: Add material properties, other matrices types etc.
 };
 
 enum class ShaderType : uint8_t

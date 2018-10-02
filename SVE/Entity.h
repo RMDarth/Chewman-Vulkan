@@ -26,9 +26,8 @@ public:
 
     virtual void setMaterial(const std::string& materialName);
 
-    // TODO: indstead of 2 uniforms it probably should be either a single structure with inner objects for shadows, main or reflection matrices
     virtual void updateUniforms(UniformDataList uniformDataList) const = 0;
-    virtual void applyDrawingCommands(uint32_t bufferIndex, bool applyMaterial) const = 0;
+    virtual void applyDrawingCommands(uint32_t bufferIndex) const = 0;
 
 protected:
     std::shared_ptr<SceneNode> _parent;

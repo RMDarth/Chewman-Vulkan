@@ -192,8 +192,10 @@ int runGame()
     std::shared_ptr<SVE::Entity> meshEntity3 = std::make_shared<SVE::MeshEntity>("terrain");
     std::shared_ptr<SVE::Entity> floorEntity = std::make_shared<SVE::MeshEntity>("Floor");
     std::shared_ptr<SVE::Entity> bigFloorEntity = std::make_shared<SVE::MeshEntity>("BigFloor");
-    std::shared_ptr<SVE::Entity> waterEntity = std::make_shared<SVE::MeshEntity>("WaterMesh");
+    std::shared_ptr<SVE::MeshEntity> waterEntity = std::make_shared<SVE::MeshEntity>("WaterMesh");
     waterEntity->setMaterial("WaterReflection");
+    waterEntity->setIsReflected(false);
+    waterEntity->setCastShadows(false);
     //floorEntity->setMaterial("Floor");
     meshEntity->setMaterial("Yellow");
     meshEntity2->setMaterial("Blue");
@@ -201,7 +203,7 @@ int runGame()
 
     // configure and attach objects to nodes
     newNode->attachEntity(meshEntity);
-    newNode2->setNodeTransformation(glm::translate(glm::mat4(1), glm::vec3(-9, 0, 0)));
+    newNode2->setNodeTransformation(glm::translate(glm::mat4(1), glm::vec3(5, 0, 2)));
 
     {
         newNode3->attachEntity(meshEntity3);
@@ -268,6 +270,11 @@ int runGame()
                     moveCamera(event.motion, camera);
             }
         }
+
+        const Uint8* keystates = SDL_GetKeyboardState(NULL);
+
+        if (keystates[SDL_SCANCODE_W])
+
         auto duration = std::chrono::duration<float, std::chrono::seconds::period>(curTime - prevTime).count();
         //std::cout << 1/duration << std::endl;
 

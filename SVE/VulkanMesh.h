@@ -20,6 +20,8 @@ public:
 
     void applyDrawingCommands(uint32_t bufferIndex);
 
+    const MeshSettings& getMeshSettings() const;
+
 private:
     void createGeometryBuffers();
     void deleteGeometryBuffers();

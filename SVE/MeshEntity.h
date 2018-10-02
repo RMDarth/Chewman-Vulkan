@@ -19,9 +19,10 @@ public:
 
     void setMaterial(const std::string& materialName) override;
     void setCastShadows(bool castShadows);
+    void setIsReflected(bool isReflected);
 
     void updateUniforms(UniformDataList uniformDataList) const override;
-    void applyDrawingCommands(uint32_t bufferIndex, bool applyMaterial) const override;
+    void applyDrawingCommands(uint32_t bufferIndex) const override;
 
 private:
     void setupMaterial();
@@ -29,7 +30,7 @@ private:
 private:
     std::shared_ptr<Mesh> _mesh;
     std::shared_ptr<Material> _material;
-    bool _waterMaterial = false;
+    bool _isReflected = true;
     bool _castShadows = true;
 
     uint32_t _materialIndex;

@@ -7,8 +7,17 @@
 namespace SVE
 {
 
+enum class LightType : uint8_t
+{
+    PointLight,
+    SunLight,
+    SpotLight,
+    RectLight
+};
+
 struct LightSettings
 {
+    LightType lightType;
     glm::vec3 lightColor;
     float ambientStrength;
     float specularStrength;

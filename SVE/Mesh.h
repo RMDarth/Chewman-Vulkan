@@ -28,8 +28,7 @@ private:
     std::string _name;
     std::string _materialName;
 
-    // TODO: remove
-    MeshSettings _meshSettings;
+    bool _isAnimated;
 
     std::unique_ptr<VulkanMesh> _vulkanMesh;
 };

@@ -5,11 +5,11 @@
     "textures": [
         {
             "samplerName": "diffuseTex",
-            "filename": "textures/terrain.jpg"
+            "filename": "textures/terrain2.jpg"
         },
         {
             "samplerName": "shadowTex",
-            "filename": "shadowmap"
+            "textureType": "ShadowMap"
         }
     ]
 }

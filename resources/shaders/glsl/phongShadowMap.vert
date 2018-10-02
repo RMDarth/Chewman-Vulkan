@@ -35,7 +35,7 @@ void main() {
     fragTexCoord = inTexCoord;
 
     fragPos = vec3(worldPos);
-    fragNormal = vec3(transpose(inverse(uniforms.model)) * vec4(inNormal, 1.0));
+    fragNormal = vec3(uniforms.model * vec4(inNormal, 1.0)); // transpose(inverse(uniforms.model)) not working for assimp
 
     fragLightSpacePos =  uniforms.lightViewProjection * worldPos;
 }

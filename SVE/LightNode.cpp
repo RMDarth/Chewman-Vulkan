@@ -24,7 +24,6 @@ void LightNode::fillUniformData(UniformData& data, bool asViewSource)
 {
     auto model = getTotalTransformation();
     data.lightPos = model[3];
-    // TODO: Light should have it's own projection matrix
     data.lightViewProjection = _projectionMatrix * _viewMatrix;
     data.lightSettings = _lightSettings;
 
@@ -53,11 +52,30 @@ void LightNode::createViewMatrix()
 
 void LightNode::createProjectionMatrix()
 {
-    _projectionMatrix =  glm::perspective(glm::radians(80.0f),
-                                    1.0f,
-                                    0.01f,
-                                    50.0f);
-    _projectionMatrix[1][1] *= -1;
+    switch (_lightSettings.lightType)
+    {
+        case LightType::PointLight:
+            _projectionMatrix =  glm::perspective(glm::radians(80.0f),
+                                                  1.0f,
+                                                  0.01f,
+                                                  100.0f);
+            _projectionMatrix[1][1] *= -1;
+            break;
+        case LightType::SunLight:
+            _projectionMatrix = glm::ortho(-20.0f, 20.0f, -20.0f, 20.0f, 0.01f, 100.0f);
+            _projectionMatrix[1][1] *= -1;
+            break;
+        case LightType::SpotLight:
+            _projectionMatrix =  glm::perspective(glm::radians(80.0f),
+                                                  1.0f,
+                                                  0.01f,
+                                                  100.0f);
+            _projectionMatrix[1][1] *= -1;
+            break;
+        case LightType::RectLight:
+            break;
+    }
+
 }
 
 void LightNode::setNodeTransformation(glm::mat4 transform)

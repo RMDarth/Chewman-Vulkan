@@ -8,10 +8,38 @@
 namespace SVE
 {
 
+enum class TextureType : uint8_t
+{
+    ImageFile,
+    ShadowMap,
+    Reflection,
+    Refraction
+};
+
+enum class TextureAddressMode : uint8_t
+{
+    Repeat,
+    MirroredRepeat,
+    ClampToEdge,
+    ClampToBorder,
+    MirrorClampToEdge
+};
+
+enum class TextureBorderColor : uint8_t
+{
+    TransparentBlack,
+    SolidBlack,
+    SolidWhite
+};
+
 struct TextureInfo
 {
+    TextureType textureType = TextureType::ImageFile;
+    TextureAddressMode textureAddressMode = TextureAddressMode::Repeat;
+    TextureBorderColor textureBorderColor = TextureBorderColor::TransparentBlack;
     std::string samplerName;
     std::string filename;
+    // TODO: Add possibility to enable/disable mipmap generation
 };
 
 struct MaterialSettings

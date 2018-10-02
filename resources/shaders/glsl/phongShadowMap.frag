@@ -31,17 +31,18 @@ float computeShadowFactor(vec4 lightSpacePos)
    // If the fragment is outside the light's projection then it is outside
    // the light's influence, which means it is in the shadow (notice that
    // such sample would be outside the shadow map image)
-   if (abs(lightSpaceReal.x) > 1.0 ||
+   // TODO: Use something like "isFiniteShadow" uniform for this check
+   /*if (abs(lightSpaceReal.x) > 1.0 ||
        abs(lightSpaceReal.y) > 1.0 ||
        abs(lightSpaceReal.z) > 1.0)
-      return 0.1;
+      return 0.4;*/
 
    // Translate from NDC to shadow map space (Vulkan's Z is already in [0..1])
    vec2 shadowMapCoord = lightSpaceReal.xy * 0.5 + 0.5;
 
    // Check if the sample is in the light or in the shadow
     if (lightSpaceReal.z > texture(shadowTex, shadowMapCoord.xy).x)
-         return 0.1; // In the shadow
+         return 0.4; // In the shadow
 
    // In the light
    return 1.0;
@@ -65,7 +66,8 @@ void main() {
     vec3 specular = ubo.specularStrength * spec * ubo.lightColor.rgb;
 
 
-    //vec3 result = (ambient + diffuse + specular) * fragColor * texture(diffuseTex, fragTexCoord).rgb * computeShadowFactor(fragLightSpacePos);
-    vec3 result = vec3(texture(diffuseTex, fragTexCoord).rgb) * computeShadowFactor(fragLightSpacePos) ;
+    vec3 result = (ambient + diffuse + specular) * fragColor * texture(diffuseTex, fragTexCoord).rgb * computeShadowFactor(fragLightSpacePos);
+    //vec3 result = vec3(texture(diffuseTex, fragTexCoord).rgb) * computeShadowFactor(fragLightSpacePos) ;
+   // vec3 result = vec3(fragNormal);
     outColor = vec4(result, 1.0);
 }

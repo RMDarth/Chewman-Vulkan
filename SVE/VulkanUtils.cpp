@@ -50,10 +50,10 @@ void VulkanUtils::createBuffer(
     allocInfo.memoryTypeIndex = findVulkanMemoryType(memoryRequirements.memoryTypeBits, properties);
 
     // TODO: It's not very convenient to allocate new memory for each new buffer, as those allocations are limited
-    // TODO: It can be refactored to use single allocation for many buffers (by using VulkanMemoryAllocator lib)
+    // TODO: It can be refactored to use single allocation for many buffers (or by using VulkanMemoryAllocator lib)
     if (vkAllocateMemory(_vulkanInstance->getLogicalDevice(), &allocInfo, nullptr, &bufferMemory) != VK_SUCCESS)
     {
-        throw std::runtime_error("Can't allocate Vulkan buffer memory");
+        throw VulkanException("Can't allocate Vulkan buffer memory");
     }
 
     // Bind memory to buffer

@@ -80,10 +80,10 @@ Skybox::Skybox(const std::string& materialName)
 
 Skybox::~Skybox() = default;
 
-void Skybox::applyDrawingCommands(uint32_t bufferIndex, bool applyMaterial) const
+void Skybox::applyDrawingCommands(uint32_t bufferIndex) const
 {
-    if (applyMaterial)
-        _material->getVulkanMaterial()->applyDrawingCommands(bufferIndex, _materialIndex);
+    // TODO: Probably should not be rendered on shadow pass (and possibly refraction)
+    _material->getVulkanMaterial()->applyDrawingCommands(bufferIndex, _materialIndex);
     _mesh->getVulkanMesh()->applyDrawingCommands(bufferIndex);
 }
 

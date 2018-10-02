@@ -54,7 +54,6 @@ Engine* Engine::createInstance(SDL_Window* window, const std::string& settingsPa
         auto settings = data.engine.front();
         _engineInstance = new Engine(window, settings);
 
-        // TODO: Revise shadowmap creation sequence
         if (settings.initShadows)
             _engineInstance->getSceneManager()->initShadowMap();
         if (settings.initWater)
@@ -131,7 +130,7 @@ void createNodeDrawCommands(const std::shared_ptr<SceneNode>& node, uint32_t buf
 {
     for (auto& entity : node->getAttachedEntities())
     {
-        entity->applyDrawingCommands(bufferIndex, bufferIndex != BUFFER_INDEX_SHADOWMAP);
+        entity->applyDrawingCommands(bufferIndex);
     }
 
     for (auto& child : node->getChildren())
@@ -187,14 +186,14 @@ void Engine::renderFrame()
             _commandsType = CommandsType::ReflectionPass;
             water->getVulkanWater()->startRenderCommandBufferCreation(VulkanWater::PassType::Reflection);
             if (skybox)
-                skybox->applyDrawingCommands(BUFFER_INDEX_WATER_REFLECTION, true);
+                skybox->applyDrawingCommands(BUFFER_INDEX_WATER_REFLECTION);
             createNodeDrawCommands(_sceneManager->getRootNode(), BUFFER_INDEX_WATER_REFLECTION);
             water->getVulkanWater()->endRenderCommandBufferCreation(VulkanWater::PassType::Reflection);
 
             _commandsType = CommandsType::RefractionPass;
             water->getVulkanWater()->startRenderCommandBufferCreation(VulkanWater::PassType::Refraction);
             if (skybox)
-                skybox->applyDrawingCommands(BUFFER_INDEX_WATER_REFRACTION, true);
+                skybox->applyDrawingCommands(BUFFER_INDEX_WATER_REFRACTION);
             createNodeDrawCommands(_sceneManager->getRootNode(), BUFFER_INDEX_WATER_REFRACTION);
             water->getVulkanWater()->endRenderCommandBufferCreation(VulkanWater::PassType::Refraction);
         }
@@ -204,7 +203,7 @@ void Engine::renderFrame()
         {
             _vulkanInstance->startRenderCommandBufferCreation(i);
             if (skybox)
-                skybox->applyDrawingCommands(i, true);
+                skybox->applyDrawingCommands(i);
             createNodeDrawCommands(_sceneManager->getRootNode(), i);
             _vulkanInstance->endRenderCommandBufferCreation(i);
         }

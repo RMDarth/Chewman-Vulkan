@@ -1,4 +1,5 @@
 {
+    "lightType": "SunLight",
     "diffuseStrength": 1.0,
     "specularStrength": 0.5,
     "ambientStrength": 0.0,

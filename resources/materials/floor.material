@@ -5,11 +5,12 @@
     "textures": [
         {
             "samplerName": "diffuseTex",
+            "textureType": "ImageFile",
             "filename": "textures/trashfloor.png"
         },
         {
             "samplerName": "shadowTex",
-            "filename": "shadowmap"
+            "textureType": "ShadowMap"
         }
     ]
 }

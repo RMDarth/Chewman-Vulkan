@@ -5,19 +5,20 @@
     "textures": [
         {
             "samplerName": "reflectionSampler",
-            "filename": "reflection"
+            "textureType": "Reflection"
         },
         {
             "samplerName": "refractionSampler",
-            "filename": "refraction"
+            "textureType": "Refraction"
         },
         {
             "samplerName": "dudvSampler",
+            "textureType": "ImageFile",
             "filename": "textures/water/waterDUDV.png"
         },
         {
             "samplerName": "shadowSampler",
-            "filename": "shadowmap"
+            "textureType": "ShadowMap"
         }
     ]
 }

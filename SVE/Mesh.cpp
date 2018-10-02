@@ -39,7 +39,7 @@ std::string fixAssimpBoneName(std::string nodeName)
 Mesh::Mesh(MeshSettings meshSettings)
     : _name(meshSettings.name)
     , _materialName(meshSettings.materialName)
-    , _meshSettings(meshSettings)
+    , _isAnimated(meshSettings.boneNum > 0)
     , _vulkanMesh(std::make_unique<VulkanMesh>(std::move(meshSettings)))
 {
 
@@ -61,7 +61,11 @@ Mesh::Mesh(const std::string& name, const std::string& modelFile)
             aiProcess_CalcTangentSpace       |
             aiProcess_Triangulate            |
             aiProcess_JoinIdenticalVertices  |
+            aiProcess_TransformUVCoords      |
             aiProcess_LimitBoneWeights       |
+            aiProcess_GenNormals             |
+            aiProcess_OptimizeMeshes         |
+            aiProcess_SortByPType            |
             aiProcess_OptimizeGraph);
 
     // If the import failed, report it
@@ -69,8 +73,6 @@ Mesh::Mesh(const std::string& name, const std::string& modelFile)
     {
         throw VulkanException( importer.GetErrorString());
     }
-
-
 
     meshSettings.name = name;
     aiString materialName;
@@ -144,8 +146,8 @@ Mesh::Mesh(const std::string& name, const std::string& modelFile)
         meshSettings.animation->boneMap = boneMap;
     }
 
-    _meshSettings = meshSettings;
-    _vulkanMesh = std::make_unique<VulkanMesh>(meshSettings);
+    _isAnimated = meshSettings.boneNum > 0;
+    _vulkanMesh = std::make_unique<VulkanMesh>(std::move(meshSettings));
 }
 
 Mesh::~Mesh() = default;
@@ -167,9 +169,8 @@ VulkanMesh* Mesh::getVulkanMesh()
 
 void Mesh::updateUniformDataBones(UniformData& data, float time) const
 {
-    //data.bones = getTransforms(_meshSettings, _meshSettings.animation, time);
-    if (_meshSettings.boneNum > 0)
-        data.bones = getAnimationTransforms(_meshSettings, 0, time);
+    if (_isAnimated)
+        data.bones = getAnimationTransforms(_vulkanMesh->getMeshSettings(), 0, time);
 }
 
 } // namespace SVE

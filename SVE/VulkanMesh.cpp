@@ -37,6 +37,11 @@ void VulkanMesh::applyDrawingCommands(uint32_t bufferIndex)
     vkCmdDrawIndexed(commandBuffer, _meshSettings.indexData.size(), 1, 0, 0, 0);
 }
 
+const MeshSettings& VulkanMesh::getMeshSettings() const
+{
+    return _meshSettings;
+}
+
 void VulkanMesh::createGeometryBuffers()
 {
     // TODO: This can be optimized to use single buffer

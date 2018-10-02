@@ -33,12 +33,6 @@ MeshEntity::~MeshEntity() = default;
 
 void MeshEntity::setMaterial(const std::string& materialName)
 {
-    // TODO: Refactor this idiocy
-    if (materialName == "WaterReflection")
-    {
-        _waterMaterial = true;
-        _castShadows = false;
-    }
     _material = Engine::getInstance()->getMaterialManager()->getMaterial(materialName);
     setupMaterial();
 }
@@ -48,6 +42,10 @@ void MeshEntity::setCastShadows(bool castShadows)
     _castShadows = castShadows;
 }
 
+void MeshEntity::setIsReflected(bool isReflected)
+{
+    _isReflected = isReflected;
+}
 
 void MeshEntity::updateUniforms(UniformDataList uniformDataList) const
 {
@@ -68,38 +66,36 @@ void MeshEntity::updateUniforms(UniformDataList uniformDataList) const
         newReflectionData.bones = newData.bones;
         _material->getVulkanMaterial()->setUniformData(_reflectionMaterialIndex, newReflectionData);
 
+        // TODO: Add refraction material index (to add correct clip plane)
         /*UniformData newRefractionData = *uniformDataList[toInt(CommandsType::ReflectionPass)];
         newRefractionData.bones = newData.bones;
         _material->getVulkanMaterial()->setUniformData(_reflectionMaterialIndex, newReflectionData);*/
     }
 }
 
-void MeshEntity::applyDrawingCommands(uint32_t bufferIndex, bool applyMaterial) const
+void MeshEntity::applyDrawingCommands(uint32_t bufferIndex) const
 {
     if (Engine::getInstance()->getPassType() == CommandsType::ReflectionPass)
     {
-        if (_waterMaterial)
+        if (!_isReflected)
             return;
         _material->getVulkanMaterial()->applyDrawingCommands(bufferIndex, _reflectionMaterialIndex);
 
     } else if (Engine::getInstance()->getPassType() == CommandsType::RefractionPass)
     {
-        if (_waterMaterial)
+        if (!_isReflected)
             return;
 
         _material->getVulkanMaterial()->applyDrawingCommands(bufferIndex, _materialIndex);
     }
+    else if (Engine::getInstance()->getPassType() == CommandsType::ShadowPass)
+    {
+        if (_shadowMaterial && _castShadows)
+            _shadowMaterial->getVulkanMaterial()->applyDrawingCommands(bufferIndex, _shadowMaterialIndex);
+    }
     else
     {
-        if (!applyMaterial)
-        {
-            if (_shadowMaterial && _castShadows)
-                _shadowMaterial->getVulkanMaterial()->applyDrawingCommands(bufferIndex, _shadowMaterialIndex);
-        }
-        else
-        {
-            _material->getVulkanMaterial()->applyDrawingCommands(bufferIndex, _materialIndex);
-        }
+        _material->getVulkanMaterial()->applyDrawingCommands(bufferIndex, _materialIndex);
     }
 
     _mesh->getVulkanMesh()->applyDrawingCommands(bufferIndex);

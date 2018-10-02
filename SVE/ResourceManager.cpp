@@ -164,29 +164,41 @@ ShaderSettings loadShader(const cppfs::FilePath& directory, const std::string& d
 
 std::vector<TextureInfo> getTextureInfos(const cppfs::FilePath& directory, rj::Document& document)
 {
+    static const std::map<std::string, TextureType> textureTypeMap{
+            {"ImageFile",   TextureType::ImageFile},
+            {"ShadowMap",   TextureType::ShadowMap},
+            {"Reflection",  TextureType::Reflection},
+            {"Refraction",  TextureType::Refraction},
+    };
+
+    static const std::map<std::string, TextureAddressMode> addressModeMap {
+            { "Repeat",             TextureAddressMode::Repeat },
+            { "MirroredRepeat",     TextureAddressMode::MirroredRepeat },
+            { "ClampToEdge",        TextureAddressMode::ClampToEdge },
+            { "ClampToBorder",      TextureAddressMode::ClampToBorder },
+            { "MirrorClampToEdge",  TextureAddressMode::MirrorClampToEdge },
+    };
+
+    static const std::map<std::string, TextureBorderColor> borderColorMap {
+            { "TransparentBlack",   TextureBorderColor::TransparentBlack },
+            { "SolidBlack",         TextureBorderColor::SolidBlack },
+            { "SolidWhite",         TextureBorderColor::SolidWhite },
+    };
+
     auto list = document["textures"].GetArray();
     std::vector<TextureInfo> textureInfosList;
 
     for (auto& item : list)
     {
         TextureInfo textureInfo {};
-        // TODO: Revise shadowmap settings (move it to texture type instead of filename)
-        std::string filename = item["filename"].GetString();
 
-        static const std::vector<std::string> usedNames = {
-                "shadowmap",
-                "reflection",
-                "refraction"
-        };
+        setOptional(textureInfo.textureType = textureTypeMap.at(item["textureType"].GetString()));
+        setOptional(textureInfo.textureAddressMode = addressModeMap.at(item["textureAddressMode"].GetString()));
+        setOptional(textureInfo.textureBorderColor = borderColorMap.at(item["textureBorderColor"].GetString()));
 
-        textureInfo.filename = directory.resolve(filename).fullPath();
-        for (auto& name : usedNames)
+        if (textureInfo.textureType == TextureType::ImageFile)
         {
-            if (name == filename)
-            {
-                textureInfo.filename = name;
-                break;
-            }
+            textureInfo.filename = directory.resolve(item["filename"].GetString()).fullPath();
         }
         textureInfo.samplerName = item["samplerName"].GetString();
 
@@ -244,11 +256,19 @@ glm::vec3 loadVector3(rj::Document& document, const std::string& name)
 
 LightSettings loadLight(const std::string& data)
 {
+    static const std::map<std::string, LightType> lightTypeMap{
+            {"PointLight",  LightType::PointLight},
+            {"RectLight",   LightType::RectLight},
+            {"SpotLight",   LightType::SpotLight},
+            {"SunLight",    LightType::SunLight},
+    };
+
     rj::Document document;
     document.Parse(data.c_str());
 
     LightSettings lightSettings {};
 
+    lightSettings.lightType =  lightTypeMap.at(document["lightType"].GetString());
     lightSettings.lightColor = loadVector3(document, "lightColor");
     lightSettings.shininess = document["shininess"].GetFloat();
     lightSettings.ambientStrength = document["ambientStrength"].GetFloat();

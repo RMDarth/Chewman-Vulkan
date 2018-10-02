@@ -27,8 +27,9 @@ layout(location = 5) in vec4 fragLightSpacePos;
 layout(location = 0) out vec4 outColor;
 
 const float waveStrength = 0.02;
+const float waterTransparency = 0.6;
 
-float computeShadowFactor(vec4 lightSpacePos)
+float computeShadowFactor(vec4 lightSpacePos, vec2 distortion, float shadowStrength)
 {
    // Convert light space position to NDC (normalized device coordinates)
    vec3 lightSpaceReal = lightSpacePos.xyz /= lightSpacePos.w;
@@ -39,14 +40,14 @@ float computeShadowFactor(vec4 lightSpacePos)
    if (abs(lightSpaceReal.x) > 1.0 ||
        abs(lightSpaceReal.y) > 1.0 ||
        abs(lightSpaceReal.z) > 1.0)
-      return 0.1;
+      return shadowStrength;
 
    // Translate from NDC to shadow map space (Vulkan's Z is already in [0..1])
    vec2 shadowMapCoord = lightSpaceReal.xy * 0.5 + 0.5;
 
    // Check if the sample is in the light or in the shadow
-    if (lightSpaceReal.z > texture(shadowSampler, shadowMapCoord.xy).x)
-         return 0.1; // In the shadow
+    if (lightSpaceReal.z > texture(shadowSampler, shadowMapCoord.xy + distortion).x)
+         return shadowStrength; // In the shadow
 
    // In the light
    return 1.0;
@@ -83,9 +84,10 @@ void main() {
     reflectionCoord = reflectionCoord + totalDistortion;
     refractionCoord = refractionCoord + totalDistortion;
     //vec3 result = (ambient + diffuse + specular) * fragColor * texture(texSampler, fragTexCoord).rgb;
-    vec3 reflectionResult = texture(reflectionSampler, reflectionCoord).rgb;
+    vec3 reflectionResult = mix(texture(reflectionSampler, reflectionCoord).rgb, vec3(0.0, 0.3, 0.5), 0.4);
     vec3 refractionResult = texture(refractionSampler, refractionCoord).rgb;
     float fresnelKoef = dot(viewDir, norm);
-    vec3 result =  mix(reflectionResult, refractionResult, fresnelKoef) * computeShadowFactor(fragLightSpacePos);
-    outColor = vec4(mix(result, vec3(0.0, 0.3, 0.5), 0.2), 1.0);
+    float shadowStrength = 0.95f; //waterTransparency;
+    vec3 result =  mix(reflectionResult, refractionResult, fresnelKoef);
+    outColor = vec4(mix(result, vec3(0.0, 0.3, 0.5), 1 - waterTransparency) * computeShadowFactor(fragLightSpacePos, totalDistortion * 0.1, shadowStrength), 1.0);
 }
