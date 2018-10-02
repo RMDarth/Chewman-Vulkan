@@ -55,11 +55,11 @@ VkImageView VulkanWater::getImageView(PassType passType)
 
 void VulkanWater::fillUniformData(UniformData& data, PassType passType)
 {
+    auto camera = Engine::getInstance()->getSceneManager()->getMainCamera();
+
     if (passType == PassType::Reflection)
     {
         data.clipPlane = glm::vec4(0, 1, 0, _waterHeight);
-
-        auto camera = Engine::getInstance()->getSceneManager()->getMainCamera();
 
         auto pos = camera->getPosition();
         auto distance = 2 * (pos.y - _waterHeight);

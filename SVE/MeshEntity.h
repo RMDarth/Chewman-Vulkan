@@ -19,6 +19,8 @@ public:
 
     void setMaterial(const std::string& materialName) override;
     void setCastShadows(bool castShadows);
+
+    // TODO: add IsRefracted method
     void setIsReflected(bool isReflected);
 
     void updateUniforms(UniformDataList uniformDataList) const override;
@@ -35,6 +37,7 @@ private:
 
     uint32_t _materialIndex;
     uint32_t _reflectionMaterialIndex;
+    uint32_t _refractionMaterialIndex;
 
     std::shared_ptr<Material> _shadowMaterial;
     uint32_t _shadowMaterialIndex;

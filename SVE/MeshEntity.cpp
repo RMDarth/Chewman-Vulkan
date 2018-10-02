@@ -66,10 +66,9 @@ void MeshEntity::updateUniforms(UniformDataList uniformDataList) const
         newReflectionData.bones = newData.bones;
         _material->getVulkanMaterial()->setUniformData(_reflectionMaterialIndex, newReflectionData);
 
-        // TODO: Add refraction material index (to add correct clip plane)
-        /*UniformData newRefractionData = *uniformDataList[toInt(CommandsType::ReflectionPass)];
+        UniformData newRefractionData = *uniformDataList[toInt(CommandsType::RefractionPass)];
         newRefractionData.bones = newData.bones;
-        _material->getVulkanMaterial()->setUniformData(_reflectionMaterialIndex, newReflectionData);*/
+        _material->getVulkanMaterial()->setUniformData(_refractionMaterialIndex, newRefractionData);
     }
 }
 
@@ -86,7 +85,7 @@ void MeshEntity::applyDrawingCommands(uint32_t bufferIndex) const
         if (!_isReflected)
             return;
 
-        _material->getVulkanMaterial()->applyDrawingCommands(bufferIndex, _materialIndex);
+        _material->getVulkanMaterial()->applyDrawingCommands(bufferIndex, _refractionMaterialIndex);
     }
     else if (Engine::getInstance()->getPassType() == CommandsType::ShadowPass)
     {
@@ -108,6 +107,7 @@ void MeshEntity::setupMaterial()
     if (Engine::getInstance()->isWaterEnabled())
     {
         _reflectionMaterialIndex = _material->getVulkanMaterial()->getInstanceForEntity(this, 1);
+        _refractionMaterialIndex = _material->getVulkanMaterial()->getInstanceForEntity(this, 2);
     }
 
     if (Engine::getInstance()->isShadowMappingEnabled())

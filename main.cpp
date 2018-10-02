@@ -52,6 +52,21 @@ void moveCamera(SDL_Keycode keycode, std::shared_ptr<SVE::CameraNode>& camera)
     }
 }
 
+void moveCamera(const Uint8* keystates, float deltaTime, std::shared_ptr<SVE::CameraNode>& camera)
+{
+    auto pos = camera->getPosition();
+    auto yawPitchRoll = camera->getYawPitchRoll();
+
+    if (keystates[SDL_SCANCODE_A])
+        camera->movePosition(glm::vec3(-12.0f*deltaTime,0,0));
+    if (keystates[SDL_SCANCODE_D])
+        camera->movePosition(glm::vec3(12.0f*deltaTime,0,0));
+    if (keystates[SDL_SCANCODE_W])
+        camera->movePosition(glm::vec3(0,0,-12.0f*deltaTime));
+    if (keystates[SDL_SCANCODE_S])
+        camera->movePosition(glm::vec3(0,0,12.0f*deltaTime));
+}
+
 void moveCamera(SDL_MouseMotionEvent& event, std::shared_ptr<SVE::CameraNode>& camera)
 {
     auto yawPitchRoll = camera->getYawPitchRoll();
@@ -260,10 +275,6 @@ int runGame()
                     }
                 }
             }
-            if (event.type == SDL_KEYDOWN)
-            {
-                moveCamera(event.key.keysym.sym, camera);
-            }
             if (event.type == SDL_MOUSEMOTION)
             {
                 if (event.motion.state && SDL_BUTTON(1))
@@ -271,12 +282,13 @@ int runGame()
             }
         }
 
-        const Uint8* keystates = SDL_GetKeyboardState(NULL);
 
-        if (keystates[SDL_SCANCODE_W])
 
         auto duration = std::chrono::duration<float, std::chrono::seconds::period>(curTime - prevTime).count();
         //std::cout << 1/duration << std::endl;
+
+        const Uint8* keystates = SDL_GetKeyboardState(nullptr);
+        moveCamera(keystates, duration, camera);
 
         SDL_Delay(1);
         if (!skipRendering)
