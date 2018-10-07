@@ -1,0 +1,11 @@
+{
+    "name": "ScreenQuad",
+    "vertexShaderName": "quadRenderVertexShader",
+    "fragmentShaderName": "quadRenderFragmentShader",
+    "textures": [
+            {
+                "samplerName": "texSampler",
+                "textureType": "ScreenQuad"
+            }
+        ]
+}

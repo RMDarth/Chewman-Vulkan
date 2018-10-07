@@ -67,7 +67,7 @@ void VulkanWater::fillUniformData(UniformData& data, PassType passType)
 
         auto yawPitchRoll = camera->getYawPitchRoll();
 
-        auto cameraPos = glm::yawPitchRoll(yawPitchRoll.x, -yawPitchRoll.y + 3.14f, yawPitchRoll.z);
+        auto cameraPos = glm::yawPitchRoll(yawPitchRoll.x, -yawPitchRoll.y, yawPitchRoll.z);
         cameraPos = glm::translate(glm::mat4(1), glm::vec3(pos)) * cameraPos;
         data.view = glm::inverse(cameraPos);
 

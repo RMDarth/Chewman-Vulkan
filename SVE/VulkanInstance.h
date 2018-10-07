@@ -14,11 +14,13 @@ namespace SVE
 {
 class VulkanMesh;
 
+// TODO: Create some mapping to external indexes instead of hardcoding
 enum BufferIndex
 {
     BUFFER_INDEX_SHADOWMAP = 100,
     BUFFER_INDEX_WATER_REFLECTION = 101,
     BUFFER_INDEX_WATER_REFRACTION = 102,
+    BUFFER_INDEX_SCREEN_QUAD = 103
 };
 
 class VulkanInstance

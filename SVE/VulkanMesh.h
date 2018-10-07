@@ -18,6 +18,8 @@ public:
     explicit VulkanMesh(MeshSettings meshSettings);
     ~VulkanMesh();
 
+    void updateMesh(MeshSettings meshSettings);
+
     void applyDrawingCommands(uint32_t bufferIndex);
 
     const MeshSettings& getMeshSettings() const;

@@ -26,10 +26,14 @@ out gl_PerVertex {
     float gl_ClipDistance[];
 };
 
+const float shadowDistance = 50.0;
+const float transitionDistance = 10.0;
+
 void main() {
     vec4 worldPos = uniforms.model * vec4(inPosition, 1.0);
+    vec4 camPos = uniforms.view * worldPos;
 
-    gl_Position = uniforms.projection * uniforms.view * worldPos;
+    gl_Position = uniforms.projection * camPos;
     gl_ClipDistance[0] = dot(worldPos, uniforms.clipPlane);
     fragColor = inColor;
     fragTexCoord = inTexCoord;
@@ -38,4 +42,13 @@ void main() {
     fragNormal = vec3(uniforms.model * vec4(inNormal, 1.0)); // transpose(inverse(uniforms.model)) not working for assimp
 
     fragLightSpacePos =  uniforms.lightViewProjection * worldPos;
+    //fragLightSpacePos.xy = fragLightSpacePos.xy / fragLightSpacePos.w;
+
+    //toCameraVector = (inverse(viewMatrix) * vec4(0.0, 0.0, 0.0, 1.0)).xyz - worldPosition.xyz;
+
+    float distance = length(camPos.xyz);
+    distance = distance - (shadowDistance - transitionDistance);
+    distance = distance / transitionDistance;
+
+    fragLightSpacePos.w = clamp(1.0 - distance, 0.0, 1.0);
 }

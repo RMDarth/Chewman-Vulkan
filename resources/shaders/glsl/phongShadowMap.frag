@@ -5,6 +5,7 @@ layout(set = 1, binding = 0) uniform sampler2D diffuseTex;
 layout(set = 1, binding = 1) uniform sampler2D shadowTex;
 layout(set = 1, binding = 2) uniform UBO
 {
+    mat4 lightViewProjection;
     vec4 lightPos;
 	vec4 lightColor;
 	vec4 cameraPos;
@@ -26,7 +27,7 @@ layout(location = 0) out vec4 outColor;
 float computeShadowFactor(vec4 lightSpacePos)
 {
    // Convert light space position to NDC (normalized device coordinates)
-   vec3 lightSpaceReal = lightSpacePos.xyz /= lightSpacePos.w;
+   //vec3 lightSpaceReal = lightSpacePos.xyz /= lightSpacePos.w;
 
    // If the fragment is outside the light's projection then it is outside
    // the light's influence, which means it is in the shadow (notice that
@@ -37,14 +38,18 @@ float computeShadowFactor(vec4 lightSpacePos)
        abs(lightSpaceReal.z) > 1.0)
       return 0.4;*/
 
+
    // Translate from NDC to shadow map space (Vulkan's Z is already in [0..1])
-   vec2 shadowMapCoord = lightSpaceReal.xy * 0.5 + 0.5;
+   vec2 shadowMapCoord = lightSpacePos.xy * 0.5 + 0.5;
 
    // Check if the sample is in the light or in the shadow
-    if (lightSpaceReal.z > texture(shadowTex, shadowMapCoord.xy).x)
-         return 0.4; // In the shadow
+    if (lightSpacePos.z > texture(shadowTex, shadowMapCoord.xy).x)
+    {
+         return 1 - (lightSpacePos.w - 0.4); // In the shadow
+    }
 
    // In the light
+
    return 1.0;
 }
 
@@ -66,8 +71,9 @@ void main() {
     vec3 specular = ubo.specularStrength * spec * ubo.lightColor.rgb;
 
 
-    vec3 result = (ambient + diffuse + specular) * fragColor * texture(diffuseTex, fragTexCoord).rgb * computeShadowFactor(fragLightSpacePos);
-    //vec3 result = vec3(texture(diffuseTex, fragTexCoord).rgb) * computeShadowFactor(fragLightSpacePos) ;
+    vec4 shadowTexCoord = ubo.lightViewProjection * vec4(fragPos, 1);// * 0.5 + 0.5;
+    //vec3 result = (ambient + diffuse + specular) * fragColor * texture(diffuseTex, fragTexCoord).rgb * computeShadowFactor(fragLightSpacePos);
+    vec3 result = vec3(texture(diffuseTex, fragTexCoord).rgb) * computeShadowFactor(shadowTexCoord);
    // vec3 result = vec3(fragNormal);
     outColor = vec4(result, 1.0);
 }

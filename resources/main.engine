@@ -2,6 +2,7 @@
     "applicationName": "Chewman Vulkan",
     "useValidation": true,
     "gpuIndex": "best",
+    "presentMode": "BestAvailable",
     "initShadows": true,
     "initWater": true
 }

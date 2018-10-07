@@ -29,6 +29,6 @@
         }
     ],
     "isCubemap": true,
-    "invertCullFace": true,
+    "cullFace": "BackFace",
     "useDepthTest": false
 }

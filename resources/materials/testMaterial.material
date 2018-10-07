@@ -1,0 +1,12 @@
+{
+    "name": "TestMaterial",
+    "vertexShaderName": "phongVertexShader",
+    "fragmentShaderName": "phongFragmentShader",
+    "cullFace": "None",
+    "textures": [
+            {
+                "samplerName": "texSampler",
+                "filename": "textures/trashfloor.png"
+            }
+        ]
+}

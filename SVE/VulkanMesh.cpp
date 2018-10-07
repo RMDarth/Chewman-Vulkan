@@ -26,6 +26,13 @@ VulkanMesh::~VulkanMesh()
     deleteGeometryBuffers();
 }
 
+void VulkanMesh::updateMesh(MeshSettings meshSettings)
+{
+    deleteGeometryBuffers();
+    _meshSettings = std::move(meshSettings);
+    createGeometryBuffers();
+}
+
 void VulkanMesh::applyDrawingCommands(uint32_t bufferIndex)
 {
     auto commandBuffer = _vulkanInstance->getCommandBuffer(bufferIndex);
@@ -117,6 +124,8 @@ void VulkanMesh::deleteGeometryBuffers()
         vkFreeMemory(_vulkanInstance->getLogicalDevice(), memory, nullptr);
     }
 
+    _vertexBufferList.clear();
+    _vertexBufferMemoryList.clear();
 
 }
 

@@ -213,21 +213,22 @@ void Engine::renderFrame()
     // Fill uniform data (from camera and lights)
     auto mainCamera = _sceneManager->getMainCamera();
     if (!mainCamera)
-        throw VulkanException("Camera not set");\
+        throw VulkanException("Camera not set");
     UniformDataList uniformDataList(4);
+    // TODO: Init this once
     for (auto i = 0; i < PassCount; i++)
     {
         uniformDataList[i] = std::make_shared<UniformData>();
     }
-    auto mainUniform = uniformDataList[toInt(CommandsType::MainPass)];
+    auto& mainUniform = uniformDataList[toInt(CommandsType::MainPass)];
 
-    mainUniform->clipPlane = glm::vec4(0.0, 1.0, 0.0, 500);
+    mainUniform->clipPlane = glm::vec4(0.0, 1.0, 0.0, 100);
     mainUniform->time = getTime();
     _sceneManager->getMainCamera()->fillUniformData(*mainUniform);
 
     for (auto i = 1; i < PassCount; i++)
     {
-        *uniformDataList[i] = *uniformDataList[0];
+        *uniformDataList[i] = *mainUniform;
     }
     if (_sceneManager->getLight())
     {
@@ -251,7 +252,8 @@ void Engine::renderFrame()
 
     // submit command buffers
     updateNode(_sceneManager->getRootNode(), uniformDataList);
-    _vulkanInstance->submitCommands(CommandsType::ShadowPass);
+    if (isShadowMappingEnabled())
+        _vulkanInstance->submitCommands(CommandsType::ShadowPass);
     if (auto water = _sceneManager->getWater())
     {
         _vulkanInstance->submitCommands(CommandsType::ReflectionPass);

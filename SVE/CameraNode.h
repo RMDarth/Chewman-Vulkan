@@ -21,6 +21,7 @@ public:
 
     const glm::mat4& getProjectionMatrix();
     const glm::mat4& getViewMatrix();
+    const CameraSettings& getCameraSettings() const;
 
     void setLookAt(glm::vec3 pos, glm::vec3 target, glm::vec3 up);
 

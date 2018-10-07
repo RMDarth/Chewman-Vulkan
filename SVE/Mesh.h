@@ -21,6 +21,8 @@ public:
     const std::string& getDefaultMaterialName() const;
     VulkanMesh* getVulkanMesh();
 
+    void updateMesh(MeshSettings meshSettings);
+
     // TODO: this should be moved to something like Animation class
     void updateUniformDataBones(UniformData& data, float time) const;
 

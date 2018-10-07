@@ -13,7 +13,8 @@ enum class TextureType : uint8_t
     ImageFile,
     ShadowMap,
     Reflection,
-    Refraction
+    Refraction,
+    ScreenQuad
 };
 
 enum class TextureAddressMode : uint8_t
@@ -30,6 +31,13 @@ enum class TextureBorderColor : uint8_t
     TransparentBlack,
     SolidBlack,
     SolidWhite
+};
+
+enum class MaterialCullFace : uint8_t
+{
+    FrontFace,
+    BackFace,
+    None
 };
 
 struct TextureInfo
@@ -54,8 +62,8 @@ struct MaterialSettings
     bool isCubemap = false;
     bool useDepthTest = true;
     bool useDepthBias = false;
-    bool invertCullFace = false;
     bool useMultisampling = true;
+    MaterialCullFace cullFace = MaterialCullFace::FrontFace;
 };
 
 } // namespace SVE

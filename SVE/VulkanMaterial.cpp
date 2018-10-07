@@ -261,10 +261,18 @@ void VulkanMaterial::createPipeline()
     rasterizationCreateInfo.polygonMode = VK_POLYGON_MODE_FILL;
     rasterizationCreateInfo.lineWidth = 1.0f;
 
-    if (!_materialSettings.invertCullFace)
-        rasterizationCreateInfo.cullMode = VK_CULL_MODE_FRONT_BIT;
-    else
-        rasterizationCreateInfo.cullMode = VK_CULL_MODE_BACK_BIT;
+    switch (_materialSettings.cullFace)
+    {
+        case MaterialCullFace::BackFace:
+            rasterizationCreateInfo.cullMode = VK_CULL_MODE_BACK_BIT;
+            break;
+        case MaterialCullFace::FrontFace:
+            rasterizationCreateInfo.cullMode = VK_CULL_MODE_FRONT_BIT;
+            break;
+        case MaterialCullFace::None:
+            rasterizationCreateInfo.cullMode = VK_CULL_MODE_NONE;
+            break;
+    }
 
     rasterizationCreateInfo.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
     rasterizationCreateInfo.depthBiasEnable = _materialSettings.useDepthBias ? VK_TRUE : VK_FALSE; // for altering depth (used in shadow mapping)
@@ -433,7 +441,15 @@ void VulkanMaterial::createTextureImages()
                     _textureSamplers[i] = water->getSampler(VulkanWater::PassType::Refraction);
                     continue;
                 }
-                case TextureType::ImageFile:
+                case TextureType::ScreenQuad:
+                {
+                    // TODO: Replace with screen quad
+                    auto shadowMap = Engine::getInstance()->getSceneManager()->getShadowMap()->getVulkanShadowMap();
+                    _textureImageViews[i] = shadowMap->getShadowMapImageView();
+                    _textureSamplers[i] = shadowMap->getShadowMapSampler();
+                    continue;
+                }
+                default:
                     throw VulkanException("Image file is not external image in material");
             }
         } else {

@@ -57,6 +57,11 @@ const glm::mat4& CameraNode::getProjectionMatrix()
     return _projection;
 }
 
+const CameraSettings& CameraNode::getCameraSettings() const
+{
+    return _cameraSettings;
+}
+
 void CameraNode::createProjectionMatrix()
 {
     _projection =  glm::perspective(glm::radians(_cameraSettings.fieldOfView),
@@ -73,7 +78,7 @@ const glm::mat4& CameraNode::getViewMatrix()
 
 void CameraNode::fillUniformData(UniformData& data)
 {
-    auto cameraPos = glm::yawPitchRoll(_yawPitchRoll.x, _yawPitchRoll.y + 3.14f, _yawPitchRoll.z);
+    auto cameraPos = glm::yawPitchRoll(_yawPitchRoll.x, _yawPitchRoll.y, _yawPitchRoll.z);
     cameraPos = glm::translate(glm::mat4(1), _position) * cameraPos;
     _view = glm::inverse(cameraPos);
     SceneNode::setNodeTransformation(cameraPos);
@@ -81,7 +86,7 @@ void CameraNode::fillUniformData(UniformData& data)
     data.projection = _projection;
     data.view = _view;
     data.model = glm::mat4(1);
-    data.cameraPos = getTotalTransformation()[3];
+    data.cameraPos = glm::vec4(_position, 1.0f);//getTotalTransformation()[3];
 }
 
 void CameraNode::setLookAt(glm::vec3 pos, glm::vec3 target,  glm::vec3 up)
@@ -124,8 +129,9 @@ glm::vec3 CameraNode::getYawPitchRoll()
 
 void CameraNode::movePosition(glm::vec3 deltaPos)
 {
-    auto cameraPos = glm::yawPitchRoll(_yawPitchRoll.x, _yawPitchRoll.y + 3.14f, _yawPitchRoll.z);
+    auto cameraPos = glm::yawPitchRoll(_yawPitchRoll.x, _yawPitchRoll.y, _yawPitchRoll.z);
     _position += glm::vec3(cameraPos * glm::vec4(deltaPos, 0));
+
 }
 
 

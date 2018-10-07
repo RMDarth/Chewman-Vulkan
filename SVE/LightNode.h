@@ -21,11 +21,17 @@ public:
 
     void setNodeTransformation(glm::mat4 transform) override;
 
+    // temp
+    bool huita = false;
+
 private:
     void createViewMatrix();
+    void updateViewMatrix(glm::vec3 cameraPos);
     void createProjectionMatrix();
 
 private:
+    glm::vec3 _originalPos;
+
     LightSettings _lightSettings;
     glm::mat4 _viewMatrix;
     glm::mat4 _projectionMatrix;

@@ -167,6 +167,11 @@ VulkanMesh* Mesh::getVulkanMesh()
     return _vulkanMesh.get();
 }
 
+void Mesh::updateMesh(MeshSettings meshSettings)
+{
+    _vulkanMesh->updateMesh(std::move(meshSettings));
+}
+
 void Mesh::updateUniformDataBones(UniformData& data, float time) const
 {
     if (_isAnimated)

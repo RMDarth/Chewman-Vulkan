@@ -169,6 +169,7 @@ std::vector<TextureInfo> getTextureInfos(const cppfs::FilePath& directory, rj::D
             {"ShadowMap",   TextureType::ShadowMap},
             {"Reflection",  TextureType::Reflection},
             {"Refraction",  TextureType::Refraction},
+            {"ScreenQuad",  TextureType::ScreenQuad},
     };
 
     static const std::map<std::string, TextureAddressMode> addressModeMap {
@@ -210,12 +211,18 @@ std::vector<TextureInfo> getTextureInfos(const cppfs::FilePath& directory, rj::D
 
 MaterialSettings loadMaterial(const cppfs::FilePath& directory, const std::string& data)
 {
+    static const std::map<std::string, MaterialCullFace> cullFaceMap {
+            { "BackFace",   MaterialCullFace::BackFace },
+            { "FrontFace",  MaterialCullFace::FrontFace },
+            { "None",       MaterialCullFace::None },
+    };
+
     rj::Document document;
     document.Parse(data.c_str());
 
     MaterialSettings materialSettings {};
     materialSettings.name = document["name"].GetString();
-    setOptional(materialSettings.invertCullFace = document["invertCullFace"].GetBool());
+    setOptional(materialSettings.cullFace = cullFaceMap.at(document["cullFace"].GetString()));
     setOptional(materialSettings.useDepthTest = document["useDepthTest"].GetBool());
     setOptional(materialSettings.useDepthBias = document["useDepthBias"].GetBool());
     setOptional(materialSettings.useMultisampling = document["useMultisampling"].GetBool());

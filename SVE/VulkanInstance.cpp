@@ -289,7 +289,7 @@ void VulkanInstance::waitAvailableFramebuffer()
 
 void VulkanInstance::submitCommands(CommandsType commandsType) const
 {
-    static VkPipelineStageFlags waitStages[] = {VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT};
+    static VkPipelineStageFlags waitStages[] = {VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT};
 
     if (commandsType == CommandsType::ShadowPass)
     {
@@ -407,6 +407,8 @@ void VulkanInstance::renderCommands() const
     } else if (result != VK_SUCCESS) {
         throw VulkanException("Can't present swapchain image");
     }
+
+    _currentWaitSemaphore = _imageAvailableSemaphore;
 }
 
 uint32_t VulkanInstance::getCurrentImageIndex() const
@@ -450,9 +452,10 @@ void VulkanInstance::startRenderCommandBufferCreation(uint32_t index)
         throw VulkanException("Failed to begin recording Vulkan command buffer");
     }
 
-    std::vector<VkClearValue> clearValues(2);
+    std::vector<VkClearValue> clearValues(3);
     clearValues[0].color = {0.0f, 0.0f, 0.0f, 1.0f};
     clearValues[1].depthStencil = {1.0f, 0};
+    clearValues[2].color = {0.0f, 0.0f, 0.0f, 1.0f};
 
     VkRenderPassBeginInfo renderPassBeginInfo{};
     renderPassBeginInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
@@ -1062,6 +1065,8 @@ void VulkanInstance::deleteSyncPrimitives()
     vkDestroySemaphore(_device, _imageAvailableSemaphore, nullptr);
     vkDestroySemaphore(_device, _renderFinishedSemaphore, nullptr);
     vkDestroySemaphore(_device, _shadowMapReadySemaphore, nullptr);
+    vkDestroySemaphore(_device, _waterRefractionReadySemaphore, nullptr);
+    vkDestroySemaphore(_device, _waterReflectionReadySemaphore, nullptr);
     for (auto i = 0u; i < _swapchainImages.size(); i++)
     {
         vkDestroyFence(_device, _inFlightFences[i], nullptr);
