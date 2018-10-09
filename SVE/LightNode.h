@@ -21,9 +21,6 @@ public:
 
     void setNodeTransformation(glm::mat4 transform) override;
 
-    // temp
-    bool huita = false;
-
 private:
     void createViewMatrix();
     void updateViewMatrix(glm::vec3 cameraPos);

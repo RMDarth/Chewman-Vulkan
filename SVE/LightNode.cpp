@@ -38,7 +38,7 @@ void LightNode::fillUniformData(UniformData& data, bool asViewSource)
     data.lightViewProjection = _projectionMatrix * _viewMatrix;
     data.lightSettings = _lightSettings;
 
-    if (huita || asViewSource)
+    if (asViewSource)
     {
         data.view = _viewMatrix;
         data.projection = _projectionMatrix;
