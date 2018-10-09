@@ -26,7 +26,7 @@ out gl_PerVertex {
     float gl_ClipDistance[];
 };
 
-const float shadowDistance = 30.0;
+const float shadowDistance = 20.0;
 const float transitionDistance = 2.0;
 
 void main() {

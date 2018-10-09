@@ -74,5 +74,7 @@ add_executable(Chewman
         SVE/VulkanWater.h
         SVE/Water.cpp
         SVE/Water.h
-        SVE/Utils.h SVE/VulkanScreenQuad.cpp SVE/VulkanScreenQuad.h)
+        SVE/Utils.h
+        SVE/VulkanScreenQuad.cpp
+        SVE/VulkanScreenQuad.h)
 target_link_libraries(Chewman mingw32 SDL2main SDL2 vulkan-1.lib libassimp libcppfsd)

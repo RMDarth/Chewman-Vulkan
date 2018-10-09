@@ -75,11 +75,11 @@ void VulkanScreenQuad::startRenderCommandBufferCreation()
     vkCmdBeginRenderPass(_commandBuffer, &renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
 
     // TODO: Add depth bias constants to configuration
-    /*vkCmdSetDepthBias(
+    vkCmdSetDepthBias(
             _commandBuffer,
             1.25f,
             0.0f,
-            1.75f);*/
+            1.75f);
 
     VkViewport viewport;
     viewport.x = 0.0f;

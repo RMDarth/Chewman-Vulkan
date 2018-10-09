@@ -23,7 +23,7 @@ layout(location = 4) in vec4 fragLightSpacePos;
 layout(location = 0) out vec4 outColor;
 
 
-float computeShadowFactor(vec4 lightSpacePos)
+float computeShadowFactor(vec4 lightSpacePos, vec2 offset)
 {
    // Convert light space position to NDC (normalized device coordinates)
    //vec3 lightSpaceReal = lightSpacePos.xyz /= lightSpacePos.w;
@@ -42,7 +42,7 @@ float computeShadowFactor(vec4 lightSpacePos)
    vec2 shadowMapCoord = lightSpacePos.xy * 0.5 + 0.5;
 
    // Check if the sample is in the light or in the shadow
-    if (lightSpacePos.z > texture(shadowTex, shadowMapCoord.xy).x)
+    if (lightSpacePos.z > texture(shadowTex, shadowMapCoord.xy + offset).x)
     {
          return 1 - (lightSpacePos.w * 0.6); // In the shadow
     }
@@ -51,6 +51,30 @@ float computeShadowFactor(vec4 lightSpacePos)
 
    return 1.0;
 }
+
+float filterPCF(vec4 lightSpacePos)
+{
+	ivec2 texDim = textureSize(shadowTex, 0);
+	float scale = 1.5;
+	float dx = scale * 1.0 / float(texDim.x);
+	float dy = scale * 1.0 / float(texDim.y);
+
+	float shadowFactor = 0.0;
+	int count = 0;
+	int range = 1;
+
+	for (int x = -range; x <= range; x++)
+	{
+		for (int y = -range; y <= range; y++)
+		{
+			shadowFactor += computeShadowFactor(lightSpacePos, vec2(dx*x, dy*y));
+			count++;
+		}
+
+	}
+	return shadowFactor / count;
+}
+
 
 void main() {
     // ambient
@@ -70,7 +94,7 @@ void main() {
     float spec = pow(max(dot(viewDir, reflectDir), 0.0), ubo.shininess);
     vec3 specular = ubo.specularStrength * spec * ubo.lightColor.rgb;
 
-    vec3 result = (ambient + diffuse + specular) * fragColor * texture(diffuseTex, fragTexCoord).rgb * computeShadowFactor(fragLightSpacePos);
+    vec3 result = (ambient + diffuse + specular) * fragColor * texture(diffuseTex, fragTexCoord).rgb * filterPCF(fragLightSpacePos);
     //vec3 result = diffuse * vec3(texture(diffuseTex, fragTexCoord).rgb) * computeShadowFactor(fragLightSpacePos);
     //vec3 result = vec3(1 - fragLightSpacePos.w * 0.4);
    // vec3 result = vec3(fragNormal);
