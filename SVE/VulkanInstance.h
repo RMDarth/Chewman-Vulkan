@@ -13,6 +13,7 @@
 namespace SVE
 {
 class VulkanMesh;
+class VulkanScreenQuad;
 
 // TODO: Create some mapping to external indexes instead of hardcoding
 enum BufferIndex
@@ -61,6 +62,9 @@ public:
     void reallocateCommandBuffers();
     void startRenderCommandBufferCreation(uint32_t index);
     void endRenderCommandBufferCreation(uint32_t index);
+
+    VulkanScreenQuad* getScreenQuad();
+    void initScreenQuad();
 
 private:
     // Vulkan objects creators and destroyers
@@ -148,6 +152,7 @@ private:
     VkSemaphore _shadowMapReadySemaphore;
     VkSemaphore _waterReflectionReadySemaphore;
     VkSemaphore _waterRefractionReadySemaphore;
+    VkSemaphore _screenQuadReadySemaphore;
     VkSemaphore _imageAvailableSemaphore;
     VkSemaphore _renderFinishedSemaphore;
 
@@ -156,6 +161,8 @@ private:
 
     std::vector<VkFence> _inFlightFences;
     uint32_t _currentImageIndex;
+
+    std::unique_ptr<VulkanScreenQuad> _screenQuad;
 };
 
 } // namespace SVE

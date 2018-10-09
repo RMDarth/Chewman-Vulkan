@@ -5,7 +5,6 @@ layout(set = 1, binding = 0) uniform sampler2D diffuseTex;
 layout(set = 1, binding = 1) uniform sampler2D shadowTex;
 layout(set = 1, binding = 2) uniform UBO
 {
-    mat4 lightViewProjection;
     vec4 lightPos;
 	vec4 lightColor;
 	vec4 cameraPos;
@@ -33,10 +32,10 @@ float computeShadowFactor(vec4 lightSpacePos)
    // the light's influence, which means it is in the shadow (notice that
    // such sample would be outside the shadow map image)
    // TODO: Use something like "isFiniteShadow" uniform for this check
-   /*if (abs(lightSpaceReal.x) > 1.0 ||
-       abs(lightSpaceReal.y) > 1.0 ||
-       abs(lightSpaceReal.z) > 1.0)
-      return 0.4;*/
+   /*if (abs(lightSpacePos.x) > 1.0 ||
+       abs(lightSpacePos.y) > 1.0 ||
+       abs(lightSpacePos.z) > 1.0)
+      return lightSpacePos.w;*/
 
 
    // Translate from NDC to shadow map space (Vulkan's Z is already in [0..1])
@@ -45,7 +44,7 @@ float computeShadowFactor(vec4 lightSpacePos)
    // Check if the sample is in the light or in the shadow
     if (lightSpacePos.z > texture(shadowTex, shadowMapCoord.xy).x)
     {
-         return 1 - (lightSpacePos.w - 0.4); // In the shadow
+         return 1 - (lightSpacePos.w * 0.6); // In the shadow
     }
 
    // In the light
@@ -59,7 +58,8 @@ void main() {
 
     // diffuse
     vec3 norm = normalize(fragNormal);
-    vec3 lightDir = normalize(ubo.lightPos.xyz - fragPos);
+    //vec3 lightDir = normalize(ubo.lightPos.xyz - fragPos);
+    vec3 lightDir = normalize(ubo.lightPos.xyz);
     float diff = max(dot(norm, lightDir), 0.0);
     vec3 diffuse = diff * ubo.diffuseStrength * ubo.lightColor.rgb;
 
@@ -70,10 +70,9 @@ void main() {
     float spec = pow(max(dot(viewDir, reflectDir), 0.0), ubo.shininess);
     vec3 specular = ubo.specularStrength * spec * ubo.lightColor.rgb;
 
-
-    vec4 shadowTexCoord = ubo.lightViewProjection * vec4(fragPos, 1);// * 0.5 + 0.5;
-    //vec3 result = (ambient + diffuse + specular) * fragColor * texture(diffuseTex, fragTexCoord).rgb * computeShadowFactor(fragLightSpacePos);
-    vec3 result = vec3(texture(diffuseTex, fragTexCoord).rgb) * computeShadowFactor(shadowTexCoord);
+    vec3 result = (ambient + diffuse + specular) * fragColor * texture(diffuseTex, fragTexCoord).rgb * computeShadowFactor(fragLightSpacePos);
+    //vec3 result = diffuse * vec3(texture(diffuseTex, fragTexCoord).rgb) * computeShadowFactor(fragLightSpacePos);
+    //vec3 result = vec3(1 - fragLightSpacePos.w * 0.4);
    // vec3 result = vec3(fragNormal);
     outColor = vec4(result, 1.0);
 }

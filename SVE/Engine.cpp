@@ -1,5 +1,3 @@
-#include <utility>
-
 // VSE (Vulkan Simple Engine) Library
 // Copyright (c) 2018-2019, Igor Barinov
 // Licensed under CC BY 4.0
@@ -8,7 +6,9 @@
 #include "VulkanInstance.h"
 #include "VulkanShadowMap.h"
 #include "VulkanWater.h"
+#include "VulkanScreenQuad.h"
 #include "VulkanException.h"
+#include "VulkanMaterial.h"
 #include "MaterialManager.h"
 #include "SceneManager.h"
 #include "ShaderManager.h"
@@ -21,6 +21,7 @@
 #include "Water.h"
 #include "Utils.h"
 #include <chrono>
+#include <utility>
 
 namespace SVE
 {
@@ -58,6 +59,10 @@ Engine* Engine::createInstance(SDL_Window* window, const std::string& settingsPa
             _engineInstance->getSceneManager()->initShadowMap();
         if (settings.initWater)
             _engineInstance->getSceneManager()->createWater(0);
+        if (settings.useScreenQuad)
+        {
+            _engineInstance->getVulkanInstance()->initScreenQuad();
+        }
     }
     return _engineInstance;
 }
@@ -198,13 +203,34 @@ void Engine::renderFrame()
             water->getVulkanWater()->endRenderCommandBufferCreation(VulkanWater::PassType::Refraction);
         }
 
+        // TODO: Check if screenquad enabled
+        if (auto* screenQuad = _vulkanInstance->getScreenQuad())
+        {
+            _commandsType = CommandsType::ScreenQuadPass;
+            screenQuad->reallocateCommandBuffers();
+            screenQuad->startRenderCommandBufferCreation();
+            if (skybox)
+                skybox->applyDrawingCommands(BUFFER_INDEX_SCREEN_QUAD);
+            createNodeDrawCommands(_sceneManager->getRootNode(), BUFFER_INDEX_SCREEN_QUAD);
+            screenQuad->endRenderCommandBufferCreation();
+        }
+
         _commandsType = CommandsType::MainPass;
         for (auto i = 0u; i < _vulkanInstance->getSwapchainSize(); ++i)
         {
             _vulkanInstance->startRenderCommandBufferCreation(i);
-            if (skybox)
-                skybox->applyDrawingCommands(i);
-            createNodeDrawCommands(_sceneManager->getRootNode(), i);
+            if (auto* screenQuad = _vulkanInstance->getScreenQuad())
+            {
+                _engineInstance->getMaterialManager()->getMaterial("ScreenQuad")->getVulkanMaterial()->getInstanceForEntity(nullptr);
+                _materialManager->getMaterial("ScreenQuad")->getVulkanMaterial()->applyDrawingCommands(i, 1);
+                auto commandBuffer = _vulkanInstance->getCommandBuffer(i);
+                vkCmdDraw(commandBuffer, 6, 1, 0, 0);
+            } else
+            {
+                if (skybox)
+                    skybox->applyDrawingCommands(i);
+                createNodeDrawCommands(_sceneManager->getRootNode(), i);
+            }
             _vulkanInstance->endRenderCommandBufferCreation(i);
         }
         _sceneManager->dequeueCommandBufferUpdate();
@@ -214,7 +240,7 @@ void Engine::renderFrame()
     auto mainCamera = _sceneManager->getMainCamera();
     if (!mainCamera)
         throw VulkanException("Camera not set");
-    UniformDataList uniformDataList(4);
+    UniformDataList uniformDataList(PassCount);
     // TODO: Init this once
     for (auto i = 0; i < PassCount; i++)
     {
@@ -249,9 +275,10 @@ void Engine::renderFrame()
     // update uniforms
     if (skybox)
         skybox->updateUniforms(uniformDataList);
+    updateNode(_sceneManager->getRootNode(), uniformDataList);
+    //_materialManager->getMaterial("ScreenQuad")->getVulkanMaterial()->setUniformData(1, *uniformDataList[toInt(CommandsType::MainPass)]);
 
     // submit command buffers
-    updateNode(_sceneManager->getRootNode(), uniformDataList);
     if (isShadowMappingEnabled())
         _vulkanInstance->submitCommands(CommandsType::ShadowPass);
     if (auto water = _sceneManager->getWater())
@@ -259,8 +286,10 @@ void Engine::renderFrame()
         _vulkanInstance->submitCommands(CommandsType::ReflectionPass);
         _vulkanInstance->submitCommands(CommandsType::RefractionPass);
     }
-
+    // TODO: Check if screen quad rendering enabled
+    _vulkanInstance->submitCommands(CommandsType::ScreenQuadPass);
     _vulkanInstance->submitCommands(CommandsType::MainPass);
+
     _vulkanInstance->renderCommands();
 }
 

@@ -4,5 +4,6 @@
     "gpuIndex": "best",
     "presentMode": "BestAvailable",
     "initShadows": true,
-    "initWater": true
+    "initWater": true,
+    "useScreenQuad": true
 }

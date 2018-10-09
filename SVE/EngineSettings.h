@@ -24,6 +24,7 @@ struct EngineSettings
     PresentMode presentMode = PresentMode::BestAvailable;
     int MSAALevel = BEST_MSAA_AVAILABLE;
     bool useValidation = false;
+    bool useScreenQuad = true;
     bool initShadows = false;
     bool initWater = false;
 

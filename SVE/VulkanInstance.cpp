@@ -9,6 +9,7 @@
 #include "VulkanException.h"
 #include "VulkanMesh.h"
 #include "VulkanMaterial.h"
+#include "VulkanScreenQuad.h"
 
 namespace SVE
 {
@@ -107,6 +108,8 @@ VulkanInstance::VulkanInstance(SDL_Window* window, EngineSettings settings)
 
 VulkanInstance::~VulkanInstance()
 {
+    _screenQuad.reset();
+
     deleteSyncPrimitives();
     deleteFramebuffers();
     deleteDepthBuffer();
@@ -289,7 +292,7 @@ void VulkanInstance::waitAvailableFramebuffer()
 
 void VulkanInstance::submitCommands(CommandsType commandsType) const
 {
-    static VkPipelineStageFlags waitStages[] = {VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT};
+    static VkPipelineStageFlags waitStages[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
 
     if (commandsType == CommandsType::ShadowPass)
     {
@@ -343,8 +346,8 @@ void VulkanInstance::submitCommands(CommandsType commandsType) const
 
     if (commandsType == CommandsType::RefractionPass)
     {
-        auto waterReflectionIter = _externalBufferMap.find(BUFFER_INDEX_WATER_REFRACTION);
-        if (waterReflectionIter != _externalBufferMap.end())
+        auto waterRefractionIter = _externalBufferMap.find(BUFFER_INDEX_WATER_REFRACTION);
+        if (waterRefractionIter != _externalBufferMap.end())
         {
             VkSubmitInfo submitInfo{};
             submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
@@ -352,7 +355,7 @@ void VulkanInstance::submitCommands(CommandsType commandsType) const
             submitInfo.pWaitSemaphores = &_currentWaitSemaphore;
             submitInfo.pWaitDstStageMask = waitStages;
             submitInfo.commandBufferCount = 1;
-            submitInfo.pCommandBuffers = &waterReflectionIter->second;
+            submitInfo.pCommandBuffers = &waterRefractionIter->second;
             submitInfo.signalSemaphoreCount = 1;
             submitInfo.pSignalSemaphores = &_waterRefractionReadySemaphore;
 
@@ -363,6 +366,31 @@ void VulkanInstance::submitCommands(CommandsType commandsType) const
             }
 
             _currentWaitSemaphore = _waterRefractionReadySemaphore;
+        }
+    }
+
+    if (commandsType == CommandsType::ScreenQuadPass)
+    {
+        auto screenQuadIter = _externalBufferMap.find(BUFFER_INDEX_SCREEN_QUAD);
+        if (screenQuadIter != _externalBufferMap.end())
+        {
+            VkSubmitInfo submitInfo{};
+            submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+            submitInfo.waitSemaphoreCount = 1;
+            submitInfo.pWaitSemaphores = &_currentWaitSemaphore;
+            submitInfo.pWaitDstStageMask = waitStages;
+            submitInfo.commandBufferCount = 1;
+            submitInfo.pCommandBuffers = &screenQuadIter->second;
+            submitInfo.signalSemaphoreCount = 1;
+            submitInfo.pSignalSemaphores = &_screenQuadReadySemaphore;
+
+            auto result = vkQueueSubmit(_queue, 1, &submitInfo, VK_NULL_HANDLE);
+            if (result != VK_SUCCESS)
+            {
+                throw VulkanException("Can't submit Vulkan command buffers to queue");
+            }
+
+            _currentWaitSemaphore = _screenQuadReadySemaphore;
         }
     }
 
@@ -494,6 +522,16 @@ void VulkanInstance::endRenderCommandBufferCreation(uint32_t index)
     {
         throw VulkanException("Failed to record Vulkan command buffer");
     }
+}
+
+void VulkanInstance::initScreenQuad()
+{
+    _screenQuad = std::make_unique<VulkanScreenQuad>();
+}
+
+VulkanScreenQuad* VulkanInstance::getScreenQuad()
+{
+    return _screenQuad.get();
 }
 
 void VulkanInstance::createInstance()
@@ -1045,6 +1083,10 @@ void VulkanInstance::createSyncPrimitives()
     {
         throw std::runtime_error("Failed to create Vulkan semaphore");
     }
+    if (vkCreateSemaphore(_device, &semaphoreCreateInfo, nullptr, &_screenQuadReadySemaphore) != VK_SUCCESS)
+    {
+        throw std::runtime_error("Failed to create Vulkan semaphore");
+    }
 
 
     VkFenceCreateInfo fenceCreateInfo{};
@@ -1067,6 +1109,7 @@ void VulkanInstance::deleteSyncPrimitives()
     vkDestroySemaphore(_device, _shadowMapReadySemaphore, nullptr);
     vkDestroySemaphore(_device, _waterRefractionReadySemaphore, nullptr);
     vkDestroySemaphore(_device, _waterReflectionReadySemaphore, nullptr);
+    vkDestroySemaphore(_device, _screenQuadReadySemaphore, nullptr);
     for (auto i = 0u; i < _swapchainImages.size(); i++)
     {
         vkDestroyFence(_device, _inFlightFences[i], nullptr);
@@ -1151,5 +1194,6 @@ size_t VulkanInstance::getGPUIndex(std::vector<VkPhysicalDevice>& deviceList)
         return static_cast<size_t>(_engineSettings.gpuIndex);
     }
 }
+
 
 } // namespace SVE

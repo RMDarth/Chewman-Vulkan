@@ -63,6 +63,7 @@ EngineSettings loadEngine(const std::string& data)
     setOptional(engineSettings.applicationName = document["applicationName"].GetString());
     setOptional(engineSettings.initShadows = document["initShadows"].GetBool());
     setOptional(engineSettings.initWater = document["initWater"].GetBool());
+    setOptional(engineSettings.useScreenQuad = document["useScreenQuad"].GetBool());
 
     return engineSettings;
 }

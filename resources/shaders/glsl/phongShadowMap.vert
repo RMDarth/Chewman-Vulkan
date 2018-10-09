@@ -26,8 +26,8 @@ out gl_PerVertex {
     float gl_ClipDistance[];
 };
 
-const float shadowDistance = 50.0;
-const float transitionDistance = 10.0;
+const float shadowDistance = 30.0;
+const float transitionDistance = 2.0;
 
 void main() {
     vec4 worldPos = uniforms.model * vec4(inPosition, 1.0);

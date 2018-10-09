@@ -74,7 +74,7 @@ void LightNode::createProjectionMatrix()
             _projectionMatrix[1][1] *= -1;
             break;
         case LightType::SunLight:
-            _projectionMatrix = glm::ortho(-20.0f, 20.0f, -20.0f, 20.0f, 0.01f, 100.0f);
+            _projectionMatrix = glm::ortho(-30.0f, 30.0f, -30.0f, 30.0f, 0.01f, 100.0f);
             _projectionMatrix[1][1] *= -1;
             break;
         case LightType::SpotLight:

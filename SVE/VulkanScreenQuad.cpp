@@ -117,7 +117,6 @@ void VulkanScreenQuad::createRenderPasses()
 
     VkAttachmentDescription colorAttachment {}; // color buffer attachment to render pass
     colorAttachment.format = _vulkanInstance->getSurfaceColorFormat();
-    // TODO: Consider removing MSAA for refraction/reflection
     colorAttachment.samples = sampleCount;
     colorAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR; // clear every frame
     colorAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE; // should be STORE for rendering

@@ -23,10 +23,11 @@ enum class CommandsType : uint8_t
     MainPass = 0,
     ShadowPass,
     ReflectionPass,
-    RefractionPass
+    RefractionPass,
+    ScreenQuadPass,
 };
 
-static const uint8_t PassCount = 4;
+static const uint8_t PassCount = 5;
 
 class Engine
 {

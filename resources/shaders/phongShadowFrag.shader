@@ -7,7 +7,6 @@
         "shadowTex"
     ],
     "uniformList": [
-        { "uniformType": "LightViewProjection" },
         { "uniformType": "LightPosition" },
         { "uniformType": "LightColor" },
         { "uniformType": "CameraPosition" },

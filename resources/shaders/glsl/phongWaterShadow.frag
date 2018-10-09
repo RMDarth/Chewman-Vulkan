@@ -31,16 +31,20 @@ const float waterTransparency = 0.6;
 
 float computeShadowFactor(vec4 lightSpacePos, vec2 distortion, float shadowStrength)
 {
+    return 1.0;
+    // TODO: rethink shadows on water surface
+
+
    // Convert light space position to NDC (normalized device coordinates)
    vec3 lightSpaceReal = lightSpacePos.xyz /= lightSpacePos.w;
 
    // If the fragment is outside the light's projection then it is outside
    // the light's influence, which means it is in the shadow (notice that
    // such sample would be outside the shadow map image)
-   if (abs(lightSpaceReal.x) > 1.0 ||
+   /*if (abs(lightSpaceReal.x) > 1.0 ||
        abs(lightSpaceReal.y) > 1.0 ||
        abs(lightSpaceReal.z) > 1.0)
-      return shadowStrength;
+      return shadowStrength;*/
 
    // Translate from NDC to shadow map space (Vulkan's Z is already in [0..1])
    vec2 shadowMapCoord = lightSpaceReal.xy * 0.5 + 0.5;

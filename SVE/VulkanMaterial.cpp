@@ -4,11 +4,12 @@
 #include "VulkanMaterial.h"
 #include "VulkanException.h"
 #include "VulkanInstance.h"
+#include "VulkanScreenQuad.h"
+#include "VulkanShadowMap.h"
 #include "ShaderManager.h"
 #include "ShaderInfo.h"
 #include "SceneManager.h"
 #include "ShadowMap.h"
-#include "VulkanShadowMap.h"
 #include "Water.h"
 #include "VulkanWater.h"
 #include "Entity.h"
@@ -420,6 +421,7 @@ void VulkanMaterial::createTextureImages()
 
             switch (_materialSettings.textures[i].textureType)
             {
+                // TODO: Add checks for if external object exists
                 case TextureType::ShadowMap:
                 {
                     auto shadowMap = Engine::getInstance()->getSceneManager()->getShadowMap()->getVulkanShadowMap();
@@ -443,10 +445,17 @@ void VulkanMaterial::createTextureImages()
                 }
                 case TextureType::ScreenQuad:
                 {
-                    // TODO: Replace with screen quad
-                    auto shadowMap = Engine::getInstance()->getSceneManager()->getShadowMap()->getVulkanShadowMap();
-                    _textureImageViews[i] = shadowMap->getShadowMapImageView();
-                    _textureSamplers[i] = shadowMap->getShadowMapSampler();
+                    auto screenQuad = Engine::getInstance()->getVulkanInstance()->getScreenQuad();
+                    if (screenQuad)
+                    {
+                        _textureImageViews[i] = screenQuad->getImageView();
+                        _textureSamplers[i] = screenQuad->getSampler();
+                    } else {
+                        // TODO: Add temporary textures or throw some kind of error
+                        auto shadowMap = Engine::getInstance()->getSceneManager()->getShadowMap()->getVulkanShadowMap();
+                        _textureImageViews[i] = shadowMap->getShadowMapImageView();
+                        _textureSamplers[i] = shadowMap->getShadowMapSampler();
+                    }
                     continue;
                 }
                 default:
