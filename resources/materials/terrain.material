@@ -5,7 +5,7 @@
     "textures": [
         {
             "samplerName": "diffuseTex",
-            "filename": "textures/terrain2.jpg"
+            "filename": "textures/terrain.gif"
         },
         {
             "samplerName": "shadowTex",

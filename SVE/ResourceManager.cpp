@@ -245,6 +245,7 @@ MeshLoadSettings loadMesh(const cppfs::FilePath& directory, const std::string& d
 
     meshLoadSettings.filename = directory.resolve(document["filename"].GetString()).fullPath();
     meshLoadSettings.name = document["name"].GetString();
+    setOptional(meshLoadSettings.switchYZ = document["switchYZ"].GetBool());
 
     return meshLoadSettings;
 }
@@ -339,7 +340,7 @@ void ResourceManager::initializeResources(LoadData& data)
     }
     for (auto& meshLoadSettings : data.meshList)
     {
-        std::shared_ptr<SVE::Mesh> mesh = std::make_shared<SVE::Mesh>(meshLoadSettings.name, meshLoadSettings.filename);
+        std::shared_ptr<SVE::Mesh> mesh = std::make_shared<SVE::Mesh>(meshLoadSettings);
         engine->getMeshManager()->registerMesh(mesh);
     }
 }

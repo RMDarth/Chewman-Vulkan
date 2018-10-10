@@ -1,4 +1,5 @@
 {
     "name": "terrain",
-    "filename": "assets/terrain.FBX"
+    "filename": "assets/terrain.FBX",
+    "switchYZ": true
 }

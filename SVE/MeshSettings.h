@@ -29,6 +29,7 @@ struct MeshLoadSettings
 {
     std::string name;
     std::string filename;
+    bool switchYZ = false;
 };
 
 struct MeshSettings

@@ -14,8 +14,8 @@ namespace SVE
 {
 
 VulkanShadowMap::VulkanShadowMap()
-    : _width(2048)
-    , _height(2048)
+    : _width(4096)
+    , _height(4096)
     , _vulkanInstance(Engine::getInstance()->getVulkanInstance())
     , _vulkanUtils(_vulkanInstance->getVulkanUtils())
 {
@@ -232,9 +232,9 @@ void VulkanShadowMap::startRenderCommandBufferCreation()
     // TODO: Add depth bias constants to configuration
     vkCmdSetDepthBias(
             _commandBuffer,
-            1.25f,
+            5.25f,
             0.0f,
-            1.75f);
+            5.75f);
 
     VkViewport viewport;
     viewport.x = 0.0f;

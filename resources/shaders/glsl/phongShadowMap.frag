@@ -1,5 +1,6 @@
 #version 450
 #extension GL_ARB_separate_shader_objects : enable
+#include "lighting.glsl"
 
 layout(set = 1, binding = 0) uniform sampler2D diffuseTex;
 layout(set = 1, binding = 1) uniform sampler2D shadowTex;
@@ -75,9 +76,8 @@ float filterPCF(vec4 lightSpacePos)
 	return shadowFactor / count;
 }
 
-
-void main() {
-    // ambient
+/*
+// ambient
     vec3 ambient = ubo.ambientStrength * ubo.lightColor.rgb;
 
     // diffuse
@@ -93,8 +93,26 @@ void main() {
     vec3 halfVec = normalize(lightDir + viewDir);
     float spec = pow(max(dot(viewDir, reflectDir), 0.0), ubo.shininess);
     vec3 specular = ubo.specularStrength * spec * ubo.lightColor.rgb;
+*/
 
-    vec3 result = (ambient + diffuse + specular) * fragColor * texture(diffuseTex, fragTexCoord).rgb * filterPCF(fragLightSpacePos);
+void main() {
+    CalculatedMaterial material;
+    material.diffuse = vec3(texture(diffuseTex, fragTexCoord).rgb) * ubo.lightColor.rgb;
+    material.specular = ubo.lightColor.rgb;
+    material.shininess = ubo.shininess;
+
+    DirLight dirLight;
+    dirLight.direction = normalize(-ubo.lightPos.xyz);
+    dirLight.ambient = vec3(0,0,0);
+    dirLight.diffuse = vec3(ubo.diffuseStrength);
+    dirLight.specular = vec3(ubo.specularStrength);
+
+    vec3 norm = normalize(fragNormal);
+    vec3 viewDir = normalize(ubo.cameraPos.xyz - fragPos);
+
+    vec3 lightEffect = CalcDirLight(dirLight, fragNormal, viewDir, material);
+
+    vec3 result = lightEffect * fragColor * filterPCF(fragLightSpacePos);
     //vec3 result = diffuse * vec3(texture(diffuseTex, fragTexCoord).rgb) * computeShadowFactor(fragLightSpacePos);
     //vec3 result = vec3(1 - fragLightSpacePos.w * 0.4);
    // vec3 result = vec3(fragNormal);

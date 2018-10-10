@@ -13,7 +13,6 @@
 #include <glm/gtx/rotate_vector.hpp>
 #include <iostream>
 #include <memory>
-#include <chrono>
 
 // Thanks to:
 // Karl "ThinMatrix" for his video blogs on OpenGL techniques
@@ -40,6 +39,55 @@ void moveCamera(const Uint8* keystates, float deltaTime, std::shared_ptr<SVE::Ca
         camera->movePosition(glm::vec3(0,0,-12.0f*deltaTime));
     if (keystates[SDL_SCANCODE_S])
         camera->movePosition(glm::vec3(0,0,12.0f*deltaTime));
+}
+
+void configFloor(SDL_Keycode key, std::shared_ptr<SVE::SceneNode>& floor)
+{
+    static float x = -12;
+    static float z = -21;
+    static float y = -11;
+    bool updated = false;
+    if (key == SDLK_UP)
+    {
+        z = z + 1;
+        updated = true;
+
+    }
+    if (key == SDLK_RIGHT)
+    {
+        x = x + 1;
+        updated = true;
+    }
+    if (key == SDLK_DOWN)
+    {
+        z = z - 1;
+        updated = true;
+
+    }
+    if (key == SDLK_LEFT)
+    {
+        x = x - 1;
+        updated = true;
+    }
+    if (key == SDLK_z)
+    {
+        y = y + 1;
+        updated = true;
+
+    }
+    if (key == SDLK_x)
+    {
+        y = y - 1;
+        updated = true;
+    }
+
+    if (updated)
+    {
+        auto nodeTransform = glm::translate(glm::mat4(1), glm::vec3(x, y, z));
+        floor->setNodeTransformation(nodeTransform);
+
+        std::cout << x << " " << y << " " << z << std::endl;
+    }
 }
 
 void rotateCamera(SDL_MouseMotionEvent& event, std::shared_ptr<SVE::CameraNode>& camera)
@@ -186,7 +234,6 @@ int runGame()
     waterEntity->setMaterial("WaterReflection");
     waterEntity->setIsReflected(false);
     waterEntity->setCastShadows(false);
-    //floorEntity->setMaterial("Floor");
     meshEntity->setMaterial("Yellow");
     meshEntity2->setMaterial("Blue");
     terrainEntity->setMaterial("Terrain");
@@ -198,8 +245,7 @@ int runGame()
 
     {
         terrainNode->attachEntity(terrainEntity);
-        auto nodeTransform = glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-        nodeTransform = glm::translate(glm::mat4(1), glm::vec3(0, 15, 0)) * nodeTransform;
+        auto nodeTransform = glm::translate(glm::mat4(1), glm::vec3(-12, -11, -21));
         terrainNode->setNodeTransformation(nodeTransform);
     }
 
@@ -212,10 +258,9 @@ int runGame()
 
     bool quit = false;
     bool skipRendering = false;
-    auto prevTime = std::chrono::high_resolution_clock::now();
-    decltype(prevTime) curTime;
+    auto prevTime = engine->getTime();
     while(!quit) {
-        curTime = std::chrono::high_resolution_clock::now();
+        auto curTime = engine->getTime();
         SDL_Event event;
         while( SDL_PollEvent(&event) ) {
             if(event.type == SDL_QUIT)
@@ -250,6 +295,8 @@ int runGame()
                         newNode2->detachEntity(meshEntity2);
                     }
                 }
+
+                configFloor(event.key.keysym.sym, terrainNode);
             }
             if (event.type == SDL_MOUSEMOTION)
             {
@@ -258,19 +305,14 @@ int runGame()
             }
         }
 
-        //newNode2->setNodeTransformation(glm::translate(glm::mat4(1), camera->getPosition()));
-
-        auto duration = std::chrono::duration<float, std::chrono::seconds::period>(curTime - prevTime).count();
-        //std::cout << 1/duration << std::endl;
-
         const Uint8* keystates = SDL_GetKeyboardState(nullptr);
-        moveCamera(keystates, duration, camera);
+        moveCamera(keystates, curTime - prevTime, camera);
         SDL_Delay(1);
         if (!skipRendering)
         {
             engine->renderFrame();
 
-            updateNode(newNode, engine->getTime());
+            updateNode(newNode, curTime);
         }
         prevTime = curTime;
     }

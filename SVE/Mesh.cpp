@@ -45,8 +45,8 @@ Mesh::Mesh(MeshSettings meshSettings)
 
 }
 
-Mesh::Mesh(const std::string& name, const std::string& modelFile)
-    : _name(name)
+Mesh::Mesh(MeshLoadSettings meshLoadSettings)
+    : _name(meshLoadSettings.name)
 {
     MeshSettings meshSettings {};
 
@@ -57,13 +57,12 @@ Mesh::Mesh(const std::string& name, const std::string& modelFile)
     std::map<std::string, uint32_t> boneMap;
 
     const aiScene* scene = importer.ReadFile(
-            modelFile,
+            meshLoadSettings.filename,
             aiProcess_CalcTangentSpace       |
             aiProcess_Triangulate            |
             aiProcess_JoinIdenticalVertices  |
             aiProcess_TransformUVCoords      |
             aiProcess_LimitBoneWeights       |
-            aiProcess_GenNormals             |
             aiProcess_OptimizeMeshes         |
             aiProcess_SortByPType            |
             aiProcess_OptimizeGraph);
@@ -74,7 +73,7 @@ Mesh::Mesh(const std::string& name, const std::string& modelFile)
         throw VulkanException( importer.GetErrorString());
     }
 
-    meshSettings.name = name;
+    meshSettings.name = meshLoadSettings.name;
     aiString materialName;
     scene->mMaterials[0]->Get(AI_MATKEY_NAME, materialName);
 
@@ -91,10 +90,18 @@ Mesh::Mesh(const std::string& name, const std::string& modelFile)
         meshSettings.vertexNormalData.reserve(mesh->mNumVertices);
         for (auto v = 0u; v < mesh->mNumVertices; v++)
         {
-            meshSettings.vertexPosData.emplace_back(mesh->mVertices[v].x, mesh->mVertices[v].y, mesh->mVertices[v].z);
-            meshSettings.vertexColorData.emplace_back(1.0f, 1.0f, 1.0f);
-            meshSettings.vertexTexData.emplace_back(mesh->mTextureCoords[0][v].x, 1.0f - mesh->mTextureCoords[0][v].y);
-            meshSettings.vertexNormalData.emplace_back(mesh->mNormals[v].x, mesh->mNormals[v].y, mesh->mNormals[v].z);
+            if (meshLoadSettings.switchYZ)
+            {
+                meshSettings.vertexPosData.emplace_back(mesh->mVertices[v].x, mesh->mVertices[v].z, mesh->mVertices[v].y);
+                meshSettings.vertexColorData.emplace_back(1.0f, 1.0f, 1.0f);
+                meshSettings.vertexTexData.emplace_back(mesh->mTextureCoords[0][v].x, 1.0f - mesh->mTextureCoords[0][v].y);
+                meshSettings.vertexNormalData.emplace_back(mesh->mNormals[v].x, mesh->mNormals[v].z, mesh->mNormals[v].y);
+            } else {
+                meshSettings.vertexPosData.emplace_back(mesh->mVertices[v].x, mesh->mVertices[v].y, mesh->mVertices[v].z);
+                meshSettings.vertexColorData.emplace_back(1.0f, 1.0f, 1.0f);
+                meshSettings.vertexTexData.emplace_back(mesh->mTextureCoords[0][v].x, 1.0f - mesh->mTextureCoords[0][v].y);
+                meshSettings.vertexNormalData.emplace_back(mesh->mNormals[v].x, mesh->mNormals[v].y, mesh->mNormals[v].z);
+            }
         }
         meshSettings.indexData.reserve(meshSettings.indexData.size() + mesh->mNumFaces * 3);
         for (auto f = 0u; f < mesh->mNumFaces; f++)

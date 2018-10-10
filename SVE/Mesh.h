@@ -14,7 +14,7 @@ class Mesh
 {
 public:
     explicit Mesh(MeshSettings meshSettings);
-    explicit Mesh(const std::string& name, const std::string& modelFile);
+    explicit Mesh(MeshLoadSettings meshLoadSettings);
     ~Mesh();
 
     const std::string& getName() const;
