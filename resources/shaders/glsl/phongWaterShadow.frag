@@ -1,5 +1,6 @@
 #version 450
 #extension GL_ARB_separate_shader_objects : enable
+#include "lighting.glsl"
 
 layout(set = 1, binding = 0) uniform sampler2D reflectionSampler;
 layout(set = 1, binding = 1) uniform sampler2D refractionSampler;
@@ -7,14 +8,11 @@ layout(set = 1, binding = 2) uniform sampler2D dudvSampler;
 layout(set = 1, binding = 3) uniform sampler2D shadowSampler;
 layout(set = 1, binding = 4) uniform UBO
 {
-    vec4 lightPos;
-	vec4 lightColor;
-	vec4 cameraPos;
-	float ambientStrength;
-	float diffuseStrength;
-    float specularStrength;
-    float shininess;
+    vec4 cameraPos;
+    DirLight dirLight;
+    MaterialInfo materialInfo;
     float time;
+    float padding[3];
 } ubo;
 
 layout(location = 0) in vec3 fragColor;
@@ -58,21 +56,10 @@ float computeShadowFactor(vec4 lightSpacePos, vec2 distortion, float shadowStren
 }
 
 void main() {
-    // ambient
-    vec3 ambient = ubo.ambientStrength * ubo.lightColor.rgb;
-
-    // diffuse
-    vec3 norm = normalize(fragNormal);
-    vec3 lightDir = normalize(ubo.lightPos.xyz - fragPos);
-    float diff = max(dot(norm, lightDir), 0.0);
-    vec3 diffuse = diff * ubo.diffuseStrength * ubo.lightColor.rgb;
-
-    // specular
+     vec3 norm = normalize(fragNormal);
     vec3 viewDir = normalize(ubo.cameraPos.xyz - fragPos);
-    vec3 reflectDir = reflect(-lightDir, norm);
-    vec3 halfVec = normalize(lightDir + viewDir);
-    float spec = pow(max(dot(viewDir, reflectDir), 0.0), ubo.shininess);
-    vec3 specular = ubo.specularStrength * spec * ubo.lightColor.rgb;
+
+    vec3 lightEffect = CalcDirLight(ubo.dirLight, fragNormal, viewDir, ubo.materialInfo);
 
     vec3 ndc = (fragClipPosition.xyz / fragClipPosition.w) * 0.5 + 0.5;
     vec2 reflectionCoord = vec2(ndc.x, 1 - ndc.y);

@@ -18,12 +18,11 @@ enum class UniformType : uint8_t
     ProjectionMatrix,
     ModelViewProjectionMatrix,
     CameraPosition,
-    LightPosition,
-    LightColor,
-    LightAmbient,
-    LightDiffuse,
-    LightSpecular,
-    LightShininess,
+    MaterialInfo,
+    LightInfo,
+    LightDirectional,
+    LightPoint,
+    LightSpot,
     LightViewProjection,
     BoneMatrices,
     ClipPlane,
@@ -38,6 +37,17 @@ enum class ShaderType : uint8_t
     GeometryShader
 };
 
+struct MaterialInfo
+{
+    glm::vec4 ambient;
+    glm::vec4 diffuse;
+    glm::vec4 specular;
+    float shininess;
+    float _padding[3];
+};
+
+
+
 struct UniformData
 {
     glm::mat4 model;
@@ -48,7 +58,11 @@ struct UniformData
     glm::vec4 lightPos;
     glm::vec4 clipPlane;  // (Nx, Ny, Nz, DistanceFromOrigin)
     float time;
-    LightSettings lightSettings;
+    MaterialInfo materialInfo;
+    DirLight dirLight;
+    std::vector<PointLight> pointLightList;
+    SpotLight spotLight;
+    LightInfo lightInfo;
     std::vector<glm::mat4> bones;
 };
 
@@ -69,7 +83,7 @@ struct VertexInfo
         BoneWeights =   1 << 4,
         BoneIds =       1 << 5
     };
-    int vertexDataFlags = Position | Color | TexCoord | Normal | BoneWeights | BoneIds; // TODO: remove bones
+    uint32_t vertexDataFlags = Position | Color | TexCoord | Normal | BoneWeights | BoneIds; // TODO: remove bones
 };
 
 struct ShaderSettings
@@ -81,6 +95,7 @@ struct ShaderSettings
     std::vector<UniformInfo> uniformList;
     std::vector<std::string> samplerNamesList;
     uint32_t maxBonesSize = 0;
+    uint32_t maxPointLightSize = 4;
 
     std::string entryPoint = "main";
 };

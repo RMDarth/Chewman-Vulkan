@@ -13,9 +13,9 @@
 #include "SceneManager.h"
 #include "ShaderManager.h"
 #include "MeshManager.h"
+#include "LightManager.h"
 #include "ResourceManager.h"
 #include "Entity.h"
-#include "LightNode.h"
 #include "Skybox.h"
 #include "ShadowMap.h"
 #include "Water.h"
@@ -256,13 +256,12 @@ void Engine::renderFrame()
     {
         *uniformDataList[i] = *mainUniform;
     }
-    if (_sceneManager->getLight())
+    for (auto i = 0; i < PassCount; i++)
     {
-        for (auto i = 0; i < PassCount; i++)
-        {
-            _sceneManager->getLight()->fillUniformData(*uniformDataList[i], i == toInt(CommandsType::ShadowPass));
-        }
+        // TODO: Refactor interface for setting view source
+        _sceneManager->getLightManager()->fillUniformData(*uniformDataList[i], i == toInt(CommandsType::ShadowPass) ? 0 : -1);
     }
+
     if (auto water = _sceneManager->getWater())
     {
         water->getVulkanWater()->fillUniformData(*uniformDataList[toInt(CommandsType::ReflectionPass)],

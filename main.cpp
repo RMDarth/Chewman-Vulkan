@@ -1,9 +1,9 @@
 #include "SVE/Engine.h"
 #include "SVE/SceneManager.h"
 #include "SVE/CameraNode.h"
-#include "SVE/LightNode.h"
 #include "SVE/MeshEntity.h"
 #include "SVE/ResourceManager.h"
+#include "SVE/LightManager.h"
 #include "SVE/MeshManager.h"
 
 #include <SDL2/SDL.h>
@@ -174,7 +174,9 @@ int runGame()
     engine->getResourceManager()->loadFolder("resources");
 
     // configure light
-    engine->getSceneManager()->getLight()->setNodeTransformation(glm::translate(glm::mat4(1), glm::vec3(15, 15, -15)));
+    engine->getSceneManager()->getLightManager()->getLight(0)->setNodeTransformation(glm::translate(glm::mat4(1), glm::vec3(15, 15, -15)));
+    if (engine->getSceneManager()->getLightManager()->getLightCount() > 1)
+        engine->getSceneManager()->getLightManager()->getLight(1)->setNodeTransformation(glm::translate(glm::mat4(1), glm::vec3(1, 1, 1)));
 
     // create camera
     auto camera = engine->getSceneManager()->createMainCamera();
@@ -190,7 +192,7 @@ int runGame()
     //engine->getSceneManager()->getWater()->setHeight(0.0f);
 
     // create skybox
-    engine->getSceneManager()->setSkybox("Skybox");
+    engine->getSceneManager()->setSkybox("Skybox2");
 
     // create floor
     auto meshSettings = constructPlane("Floor", glm::vec3(0, 0, 0), 10.0f, 10.0f, glm::vec3(0.0f, 1.0f, 0.0f));

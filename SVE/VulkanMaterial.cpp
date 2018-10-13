@@ -975,35 +975,30 @@ std::vector<char> VulkanMaterial::getUniformDataByType(const UniformData& data, 
             const char* byteData = reinterpret_cast<const char*>(&data.cameraPos);
             return std::vector<char>(byteData, byteData + sizeof(data.cameraPos));
         }
-        case UniformType::LightPosition:
+        case UniformType::MaterialInfo:
         {
-            const char* byteData = reinterpret_cast<const char*>(&data.lightPos);
+            const char* byteData = reinterpret_cast<const char*>(&data.materialInfo);
+            return std::vector<char>(byteData, byteData + sizeof(data.materialInfo));
+        }
+        case UniformType::LightInfo:
+        {
+            const char* byteData = reinterpret_cast<const char*>(&data.lightInfo);
+            return std::vector<char>(byteData, byteData + sizeof(data.lightInfo));
+        }
+        case UniformType::LightDirectional:
+        {
+            const char* byteData = reinterpret_cast<const char*>(&data.dirLight);
             return std::vector<char>(byteData, byteData + sizeMap.at(type));
         }
-        case UniformType::LightColor:
+        case UniformType::LightPoint:
         {
-            const char* byteData = reinterpret_cast<const char*>(&data.lightSettings.lightColor);
+            const char* byteData = reinterpret_cast<const char*>(data.pointLightList.data());
+            return std::vector<char>(byteData, byteData + sizeMap.at(type) * data.pointLightList.size());
+        }
+        case UniformType::LightSpot:
+        {
+            const char* byteData = reinterpret_cast<const char*>(&data.spotLight);
             return std::vector<char>(byteData, byteData + sizeMap.at(type));
-        }
-        case UniformType::LightAmbient:
-        {
-            const char* byteData = reinterpret_cast<const char*>(&data.lightSettings.ambientStrength);
-            return std::vector<char>(byteData, byteData + sizeof(data.lightSettings.ambientStrength));
-        }
-        case UniformType::LightDiffuse:
-        {
-            const char* byteData = reinterpret_cast<const char*>(&data.lightSettings.diffuseStrength);
-            return std::vector<char>(byteData, byteData + sizeof(data.lightSettings.diffuseStrength));
-        }
-        case UniformType::LightSpecular:
-        {
-            const char* byteData = reinterpret_cast<const char*>(&data.lightSettings.specularStrength);
-            return std::vector<char>(byteData, byteData + sizeof(data.lightSettings.specularStrength));
-        }
-        case UniformType::LightShininess:
-        {
-            const char* byteData = reinterpret_cast<const char*>(&data.lightSettings.shininess);
-            return std::vector<char>(byteData, byteData + sizeof(data.lightSettings.shininess));
         }
         case UniformType::LightViewProjection:
         {

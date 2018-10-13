@@ -8,6 +8,7 @@
 #include "MaterialManager.h"
 #include "VulkanMesh.h"
 #include "VulkanMaterial.h"
+#include "ShaderSettings.h"
 #include "Utils.h"
 
 namespace SVE
@@ -49,6 +50,13 @@ void MeshEntity::setIsReflected(bool isReflected)
 
 void MeshEntity::updateUniforms(UniformDataList uniformDataList) const
 {
+    for (auto& uniformData : uniformDataList)
+    {
+        // TODO: Load material info data from resources
+        MaterialInfo materialInfo { glm::vec4(0), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), 16 };
+        uniformData->materialInfo = std::move(materialInfo);
+    }
+
     UniformData newData = *uniformDataList[toInt(CommandsType::MainPass)];
 
     _mesh->updateUniformDataBones(newData, Engine::getInstance()->getTime());

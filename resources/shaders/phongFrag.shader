@@ -6,12 +6,11 @@
         "texSampler"
     ],
     "uniformList": [
-        { "uniformType": "LightPosition" },
-        { "uniformType": "LightColor" },
         { "uniformType": "CameraPosition" },
-        { "uniformType": "LightAmbient" },
-        { "uniformType": "LightDiffuse" },
-        { "uniformType": "LightSpecular" },
-        { "uniformType": "LightShininess" }
+        { "uniformType": "LightDirectional" },
+        { "uniformType": "LightSpot" },
+        { "uniformType": "LightPoint" },
+        { "uniformType": "LightInfo" },
+        { "uniformType": "MaterialInfo" }
     ]
 }

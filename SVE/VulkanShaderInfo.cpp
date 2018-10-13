@@ -86,6 +86,9 @@ size_t VulkanShaderInfo::getShaderUniformsSize() const
         if (info.uniformType == UniformType::BoneMatrices)
         {
             size += sizeMap.at(info.uniformType) * _shaderSettings.maxBonesSize;
+        } else if (info.uniformType == UniformType::LightPoint)
+        {
+            size += sizeMap.at(info.uniformType) * _shaderSettings.maxPointLightSize;
         } else
         {
             size += sizeMap.at(info.uniformType);

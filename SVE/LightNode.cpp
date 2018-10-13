@@ -35,8 +35,46 @@ void LightNode::fillUniformData(UniformData& data, bool asViewSource)
 
     auto model = getTotalTransformation();
     data.lightPos = model[3];
-    data.lightViewProjection = _projectionMatrix * _viewMatrix;
-    data.lightSettings = _lightSettings;
+
+    switch (_lightSettings.lightType)
+    {
+        case LightType::PointLight:
+        {
+            PointLight pointLight;
+            pointLight.diffuse = glm::vec4(_lightSettings.diffuseStrength);
+            pointLight.specular = glm::vec4(_lightSettings.specularStrength);
+            pointLight.ambient = glm::vec4(_lightSettings.ambientStrength);
+            pointLight.position = model[3];
+
+            // TODO: Move light attenuation to light settings
+            pointLight.constant = 1.0f * 0.05f;
+            pointLight.linear = 1.35f * 0.05f;
+            pointLight.quadratic = 0.44f * 0.05f;
+
+            data.pointLightList.push_back(pointLight);
+            data.lightInfo.lightFlags |= (LightInfo::PointLight1 << (data.pointLightList.size() - 1));
+
+            break;
+        }
+        case LightType::SunLight:
+        {
+            // TODO: Probably this data should be for each shadow (if multiple shadowmaps are used)
+            data.lightViewProjection = _projectionMatrix * _viewMatrix;
+
+            data.dirLight.diffuse = glm::vec4(_lightSettings.diffuseStrength);
+            data.dirLight.specular = glm::vec4(_lightSettings.specularStrength);
+            data.dirLight.ambient = glm::vec4(_lightSettings.ambientStrength);
+            data.dirLight.direction = glm::vec4(-glm::normalize(model[3]));
+
+            data.lightInfo.lightFlags |= LightInfo::DirectionalLight;
+            break;
+        }
+        case LightType::SpotLight:
+            break;
+        case LightType::RectLight:
+            break;
+    }
+
 
     if (asViewSource)
     {

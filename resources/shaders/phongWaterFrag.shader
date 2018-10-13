@@ -7,13 +7,9 @@
         "dudvSampler"
     ],
     "uniformList": [
-        { "uniformType": "LightPosition" },
-        { "uniformType": "LightColor" },
         { "uniformType": "CameraPosition" },
-        { "uniformType": "LightAmbient" },
-        { "uniformType": "LightDiffuse" },
-        { "uniformType": "LightSpecular" },
-        { "uniformType": "LightShininess" },
+        { "uniformType": "LightDirectional" },
+        { "uniformType": "MaterialInfo" },
         { "uniformType": "Time" }
     ]
 }

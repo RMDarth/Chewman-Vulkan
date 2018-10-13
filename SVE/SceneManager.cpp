@@ -2,6 +2,7 @@
 // Copyright (c) 2018-2019, Igor Barinov
 // Licensed under CC BY 4.0
 #include "SceneManager.h"
+#include "LightManager.h"
 #include "LightNode.h"
 #include "ShadowMap.h"
 #include "Skybox.h"
@@ -11,9 +12,12 @@ namespace SVE
 {
 
 SceneManager::SceneManager()
+    : _lightManager(std::make_unique<LightManager>())
 {
     _root = std::make_shared<SceneNode>("root");
 }
+
+SceneManager::~SceneManager() = default;
 
 std::shared_ptr<SceneNode> SceneManager::getRootNode()
 {
@@ -40,15 +44,16 @@ void SceneManager::setMainCamera(std::shared_ptr<CameraNode> cameraEntity)
 
 std::shared_ptr<LightNode> SceneManager::createLight(LightSettings lightSettings)
 {
-    _lightNode = std::make_shared<LightNode>(lightSettings);
-    _root->attachSceneNode(_lightNode);
+    auto lightNode = std::make_shared<LightNode>(lightSettings);
+    _lightManager->setLight(lightNode, static_cast<uint16_t>(_lightManager->getLightCount()));
+    _root->attachSceneNode(lightNode);
 
-    return _lightNode;
+    return lightNode;
 }
 
-std::shared_ptr<LightNode> SceneManager::getLight()
+LightManager* SceneManager::getLightManager()
 {
-    return _lightNode;
+    return _lightManager.get();
 }
 
 std::shared_ptr<SceneNode> SceneManager::createSceneNode(std::string name)

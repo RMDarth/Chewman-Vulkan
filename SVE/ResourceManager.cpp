@@ -76,12 +76,11 @@ std::vector<UniformInfo> getUniformInfoList(rj::Document& document)
             {"ProjectionMatrix",          UniformType::ProjectionMatrix},
             {"ModelViewProjectionMatrix", UniformType::ModelViewProjectionMatrix},
             {"CameraPosition",            UniformType::CameraPosition},
-            {"LightPosition",             UniformType::LightPosition},
-            {"LightColor",                UniformType::LightColor},
-            {"LightAmbient",              UniformType::LightAmbient},
-            {"LightDiffuse",              UniformType::LightDiffuse},
-            {"LightSpecular",             UniformType::LightSpecular},
-            {"LightShininess",            UniformType::LightShininess},
+            {"MaterialInfo",              UniformType::MaterialInfo},
+            {"LightInfo",                 UniformType::LightInfo},
+            {"LightDirectional",          UniformType::LightDirectional},
+            {"LightPoint",                UniformType::LightPoint},
+            {"LightSpot",                 UniformType::LightSpot},
             {"LightViewProjection",       UniformType::LightViewProjection},
             {"BoneMatrices",              UniformType::BoneMatrices},
             {"ClipPlane",                 UniformType::ClipPlane},
@@ -414,23 +413,31 @@ void ResourceManager::loadFile(const std::string& filename, LoadData& loadData)
     std::string fileContent = file.readFile();
     auto directory = cppfs::FilePath(fp.directoryPath());
 
-    switch (resourceTypeMap.at(type))
+    try
     {
-        case ResourceType::Engine:
-            loadData.engine.emplace_back(loadEngine(fileContent));
-            break;
-        case ResourceType::Shader:
-            loadData.shaderList.emplace_back(loadShader(directory, fileContent));
-            break;
-        case ResourceType::Material:
-            loadData.materialsList.emplace_back(loadMaterial(directory, fileContent));
-            break;
-        case ResourceType::Mesh:
-            loadData.meshList.emplace_back(loadMesh(directory, fileContent));
-            break;
-        case ResourceType::Light:
-            loadData.lightList.emplace_back(loadLight(fileContent));
-            break;
+        if (resourceTypeMap.find(type) == resourceTypeMap.end())
+            return;
+        switch (resourceTypeMap.at(type))
+        {
+            case ResourceType::Engine:
+                loadData.engine.emplace_back(loadEngine(fileContent));
+                break;
+            case ResourceType::Shader:
+                loadData.shaderList.emplace_back(loadShader(directory, fileContent));
+                break;
+            case ResourceType::Material:
+                loadData.materialsList.emplace_back(loadMaterial(directory, fileContent));
+                break;
+            case ResourceType::Mesh:
+                loadData.meshList.emplace_back(loadMesh(directory, fileContent));
+                break;
+            case ResourceType::Light:
+                loadData.lightList.emplace_back(loadLight(fileContent));
+                break;
+        }
+    } catch (const std::exception& ex)
+    {
+        throw VulkanException(std::string("Can't load resource file ") + filename + ": " + ex.what());
     }
 }
 

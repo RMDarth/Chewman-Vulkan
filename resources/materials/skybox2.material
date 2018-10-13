@@ -1,0 +1,34 @@
+{
+    "name": "Skybox2",
+    "vertexShaderName": "skyboxVertexShader",
+    "fragmentShaderName": "skyboxFragmentShader",
+    "textures": [
+        {
+            "samplerName": "samplerCubeMap",
+            "filename": "textures/skybox/sky/skyrender_rt.tga"
+        },
+        {
+            "samplerName": "samplerCubeMap",
+            "filename": "textures/skybox/sky/skyrender_lf.tga"
+        },
+        {
+            "samplerName": "samplerCubeMap",
+            "filename": "textures/skybox/sky/skyrender_up.tga"
+        },
+        {
+            "samplerName": "samplerCubeMap",
+            "filename": "textures/skybox/sky/skyrender_dn.tga"
+        },
+        {
+            "samplerName": "samplerCubeMap",
+            "filename": "textures/skybox/sky/skyrender_bk.tga"
+        },
+        {
+            "samplerName": "samplerCubeMap",
+            "filename": "textures/skybox/sky/skyrender_ft.tga"
+        }
+    ],
+    "isCubemap": true,
+    "cullFace": "BackFace",
+    "useDepthTest": false
+}

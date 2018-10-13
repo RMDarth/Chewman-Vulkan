@@ -8,6 +8,7 @@
 
 namespace SVE
 {
+class LightManager;
 class LightNode;
 class LightSettings;
 class Skybox;
@@ -18,6 +19,7 @@ class SceneManager
 {
 public:
     SceneManager();
+    ~SceneManager();
 
     std::shared_ptr<SceneNode> getRootNode();
 
@@ -29,7 +31,7 @@ public:
 
     // TODO: Support multiple lights
     std::shared_ptr<LightNode> createLight(LightSettings lightSettings);
-    std::shared_ptr<LightNode> getLight();
+    LightManager* getLightManager();
 
     void setSkybox(const std::string& materialName);
     void setSkybox(std::shared_ptr<Skybox> skybox);
@@ -51,10 +53,11 @@ private:
     bool _recreateCommandBuffers = true;
     std::shared_ptr<SceneNode> _root;
     std::shared_ptr<CameraNode> _mainCamera;
-    std::shared_ptr<LightNode> _lightNode;
     std::shared_ptr<Skybox> _skybox;
     std::shared_ptr<ShadowMap> _shadowmap;
     std::shared_ptr<Water> _water;
+
+    std::unique_ptr<LightManager> _lightManager;
 };
 
 } // namespace SVE
