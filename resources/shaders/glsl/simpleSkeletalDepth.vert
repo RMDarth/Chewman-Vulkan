@@ -5,8 +5,7 @@
 layout (set = 0, binding = 0) uniform UBO
 {
 	mat4 model;
-	mat4 view;
-	mat4 projection;
+	mat4 viewProjection;
 	mat4 bones[MAX_BONES];
 } matrices;
 
@@ -27,5 +26,5 @@ void main() {
     boneTransform     += matrices.bones[inBoneIDs[2]] * inBoneWeights[2];
     boneTransform     += matrices.bones[inBoneIDs[3]] * inBoneWeights[3];
 
-    gl_Position = matrices.projection * matrices.view * matrices.model * boneTransform * vec4(inPosition, 1.0);
+    gl_Position = matrices.viewProjection * matrices.model * boneTransform * vec4(inPosition, 1.0);
 }

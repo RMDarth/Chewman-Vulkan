@@ -16,6 +16,7 @@ enum class UniformType : uint8_t
     ModelMatrix,
     ViewMatrix,
     ProjectionMatrix,
+    ViewProjectionMatrix,
     ModelViewProjectionMatrix,
     CameraPosition,
     MaterialInfo,
@@ -53,9 +54,8 @@ struct UniformData
     glm::mat4 model;
     glm::mat4 view;
     glm::mat4 projection;
-    glm::mat4 lightViewProjection;
+    std::vector<glm::mat4> lightViewProjectionList;
     glm::vec4 cameraPos;
-    glm::vec4 lightPos;
     glm::vec4 clipPlane;  // (Nx, Ny, Nz, DistanceFromOrigin)
     float time;
     MaterialInfo materialInfo;
@@ -96,6 +96,7 @@ struct ShaderSettings
     std::vector<std::string> samplerNamesList;
     uint32_t maxBonesSize = 0;
     uint32_t maxPointLightSize = 4;
+    uint32_t maxLightSize = 6;
 
     std::string entryPoint = "main";
 };

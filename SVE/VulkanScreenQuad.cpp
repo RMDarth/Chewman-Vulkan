@@ -2,14 +2,18 @@
 // Copyright (c) 2018-2019, Igor Barinov
 // Licensed under CC BY 4.0
 #include "VulkanScreenQuad.h"
+#include "VulkanSamplerHolder.h"
 #include "Engine.h"
 #include "VulkanInstance.h"
 #include "VulkanUtils.h"
 #include "VulkanException.h"
 #include "ShaderSettings.h"
+#include "VulkanPassInfo.h"
 
 namespace SVE
 {
+
+const std::string ScreenQuadSamplerName = "screenquad";
 
 VulkanScreenQuad::VulkanScreenQuad()
     : _vulkanInstance(Engine::getInstance()->getVulkanInstance())
@@ -17,16 +21,20 @@ VulkanScreenQuad::VulkanScreenQuad()
     , _height(_vulkanInstance->getExtent().height)
     , _vulkanUtils(_vulkanInstance->getVulkanUtils())
 {
-    createRenderPasses();
+    createRenderPass();
     createImages();
     createFramebuffers();
+
+    VulkanSamplerHolder::SamplerInfo samplerInfo { _resolveImageView, _colorSampler };
+    VulkanSamplerInfoList list(3, samplerInfo);
+    _vulkanInstance->getSamplerHolder()->setSamplerInfo(ScreenQuadSamplerName, list);
 }
 
 VulkanScreenQuad::~VulkanScreenQuad()
 {
     deleteFramebuffers();
     deleteImages();
-    deleteRenderPasses();
+    deleteRenderPass();
 }
 
 VkSampler VulkanScreenQuad::getSampler()
@@ -39,10 +47,9 @@ VkImageView VulkanScreenQuad::getImageView()
     return _resolveImageView;
 }
 
-
 void VulkanScreenQuad::reallocateCommandBuffers()
 {
-    _commandBuffer = _vulkanInstance->createCommandBuffer(0, BUFFER_INDEX_SCREEN_QUAD);
+    _commandBuffer = _vulkanInstance->createCommandBuffer(BUFFER_INDEX_SCREEN_QUAD);
 }
 
 void VulkanScreenQuad::startRenderCommandBufferCreation()
@@ -110,7 +117,7 @@ void VulkanScreenQuad::endRenderCommandBufferCreation()
     }
 }
 
-void VulkanScreenQuad::createRenderPasses()
+void VulkanScreenQuad::createRenderPass()
 {
     auto depthFormat = _vulkanInstance->getDepthFormat();
     auto sampleCount = _vulkanInstance->getMSAASamples();
@@ -197,9 +204,14 @@ void VulkanScreenQuad::createRenderPasses()
     {
         throw VulkanException("Can't create Vulkan render pass");
     }
+
+    VulkanPassInfo::PassData data {
+            _renderPass
+    };
+    _vulkanInstance->getPassInfo()->setPassData(CommandsType::ScreenQuadPass, data);
 }
 
-void VulkanScreenQuad::deleteRenderPasses()
+void VulkanScreenQuad::deleteRenderPass()
 {
     vkDestroyRenderPass(_vulkanInstance->getLogicalDevice(), _renderPass, nullptr);
 }
@@ -220,7 +232,7 @@ void VulkanScreenQuad::createImages()
             sampleCount,
             _vulkanInstance->getSurfaceColorFormat(),
             VK_IMAGE_TILING_OPTIMAL,
-            VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
+            VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
             VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
             _colorImage,
             _colorImageMemory);
@@ -232,7 +244,7 @@ void VulkanScreenQuad::createImages()
             _vulkanInstance->getSurfaceColorFormat(),
             {VK_IMAGE_LAYOUT_UNDEFINED, 0, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT},
             {VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
-             VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT | VK_ACCESS_SHADER_READ_BIT,
+             VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
              VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT},
             1,
             VK_IMAGE_ASPECT_COLOR_BIT);
@@ -257,7 +269,7 @@ void VulkanScreenQuad::createImages()
             _vulkanInstance->getSurfaceColorFormat(),
             {VK_IMAGE_LAYOUT_UNDEFINED, 0, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT},
             {VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
-             VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT | VK_ACCESS_SHADER_READ_BIT,
+             VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
              VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT},
             1);
 
@@ -280,8 +292,7 @@ void VulkanScreenQuad::createImages()
             depthFormat,
             {VK_IMAGE_LAYOUT_UNDEFINED, 0, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT},
             {VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
-             VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT |
-             VK_ACCESS_SHADER_READ_BIT,
+             VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT,
              VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT},
             1,
             aspectFlags);

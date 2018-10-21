@@ -69,7 +69,9 @@ Skybox::Skybox(const std::string& materialName)
     meshSettings.animation = nullptr;
     meshSettings.vertexPosData = skyboxVertices;
     for (uint32_t i = 0; i < skyboxVertices.size(); i++)
+    {
         meshSettings.indexData.push_back(i);
+    }
     meshSettings.materialName = materialName;
 
     _mesh = std::make_shared<Mesh>(meshSettings);

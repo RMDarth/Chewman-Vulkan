@@ -7,32 +7,37 @@
 
 namespace SVE
 {
+class ShadowMap;
 
 class LightNode : public SceneNode
 {
 public:
-    explicit LightNode(LightSettings lightSettings);
+    explicit LightNode(LightSettings lightSettings, uint32_t lightIndex);
 
     const glm::mat4& getViewMatrix();
     const glm::mat4& getProjectionMatrix();
 
     const LightSettings& getLightSettings();
-    void fillUniformData(UniformData& data, bool asViewSource);
+    void updateViewMatrix(glm::vec3 cameraPos);
+    void fillUniformData(UniformData& data, uint32_t lightNum, bool asViewSource);
+    std::shared_ptr<ShadowMap> getShadowMap();
 
     void setNodeTransformation(glm::mat4 transform) override;
 
 private:
     void createViewMatrix();
-    void updateViewMatrix(glm::vec3 cameraPos);
+
     void createProjectionMatrix();
 
 private:
+    uint32_t _lightIndex;
     glm::vec3 _originalPos;
 
     LightSettings _lightSettings;
     glm::mat4 _viewMatrix;
     glm::mat4 _projectionMatrix;
 
+    std::shared_ptr<ShadowMap> _shadowmap;
 };
 
 } // namespace SVE

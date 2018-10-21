@@ -29,5 +29,13 @@ void MaterialManager::resetPipelines()
     }
 }
 
+void MaterialManager::resetDescriptors()
+{
+    for (auto& material : _materialMap)
+    {
+        material.second->resetDescriptorSets();
+    }
+}
+
 
 } // namespace SVE

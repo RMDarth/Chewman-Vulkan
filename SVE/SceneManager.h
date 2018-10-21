@@ -37,11 +37,6 @@ public:
     void setSkybox(std::shared_ptr<Skybox> skybox);
     std::shared_ptr<Skybox> getSkybox();
 
-    void setShadowMap(std::shared_ptr<ShadowMap> shadowMap);
-    void initShadowMap();
-    void enableShadowMap();
-    std::shared_ptr<ShadowMap> getShadowMap();
-
     std::shared_ptr<Water> createWater(float height);
     std::shared_ptr<Water> getWater();
 
@@ -54,7 +49,6 @@ private:
     std::shared_ptr<SceneNode> _root;
     std::shared_ptr<CameraNode> _mainCamera;
     std::shared_ptr<Skybox> _skybox;
-    std::shared_ptr<ShadowMap> _shadowmap;
     std::shared_ptr<Water> _water;
 
     std::unique_ptr<LightManager> _lightManager;

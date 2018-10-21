@@ -9,107 +9,33 @@
 #include "VulkanException.h"
 #include "MaterialManager.h"
 #include "VulkanMaterial.h"
+#include "VulkanShadowImage.h"
+
 
 namespace SVE
 {
 
-VulkanShadowMap::VulkanShadowMap()
-    : _width(4096)
-    , _height(4096)
-    , _vulkanInstance(Engine::getInstance()->getVulkanInstance())
-    , _vulkanUtils(_vulkanInstance->getVulkanUtils())
+static const std::string ShadowSamplerName = "shadowmap";
+
+VulkanShadowMap::VulkanShadowMap(uint32_t lightIndex, const VulkanShadowImage& vulkanShadowImage)
+        : _lightIndex(lightIndex)
+        , _width(vulkanShadowImage.getSize())
+        , _height(vulkanShadowImage.getSize())
+        , _vulkanInstance(Engine::getInstance()->getVulkanInstance())
+        , _vulkanUtils(_vulkanInstance->getVulkanUtils())
+        , _vulkanShadowImage(vulkanShadowImage)
 {
-    createRenderPass();
-    createShadowImage();
+    createShadowImageView();
     createFramebuffer();
 }
 
 VulkanShadowMap::~VulkanShadowMap()
 {
     deleteFramebuffer();
-    deleteShadowImage();
-    deleteRenderPass();
+    deleteShadowImageView();
 }
 
-void VulkanShadowMap::setLight(std::shared_ptr<LightNode> light)
-{
-    _light = std::move(light);
-}
-
-VkSampler VulkanShadowMap::getShadowMapSampler()
-{
-    return _shadowSampler;
-}
-
-VkImageView VulkanShadowMap::getShadowMapImageView()
-{
-    return _shadowImageView;
-}
-
-void VulkanShadowMap::createRenderPass()
-{
-    auto depthFormat = _vulkanInstance->getDepthFormat();
-
-    VkAttachmentDescription depthAttachment {};
-    depthAttachment.format = depthFormat;
-    depthAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
-    depthAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
-    depthAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
-    depthAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
-    depthAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-    depthAttachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-    depthAttachment.finalLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL; //VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
-
-    VkAttachmentReference depthAttachmentRef {};
-    depthAttachmentRef.attachment = 0;
-    depthAttachmentRef.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
-
-    VkSubpassDescription subpass {};
-    subpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
-    subpass.colorAttachmentCount = 0;
-    subpass.pDepthStencilAttachment = &depthAttachmentRef;
-
-    std::vector<VkSubpassDependency> dependencies(2);
-
-    dependencies[0].srcSubpass = VK_SUBPASS_EXTERNAL;
-    dependencies[0].dstSubpass = 0;
-    dependencies[0].srcStageMask = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
-    dependencies[0].dstStageMask = VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
-    dependencies[0].srcAccessMask = VK_ACCESS_SHADER_READ_BIT;
-    dependencies[0].dstAccessMask = VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
-    dependencies[0].dependencyFlags = VK_DEPENDENCY_BY_REGION_BIT;
-
-    dependencies[1].srcSubpass = 0;
-    dependencies[1].dstSubpass = VK_SUBPASS_EXTERNAL;
-    dependencies[1].srcStageMask = VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT;
-    dependencies[1].dstStageMask = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
-    dependencies[1].srcAccessMask = VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
-    dependencies[1].dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
-    dependencies[1].dependencyFlags = VK_DEPENDENCY_BY_REGION_BIT;
-
-    std::vector<VkAttachmentDescription> attachments { depthAttachment  };
-
-    VkRenderPassCreateInfo renderPassCreateInfo{};
-    renderPassCreateInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
-    renderPassCreateInfo.attachmentCount = attachments.size();
-    renderPassCreateInfo.pAttachments = attachments.data();
-    renderPassCreateInfo.subpassCount = 1;
-    renderPassCreateInfo.pSubpasses = &subpass;
-    renderPassCreateInfo.dependencyCount = dependencies.size();
-    renderPassCreateInfo.pDependencies = dependencies.data();
-
-    if (vkCreateRenderPass(_vulkanInstance->getLogicalDevice(), &renderPassCreateInfo, nullptr, &_renderPass) != VK_SUCCESS)
-    {
-        throw VulkanException("Can't create Vulkan render pass");
-    }
-}
-
-void VulkanShadowMap::deleteRenderPass()
-{
-    vkDestroyRenderPass(_vulkanInstance->getLogicalDevice(), _renderPass, nullptr);
-}
-
-void VulkanShadowMap::createShadowImage()
+void VulkanShadowMap::createShadowImageView()
 {
     auto depthFormat = _vulkanInstance->getDepthFormat();
 
@@ -117,98 +43,72 @@ void VulkanShadowMap::createShadowImage()
     if (depthFormat == VK_FORMAT_D32_SFLOAT_S8_UINT || depthFormat == VK_FORMAT_D24_UNORM_S8_UINT)
         aspectFlags |= VK_IMAGE_ASPECT_STENCIL_BIT;
 
-    _vulkanUtils.createImage(
-            _width,
-            _height,
-            1,
-            VK_SAMPLE_COUNT_1_BIT,
-            depthFormat,
-            VK_IMAGE_TILING_OPTIMAL,
-            VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
-            VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-            _shadowImage,
-            _shadowImageMemory);
-    _shadowImageView = _vulkanUtils.createImageView(_shadowImage, depthFormat, 1, aspectFlags);
-
-    _vulkanUtils.transitionImageLayout(
-            _shadowImage,
-            depthFormat,
-            {VK_IMAGE_LAYOUT_UNDEFINED, 0, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT},
-            {VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
-             VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT | VK_ACCESS_SHADER_READ_BIT,
-             VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT},
-            1,
-            aspectFlags);
-
-    // Create sampler
-    VkSamplerCreateInfo samplerCreateInfo {};
-    samplerCreateInfo.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
-    samplerCreateInfo.magFilter = VK_FILTER_LINEAR;
-    samplerCreateInfo.minFilter = VK_FILTER_LINEAR;
-    samplerCreateInfo.addressModeU = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER;
-    samplerCreateInfo.addressModeV = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER;
-    samplerCreateInfo.addressModeW = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER;
-    samplerCreateInfo.anisotropyEnable = VK_TRUE;
-    samplerCreateInfo.maxAnisotropy = 16;
-    samplerCreateInfo.borderColor = VK_BORDER_COLOR_FLOAT_OPAQUE_WHITE;
-    samplerCreateInfo.compareEnable = VK_FALSE;
-    samplerCreateInfo.compareOp = VK_COMPARE_OP_ALWAYS;
-    samplerCreateInfo.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR;
-    samplerCreateInfo.minLod = 0;
-    samplerCreateInfo.maxLod = 1;
-    samplerCreateInfo.mipLodBias = 0;
-
-    if (vkCreateSampler(_vulkanInstance->getLogicalDevice(), &samplerCreateInfo, nullptr, &_shadowSampler) != VK_SUCCESS)
+    _shadowImageViews.resize(_vulkanInstance->getSwapchainSize());
+    for (auto i = 0u; i < _vulkanInstance->getSwapchainSize(); i++)
     {
-        throw VulkanException("Can't create Vulkan texture sampler");
+        _shadowImageViews[i] = _vulkanUtils.createImageView(
+                _vulkanShadowImage.getImage(i), depthFormat, 1, aspectFlags, VK_IMAGE_VIEW_TYPE_2D, 1, _lightIndex);
     }
 }
 
-void VulkanShadowMap::deleteShadowImage()
+void VulkanShadowMap::deleteShadowImageView()
 {
-    vkDestroySampler(_vulkanInstance->getLogicalDevice(), _shadowSampler, nullptr);
-    vkDestroyImageView(_vulkanInstance->getLogicalDevice(), _shadowImageView, nullptr);
-    vkDestroyImage(_vulkanInstance->getLogicalDevice(), _shadowImage, nullptr);
-    vkFreeMemory(_vulkanInstance->getLogicalDevice(), _shadowImageMemory, nullptr);
+    for (auto i = 0u; i < _vulkanInstance->getSwapchainSize(); i++)
+    {
+        vkDestroyImageView(_vulkanInstance->getLogicalDevice(), _shadowImageViews[i], nullptr);
+    }
 }
 
 void VulkanShadowMap::createFramebuffer()
 {
-    std::vector<VkImageView> attachments = { _shadowImageView };
-
-    VkFramebufferCreateInfo framebufferCreateInfo{};
-    framebufferCreateInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
-    framebufferCreateInfo.renderPass = _renderPass;
-    framebufferCreateInfo.attachmentCount = attachments.size();
-    framebufferCreateInfo.pAttachments = attachments.data();
-    framebufferCreateInfo.width = _width;
-    framebufferCreateInfo.height = _height;
-    framebufferCreateInfo.layers = 1;
-
-    if (vkCreateFramebuffer(_vulkanInstance->getLogicalDevice(), &framebufferCreateInfo, nullptr, &_framebuffer) != VK_SUCCESS)
+    _framebuffers.resize(_vulkanInstance->getSwapchainSize());
+    for (auto i = 0u; i < _vulkanInstance->getSwapchainSize(); i++)
     {
-        throw VulkanException("Can't create Vulkan Framebuffer");
+        std::vector<VkImageView> attachments = { _shadowImageViews[i] };
+
+        VkFramebufferCreateInfo framebufferCreateInfo{};
+        framebufferCreateInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
+        framebufferCreateInfo.renderPass = _vulkanShadowImage.getRenderPass();
+        framebufferCreateInfo.attachmentCount = attachments.size();
+        framebufferCreateInfo.pAttachments = attachments.data();
+        framebufferCreateInfo.width = _width;
+        framebufferCreateInfo.height = _height;
+        framebufferCreateInfo.layers = 1;
+
+        if (vkCreateFramebuffer(_vulkanInstance->getLogicalDevice(), &framebufferCreateInfo, nullptr, &_framebuffers[i]) !=
+            VK_SUCCESS)
+        {
+            throw VulkanException("Can't create Vulkan Framebuffer");
+        }
     }
 }
 
 void VulkanShadowMap::deleteFramebuffer()
 {
-    vkDestroyFramebuffer(_vulkanInstance->getLogicalDevice(), _framebuffer, nullptr);
+    for (auto i = 0u; i < _vulkanInstance->getSwapchainSize(); i++)
+    {
+        vkDestroyFramebuffer(_vulkanInstance->getLogicalDevice(), _framebuffers[i], nullptr);
+    }
 }
 
 void VulkanShadowMap::reallocateCommandBuffers()
 {
-    _commandBuffer = _vulkanInstance->createCommandBuffer(0, BUFFER_INDEX_SHADOWMAP);
+    _commandBuffers.resize(_vulkanInstance->getSwapchainSize());
+    for (auto i = 0u; i < _vulkanInstance->getSwapchainSize(); i++)
+    {
+        // TODO: maybe just shift instead of multiplying
+        _commandBuffers[i] = _vulkanInstance->createCommandBuffer(BUFFER_INDEX_SHADOWMAP + i * _vulkanShadowImage.getLayersSize());
+    }
 }
 
-void VulkanShadowMap::startRenderCommandBufferCreation()
+uint32_t VulkanShadowMap::startRenderCommandBufferCreation(uint32_t index)
 {
     VkCommandBufferBeginInfo beginInfo{};
     beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
     beginInfo.flags = VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT;
     beginInfo.pInheritanceInfo = nullptr;
 
-    if (vkBeginCommandBuffer(_commandBuffer, &beginInfo) != VK_SUCCESS)
+    if (vkBeginCommandBuffer(_commandBuffers[index], &beginInfo) != VK_SUCCESS)
     {
         throw VulkanException("Failed to begin recording Vulkan command buffer");
     }
@@ -219,19 +119,19 @@ void VulkanShadowMap::startRenderCommandBufferCreation()
 
     VkRenderPassBeginInfo renderPassBeginInfo{};
     renderPassBeginInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-    renderPassBeginInfo.renderPass = _renderPass;
-    renderPassBeginInfo.framebuffer = _framebuffer;
+    renderPassBeginInfo.renderPass = _vulkanShadowImage.getRenderPass();
+    renderPassBeginInfo.framebuffer = _framebuffers[index];
     renderPassBeginInfo.renderArea.offset = {0, 0};
     renderPassBeginInfo.renderArea.extent.width = _width;
     renderPassBeginInfo.renderArea.extent.height = _height;
     renderPassBeginInfo.clearValueCount = 1;
     renderPassBeginInfo.pClearValues = &clearValue;
 
-    vkCmdBeginRenderPass(_commandBuffer, &renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
+    vkCmdBeginRenderPass(_commandBuffers[index], &renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
 
     // TODO: Add depth bias constants to configuration
     vkCmdSetDepthBias(
-            _commandBuffer,
+            _commandBuffers[index],
             5.25f,
             0.0f,
             5.75f);
@@ -244,22 +144,24 @@ void VulkanShadowMap::startRenderCommandBufferCreation()
     viewport.minDepth = 0.0f;
     viewport.maxDepth = 1.0f;
 
-    vkCmdSetViewport(_commandBuffer, 0, 1, &viewport);
+    vkCmdSetViewport(_commandBuffers[index], 0, 1, &viewport);
 
     VkRect2D scissor{};
     scissor.offset = {0, 0};
     scissor.extent.width = _width;
     scissor.extent.height = _height;
 
-    vkCmdSetScissor(_commandBuffer, 0, 1, &scissor);
+    vkCmdSetScissor(_commandBuffers[index], 0, 1, &scissor);
+
+    return BUFFER_INDEX_SHADOWMAP + index * _vulkanShadowImage.getLayersSize();
 }
 
-void VulkanShadowMap::endRenderCommandBufferCreation()
+void VulkanShadowMap::endRenderCommandBufferCreation(uint32_t index)
 {
-    vkCmdEndRenderPass(_commandBuffer);
+    vkCmdEndRenderPass(_commandBuffers[index]);
 
     // finish recording
-    if (vkEndCommandBuffer(_commandBuffer) != VK_SUCCESS)
+    if (vkEndCommandBuffer(_commandBuffers[index]) != VK_SUCCESS)
     {
         throw VulkanException("Failed to record Vulkan command buffer");
     }

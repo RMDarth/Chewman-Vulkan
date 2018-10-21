@@ -3,10 +3,34 @@
 // Licensed under CC BY 4.0
 #include "LightManager.h"
 #include "ShaderSettings.h"
+#include "Engine.h"
+#include "VulkanInstance.h"
+#include "VulkanSamplerHolder.h"
+#include "VulkanShadowImage.h"
 #include <utility>
 
 namespace SVE
 {
+static const std::string ShadowSamplerName = "shadowmap";
+static const uint32_t MAX_LIGHTS = 6;
+static const uint32_t ShadowSize = 4096;
+
+LightManager::LightManager()
+    : _shadowImage(std::make_unique<VulkanShadowImage>(MAX_LIGHTS, ShadowSize))
+{
+    VulkanSamplerInfoList list;
+    for (auto i = 0; i < Engine::getInstance()->getVulkanInstance()->getSwapchainSize(); i++)
+    {
+        VulkanSamplerHolder::SamplerInfo samplerInfo{
+                _shadowImage->getImageView(i),
+                _shadowImage->getSampler(i)
+        };
+        list.push_back(samplerInfo);
+    }
+    Engine::getInstance()->getVulkanInstance()->getSamplerHolder()->setSamplerInfo(ShadowSamplerName, list);
+}
+
+LightManager::~LightManager() = default;
 
 void LightManager::setLight(std::shared_ptr<LightNode> light, uint16_t index)
 {
@@ -28,10 +52,12 @@ size_t LightManager::getLightCount() const
 
 void LightManager::fillUniformData(UniformData& data, int viewSource)
 {
+    // TODO: Make 6 some const
+    data.lightViewProjectionList.resize(MAX_LIGHTS);
     for (auto i = 0u; i < _lightList.size(); i++)
     {
         if (_lightList[i])
-            _lightList[i]->fillUniformData(data, viewSource == i);
+            _lightList[i]->fillUniformData(data, i, viewSource == i);
     }
     // TODO: Replace 4 with constant or data from shader
     if (data.pointLightList.size() != 4)
@@ -40,6 +66,11 @@ void LightManager::fillUniformData(UniformData& data, int viewSource)
         // TODO: Refactor to remove dummy lights if light count < 4
         data.pointLightList.resize(4);
     }
+}
+
+VulkanShadowImage* LightManager::getVulkanShadowImage()
+{
+    return _shadowImage.get();
 }
 
 } // namespace SVE

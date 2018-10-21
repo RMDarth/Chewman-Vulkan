@@ -39,6 +39,8 @@ void moveCamera(const Uint8* keystates, float deltaTime, std::shared_ptr<SVE::Ca
         camera->movePosition(glm::vec3(0,0,-12.0f*deltaTime));
     if (keystates[SDL_SCANCODE_S])
         camera->movePosition(glm::vec3(0,0,12.0f*deltaTime));
+
+    camera->movePosition(glm::vec3(0,0,5.0f*deltaTime));
 }
 
 void configFloor(SDL_Keycode key, std::shared_ptr<SVE::SceneNode>& floor)
@@ -166,163 +168,174 @@ int runGame()
     }
 
     SVE::Engine* engine = SVE::Engine::createInstance(window, "resources/main.engine");
-
-    // load resources
-    engine->getResourceManager()->loadFolder("resources/shaders");
-    engine->getResourceManager()->loadFolder("resources/materials");
-    engine->getResourceManager()->loadFolder("resources/models");
-    engine->getResourceManager()->loadFolder("resources");
-
-    // configure light
-    engine->getSceneManager()->getLightManager()->getLight(0)->setNodeTransformation(glm::translate(glm::mat4(1), glm::vec3(15, 15, -15)));
-    if (engine->getSceneManager()->getLightManager()->getLightCount() > 1)
-        engine->getSceneManager()->getLightManager()->getLight(1)->setNodeTransformation(glm::translate(glm::mat4(1), glm::vec3(1, 1, 1)));
-
-    // create camera
-    auto camera = engine->getSceneManager()->createMainCamera();
-    camera->setNearFarPlane(0.1f, 500.0f);
-    camera->setPosition(glm::vec3(5.0f, 5.0f, 5.0f));
-    camera->setYawPitchRoll(glm::vec3(glm::radians(20.0f), glm::radians(-30.0f), 0.0f));
-    //camera->setLookAt(glm::vec3(5.0f, 5.0f, 5.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-
-    // create shadowmap
-    engine->getSceneManager()->enableShadowMap();
-
-    // init water
-    //engine->getSceneManager()->getWater()->setHeight(0.0f);
-
-    // create skybox
-    engine->getSceneManager()->setSkybox("Skybox2");
-
-    // create floor
-    auto meshSettings = constructPlane("Floor", glm::vec3(0, 0, 0), 10.0f, 10.0f, glm::vec3(0.0f, 1.0f, 0.0f));
-    meshSettings.materialName = "Floor";
-    auto floorMesh = std::make_shared<SVE::Mesh>(meshSettings);
-    engine->getMeshManager()->registerMesh(floorMesh);
-
-    // create water mesh
-    meshSettings.name = "WaterMesh";
-    meshSettings.materialName = "WaterReflection";
-    auto waterMesh = std::make_shared<SVE::Mesh>(meshSettings);
-    engine->getMeshManager()->registerMesh(waterMesh);
-
-    auto bigFloorMeshSettings = constructPlane("BigFloor", glm::vec3(0, 0, 0), 30.0f, 30.0f, glm::vec3(0.0f, 1.0f, 0.0f));
-    bigFloorMeshSettings.materialName = "Floor";
-    auto bigFloorMesh = std::make_shared<SVE::Mesh>(bigFloorMeshSettings);
-    engine->getMeshManager()->registerMesh(bigFloorMesh);
-
-    // create nodes
-    auto newNodeMid = engine->getSceneManager()->createSceneNode();
-    auto newNode = engine->getSceneManager()->createSceneNode();
-    auto newNode2 = engine->getSceneManager()->createSceneNode();
-    auto terrainNode = engine->getSceneManager()->createSceneNode();
-    auto floorNode = engine->getSceneManager()->createSceneNode();
-    auto bigFloorNode = engine->getSceneManager()->createSceneNode();
-    auto waterNode = engine->getSceneManager()->createSceneNode();
-    engine->getSceneManager()->getRootNode()->attachSceneNode(newNodeMid);
-    newNodeMid->attachSceneNode(newNode);
-    engine->getSceneManager()->getRootNode()->attachSceneNode(newNode2);
-    engine->getSceneManager()->getRootNode()->attachSceneNode(terrainNode);
-    engine->getSceneManager()->getRootNode()->attachSceneNode(floorNode);
-    engine->getSceneManager()->getRootNode()->attachSceneNode(waterNode);
-    //engine->getSceneManager()->getRootNode()->attachSceneNode(bigFloorNode);
-
-    // create entities
-    std::shared_ptr<SVE::Entity> meshEntity = std::make_shared<SVE::MeshEntity>("trashman");
-    std::shared_ptr<SVE::Entity> meshEntity2 = std::make_shared<SVE::MeshEntity>("trashman");
-    std::shared_ptr<SVE::Entity> terrainEntity = std::make_shared<SVE::MeshEntity>("terrain");
-    std::shared_ptr<SVE::Entity> floorEntity = std::make_shared<SVE::MeshEntity>("Floor");
-    std::shared_ptr<SVE::MeshEntity> waterEntity = std::make_shared<SVE::MeshEntity>("WaterMesh");
-    waterEntity->setMaterial("WaterReflection");
-    waterEntity->setIsReflected(false);
-    waterEntity->setCastShadows(false);
-    meshEntity->setMaterial("Yellow");
-    meshEntity2->setMaterial("Blue");
-    terrainEntity->setMaterial("Terrain");
-    //bigFloorEntity->setMaterial("TestMaterial");
-
-    // configure and attach objects to nodes
-    newNode->attachEntity(meshEntity);
-    newNode2->setNodeTransformation(glm::translate(glm::mat4(1), glm::vec3(5, 0, 2)));
-
     {
-        terrainNode->attachEntity(terrainEntity);
-        auto nodeTransform = glm::translate(glm::mat4(1), glm::vec3(-12, -11, -21));
-        terrainNode->setNodeTransformation(nodeTransform);
-    }
 
-    floorNode->attachEntity(floorEntity);
-    floorNode->setNodeTransformation(glm::translate(glm::mat4(1), glm::vec3(-20, 5, 0)));
-    waterNode->setNodeTransformation(glm::translate(glm::mat4(1), glm::vec3(0, 0, 0)));
-    waterNode->attachEntity(waterEntity);
-    //bigFloorNode->attachEntity(bigFloorEntity);
-    //bigFloorNode->setNodeTransformation(glm::translate(glm::mat4(1), glm::vec3(0, -5, 0)));
+        // load resources
+        engine->getResourceManager()->loadFolder("resources/shaders");
+        engine->getResourceManager()->loadFolder("resources/materials");
+        engine->getResourceManager()->loadFolder("resources/models");
+        engine->getResourceManager()->loadFolder("resources");
 
-    bool quit = false;
-    bool skipRendering = false;
-    auto prevTime = engine->getTime();
-    while(!quit) {
-        auto curTime = engine->getTime();
-        SDL_Event event;
-        while( SDL_PollEvent(&event) ) {
-            if(event.type == SDL_QUIT)
+        // configure light
+        engine->getSceneManager()->getLightManager()->getLight(0)->setNodeTransformation(
+                glm::translate(glm::mat4(1), glm::vec3(15, 15, -15)));
+        if (engine->getSceneManager()->getLightManager()->getLightCount() > 1)
+            engine->getSceneManager()->getLightManager()->getLight(1)->setNodeTransformation(
+                    glm::translate(glm::mat4(1), glm::vec3(1, 1, 1)));
+
+        // create camera
+        auto camera = engine->getSceneManager()->createMainCamera();
+        camera->setNearFarPlane(0.1f, 500.0f);
+        camera->setPosition(glm::vec3(5.0f, 5.0f, 5.0f));
+        camera->setYawPitchRoll(glm::vec3(glm::radians(20.0f), glm::radians(-30.0f), 0.0f));
+        //camera->setLookAt(glm::vec3(5.0f, 5.0f, 5.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+
+        // create shadowmap
+        //engine->getSceneManager()->enableShadowMap();
+
+        // init water
+        //engine->getSceneManager()->getWater()->setHeight(0.0f);
+
+        // create skybox
+        engine->getSceneManager()->setSkybox("Skybox2");
+
+        // create floor
+        auto meshSettings = constructPlane("Floor", glm::vec3(0, 0, 0), 10.0f, 10.0f, glm::vec3(0.0f, 1.0f, 0.0f));
+        meshSettings.materialName = "Floor";
+        auto floorMesh = std::make_shared<SVE::Mesh>(meshSettings);
+        engine->getMeshManager()->registerMesh(floorMesh);
+
+        // create water mesh
+        meshSettings.name = "WaterMesh";
+        meshSettings.materialName = "WaterReflection";
+        auto waterMesh = std::make_shared<SVE::Mesh>(meshSettings);
+        engine->getMeshManager()->registerMesh(waterMesh);
+
+        auto bigFloorMeshSettings = constructPlane("BigFloor", glm::vec3(0, 0, 0), 30.0f, 30.0f,
+                                                   glm::vec3(0.0f, 1.0f, 0.0f));
+        bigFloorMeshSettings.materialName = "Floor";
+        auto bigFloorMesh = std::make_shared<SVE::Mesh>(bigFloorMeshSettings);
+        engine->getMeshManager()->registerMesh(bigFloorMesh);
+
+        // create nodes
+        auto newNodeMid = engine->getSceneManager()->createSceneNode();
+        auto newNode = engine->getSceneManager()->createSceneNode();
+        auto newNode2 = engine->getSceneManager()->createSceneNode();
+        auto terrainNode = engine->getSceneManager()->createSceneNode();
+        auto floorNode = engine->getSceneManager()->createSceneNode();
+        auto bigFloorNode = engine->getSceneManager()->createSceneNode();
+        auto waterNode = engine->getSceneManager()->createSceneNode();
+        engine->getSceneManager()->getRootNode()->attachSceneNode(newNodeMid);
+        newNodeMid->attachSceneNode(newNode);
+        engine->getSceneManager()->getRootNode()->attachSceneNode(newNode2);
+        engine->getSceneManager()->getRootNode()->attachSceneNode(terrainNode);
+        engine->getSceneManager()->getRootNode()->attachSceneNode(floorNode);
+        engine->getSceneManager()->getRootNode()->attachSceneNode(waterNode);
+        //engine->getSceneManager()->getRootNode()->attachSceneNode(bigFloorNode);
+
+        // create entities
+        std::shared_ptr<SVE::Entity> meshEntity = std::make_shared<SVE::MeshEntity>("trashman");
+        std::shared_ptr<SVE::Entity> meshEntity2 = std::make_shared<SVE::MeshEntity>("trashman");
+        std::shared_ptr<SVE::Entity> terrainEntity = std::make_shared<SVE::MeshEntity>("terrain");
+        std::shared_ptr<SVE::Entity> floorEntity = std::make_shared<SVE::MeshEntity>("Floor");
+        std::shared_ptr<SVE::MeshEntity> waterEntity = std::make_shared<SVE::MeshEntity>("WaterMesh");
+        waterEntity->setMaterial("WaterReflection");
+        waterEntity->setIsReflected(false);
+        waterEntity->setCastShadows(false);
+        meshEntity->setMaterial("Yellow");
+        meshEntity2->setMaterial("Blue");
+        terrainEntity->setMaterial("Terrain");
+        //bigFloorEntity->setMaterial("TestMaterial");
+
+        // configure and attach objects to nodes
+        newNode->attachEntity(meshEntity);
+        newNode2->setNodeTransformation(glm::translate(glm::mat4(1), glm::vec3(5, 0, 2)));
+
+        {
+            terrainNode->attachEntity(terrainEntity);
+            auto nodeTransform = glm::translate(glm::mat4(1), glm::vec3(-12, -11, -21));
+            terrainNode->setNodeTransformation(nodeTransform);
+        }
+
+        floorNode->attachEntity(floorEntity);
+        floorNode->setNodeTransformation(glm::translate(glm::mat4(1), glm::vec3(-20, 5, 0)));
+        waterNode->setNodeTransformation(glm::translate(glm::mat4(1), glm::vec3(0, 0, 0)));
+        waterNode->attachEntity(waterEntity);
+        //bigFloorNode->attachEntity(bigFloorEntity);
+        //bigFloorNode->setNodeTransformation(glm::translate(glm::mat4(1), glm::vec3(0, -5, 0)));
+
+        bool quit = false;
+        bool skipRendering = false;
+        auto prevTime = engine->getTime();
+        while (!quit)
+        {
+            auto curTime = engine->getTime();
+            SDL_Event event;
+            while (SDL_PollEvent(&event))
             {
-                quit = true;
-            }
-            if (event.type == SDL_WINDOWEVENT)
-            {
-                if (event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED)
+                if (event.type == SDL_QUIT)
                 {
-                    if (!skipRendering)
-                        engine->resizeWindow();
+                    quit = true;
                 }
-                if (event.window.event == SDL_WINDOWEVENT_MINIMIZED)
+                if (event.type == SDL_WINDOWEVENT)
                 {
-                    skipRendering = true;
-                    std::cout << "skip rendering" << std::endl;
-                }
-                if (event.window.event == SDL_WINDOWEVENT_RESTORED)
-                {
-                    skipRendering = false;
-                }
-            }
-            if (event.type == SDL_KEYUP)
-            {
-                if (event.key.keysym.sym == SDLK_SPACE)
-                {
-                    if (newNode2->getAttachedEntities().empty())
+                    if (event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED)
                     {
-                        newNode2->attachEntity(meshEntity2);
-                    } else {
-                        newNode2->detachEntity(meshEntity2);
+                        if (!skipRendering)
+                            engine->resizeWindow();
+                    }
+                    if (event.window.event == SDL_WINDOWEVENT_MINIMIZED)
+                    {
+                        skipRendering = true;
+                        std::cout << "skip rendering" << std::endl;
+                    }
+                    if (event.window.event == SDL_WINDOWEVENT_RESTORED)
+                    {
+                        skipRendering = false;
                     }
                 }
+                if (event.type == SDL_KEYUP)
+                {
+                    if (event.key.keysym.sym == SDLK_SPACE)
+                    {
+                        if (newNode2->getAttachedEntities().empty())
+                        {
+                            newNode2->attachEntity(meshEntity2);
+                        }
+                        else
+                        {
+                            newNode2->detachEntity(meshEntity2);
+                        }
+                    }
 
-                configFloor(event.key.keysym.sym, terrainNode);
+                    configFloor(event.key.keysym.sym, terrainNode);
+                }
+                if (event.type == SDL_MOUSEMOTION)
+                {
+                    if (event.motion.state && SDL_BUTTON(1))
+                        rotateCamera(event.motion, camera);
+                }
             }
-            if (event.type == SDL_MOUSEMOTION)
+
+            const Uint8* keystates = SDL_GetKeyboardState(nullptr);
+            moveCamera(keystates, curTime - prevTime, camera);
+            SDL_Delay(1);
+            if (!skipRendering)
             {
-                if (event.motion.state && SDL_BUTTON(1))
-                    rotateCamera(event.motion, camera);
+                engine->renderFrame();
+
+                updateNode(newNode, curTime);
             }
+            prevTime = curTime;
         }
 
-        const Uint8* keystates = SDL_GetKeyboardState(nullptr);
-        moveCamera(keystates, curTime - prevTime, camera);
-        SDL_Delay(1);
-        if (!skipRendering)
-        {
-            engine->renderFrame();
+        engine->finishRendering();
 
-            updateNode(newNode, curTime);
-        }
-        prevTime = curTime;
+        SDL_DestroyWindow(window);
+        SDL_Quit();
     }
 
-    engine->finishRendering();
-
-    SDL_DestroyWindow(window);
-    SDL_Quit();
+    engine->destroyInstance();
 
     return 0;
 }

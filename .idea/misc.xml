@@ -3,6 +3,8 @@
   <component name="CMakeWorkspace" PROJECT_DIR="$PROJECT_DIR$" />
   <component name="CidrRootsConfiguration">
     <excludeRoots>
+      <file path="$PROJECT_DIR$/RenderDoc" />
+      <file path="$PROJECT_DIR$/build-ubuntu" />
       <file path="$PROJECT_DIR$/deps" />
     </excludeRoots>
   </component>

@@ -6,17 +6,24 @@
 
 #include "Engine.h"
 #include "SceneManager.h"
-#include "CameraNode.h"
+#include "LightManager.h"
+#include "ShadowMap.h"
 
 #include <glm/gtc/matrix_transform.hpp>
 
 namespace SVE
 {
 
-LightNode::LightNode(LightSettings lightSettings)
-    : _lightSettings(std::move(lightSettings))
+LightNode::LightNode(LightSettings lightSettings, uint32_t lightIndex)
+    : _lightIndex(lightIndex)
+    , _lightSettings(std::move(lightSettings))
 {
     createProjectionMatrix();
+    if (_lightSettings.castShadows)
+    {
+        _shadowmap = std::make_shared<ShadowMap>(_lightIndex);
+        _shadowmap->enableShadowMap();
+    }
 }
 
 const LightSettings& LightNode::getLightSettings()
@@ -29,18 +36,19 @@ void LightNode::updateViewMatrix(glm::vec3 cameraPos)
     _viewMatrix = glm::lookAt(_originalPos + cameraPos, glm::vec3(0, 0, 0) + cameraPos, glm::vec3(0.0f, 1.0f, 0.0f));
 }
 
-void LightNode::fillUniformData(UniformData& data, bool asViewSource)
+void LightNode::fillUniformData(UniformData& data, uint32_t lightNum, bool asViewSource)
 {
-    updateViewMatrix(data.cameraPos);
+    //updateViewMatrix(data.cameraPos);
 
     auto model = getTotalTransformation();
-    data.lightPos = model[3];
 
     switch (_lightSettings.lightType)
     {
         case LightType::PointLight:
         {
-            PointLight pointLight;
+            data.lightViewProjectionList[lightNum] = _projectionMatrix * _viewMatrix;
+
+            PointLight pointLight{};
             pointLight.diffuse = glm::vec4(_lightSettings.diffuseStrength);
             pointLight.specular = glm::vec4(_lightSettings.specularStrength);
             pointLight.ambient = glm::vec4(_lightSettings.ambientStrength);
@@ -59,7 +67,7 @@ void LightNode::fillUniformData(UniformData& data, bool asViewSource)
         case LightType::SunLight:
         {
             // TODO: Probably this data should be for each shadow (if multiple shadowmaps are used)
-            data.lightViewProjection = _projectionMatrix * _viewMatrix;
+            data.lightViewProjectionList[lightNum] = _projectionMatrix * _viewMatrix;
 
             data.dirLight.diffuse = glm::vec4(_lightSettings.diffuseStrength);
             data.dirLight.specular = glm::vec4(_lightSettings.specularStrength);
@@ -70,6 +78,14 @@ void LightNode::fillUniformData(UniformData& data, bool asViewSource)
             break;
         }
         case LightType::SpotLight:
+            // TODO: Add spotlight
+            data.lightViewProjectionList[lightNum] = _projectionMatrix * _viewMatrix;
+            data.spotLight.diffuse = glm::vec4(_lightSettings.diffuseStrength);
+            data.spotLight.specular = glm::vec4(_lightSettings.specularStrength);
+            data.spotLight.ambient = glm::vec4(_lightSettings.ambientStrength);
+            //data.spotLight.direction = glm::vec4(-glm::normalize(model[3]));
+
+            data.lightInfo.lightFlags |= LightInfo::SpotLight;
             break;
         case LightType::RectLight:
             break;
@@ -81,6 +97,11 @@ void LightNode::fillUniformData(UniformData& data, bool asViewSource)
         data.view = _viewMatrix;
         data.projection = _projectionMatrix;
     }
+}
+
+std::shared_ptr<ShadowMap> LightNode::getShadowMap()
+{
+    return _shadowmap;
 }
 
 const glm::mat4& LightNode::getViewMatrix()
@@ -133,8 +154,6 @@ void LightNode::setNodeTransformation(glm::mat4 transform)
     SceneNode::setNodeTransformation(transform);
     createViewMatrix();
 }
-
-
 
 
 } // namespace SVE

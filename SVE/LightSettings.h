@@ -23,6 +23,7 @@ struct LightSettings
     float specularStrength;
     float diffuseStrength;
     float shininess;
+    bool castShadows = true;
 };
 
 struct DirLight

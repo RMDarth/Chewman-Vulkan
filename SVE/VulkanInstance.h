@@ -14,14 +14,16 @@ namespace SVE
 {
 class VulkanMesh;
 class VulkanScreenQuad;
+class VulkanSamplerHolder;
+class VulkanPassInfo;
 
 // TODO: Create some mapping to external indexes instead of hardcoding
 enum BufferIndex
 {
     BUFFER_INDEX_SHADOWMAP = 100,
-    BUFFER_INDEX_WATER_REFLECTION = 101,
-    BUFFER_INDEX_WATER_REFRACTION = 102,
-    BUFFER_INDEX_SCREEN_QUAD = 103
+    BUFFER_INDEX_WATER_REFLECTION = 200,
+    BUFFER_INDEX_WATER_REFRACTION = 201,
+    BUFFER_INDEX_SCREEN_QUAD = 300
 };
 
 class VulkanInstance
@@ -47,9 +49,8 @@ public:
     VkFormat getSurfaceColorFormat() const;
     VkFormat getDepthFormat() const;
     VkFramebuffer getFramebuffer(size_t index) const;
-    VkSemaphore* getImageAvailableSemaphore();
 
-    VkCommandBuffer createCommandBuffer(uint32_t commandPool, uint32_t bufferIndex);
+    VkCommandBuffer createCommandBuffer(uint32_t bufferIndex);
     VkCommandBuffer getCommandBuffer(uint32_t index);
 
     const std::vector<VkCommandBuffer>& getCommandBuffersList();
@@ -58,12 +59,15 @@ public:
     void submitCommands(CommandsType commandsType) const;
     void renderCommands() const;
     uint32_t getCurrentImageIndex() const;
+    uint32_t getCurrentFrameIndex() const;
 
     void reallocateCommandBuffers();
     void startRenderCommandBufferCreation(uint32_t index);
     void endRenderCommandBufferCreation(uint32_t index);
 
     VulkanScreenQuad* getScreenQuad();
+    VulkanSamplerHolder* getSamplerHolder();
+    VulkanPassInfo* getPassInfo();
     void initScreenQuad();
 
 private:
@@ -116,6 +120,7 @@ private:
     VkDevice _device;
 
     VkDebugReportCallbackEXT _debugCallbackHandle;
+    VkDebugUtilsMessengerEXT _debugUtilsCallbackHandle;
 
     VkSampleCountFlagBits _msaaSamples;
 
@@ -149,20 +154,24 @@ private:
     VkDeviceMemory _depthImageMemory;
     VkImageView _depthImageView;
 
-    VkSemaphore _shadowMapReadySemaphore;
-    VkSemaphore _waterReflectionReadySemaphore;
-    VkSemaphore _waterRefractionReadySemaphore;
-    VkSemaphore _screenQuadReadySemaphore;
-    VkSemaphore _imageAvailableSemaphore;
-    VkSemaphore _renderFinishedSemaphore;
+    const int MAX_FRAMES_IN_FLIGHT = 2; // max parallel processing frame
+    std::vector<VkSemaphore> _shadowMapReadySemaphores;
+    std::vector<VkSemaphore> _waterReflectionReadySemaphores;
+    std::vector<VkSemaphore> _waterRefractionReadySemaphores;
+    std::vector<VkSemaphore> _screenQuadReadySemaphores;
+    std::vector<VkSemaphore> _imageAvailableSemaphores;
+    std::vector<VkSemaphore> _renderFinishedSemaphores;
 
     // TODO: Meh... mutable
+    mutable int _currentFrame = 0;
     mutable VkSemaphore _currentWaitSemaphore;
 
     std::vector<VkFence> _inFlightFences;
-    uint32_t _currentImageIndex;
+    uint32_t _currentImageIndex = 0;
 
     std::unique_ptr<VulkanScreenQuad> _screenQuad;
+    std::unique_ptr<VulkanSamplerHolder> _samplerHolder;
+    std::unique_ptr<VulkanPassInfo> _passInfo;
 };
 
 } // namespace SVE

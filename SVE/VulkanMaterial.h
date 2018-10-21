@@ -27,6 +27,7 @@ public:
 
     void applyDrawingCommands(uint32_t bufferIndex, uint32_t materialIndex);
 
+    void resetDescriptorSets();
     void resetPipeline();
 
     std::vector<VkDescriptorSet> getDescriptorSets(uint32_t materialIndex, size_t index) const;
@@ -59,6 +60,13 @@ private:
     void createDescriptorSets();
     void deleteDescriptorSets();
 
+    void updateDescriptorSets();
+    void updateDescriptorSet(uint32_t imageIndex,
+                             const VkBuffer* shaderBuffer,
+                             const size_t uniformSize,
+                             const VulkanShaderInfo* shaderInfo,
+                             VkDescriptorSet descriptorSet);
+
     std::vector<char> getUniformDataByType(const UniformData& data, UniformType type) const;
 
 
@@ -83,7 +91,10 @@ private:
     std::vector<VkImageView> _textureImageViews;
     std::vector<VkSampler> _textureSamplers;
     std::vector<std::string> _textureNames;
+
+    bool _hasExternals;
     std::vector<bool> _textureExternal;
+    std::vector<std::string> _textureExternalName;
 
     struct PerInstanceData
     {
@@ -92,7 +103,7 @@ private:
         std::vector<VkBuffer> geometryUniformBuffer;
         std::vector<VkDeviceMemory> uniformBuffersMemory;
 
-        VkDescriptorPool descriptorPool;
+        VkDescriptorPool descriptorPool = VK_NULL_HANDLE;
 
         std::vector<VkDescriptorSet> vertexDescriptorSets;
         std::vector<VkDescriptorSet> fragmentDescriptorSets;

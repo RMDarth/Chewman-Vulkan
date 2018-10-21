@@ -55,8 +55,9 @@ Engine* Engine::createInstance(SDL_Window* window, const std::string& settingsPa
         auto settings = data.engine.front();
         _engineInstance = new Engine(window, settings);
 
-        if (settings.initShadows)
-            _engineInstance->getSceneManager()->initShadowMap();
+        //if (settings.initShadows)
+        _engineInstance->getSceneManager()->getLightManager();
+        //    _engineInstance->getSceneManager()->initShadowMap();
         if (settings.initWater)
             _engineInstance->getSceneManager()->createWater(0);
         if (settings.useScreenQuad)
@@ -69,7 +70,7 @@ Engine* Engine::createInstance(SDL_Window* window, const std::string& settingsPa
 
 VulkanInstance* Engine::getVulkanInstance()
 {
-    return _vulkanInstance;
+    return _vulkanInstance.get();
 }
 
 Engine::Engine(SDL_Window* window)
@@ -78,7 +79,7 @@ Engine::Engine(SDL_Window* window)
 }
 
 Engine::Engine(SDL_Window* window, EngineSettings settings)
-    : _vulkanInstance(new VulkanInstance(window, std::move(settings)))
+    : _vulkanInstance(std::make_unique<VulkanInstance>(window, std::move(settings)))
     , _materialManager(new MaterialManager())
     , _shaderManager(std::make_unique<ShaderManager>())
     , _sceneManager(new SceneManager())
@@ -88,7 +89,16 @@ Engine::Engine(SDL_Window* window, EngineSettings settings)
     getTime();
 }
 
-Engine::~Engine() = default;
+Engine::~Engine()
+{
+    // TODO: need to add correct resource handling
+    _resourceManager.reset();
+    _meshManager.reset();
+    _sceneManager.reset();
+    _shaderManager.reset();
+    _materialManager.reset();
+    _vulkanInstance.reset();
+}
 
 MaterialManager* Engine::getMaterialManager()
 {
@@ -168,21 +178,33 @@ void updateNode(const std::shared_ptr<SceneNode>& node, UniformDataList& uniform
 
 void Engine::renderFrame()
 {
+    updateTime();
     auto skybox = _sceneManager->getSkybox();
 
     // update command buffers if scene changed
-    if (_sceneManager->isCommandBufferUpdateQueued())
+    //if (_sceneManager->isCommandBufferUpdateQueued())
     {
+        finishRendering();
+        _materialManager->resetDescriptors();
+
         _vulkanInstance->reallocateCommandBuffers();
 
         _commandsType = CommandsType::ShadowPass;
-        auto shadowMap = _sceneManager->getShadowMap();
-        if (shadowMap->isEnabled())
+
+        for (auto i = 0; i < _sceneManager->getLightManager()->getLightCount(); i++)
         {
-            shadowMap->getVulkanShadowMap()->reallocateCommandBuffers();
-            shadowMap->getVulkanShadowMap()->startRenderCommandBufferCreation();
-            createNodeDrawCommands(_sceneManager->getRootNode(), BUFFER_INDEX_SHADOWMAP);
-            shadowMap->getVulkanShadowMap()->endRenderCommandBufferCreation();
+            auto shadowMap = _sceneManager->getLightManager()->getLight(i)->getShadowMap();
+
+            if (shadowMap && shadowMap->isEnabled())
+            {
+                shadowMap->getVulkanShadowMap()->reallocateCommandBuffers();
+                for (auto r = 0u; r < _vulkanInstance->getSwapchainSize(); ++r)
+                {
+                    auto bufferIndex = shadowMap->getVulkanShadowMap()->startRenderCommandBufferCreation(r);
+                    createNodeDrawCommands(_sceneManager->getRootNode(), bufferIndex);
+                    shadowMap->getVulkanShadowMap()->endRenderCommandBufferCreation(r);
+                }
+            }
         }
 
         if (auto water = _sceneManager->getWater())
@@ -203,7 +225,6 @@ void Engine::renderFrame()
             water->getVulkanWater()->endRenderCommandBufferCreation(VulkanWater::PassType::Refraction);
         }
 
-        // TODO: Check if screenquad enabled
         if (auto* screenQuad = _vulkanInstance->getScreenQuad())
         {
             _commandsType = CommandsType::ScreenQuadPass;
@@ -229,10 +250,11 @@ void Engine::renderFrame()
             {
                 if (skybox)
                     skybox->applyDrawingCommands(i);
-                createNodeDrawCommands(_sceneManager->getRootNode(), i);
+                createNodeDrawCommands(_sceneManager->getRootNode(), _vulkanInstance->getCurrentImageIndex());
             }
             _vulkanInstance->endRenderCommandBufferCreation(i);
         }
+
         _sceneManager->dequeueCommandBufferUpdate();
     }
 
@@ -240,8 +262,10 @@ void Engine::renderFrame()
     auto mainCamera = _sceneManager->getMainCamera();
     if (!mainCamera)
         throw VulkanException("Camera not set");
-    UniformDataList uniformDataList(PassCount);
+
     // TODO: Init this once
+    UniformDataList uniformDataList(PassCount);
+
     for (auto i = 0; i < PassCount; i++)
     {
         uniformDataList[i] = std::make_shared<UniformData>();
@@ -256,11 +280,17 @@ void Engine::renderFrame()
     {
         *uniformDataList[i] = *mainUniform;
     }
+
+    for (auto i = 0u; i < _sceneManager->getLightManager()->getLightCount(); i++)
+    {
+        _sceneManager->getLightManager()->getLight(i)->updateViewMatrix(_sceneManager->getMainCamera()->getPosition());
+    }
     for (auto i = 0; i < PassCount; i++)
     {
         // TODO: Refactor interface for setting view source
         _sceneManager->getLightManager()->fillUniformData(*uniformDataList[i], i == toInt(CommandsType::ShadowPass) ? 0 : -1);
     }
+
 
     if (auto water = _sceneManager->getWater())
     {
@@ -269,6 +299,7 @@ void Engine::renderFrame()
         water->getVulkanWater()->fillUniformData(*uniformDataList[toInt(CommandsType::RefractionPass)],
                                                  VulkanWater::PassType::Refraction);
     }
+
     _vulkanInstance->waitAvailableFramebuffer();
 
     // update uniforms
@@ -279,7 +310,9 @@ void Engine::renderFrame()
 
     // submit command buffers
     if (isShadowMappingEnabled())
+    {
         _vulkanInstance->submitCommands(CommandsType::ShadowPass);
+    }
     if (auto water = _sceneManager->getWater())
     {
         _vulkanInstance->submitCommands(CommandsType::ReflectionPass);
@@ -294,10 +327,13 @@ void Engine::renderFrame()
 
 float Engine::getTime()
 {
-    static auto startTime = std::chrono::high_resolution_clock::now();
+    return _duration;
+}
 
-    auto currentTime = std::chrono::high_resolution_clock::now();
-    return std::chrono::duration<float, std::chrono::seconds::period>(currentTime - startTime).count();
+void Engine::updateTime()
+{
+    _currentTime = std::chrono::high_resolution_clock::now();
+    _duration = std::chrono::duration<float, std::chrono::seconds::period>(_currentTime - _startTime).count();
 }
 
 CommandsType Engine::getPassType() const
@@ -307,12 +343,18 @@ CommandsType Engine::getPassType() const
 
 bool Engine::isShadowMappingEnabled() const
 {
-    return _sceneManager->getShadowMap()->isEnabled();
+    // TODO: Refactor this or remove
+    return true;//_sceneManager->getShadowMap()->isEnabled();
 }
 
 bool Engine::isWaterEnabled() const
 {
     return _sceneManager->getWater() != nullptr;
+}
+
+void Engine::destroyInstance()
+{
+    delete _engineInstance;
 }
 
 } // namespace SVE

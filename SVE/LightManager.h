@@ -8,17 +8,26 @@
 namespace SVE
 {
 
+class VulkanShadowImage;
+
 class LightManager
 {
 public:
+    LightManager();
+    ~LightManager();
+
     void setLight(std::shared_ptr<LightNode> light, uint16_t index);
     std::shared_ptr<LightNode> getLight(uint16_t index) const;
     size_t getLightCount() const;
+
+    VulkanShadowImage* getVulkanShadowImage();
 
     void fillUniformData(UniformData& data, int viewSource = -1);
 
 private:
     std::vector<std::shared_ptr<LightNode>> _lightList;
+
+    std::unique_ptr<VulkanShadowImage> _shadowImage;
 };
 
 } // namespace SVE

@@ -4,6 +4,7 @@
     "shaderType": "FragmentShader",
     "samplerNamesList": [
         "reflectionSampler",
+        "refractionSampler",
         "dudvSampler"
     ],
     "uniformList": [

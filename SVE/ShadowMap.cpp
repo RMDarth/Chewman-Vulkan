@@ -3,13 +3,16 @@
 // Licensed under CC BY 4.0
 #include "ShadowMap.h"
 #include "VulkanShadowMap.h"
+#include "Engine.h"
+#include "SceneManager.h"
+#include "LightManager.h"
 
 namespace SVE
 {
 
-ShadowMap::ShadowMap()
+ShadowMap::ShadowMap(uint32_t lightIndex)
     : _isEnabled(false)
-    , _vulkanShadowMap(std::make_unique<VulkanShadowMap>())
+    , _vulkanShadowMap(std::make_unique<VulkanShadowMap>(lightIndex, *Engine::getInstance()->getSceneManager()->getLightManager()->getVulkanShadowImage()))
 {
 }
 

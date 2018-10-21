@@ -75,6 +75,7 @@ std::vector<UniformInfo> getUniformInfoList(rj::Document& document)
             {"ViewMatrix",                UniformType::ViewMatrix},
             {"ProjectionMatrix",          UniformType::ProjectionMatrix},
             {"ModelViewProjectionMatrix", UniformType::ModelViewProjectionMatrix},
+            {"ViewProjectionMatrix",      UniformType::ViewProjectionMatrix},
             {"CameraPosition",            UniformType::CameraPosition},
             {"MaterialInfo",              UniformType::MaterialInfo},
             {"LightInfo",                 UniformType::LightInfo},
@@ -196,6 +197,7 @@ std::vector<TextureInfo> getTextureInfos(const cppfs::FilePath& directory, rj::D
         setOptional(textureInfo.textureType = textureTypeMap.at(item["textureType"].GetString()));
         setOptional(textureInfo.textureAddressMode = addressModeMap.at(item["textureAddressMode"].GetString()));
         setOptional(textureInfo.textureBorderColor = borderColorMap.at(item["textureBorderColor"].GetString()));
+        setOptional(textureInfo.layers = item["layers"].GetUint())
 
         if (textureInfo.textureType == TextureType::ImageFile)
         {
@@ -217,6 +219,14 @@ MaterialSettings loadMaterial(const cppfs::FilePath& directory, const std::strin
             { "None",       MaterialCullFace::None },
     };
 
+    static const std::map<std::string, CommandsType> passTypeMap {
+            { "MainPass",       CommandsType::MainPass },
+            { "ScreenQuadPass", CommandsType::ScreenQuadPass },
+            { "RefractionPass", CommandsType::RefractionPass },
+            { "ReflectionPass", CommandsType::ReflectionPass },
+            { "ShadowPass",     CommandsType::ShadowPass },
+    };
+
     rj::Document document;
     document.Parse(data.c_str());
 
@@ -227,6 +237,7 @@ MaterialSettings loadMaterial(const cppfs::FilePath& directory, const std::strin
     setOptional(materialSettings.useDepthBias = document["useDepthBias"].GetBool());
     setOptional(materialSettings.useMultisampling = document["useMultisampling"].GetBool());
     setOptional(materialSettings.isCubemap = document["isCubemap"].GetBool());
+    setOptional(materialSettings.passType = passTypeMap.at(document["passType"].GetString()));
     setOptional(materialSettings.fragmentShaderName = document["fragmentShaderName"].GetString());
     setOptional(materialSettings.geometryShaderName = document["geometryShaderName"].GetString());
     setOptional(materialSettings.vertexShaderName = document["vertexShaderName"].GetString());
@@ -282,6 +293,7 @@ LightSettings loadLight(const std::string& data)
     lightSettings.ambientStrength = document["ambientStrength"].GetFloat();
     lightSettings.specularStrength = document["specularStrength"].GetFloat();
     lightSettings.diffuseStrength = document["diffuseStrength"].GetFloat();
+    setOptional(lightSettings.castShadows = document["castShadows"].GetBool());
 
     return lightSettings;
 }

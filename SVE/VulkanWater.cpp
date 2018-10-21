@@ -4,12 +4,14 @@
 #include "VulkanWater.h"
 #include "Engine.h"
 #include "VulkanInstance.h"
+#include "VulkanSamplerHolder.h"
 #include "VulkanUtils.h"
 #include "VulkanException.h"
 #include "ShaderSettings.h"
 
 #include "SceneManager.h"
 #include "CameraNode.h"
+#include "VulkanPassInfo.h"
 
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/euler_angles.hpp>
@@ -17,6 +19,9 @@
 
 namespace SVE
 {
+
+const std::string ReflectionSamplerName = "reflection";
+const std::string RefractionSamplerName = "refraction";
 
 VulkanWater::VulkanWater(float height)
     : _vulkanInstance(Engine::getInstance()->getVulkanInstance())
@@ -29,6 +34,14 @@ VulkanWater::VulkanWater(float height)
     createRenderPasses();
     createImages();
     createFramebuffers();
+
+    VulkanSamplerHolder::SamplerInfo reflectionSamplerInfo { _resolveImageView[0], _colorSampler[0] };
+    VulkanSamplerInfoList reflectionList(3, reflectionSamplerInfo);
+    _vulkanInstance->getSamplerHolder()->setSamplerInfo(ReflectionSamplerName, reflectionList);
+
+    VulkanSamplerHolder::SamplerInfo refractionSamplerInfo { _resolveImageView[1], _colorSampler[1] };
+    VulkanSamplerInfoList refractionList(3, refractionSamplerInfo);
+    _vulkanInstance->getSamplerHolder()->setSamplerInfo(RefractionSamplerName, refractionList);
 }
 
 VulkanWater::~VulkanWater()
@@ -78,8 +91,8 @@ void VulkanWater::fillUniformData(UniformData& data, PassType passType)
 
 void VulkanWater::reallocateCommandBuffers()
 {
-    _commandBuffer[0] = _vulkanInstance->createCommandBuffer(0, BUFFER_INDEX_WATER_REFLECTION);
-    _commandBuffer[1] = _vulkanInstance->createCommandBuffer(0, BUFFER_INDEX_WATER_REFRACTION);
+    _commandBuffer[0] = _vulkanInstance->createCommandBuffer(BUFFER_INDEX_WATER_REFLECTION);
+    _commandBuffer[1] = _vulkanInstance->createCommandBuffer(BUFFER_INDEX_WATER_REFRACTION);
 }
 
 void VulkanWater::startRenderCommandBufferCreation(VulkanWater::PassType passType)
@@ -188,7 +201,7 @@ void VulkanWater::createRenderPasses()
         depthAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
         depthAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
         depthAttachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-        depthAttachment.finalLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+        depthAttachment.finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
 
         VkAttachmentReference colorAttachmentRef {};
         colorAttachmentRef.attachment = 0;
@@ -241,7 +254,14 @@ void VulkanWater::createRenderPasses()
         {
             throw VulkanException("Can't create Vulkan render pass");
         }
+
+        VulkanPassInfo::PassData data {
+                _renderPass[passIndex]
+        };
+        _vulkanInstance->getPassInfo()->setPassData(passIndex == 0 ? CommandsType::ReflectionPass : CommandsType::RefractionPass, data);
     }
+
+
 }
 
 void VulkanWater::deleteRenderPasses()
@@ -268,7 +288,7 @@ void VulkanWater::createImages()
                 sampleCount,
                 _vulkanInstance->getSurfaceColorFormat(),
                 VK_IMAGE_TILING_OPTIMAL,
-                VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
+                VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
                 VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
                 _colorImage[passIndex],
                 _colorImageMemory[passIndex]);
@@ -280,7 +300,7 @@ void VulkanWater::createImages()
                 _vulkanInstance->getSurfaceColorFormat(),
                 {VK_IMAGE_LAYOUT_UNDEFINED, 0, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT},
                 {VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
-                 VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT | VK_ACCESS_SHADER_READ_BIT,
+                 VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
                  VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT},
                 1,
                 VK_IMAGE_ASPECT_COLOR_BIT);
@@ -305,7 +325,7 @@ void VulkanWater::createImages()
                 _vulkanInstance->getSurfaceColorFormat(),
                 {VK_IMAGE_LAYOUT_UNDEFINED, 0, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT},
                 {VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
-                 VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT | VK_ACCESS_SHADER_READ_BIT,
+                 VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
                  VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT},
                 1);
 
@@ -328,8 +348,7 @@ void VulkanWater::createImages()
                 depthFormat,
                 {VK_IMAGE_LAYOUT_UNDEFINED, 0, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT},
                 {VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
-                 VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT |
-                 VK_ACCESS_SHADER_READ_BIT,
+                 VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT,
                  VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT},
                 1,
                 aspectFlags);

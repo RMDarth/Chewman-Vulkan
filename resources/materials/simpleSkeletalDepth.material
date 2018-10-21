@@ -3,5 +3,6 @@
     "vertexShaderName": "simpleSkeletalDepthVertexShader",
     "fragmentShaderName": "simpleDepthFragmentShader",
     "useDepthBias": true,
-    "useMultisampling": false
+    "useMultisampling": false,
+    "passType": "ShadowPass"
 }

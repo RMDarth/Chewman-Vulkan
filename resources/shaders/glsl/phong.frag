@@ -34,6 +34,8 @@ void main() {
         if ((ubo.lightInfo.lightFlags & LI_PointLight[i]) != 0)
             lightEffect += CalcPointLight(ubo.pointLight[i], norm, fragPos, viewDir, ubo.materialInfo);
     }
+    if ((ubo.lightInfo.lightFlags & LI_SpotLight) != 0)
+        lightEffect += CalcSpotLight(ubo.spotLight, norm, fragPos, viewDir, ubo.materialInfo);
 
     vec3 result = diffuse * lightEffect * fragColor;
     outColor = vec4(result, 1.0);

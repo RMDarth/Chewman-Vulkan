@@ -3,8 +3,8 @@
 #include "lighting.glsl"
 
 layout(set = 1, binding = 0) uniform sampler2D diffuseTex;
-layout(set = 1, binding = 1) uniform sampler2D shadowTex;
-layout(std140, set = 1, binding = 2) uniform UBO
+layout(set = 1, binding = 1) uniform sampler2DArray shadowTex;
+layout(set = 1, binding = 2) uniform UBO
 {
 	vec4 cameraPos;
 	DirLight dirLight;
@@ -24,7 +24,7 @@ layout(location = 0) out vec4 outColor;
 
 
 // for directional
-float computeShadowFactor(vec4 lightSpacePos, vec2 offset)
+float computeShadowFactor(vec4 lightSpacePos, vec2 offset, uint layer)
 {
    // Convert light space position to NDC (normalized device coordinates)
    //vec3 lightSpaceReal = lightSpacePos.xyz /= lightSpacePos.w;
@@ -43,7 +43,7 @@ float computeShadowFactor(vec4 lightSpacePos, vec2 offset)
    vec2 shadowMapCoord = lightSpacePos.xy * 0.5 + 0.5;
 
    // Check if the sample is in the light or in the shadow
-    if (lightSpacePos.z > texture(shadowTex, shadowMapCoord.xy + offset).x)
+    if (lightSpacePos.z > texture(shadowTex, vec3(shadowMapCoord.xy + offset, layer)).x)
     {
          return 1 - (lightSpacePos.w * 0.6); // In the shadow
     }
@@ -53,9 +53,9 @@ float computeShadowFactor(vec4 lightSpacePos, vec2 offset)
    return 1.0;
 }
 
-float filterPCF(vec4 lightSpacePos)
+float filterPCF(vec4 lightSpacePos, uint layer)
 {
-	ivec2 texDim = textureSize(shadowTex, 0);
+	ivec2 texDim = textureSize(shadowTex, 0).xy;
 	float scale = 1.5;
 	float dx = scale * 1.0 / float(texDim.x);
 	float dy = scale * 1.0 / float(texDim.y);
@@ -68,7 +68,7 @@ float filterPCF(vec4 lightSpacePos)
 	{
 		for (int y = -range; y <= range; y++)
 		{
-			shadowFactor += computeShadowFactor(lightSpacePos, vec2(dx*x, dy*y));
+			shadowFactor += computeShadowFactor(lightSpacePos, vec2(dx*x, dy*y), layer);
 			count++;
 		}
 
@@ -90,7 +90,9 @@ void main() {
         if ((ubo.lightInfo.lightFlags & LI_PointLight[i]) != 0)
             lightEffect += CalcPointLight(ubo.pointLight[i], norm, fragPos, viewDir, ubo.materialInfo);
     }
+    if ((ubo.lightInfo.lightFlags & LI_SpotLight) != 0)
+        lightEffect += CalcSpotLight(ubo.spotLight, norm, fragPos, viewDir, ubo.materialInfo);
 
-    vec3 result = diffuse * lightEffect * fragColor * filterPCF(fragLightSpacePos);
+    vec3 result = diffuse * lightEffect * fragColor * filterPCF(fragLightSpacePos, 0);
     outColor = vec4(result, 1.0);
 }

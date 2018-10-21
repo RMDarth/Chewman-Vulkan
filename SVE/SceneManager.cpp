@@ -12,7 +12,6 @@ namespace SVE
 {
 
 SceneManager::SceneManager()
-    : _lightManager(std::make_unique<LightManager>())
 {
     _root = std::make_shared<SceneNode>("root");
 }
@@ -44,8 +43,8 @@ void SceneManager::setMainCamera(std::shared_ptr<CameraNode> cameraEntity)
 
 std::shared_ptr<LightNode> SceneManager::createLight(LightSettings lightSettings)
 {
-    auto lightNode = std::make_shared<LightNode>(lightSettings);
-    _lightManager->setLight(lightNode, static_cast<uint16_t>(_lightManager->getLightCount()));
+    auto lightNode = std::make_shared<LightNode>(lightSettings, getLightManager()->getLightCount());
+    getLightManager()->setLight(lightNode, static_cast<uint16_t>(getLightManager()->getLightCount()));
     _root->attachSceneNode(lightNode);
 
     return lightNode;
@@ -53,6 +52,8 @@ std::shared_ptr<LightNode> SceneManager::createLight(LightSettings lightSettings
 
 LightManager* SceneManager::getLightManager()
 {
+    if (!_lightManager)
+        _lightManager = std::make_unique<LightManager>();
     return _lightManager.get();
 }
 
@@ -74,26 +75,6 @@ void SceneManager::setSkybox(std::shared_ptr<Skybox> skybox)
 std::shared_ptr<Skybox> SceneManager::getSkybox()
 {
     return _skybox;
-}
-
-void SceneManager::setShadowMap(std::shared_ptr<ShadowMap> shadowMap)
-{
-    _shadowmap = std::move(shadowMap);
-}
-
-void SceneManager::initShadowMap()
-{
-    _shadowmap = std::make_shared<ShadowMap>();
-}
-
-void SceneManager::enableShadowMap()
-{
-    _shadowmap->enableShadowMap();
-}
-
-std::shared_ptr<ShadowMap> SceneManager::getShadowMap()
-{
-    return _shadowmap;
 }
 
 std::shared_ptr<Water> SceneManager::createWater(float height)

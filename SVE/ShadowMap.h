@@ -12,7 +12,7 @@ class VulkanShadowMap;
 class ShadowMap
 {
 public:
-    ShadowMap();
+    ShadowMap(uint32_t lightIndex);
     ~ShadowMap();
 
     VulkanShadowMap* getVulkanShadowMap();

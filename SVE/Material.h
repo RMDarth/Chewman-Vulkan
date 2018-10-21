@@ -20,6 +20,7 @@ public:
     const std::string& getName();
     VulkanMaterial* getVulkanMaterial();
     void resetPipeline();
+    void resetDescriptorSets();
 
 private:
     std::string _name;

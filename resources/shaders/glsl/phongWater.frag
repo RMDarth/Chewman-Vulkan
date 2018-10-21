@@ -3,8 +3,9 @@
 #include "lighting.glsl"
 
 layout(set = 1, binding = 0) uniform sampler2D reflectionSampler;
-layout(set = 1, binding = 1) uniform sampler2D dudvSampler;
-layout(set = 1, binding = 2) uniform UBO
+layout(set = 1, binding = 1) uniform sampler2D refractionSampler;
+layout(set = 1, binding = 2) uniform sampler2D dudvSampler;
+layout(set = 1, binding = 3) uniform UBO
 {
     vec4 cameraPos;
     DirLight dirLight;
@@ -30,6 +31,7 @@ void main() {
 
     vec3 ndc = (fragClipPosition.xyz / fragClipPosition.w) * 0.5 + 0.5;
     vec2 reflectionCoord = vec2(ndc.x, 1 - ndc.y);
+    vec2 refractionCoord = vec2(ndc.x, ndc.y);
 
     float timeMult = ubo.time * 0.05;
     float clampTime = timeMult - floor(timeMult);
@@ -37,8 +39,14 @@ void main() {
     vec2 distortion1 = (texture(dudvSampler, vec2(dudvCoords.x + clampTime, dudvCoords.y)).rg * 2.0 - 1.0) * waveStrength;
     vec2 distortion2 = (texture(dudvSampler, vec2(-dudvCoords.x + clampTime, dudvCoords.y + clampTime)).rg * 2.0 - 1.0) * waveStrength;
     vec2 totalDistortion = distortion1 + distortion2;
+
     reflectionCoord = reflectionCoord + totalDistortion;
-    //vec3 result = (ambient + diffuse + specular) * fragColor * texture(texSampler, fragTexCoord).rgb;
-    vec3 result = texture(reflectionSampler, reflectionCoord).rgb;
-    outColor = vec4(mix(result, vec3(0.0, 0.3, 0.5), 0.2), 1.0);
+    refractionCoord = refractionCoord + totalDistortion;
+
+    vec3 reflectionResult = mix(texture(reflectionSampler, reflectionCoord).rgb, vec3(0.0, 0.3, 0.5), 0.4);
+    vec3 refractionResult = texture(refractionSampler, refractionCoord).rgb;
+    float fresnelKoef = dot(viewDir, norm);
+
+    vec3 result =  mix(reflectionResult, refractionResult, fresnelKoef);
+    outColor = vec4(lightEffect * mix(result, vec3(0.0, 0.3, 0.5), 0.4), 1.0);
 }

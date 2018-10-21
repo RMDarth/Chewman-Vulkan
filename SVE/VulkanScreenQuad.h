@@ -24,8 +24,8 @@ public:
     void startRenderCommandBufferCreation();
     void endRenderCommandBufferCreation();
 private:
-    void createRenderPasses();
-    void deleteRenderPasses();
+    void createRenderPass();
+    void deleteRenderPass();
     void createImages();
     void deleteImages();
     void createFramebuffers();

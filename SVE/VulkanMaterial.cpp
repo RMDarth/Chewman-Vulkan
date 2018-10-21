@@ -6,9 +6,12 @@
 #include "VulkanInstance.h"
 #include "VulkanScreenQuad.h"
 #include "VulkanShadowMap.h"
+#include "VulkanSamplerHolder.h"
+#include "VulkanPassInfo.h"
 #include "ShaderManager.h"
 #include "ShaderInfo.h"
 #include "SceneManager.h"
+#include "LightManager.h"
 #include "ShadowMap.h"
 #include "Water.h"
 #include "VulkanWater.h"
@@ -19,6 +22,8 @@
 #include <algorithm>
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb/stb_image.h>
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/gtx/string_cast.hpp>
 #include <cmath>
 
 namespace SVE
@@ -60,6 +65,7 @@ SVE::VulkanMaterial::VulkanMaterial(MaterialSettings materialSettings)
     , _vulkanInstance(Engine::getInstance()->getVulkanInstance())
     , _device(_vulkanInstance->getLogicalDevice())
     , _vulkanUtils(_vulkanInstance->getVulkanUtils())
+    , _hasExternals(false)
 {
     const auto& shaderManager = Engine::getInstance()->getShaderManager();
 
@@ -136,6 +142,12 @@ void VulkanMaterial::applyDrawingCommands(uint32_t bufferIndex, uint32_t materia
             descriptorSets.data(), 0, nullptr);
 }
 
+void VulkanMaterial::resetDescriptorSets()
+{
+   if (_hasExternals)
+       updateDescriptorSets();
+}
+
 void VulkanMaterial::resetPipeline()
 {
     deletePipeline();
@@ -200,9 +212,9 @@ void VulkanMaterial::setUniformData(uint32_t materialIndex, const UniformData& u
         void* data = nullptr;
         vkMapMemory(_device,  _instanceData[materialIndex].uniformBuffersMemory[swapchainSize * i + imageIndex], 0, uniformSize, 0, &data);
         char* mappedData = reinterpret_cast<char*>(data);
-        for (auto r = 0u; r < shaderSettings.uniformList.size(); r++)
+        for (const auto& r : shaderSettings.uniformList)
         {
-            auto uniformBytes = getUniformDataByType(uniformData, shaderSettings.uniformList[r].uniformType);
+            auto uniformBytes = getUniformDataByType(uniformData, r.uniformType);
             memcpy(mappedData, uniformBytes.data(), uniformBytes.size());
             mappedData += uniformBytes.size();
         }
@@ -257,7 +269,7 @@ void VulkanMaterial::createPipeline()
     // Rasterizer
     VkPipelineRasterizationStateCreateInfo rasterizationCreateInfo{};
     rasterizationCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
-    rasterizationCreateInfo.depthClampEnable = VK_TRUE; // clamp objects beyond near and far plane to the edges
+    rasterizationCreateInfo.depthClampEnable = VK_FALSE; // clamp objects beyond near and far plane to the edges
     rasterizationCreateInfo.rasterizerDiscardEnable = VK_FALSE;
     rasterizationCreateInfo.polygonMode = VK_POLYGON_MODE_FILL;
     rasterizationCreateInfo.lineWidth = 1.0f;
@@ -346,7 +358,7 @@ void VulkanMaterial::createPipeline()
     pipelineCreateInfo.pColorBlendState = &blendingCreateInfo;
     pipelineCreateInfo.pDynamicState = &dynamicStateCreateInfo;
     pipelineCreateInfo.layout = _pipelineLayout;
-    pipelineCreateInfo.renderPass = _vulkanInstance->getRenderPass();
+    pipelineCreateInfo.renderPass = _vulkanInstance->getPassInfo()->getPassData(_materialSettings.passType).renderPass;
     pipelineCreateInfo.subpass = 0;
     pipelineCreateInfo.basePipelineHandle = VK_NULL_HANDLE; // no deriving from other pipeline
     pipelineCreateInfo.basePipelineIndex = -1;
@@ -406,6 +418,7 @@ void VulkanMaterial::createTextureImages()
     size_t imageCount = _materialSettings.textures.size();
     _mipLevels.resize(imageCount);
     _textureExternal.resize(imageCount);
+    _textureExternalName.resize(imageCount);
     _textureImages.resize(imageCount);
     _textureImageMemoryList.resize(imageCount);
     _textureNames.resize(imageCount);
@@ -417,45 +430,31 @@ void VulkanMaterial::createTextureImages()
 
         if (_materialSettings.textures[i].textureType != TextureType::ImageFile)
         {
+            _hasExternals = true;
             _textureExternal[i] = true;
 
+            // TODO: Revise texture type enum, probably it should be string
             switch (_materialSettings.textures[i].textureType)
             {
                 // TODO: Add checks for if external object exists
                 case TextureType::ShadowMap:
                 {
-                    auto shadowMap = Engine::getInstance()->getSceneManager()->getShadowMap()->getVulkanShadowMap();
-                    _textureImageViews[i] = shadowMap->getShadowMapImageView();
-                    _textureSamplers[i] = shadowMap->getShadowMapSampler();
+                    _textureExternalName[i] = "shadowmap";
                     continue;
                 }
                 case TextureType::Reflection:
                 {
-                    auto water = Engine::getInstance()->getSceneManager()->getWater()->getVulkanWater();
-                    _textureImageViews[i] = water->getImageView(VulkanWater::PassType::Reflection);
-                    _textureSamplers[i] = water->getSampler(VulkanWater::PassType::Reflection);
+                    _textureExternalName[i] = "reflection";
                     continue;
                 }
                 case TextureType::Refraction:
                 {
-                    auto water = Engine::getInstance()->getSceneManager()->getWater()->getVulkanWater();
-                    _textureImageViews[i] = water->getImageView(VulkanWater::PassType::Refraction);
-                    _textureSamplers[i] = water->getSampler(VulkanWater::PassType::Refraction);
+                    _textureExternalName[i] = "refraction";
                     continue;
                 }
                 case TextureType::ScreenQuad:
                 {
-                    auto screenQuad = Engine::getInstance()->getVulkanInstance()->getScreenQuad();
-                    if (screenQuad)
-                    {
-                        _textureImageViews[i] = screenQuad->getImageView();
-                        _textureSamplers[i] = screenQuad->getSampler();
-                    } else {
-                        // TODO: Add temporary textures or throw some kind of error
-                        auto shadowMap = Engine::getInstance()->getSceneManager()->getShadowMap()->getVulkanShadowMap();
-                        _textureImageViews[i] = shadowMap->getShadowMapImageView();
-                        _textureSamplers[i] = shadowMap->getShadowMapSampler();
-                    }
+                    _textureExternalName[i] = "screenquad";
                     continue;
                 }
                 default:
@@ -539,6 +538,7 @@ void VulkanMaterial::createCubemapTextureImages()
     _textureImageMemoryList.resize(1);
     _textureNames.resize(1);
     _textureExternal.resize(1);
+    _textureExternalName.resize(1);
     _textureImageViews.resize(1);
     _textureSamplers.resize(1);
     std::vector<stbi_uc*> pixelsData;
@@ -589,15 +589,19 @@ void VulkanMaterial::createCubemapTextureImages()
         stbi_image_free(pixelsData[i]);
 
     // Create texture image which will be used in shaders
-    _vulkanUtils.createCubeImage(static_cast<uint32_t>(texWidth),
-                                 static_cast<uint32_t>(texHeight),
-                                 _mipLevels[0],
-                                 VK_FORMAT_R8G8B8A8_UNORM,
-                                 VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT |
-                                 VK_IMAGE_USAGE_SAMPLED_BIT,
-                                 VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-                                 _textureImages[0],
-                                 _textureImageMemoryList[0]);
+    _vulkanUtils.createImage(static_cast<uint32_t>(texWidth),
+                             static_cast<uint32_t>(texHeight),
+                             _mipLevels[0],
+                             VK_SAMPLE_COUNT_1_BIT,
+                             VK_FORMAT_R8G8B8A8_UNORM,
+                             VK_IMAGE_TILING_OPTIMAL,
+                             VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT |
+                             VK_IMAGE_USAGE_SAMPLED_BIT,
+                             VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+                             _textureImages[0],
+                             _textureImageMemoryList[0],
+                             VK_IMAGE_CREATE_CUBE_COMPATIBLE_BIT,
+                             6);
 
     // Transition layout of the image to be optimal as a transfer destination
     _vulkanUtils.transitionImageLayout(
@@ -719,7 +723,7 @@ void VulkanMaterial::createTextureSampler()
         samplerCreateInfo.borderColor = getBorderColor(_materialSettings.textures[i].textureBorderColor);
         samplerCreateInfo.anisotropyEnable = VK_TRUE;
         samplerCreateInfo.maxAnisotropy = 16;
-        samplerCreateInfo.borderColor = VK_BORDER_COLOR_INT_OPAQUE_BLACK;
+        //samplerCreateInfo.borderColor = VK_BORDER_COLOR_INT_OPAQUE_BLACK;
         samplerCreateInfo.unnormalizedCoordinates = VK_FALSE;
         samplerCreateInfo.compareEnable = VK_FALSE;
         samplerCreateInfo.compareOp = VK_COMPARE_OP_ALWAYS;
@@ -819,6 +823,9 @@ void VulkanMaterial::createDescriptorPool()
     poolSizes[0].descriptorCount = instance.vertexUniformBuffers.size() + instance.fragmentUniformBuffer.size() + instance.geometryUniformBuffer.size();
     poolSizes[1].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
     poolSizes[1].descriptorCount = swapchainSize * _materialSettings.textures.size();
+    for (auto& poolSize : poolSizes)
+        if (poolSize.descriptorCount == 0)
+            poolSize.descriptorCount = 1;
 
     VkDescriptorPoolCreateInfo poolInfo = {};
     poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
@@ -891,12 +898,26 @@ void VulkanMaterial::createDescriptorSets()
                 }
                 auto index = std::distance(_textureNames.cbegin(), iter);
 
-                VkDescriptorImageInfo imageInfo{};
-                imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-                imageInfo.imageView = _textureImageViews[index];
-                imageInfo.sampler = _textureSamplers[index];
+                if (!_textureExternal[index])
+                {
+                    VkDescriptorImageInfo imageInfo{};
+                    imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+                    imageInfo.imageView = _textureImageViews[index];
+                    imageInfo.sampler = _textureSamplers[index];
 
-                imageInfoList.push_back(imageInfo);
+                    imageInfoList.push_back(imageInfo);
+                } else {
+                    const auto& samplerInfoList = _vulkanInstance->getSamplerHolder()->getSamplerInfo(_textureExternalName[index]);
+                    if (!samplerInfoList.empty() && samplerInfoList[i].imageView != VK_NULL_HANDLE)
+                    {
+                        VkDescriptorImageInfo imageInfo{};
+                        imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+                        imageInfo.imageView = samplerInfoList[i].imageView;
+                        imageInfo.sampler = samplerInfoList[i].sampler;
+
+                        imageInfoList.push_back(imageInfo);
+                    }
+                }
             }
 
 
@@ -944,6 +965,113 @@ void VulkanMaterial::deleteDescriptorSets()
 
 }
 
+void VulkanMaterial::updateDescriptorSets()
+{
+    auto swapchainSize = _vulkanInstance->getSwapchainSize();
+    auto makeDescriptorSet = [this, swapchainSize](const std::vector<VkBuffer>& shaderBuffers,
+                                                   const VulkanShaderInfo* shaderInfo,
+                                                   std::vector<VkDescriptorSet>& descriptorSets)
+    {
+        if (!shaderInfo)
+            return;
+        if (shaderInfo->getShaderSettings().samplerNamesList.empty() && shaderBuffers.empty())
+            return;
+
+        auto uniformSize = shaderInfo->getShaderUniformsSize();
+
+        for (auto i = 0u; i < swapchainSize; i++)
+        {
+            updateDescriptorSet(i, shaderBuffers.empty() ? nullptr : &shaderBuffers[i], uniformSize, shaderInfo, descriptorSets[i]);
+        }
+    };
+
+    makeDescriptorSet(_instanceData.back().vertexUniformBuffers, _vertexShader, _instanceData.back().vertexDescriptorSets);
+    makeDescriptorSet(_instanceData.back().fragmentUniformBuffer, _fragmentShader, _instanceData.back().fragmentDescriptorSets);
+    makeDescriptorSet(_instanceData.back().geometryUniformBuffer, _geometryShader, _instanceData.back().geometryDescriptorSets);
+}
+
+void VulkanMaterial::updateDescriptorSet(
+        uint32_t imageIndex,
+        const VkBuffer* shaderBuffer,
+        const size_t uniformSize,
+        const VulkanShaderInfo* shaderInfo,
+        VkDescriptorSet descriptorSet)
+{
+    VkDescriptorBufferInfo bufferInfo {};
+    if (shaderBuffer)
+    {
+        bufferInfo.buffer = *shaderBuffer;
+        bufferInfo.offset = 0;
+        bufferInfo.range = uniformSize;
+    }
+
+    std::vector<VkDescriptorImageInfo> imageInfoList;
+    for (const auto& samplerName : shaderInfo->getShaderSettings().samplerNamesList)
+    {
+        auto iter = std::find(_textureNames.cbegin(),
+                              _textureNames.cend(),
+                              samplerName);
+        if (iter == _textureNames.end())
+        {
+            throw VulkanException("Incorrect sampler name in material configuration");
+        }
+        auto index = std::distance(_textureNames.cbegin(), iter);
+
+        if (!_textureExternal[index])
+        {
+            VkDescriptorImageInfo imageInfo{};
+            imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+            imageInfo.imageView = _textureImageViews[index];
+            imageInfo.sampler = _textureSamplers[index];
+
+            imageInfoList.push_back(imageInfo);
+        } else {
+            const auto& samplerInfoList = _vulkanInstance->getSamplerHolder()->getSamplerInfo(_textureExternalName[index]);
+            if (!samplerInfoList.empty() && samplerInfoList[imageIndex].imageView != VK_NULL_HANDLE)
+            {
+                VkDescriptorImageInfo imageInfo{};
+                imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+                imageInfo.imageView = samplerInfoList[imageIndex].imageView;
+                imageInfo.sampler = samplerInfoList[imageIndex].sampler;
+
+                imageInfoList.push_back(imageInfo);
+            }
+        }
+    }
+
+    std::vector<VkWriteDescriptorSet> descriptorWrites;
+    auto bindingIndex = 0u;
+    // Add texture samplers
+    if (!imageInfoList.empty())
+    {
+        VkWriteDescriptorSet imagesBuffer {};
+        imagesBuffer.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+        imagesBuffer.dstSet = descriptorSet;
+        imagesBuffer.dstBinding = bindingIndex;
+        imagesBuffer.dstArrayElement = 0;
+        imagesBuffer.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+        imagesBuffer.descriptorCount = imageInfoList.size();
+        imagesBuffer.pImageInfo = imageInfoList.data();
+        descriptorWrites.push_back(imagesBuffer);
+        bindingIndex += imageInfoList.size();
+    }
+    // Add uniforms
+    if (shaderBuffer)
+    {
+        VkWriteDescriptorSet uniformsBuffer {};
+        uniformsBuffer.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+        uniformsBuffer.dstSet = descriptorSet;
+        uniformsBuffer.dstBinding = bindingIndex;
+        uniformsBuffer.dstArrayElement = 0;
+        uniformsBuffer.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+        uniformsBuffer.descriptorCount = 1;
+        uniformsBuffer.pBufferInfo = &bufferInfo;
+        descriptorWrites.push_back(uniformsBuffer);
+    }
+
+    vkUpdateDescriptorSets(_device, descriptorWrites.size(), descriptorWrites.data(), 0, nullptr);
+}
+
 std::vector<char> VulkanMaterial::getUniformDataByType(const UniformData& data, UniformType type) const
 {
     const auto& sizeMap = getUniformSizeMap();
@@ -969,6 +1097,12 @@ std::vector<char> VulkanMaterial::getUniformDataByType(const UniformData& data, 
             glm::mat4 mvp = data.projection * data.view * data.model;
             const char* byteData = reinterpret_cast<const char*>(&mvp);
             return std::vector<char>(byteData, byteData + sizeof(mvp));
+        }
+        case UniformType::ViewProjectionMatrix:
+        {
+            glm::mat4 vp = data.projection * data.view;
+            const char* byteData = reinterpret_cast<const char*>(&vp);
+            return std::vector<char>(byteData, byteData + sizeof(vp));
         }
         case UniformType::CameraPosition:
         {
@@ -1002,8 +1136,8 @@ std::vector<char> VulkanMaterial::getUniformDataByType(const UniformData& data, 
         }
         case UniformType::LightViewProjection:
         {
-            const char* byteData = reinterpret_cast<const char*>(&data.lightViewProjection);
-            return std::vector<char>(byteData, byteData + sizeof(data.lightViewProjection));
+            const char* byteData = reinterpret_cast<const char*>(data.lightViewProjectionList.data());
+            return std::vector<char>(byteData, byteData + sizeMap.at(type) * data.lightViewProjectionList.size());
         }
         case UniformType::BoneMatrices:
         {

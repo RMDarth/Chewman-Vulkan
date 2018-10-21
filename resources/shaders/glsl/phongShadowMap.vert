@@ -1,13 +1,14 @@
 #version 450
 #extension GL_ARB_separate_shader_objects : enable
-
+#define MAX_LIGHTS 6
 layout (set = 0, binding = 0) uniform UBO
 {
 	mat4 model;
 	mat4 view;
 	mat4 projection;
-	mat4 lightViewProjection;
+	mat4 lightViewProjection[MAX_LIGHTS];
 	vec4 clipPlane;
+	float time;
 } uniforms;
 
 layout (location = 0) in vec3 inPosition;
@@ -41,7 +42,7 @@ void main() {
     fragPos = vec3(worldPos);
     fragNormal = vec3(transpose(inverse(uniforms.model)) * vec4(inNormal.xyz, 1.0)); // transpose(inverse(uniforms.model)) not working for assimp
 
-    fragLightSpacePos =  uniforms.lightViewProjection * worldPos;
+    fragLightSpacePos =  uniforms.lightViewProjection[0] * worldPos;
     //fragLightSpacePos.xy = fragLightSpacePos.xy / fragLightSpacePos.w;
 
     //toCameraVector = (inverse(viewMatrix) * vec4(0.0, 0.0, 0.0, 1.0)).xyz - worldPosition.xyz;

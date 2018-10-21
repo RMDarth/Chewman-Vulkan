@@ -89,7 +89,11 @@ size_t VulkanShaderInfo::getShaderUniformsSize() const
         } else if (info.uniformType == UniformType::LightPoint)
         {
             size += sizeMap.at(info.uniformType) * _shaderSettings.maxPointLightSize;
-        } else
+        } else if (info.uniformType == UniformType::LightViewProjection)
+        {
+            size += sizeMap.at(info.uniformType) * _shaderSettings.maxLightSize;
+        }
+        else
         {
             size += sizeMap.at(info.uniformType);
         }
@@ -282,6 +286,7 @@ void VulkanShaderInfo::deleteDescriptorSetLayout()
     vkDestroyDescriptorSetLayout(_device,
                                  _descriptorSetLayout,
                                  nullptr);
+    _descriptorSetLayout = VK_NULL_HANDLE;
 }
 
 VkShaderModule VulkanShaderInfo::createShaderModule(const std::vector<char> &code) const

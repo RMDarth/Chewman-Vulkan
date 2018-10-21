@@ -4,6 +4,7 @@
 #pragma once
 #include <string>
 #include <vector>
+#include "Engine.h"
 
 namespace SVE
 {
@@ -47,6 +48,7 @@ struct TextureInfo
     TextureBorderColor textureBorderColor = TextureBorderColor::TransparentBlack;
     std::string samplerName;
     std::string filename;
+    uint32_t layers = 1;
     // TODO: Add possibility to enable/disable mipmap generation
 };
 
@@ -64,6 +66,7 @@ struct MaterialSettings
     bool useDepthBias = false;
     bool useMultisampling = true;
     MaterialCullFace cullFace = MaterialCullFace::FrontFace;
+    CommandsType passType = CommandsType::MainPass;
 };
 
 } // namespace SVE

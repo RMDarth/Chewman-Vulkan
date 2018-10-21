@@ -6,7 +6,7 @@ layout (set = 0, binding = 0) uniform UBO
 	mat4 model;
 	mat4 view;
 	mat4 projection;
-} matrices;
+} uniforms;
 
 layout (location = 0) in vec3 inPosition;
 layout (location = 1) in vec3 inColor;
@@ -24,10 +24,11 @@ out gl_PerVertex {
 };
 
 void main() {
-    fragClipPosition = matrices.projection * matrices.view * matrices.model * vec4(inPosition, 1.0);
+    vec4 worldPos = uniforms.model * vec4(inPosition, 1.0);
+    fragClipPosition = uniforms.projection * uniforms.view * worldPos;
     gl_Position = fragClipPosition;
     fragColor = inColor;
     fragTexCoord = inTexCoord;
-    fragPos = vec3(matrices.model * vec4(inPosition, 1.0));
-    fragNormal = vec3(matrices.model * vec4(inNormal, 1.0));
+    fragPos = vec3(worldPos);
+    fragNormal = vec3(transpose(inverse(uniforms.model))  * vec4(inNormal, 1.0));
 }

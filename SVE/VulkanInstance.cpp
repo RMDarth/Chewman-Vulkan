@@ -10,6 +10,8 @@
 #include "VulkanMesh.h"
 #include "VulkanMaterial.h"
 #include "VulkanScreenQuad.h"
+#include "VulkanSamplerHolder.h"
+#include "VulkanPassInfo.h"
 
 namespace SVE
 {
@@ -56,6 +58,20 @@ VkResult CreateDebugReportCallbackEXT(
     }
 }
 
+VkResult CreateDebugUtilsMessengerEXT(
+        VkInstance instance,
+        const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo,
+        const VkAllocationCallbacks* pAllocator,
+        VkDebugUtilsMessengerEXT* pCallback)
+{
+    auto func = (PFN_vkCreateDebugUtilsMessengerEXT) vkGetInstanceProcAddr(instance, "vkCreateDebugUtilsMessengerEXT");
+    if (func != nullptr) {
+        return func(instance, pCreateInfo, pAllocator, pCallback);
+    } else {
+        return VK_ERROR_EXTENSION_NOT_PRESENT;
+    }
+}
+
 void DestroyDebugReportCallbackEXT(VkInstance instance,
                                    VkDebugReportCallbackEXT callback,
                                    const VkAllocationCallbacks *pAllocator)
@@ -64,6 +80,16 @@ void DestroyDebugReportCallbackEXT(VkInstance instance,
                                                                             "vkDestroyDebugReportCallbackEXT");
     if (func != nullptr)
     {
+        func(instance, callback, pAllocator);
+    }
+}
+
+void DestroyDebugUtilsMessengerEXT(VkInstance instance,
+                                   VkDebugUtilsMessengerEXT callback,
+                                   const VkAllocationCallbacks* pAllocator)
+{
+    auto func = (PFN_vkDestroyDebugUtilsMessengerEXT) vkGetInstanceProcAddr(instance, "vkDestroyDebugUtilsMessengerEXT");
+    if (func != nullptr) {
         func(instance, callback, pAllocator);
     }
 }
@@ -78,7 +104,18 @@ VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
         const char* msg,
         void* /*userData*/)
 {
-    std::cerr << "validation layer: " << msg << std::endl;
+    //std::cerr << "validation layer (1): " << msg << std::endl;
+
+    return VK_FALSE;
+}
+
+static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
+        VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
+        VkDebugUtilsMessageTypeFlagsEXT messageType,
+        const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
+        void* pUserData) {
+
+    std::cerr << "validation layer (2): " << pCallbackData->pMessage << std::endl;
 
     return VK_FALSE;
 }
@@ -89,6 +126,8 @@ VulkanInstance::VulkanInstance(SDL_Window* window, EngineSettings settings)
     : _engineSettings(settings)
     , _window(window)
     , _vulkanUtils(this)
+    , _samplerHolder(std::make_unique<VulkanSamplerHolder>())
+    , _passInfo(std::make_unique<VulkanPassInfo>())
 
 {
     createInstance();
@@ -224,16 +263,11 @@ VkFramebuffer VulkanInstance::getFramebuffer(size_t index) const
     return _swapchainFramebuffers[index];
 }
 
-VkSemaphore* VulkanInstance::getImageAvailableSemaphore()
-{
-    return &_imageAvailableSemaphore;
-}
-
-VkCommandBuffer VulkanInstance::createCommandBuffer(uint32_t commandPool, uint32_t bufferIndex)
+VkCommandBuffer VulkanInstance::createCommandBuffer(uint32_t bufferIndex)
 {
     VkCommandBufferAllocateInfo commandBufferAllocateInfo{};
     commandBufferAllocateInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-    commandBufferAllocateInfo.commandPool = _commandPools[commandPool];
+    commandBufferAllocateInfo.commandPool = _commandPools[_currentPool];
     commandBufferAllocateInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
     commandBufferAllocateInfo.commandBufferCount = 1;
 
@@ -270,15 +304,16 @@ void VulkanInstance::waitAvailableFramebuffer()
 {
     // acquire image
     auto result = vkAcquireNextImageKHR(_device, _swapchain, std::numeric_limits<uint64_t>::max(),
-                                        _imageAvailableSemaphore, VK_NULL_HANDLE, &_currentImageIndex);
+                                        _imageAvailableSemaphores[_currentFrame], VK_NULL_HANDLE, &_currentImageIndex);
 
     vkWaitForFences(_device,
                     1,
-                    &_inFlightFences[_currentImageIndex],
+                    &_inFlightFences[_currentFrame],
                     VK_TRUE,
                     std::numeric_limits<uint64_t>::max());
+    vkResetFences(_device, 1, &_inFlightFences[_currentFrame]);
 
-    _currentWaitSemaphore = _imageAvailableSemaphore;
+    _currentWaitSemaphore = _imageAvailableSemaphores[_currentFrame];
 
     if (result == VK_ERROR_OUT_OF_DATE_KHR)
     {
@@ -292,11 +327,12 @@ void VulkanInstance::waitAvailableFramebuffer()
 
 void VulkanInstance::submitCommands(CommandsType commandsType) const
 {
-    static VkPipelineStageFlags waitStages[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
+    static VkPipelineStageFlags waitStages[] = { VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT };
 
     if (commandsType == CommandsType::ShadowPass)
     {
-        auto shadowMapIter = _externalBufferMap.find(BUFFER_INDEX_SHADOWMAP);
+        // TODO: index calculation should be placed in some function
+        auto shadowMapIter = _externalBufferMap.find(BUFFER_INDEX_SHADOWMAP + _currentFrame * 6);
         if (shadowMapIter != _externalBufferMap.end())
         {
             VkSubmitInfo submitInfo{};
@@ -307,15 +343,15 @@ void VulkanInstance::submitCommands(CommandsType commandsType) const
             submitInfo.commandBufferCount = 1;
             submitInfo.pCommandBuffers = &shadowMapIter->second;
             submitInfo.signalSemaphoreCount = 1;
-            submitInfo.pSignalSemaphores = &_shadowMapReadySemaphore;
+            submitInfo.pSignalSemaphores = &_shadowMapReadySemaphores[_currentFrame];
 
             auto result = vkQueueSubmit(_queue, 1, &submitInfo, VK_NULL_HANDLE);
             if (result != VK_SUCCESS)
             {
-                throw VulkanException("Can't submit Vulkan command buffers to queue");
+                throw VulkanException("Can't submit Vulkan command buffers to queue (shadow pass)");
             }
 
-            _currentWaitSemaphore = _shadowMapReadySemaphore;
+            _currentWaitSemaphore = _shadowMapReadySemaphores[_currentFrame];
         }
     }
 
@@ -332,7 +368,7 @@ void VulkanInstance::submitCommands(CommandsType commandsType) const
             submitInfo.commandBufferCount = 1;
             submitInfo.pCommandBuffers = &waterReflectionIter->second;
             submitInfo.signalSemaphoreCount = 1;
-            submitInfo.pSignalSemaphores = &_waterReflectionReadySemaphore;
+            submitInfo.pSignalSemaphores = &_waterReflectionReadySemaphores[_currentFrame];
 
             auto result = vkQueueSubmit(_queue, 1, &submitInfo, VK_NULL_HANDLE);
             if (result != VK_SUCCESS)
@@ -340,7 +376,7 @@ void VulkanInstance::submitCommands(CommandsType commandsType) const
                 throw VulkanException("Can't submit Vulkan command buffers to queue");
             }
 
-            _currentWaitSemaphore = _waterReflectionReadySemaphore;
+            _currentWaitSemaphore = _waterReflectionReadySemaphores[_currentFrame];
         }
     }
 
@@ -357,7 +393,7 @@ void VulkanInstance::submitCommands(CommandsType commandsType) const
             submitInfo.commandBufferCount = 1;
             submitInfo.pCommandBuffers = &waterRefractionIter->second;
             submitInfo.signalSemaphoreCount = 1;
-            submitInfo.pSignalSemaphores = &_waterRefractionReadySemaphore;
+            submitInfo.pSignalSemaphores = &_waterRefractionReadySemaphores[_currentFrame];
 
             auto result = vkQueueSubmit(_queue, 1, &submitInfo, VK_NULL_HANDLE);
             if (result != VK_SUCCESS)
@@ -365,7 +401,7 @@ void VulkanInstance::submitCommands(CommandsType commandsType) const
                 throw VulkanException("Can't submit Vulkan command buffers to queue");
             }
 
-            _currentWaitSemaphore = _waterRefractionReadySemaphore;
+            _currentWaitSemaphore = _waterRefractionReadySemaphores[_currentFrame];
         }
     }
 
@@ -382,15 +418,15 @@ void VulkanInstance::submitCommands(CommandsType commandsType) const
             submitInfo.commandBufferCount = 1;
             submitInfo.pCommandBuffers = &screenQuadIter->second;
             submitInfo.signalSemaphoreCount = 1;
-            submitInfo.pSignalSemaphores = &_screenQuadReadySemaphore;
+            submitInfo.pSignalSemaphores = &_screenQuadReadySemaphores[_currentFrame];
 
             auto result = vkQueueSubmit(_queue, 1, &submitInfo, VK_NULL_HANDLE);
             if (result != VK_SUCCESS)
             {
-                throw VulkanException("Can't submit Vulkan command buffers to queue");
+                throw VulkanException("Can't submit Vulkan command buffers to queue (screen quad pass)");
             }
 
-            _currentWaitSemaphore = _screenQuadReadySemaphore;
+            _currentWaitSemaphore = _screenQuadReadySemaphores[_currentFrame];
         }
     }
 
@@ -402,17 +438,17 @@ void VulkanInstance::submitCommands(CommandsType commandsType) const
         submitInfo.pWaitSemaphores = &_currentWaitSemaphore;
         submitInfo.pWaitDstStageMask = waitStages; // should be same size as wait semaphores
         submitInfo.commandBufferCount = 1;
-        submitInfo.pCommandBuffers = &_commandBuffers[_currentImageIndex]; // command buffer to submit (should be the one with current swap chain image attachment)
+        submitInfo.pCommandBuffers = &_commandBuffers[_currentFrame]; // command buffer to submit (should be the one with current swap chain image attachment)
         submitInfo.signalSemaphoreCount = 1;
-        submitInfo.pSignalSemaphores = &_renderFinishedSemaphore;
+        submitInfo.pSignalSemaphores = &_renderFinishedSemaphores[_currentFrame];
 
-        vkResetFences(_device, 1, &_inFlightFences[_currentImageIndex]);
-        if (vkQueueSubmit(_queue, 1, &submitInfo, _inFlightFences[_currentImageIndex]) != VK_SUCCESS)
+        //vkResetFences(_device, 1, &_inFlightFences[_currentFrame]);
+        if (vkQueueSubmit(_queue, 1, &submitInfo, _inFlightFences[_currentFrame]) != VK_SUCCESS)
         {
-            throw VulkanException("Can't submit Vulkan command buffers to queue");
+            throw VulkanException("Can't submit Vulkan command buffers to queue (main pass)");
         }
 
-        _currentWaitSemaphore = _renderFinishedSemaphore;
+        _currentWaitSemaphore = _renderFinishedSemaphores[_currentFrame];
     }
 
 }
@@ -436,12 +472,20 @@ void VulkanInstance::renderCommands() const
         throw VulkanException("Can't present swapchain image");
     }
 
-    _currentWaitSemaphore = _imageAvailableSemaphore;
+    _currentFrame = (_currentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
+    //_currentWaitSemaphore = _imageAvailableSemaphores[_currentFrame];
+    //vkDeviceWaitIdle(_device);
 }
 
 uint32_t VulkanInstance::getCurrentImageIndex() const
 {
     return _currentImageIndex;
+}
+
+
+uint32_t VulkanInstance::getCurrentFrameIndex() const
+{
+    return _currentFrame;
 }
 
 void VulkanInstance::reallocateCommandBuffers()
@@ -534,6 +578,16 @@ VulkanScreenQuad* VulkanInstance::getScreenQuad()
     return _screenQuad.get();
 }
 
+VulkanSamplerHolder* VulkanInstance::getSamplerHolder()
+{
+    return _samplerHolder.get();
+}
+
+VulkanPassInfo* VulkanInstance::getPassInfo()
+{
+    return _passInfo.get();
+}
+
 void VulkanInstance::createInstance()
 {
     VkApplicationInfo appInfo{};
@@ -557,6 +611,7 @@ void VulkanInstance::createInstance()
     if (_engineSettings.useValidation)
     {
         extensions.push_back(VK_EXT_DEBUG_REPORT_EXTENSION_NAME);
+        extensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
     }
 
     instanceInfo.enabledExtensionCount = static_cast<uint32_t>(extensions.size());
@@ -634,6 +689,10 @@ void VulkanInstance::createDevice()
             VK_KHR_SWAPCHAIN_EXTENSION_NAME
     };
 
+    const std::vector<const char *> validationLayers = {
+            VK_LAYER_LUNARG_STANDARD_VALIDATION
+    };
+
     // TODO: move filtering method to EngineSettings
     VkPhysicalDeviceFeatures deviceFeatures {};
     deviceFeatures.samplerAnisotropy = VK_TRUE;
@@ -646,6 +705,13 @@ void VulkanInstance::createDevice()
     deviceCreateInfo.pQueueCreateInfos = &deviceQueueCreateInfo;
     deviceCreateInfo.enabledExtensionCount = extensions.size();
     deviceCreateInfo.ppEnabledExtensionNames = extensions.data();
+
+    if (_engineSettings.useValidation)
+    {
+        deviceCreateInfo.enabledLayerCount = validationLayers.size();
+        deviceCreateInfo.ppEnabledLayerNames = validationLayers.data();
+    }
+
 
     if (vkCreateDevice(_gpu, &deviceCreateInfo, nullptr, &_device) != VK_SUCCESS)
     {
@@ -670,12 +736,24 @@ void VulkanInstance::createDebugCallback()
     VkDebugReportCallbackCreateInfoEXT debugCallbackCreateInfo = {};
     debugCallbackCreateInfo.sType = VK_STRUCTURE_TYPE_DEBUG_REPORT_CALLBACK_CREATE_INFO_EXT;
     debugCallbackCreateInfo.flags = VK_DEBUG_REPORT_ERROR_BIT_EXT | VK_DEBUG_REPORT_WARNING_BIT_EXT |
-                                    VK_DEBUG_REPORT_PERFORMANCE_WARNING_BIT_EXT; // | VK_DEBUG_REPORT_INFORMATION_BIT_EXT for verbose output
+                                    VK_DEBUG_REPORT_PERFORMANCE_WARNING_BIT_EXT;// | VK_DEBUG_REPORT_DEBUG_BIT_EXT;// | VK_DEBUG_REPORT_INFORMATION_BIT_EXT; //for verbose output
     debugCallbackCreateInfo.pfnCallback = debugCallback;
 
     if (CreateDebugReportCallbackEXT(_instance, &debugCallbackCreateInfo, nullptr, &_debugCallbackHandle) != VK_SUCCESS)
     {
         throw VulkanException("Vulkan failed to set up debug callback!");
+    }
+
+
+    VkDebugUtilsMessengerCreateInfoEXT debugUtilsCreateInfo = {};
+    debugUtilsCreateInfo.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
+    debugUtilsCreateInfo.messageSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT;
+    debugUtilsCreateInfo.messageType = VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT;
+    debugUtilsCreateInfo.pfnUserCallback = debugCallback;
+
+    if (CreateDebugUtilsMessengerEXT(_instance, &debugUtilsCreateInfo, nullptr, &_debugUtilsCallbackHandle) != VK_SUCCESS)
+    {
+        throw VulkanException("Vulkan failed to set up debug utils callback!");
     }
 }
 
@@ -685,6 +763,9 @@ void VulkanInstance::deleteDebugCallback()
     {
         DestroyDebugReportCallbackEXT(_instance, _debugCallbackHandle, nullptr);
         _debugCallbackHandle = VK_NULL_HANDLE;
+
+        DestroyDebugUtilsMessengerEXT(_instance, _debugUtilsCallbackHandle, nullptr);
+        _debugUtilsCallbackHandle = VK_NULL_HANDLE;
     }
 }
 
@@ -918,6 +999,12 @@ void VulkanInstance::createRenderPass()
     {
         throw VulkanException("Can't create Vulkan render pass");
     }
+
+    VulkanPassInfo::PassData data {
+        _renderPass
+    };
+
+    _passInfo->setPassData(CommandsType::MainPass, data);
 }
 
 void VulkanInstance::deleteRenderPass()
@@ -1059,41 +1146,51 @@ void VulkanInstance::deleteFramebuffers()
 
 void VulkanInstance::createSyncPrimitives()
 {
-    _inFlightFences.resize(_swapchainImages.size());
+    _inFlightFences.resize(MAX_FRAMES_IN_FLIGHT);
+
+    _imageAvailableSemaphores.resize(MAX_FRAMES_IN_FLIGHT);
+    _renderFinishedSemaphores.resize(MAX_FRAMES_IN_FLIGHT);
+    _shadowMapReadySemaphores.resize(MAX_FRAMES_IN_FLIGHT);
+    _waterReflectionReadySemaphores.resize(MAX_FRAMES_IN_FLIGHT);
+    _waterRefractionReadySemaphores.resize(MAX_FRAMES_IN_FLIGHT);
+    _screenQuadReadySemaphores.resize(MAX_FRAMES_IN_FLIGHT);
 
     VkSemaphoreCreateInfo semaphoreCreateInfo{};
     semaphoreCreateInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
-    if (vkCreateSemaphore(_device, &semaphoreCreateInfo, nullptr, &_imageAvailableSemaphore) != VK_SUCCESS)
-    {
-        throw std::runtime_error("Failed to create Vulkan semaphore");
-    }
-    if (vkCreateSemaphore(_device, &semaphoreCreateInfo, nullptr, &_renderFinishedSemaphore) != VK_SUCCESS)
-    {
-        throw std::runtime_error("Failed to create Vulkan semaphore");
-    }
-    if (vkCreateSemaphore(_device, &semaphoreCreateInfo, nullptr, &_shadowMapReadySemaphore) != VK_SUCCESS)
-    {
-        throw std::runtime_error("Failed to create Vulkan semaphore");
-    }
-    if (vkCreateSemaphore(_device, &semaphoreCreateInfo, nullptr, &_waterReflectionReadySemaphore) != VK_SUCCESS)
-    {
-        throw std::runtime_error("Failed to create Vulkan semaphore");
-    }
-    if (vkCreateSemaphore(_device, &semaphoreCreateInfo, nullptr, &_waterRefractionReadySemaphore) != VK_SUCCESS)
-    {
-        throw std::runtime_error("Failed to create Vulkan semaphore");
-    }
-    if (vkCreateSemaphore(_device, &semaphoreCreateInfo, nullptr, &_screenQuadReadySemaphore) != VK_SUCCESS)
-    {
-        throw std::runtime_error("Failed to create Vulkan semaphore");
-    }
 
+    for (auto i = 0; i < MAX_FRAMES_IN_FLIGHT; i++)
+    {
+        if (vkCreateSemaphore(_device, &semaphoreCreateInfo, nullptr, &_imageAvailableSemaphores[i]) != VK_SUCCESS)
+        {
+            throw std::runtime_error("Failed to create Vulkan semaphore");
+        }
+        if (vkCreateSemaphore(_device, &semaphoreCreateInfo, nullptr, &_renderFinishedSemaphores[i]) != VK_SUCCESS)
+        {
+            throw std::runtime_error("Failed to create Vulkan semaphore");
+        }
+        if (vkCreateSemaphore(_device, &semaphoreCreateInfo, nullptr, &_shadowMapReadySemaphores[i]) != VK_SUCCESS)
+        {
+            throw std::runtime_error("Failed to create Vulkan semaphore");
+        }
+        if (vkCreateSemaphore(_device, &semaphoreCreateInfo, nullptr, &_waterReflectionReadySemaphores[i]) != VK_SUCCESS)
+        {
+            throw std::runtime_error("Failed to create Vulkan semaphore");
+        }
+        if (vkCreateSemaphore(_device, &semaphoreCreateInfo, nullptr, &_waterRefractionReadySemaphores[i]) != VK_SUCCESS)
+        {
+            throw std::runtime_error("Failed to create Vulkan semaphore");
+        }
+        if (vkCreateSemaphore(_device, &semaphoreCreateInfo, nullptr, &_screenQuadReadySemaphores[i]) != VK_SUCCESS)
+        {
+            throw std::runtime_error("Failed to create Vulkan semaphore");
+        }
+    }
 
     VkFenceCreateInfo fenceCreateInfo{};
     fenceCreateInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
     fenceCreateInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
 
-    for (auto i = 0u; i < _swapchainImages.size(); i++)
+    for (auto i = 0u; i < MAX_FRAMES_IN_FLIGHT; i++)
     {
         if (vkCreateFence(_device, &fenceCreateInfo, nullptr, &_inFlightFences[i]) != VK_SUCCESS)
         {
@@ -1104,13 +1201,18 @@ void VulkanInstance::createSyncPrimitives()
 
 void VulkanInstance::deleteSyncPrimitives()
 {
-    vkDestroySemaphore(_device, _imageAvailableSemaphore, nullptr);
-    vkDestroySemaphore(_device, _renderFinishedSemaphore, nullptr);
-    vkDestroySemaphore(_device, _shadowMapReadySemaphore, nullptr);
-    vkDestroySemaphore(_device, _waterRefractionReadySemaphore, nullptr);
-    vkDestroySemaphore(_device, _waterReflectionReadySemaphore, nullptr);
-    vkDestroySemaphore(_device, _screenQuadReadySemaphore, nullptr);
-    for (auto i = 0u; i < _swapchainImages.size(); i++)
+    for (auto i = 0u; i < MAX_FRAMES_IN_FLIGHT; i++)
+    {
+        vkDestroySemaphore(_device, _imageAvailableSemaphores[i], nullptr);
+        vkDestroySemaphore(_device, _renderFinishedSemaphores[i], nullptr);
+        vkDestroySemaphore(_device, _shadowMapReadySemaphores[i], nullptr);
+        vkDestroySemaphore(_device, _waterRefractionReadySemaphores[i], nullptr);
+        vkDestroySemaphore(_device, _waterReflectionReadySemaphores[i], nullptr);
+        vkDestroySemaphore(_device, _screenQuadReadySemaphores[i], nullptr);
+    }
+
+
+    for (auto i = 0u; i < MAX_FRAMES_IN_FLIGHT; i++)
     {
         vkDestroyFence(_device, _inFlightFences[i], nullptr);
     }

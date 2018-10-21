@@ -5,6 +5,7 @@
 
 #include <vulkan/vulkan.h>
 #include <memory>
+#include <vector>
 
 namespace SVE
 {
@@ -13,47 +14,37 @@ class LightNode;
 class Material;
 class VulkanUtils;
 class VulkanInstance;
+class VulkanShadowImage;
 
 class VulkanShadowMap
 {
 public:
-    VulkanShadowMap();
+    VulkanShadowMap(uint32_t lightIndex, const VulkanShadowImage& vulkanShadowImage);
     ~VulkanShadowMap();
 
-    void setLight(std::shared_ptr<LightNode> light);
-
-    VkSampler getShadowMapSampler();
-    VkImageView getShadowMapImageView();
-
     void reallocateCommandBuffers();
-    void startRenderCommandBufferCreation();
-    void endRenderCommandBufferCreation();
+    uint32_t startRenderCommandBufferCreation(uint32_t index);
+    void endRenderCommandBufferCreation(uint32_t index);
 
 private:
-    void createRenderPass();
-    void deleteRenderPass();
-    void createShadowImage();
-    void deleteShadowImage();
+    void createShadowImageView();
+    void deleteShadowImageView();
     void createFramebuffer();
     void deleteFramebuffer();
 
 private:
+    uint32_t _lightIndex;
+
     uint32_t _width;
     uint32_t _height;
 
-    std::shared_ptr<LightNode> _light;
     VulkanInstance* _vulkanInstance;
     const VulkanUtils& _vulkanUtils;
+    const VulkanShadowImage& _vulkanShadowImage;
 
-    VkRenderPass _renderPass;
-
-    VkImage _shadowImage;
-    VkDeviceMemory _shadowImageMemory;
-    VkImageView _shadowImageView;
-    VkSampler _shadowSampler;
-
-    VkFramebuffer _framebuffer;
-    VkCommandBuffer _commandBuffer = VK_NULL_HANDLE;
+    std::vector<VkImageView> _shadowImageViews;
+    std::vector<VkFramebuffer> _framebuffers;
+    std::vector<VkCommandBuffer> _commandBuffers;
 };
 
 } // namespace SVE

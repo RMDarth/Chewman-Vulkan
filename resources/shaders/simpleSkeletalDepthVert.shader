@@ -4,8 +4,7 @@
     "shaderType": "VertexShader",
     "uniformList": [
         { "uniformType": "ModelMatrix" },
-        { "uniformType": "ViewMatrix" },
-        { "uniformType": "ProjectionMatrix" },
+        { "uniformType": "ViewProjectionMatrix" },
         { "uniformType": "BoneMatrices" }
     ],
     "maxBonesSize": 64

@@ -99,24 +99,27 @@ void VulkanUtils::copyBufferToImage(VkBuffer buffer, VkImage image, uint32_t wid
 }
 
 void VulkanUtils::createImage(uint32_t width,
-                             uint32_t height,
-                             uint32_t mipLevels,
-                             VkSampleCountFlagBits numSamples,
-                             VkFormat format,
-                             VkImageTiling tiling,
-                             VkImageUsageFlags usage,
-                             VkMemoryPropertyFlags properties,
-                             VkImage& image,
-                             VkDeviceMemory& imageMemory) const
+                              uint32_t height,
+                              uint32_t mipLevels,
+                              VkSampleCountFlagBits numSamples,
+                              VkFormat format,
+                              VkImageTiling tiling,
+                              VkImageUsageFlags usage,
+                              VkMemoryPropertyFlags properties,
+                              VkImage& image,
+                              VkDeviceMemory& imageMemory,
+                              VkImageCreateFlags imageCreateFlags,
+                              uint32_t layersNum) const
 {
     VkImageCreateInfo imageCreateInfo {};
     imageCreateInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
+    imageCreateInfo.flags = imageCreateFlags;
     imageCreateInfo.imageType = VK_IMAGE_TYPE_2D;
     imageCreateInfo.extent.width = width;
     imageCreateInfo.extent.height = height;
     imageCreateInfo.extent.depth = 1;
     imageCreateInfo.mipLevels = mipLevels;
-    imageCreateInfo.arrayLayers = 1;
+    imageCreateInfo.arrayLayers = layersNum;
     imageCreateInfo.format = format;
     imageCreateInfo.tiling = tiling;
     imageCreateInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
@@ -196,7 +199,8 @@ VkImageView VulkanUtils::createImageView(VkImage image,
                                         uint32_t mipLevels,
                                         VkImageAspectFlags aspectFlags,
                                         VkImageViewType imageType,
-                                        uint32_t layersCount) const
+                                        uint32_t layersCount,
+                                        uint32_t baseLayer) const
 {
     VkImageViewCreateInfo imageViewCreateInfo{};
     imageViewCreateInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
@@ -210,7 +214,7 @@ VkImageView VulkanUtils::createImageView(VkImage image,
     imageViewCreateInfo.subresourceRange.aspectMask = aspectFlags;
     imageViewCreateInfo.subresourceRange.baseMipLevel = 0;
     imageViewCreateInfo.subresourceRange.levelCount = mipLevels;
-    imageViewCreateInfo.subresourceRange.baseArrayLayer = 0;
+    imageViewCreateInfo.subresourceRange.baseArrayLayer = baseLayer;
     imageViewCreateInfo.subresourceRange.layerCount = layersCount;
 
     VkImageView imageView = VK_NULL_HANDLE;
@@ -366,7 +370,8 @@ void VulkanUtils::transitionImageLayout(VkImage image,
                                        ImageLayoutState newLayoutState,
                                        uint32_t mipLevels,
                                        VkImageAspectFlags aspectFlags,
-                                       uint32_t layersCount) const
+                                       uint32_t layersCount,
+                                       uint32_t baseLayer) const
 {
     // Layout transition can be achieved using memory barriers (which used for pipeline syncronization).
     // Memory barriers are pipeline command, which should be submitted to queue.
@@ -383,7 +388,7 @@ void VulkanUtils::transitionImageLayout(VkImage image,
     barrier.subresourceRange.aspectMask = aspectFlags;
     barrier.subresourceRange.baseMipLevel = 0;
     barrier.subresourceRange.levelCount = mipLevels;
-    barrier.subresourceRange.baseArrayLayer = 0;
+    barrier.subresourceRange.baseArrayLayer = baseLayer;
     barrier.subresourceRange.layerCount = layersCount;
     barrier.srcAccessMask = oldLayoutState.accessFlags;
     barrier.dstAccessMask = newLayoutState.accessFlags;

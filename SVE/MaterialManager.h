@@ -16,6 +16,7 @@ public:
     std::shared_ptr<Material> getMaterial(const std::string& name) const;
 
     void resetPipelines();
+    void resetDescriptors();
 
 private:
     std::unordered_map<std::string, std::shared_ptr<Material>> _materialMap;

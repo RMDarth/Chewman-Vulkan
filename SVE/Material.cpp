@@ -32,5 +32,10 @@ void Material::resetPipeline()
     _vulkanMaterial->resetPipeline();
 }
 
+void Material::resetDescriptorSets()
+{
+    _vulkanMaterial->resetDescriptorSets();
+}
+
 
 } // namespace SVE
