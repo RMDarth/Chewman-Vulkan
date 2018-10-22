@@ -80,9 +80,9 @@ Engine::Engine(SDL_Window* window)
 
 Engine::Engine(SDL_Window* window, EngineSettings settings)
     : _vulkanInstance(std::make_unique<VulkanInstance>(window, std::move(settings)))
-    , _materialManager(new MaterialManager())
+    , _materialManager(std::make_unique<MaterialManager>())
     , _shaderManager(std::make_unique<ShaderManager>())
-    , _sceneManager(new SceneManager())
+    , _sceneManager(std::make_unique<SceneManager>())
     , _meshManager(std::make_unique<MeshManager>())
     , _resourceManager(std::make_unique<ResourceManager>())
 {

@@ -13,7 +13,7 @@ class MaterialManager
 {
 public:
     void registerMaterial(std::shared_ptr<Material> material);
-    std::shared_ptr<Material> getMaterial(const std::string& name) const;
+    Material* getMaterial(const std::string& name) const;
 
     void resetPipelines();
     void resetDescriptors();

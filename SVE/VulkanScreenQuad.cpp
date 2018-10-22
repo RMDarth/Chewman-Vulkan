@@ -330,10 +330,13 @@ void VulkanScreenQuad::deleteImages()
     vkDestroySampler(_vulkanInstance->getLogicalDevice(), _colorSampler, nullptr);
     vkDestroyImageView(_vulkanInstance->getLogicalDevice(), _colorImageView, nullptr);
     vkDestroyImageView(_vulkanInstance->getLogicalDevice(), _depthImageView, nullptr);
+    vkDestroyImageView(_vulkanInstance->getLogicalDevice(), _resolveImageView, nullptr);
     vkDestroyImage(_vulkanInstance->getLogicalDevice(), _colorImage, nullptr);
     vkDestroyImage(_vulkanInstance->getLogicalDevice(), _depthImage, nullptr);
+    vkDestroyImage(_vulkanInstance->getLogicalDevice(), _resolveImage, nullptr);
     vkFreeMemory(_vulkanInstance->getLogicalDevice(), _colorImageMemory, nullptr);
     vkFreeMemory(_vulkanInstance->getLogicalDevice(), _depthImageMemory, nullptr);
+    vkFreeMemory(_vulkanInstance->getLogicalDevice(), _resolveImageMemory, nullptr);
 }
 
 void VulkanScreenQuad::createFramebuffers()

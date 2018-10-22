@@ -27,16 +27,17 @@ const std::string &SceneNode::getName() const
 
 void SceneNode::setParent(std::shared_ptr<SceneNode> parent)
 {
-    if (_parent)
+    auto currentParent = _parent.lock();
+    if (currentParent)
     {
-        _parent->detachSceneNode(shared_from_this());
+        currentParent->detachSceneNode(shared_from_this());
     }
     _parent = std::move(parent);
 }
 
 std::shared_ptr<SceneNode> SceneNode::getParent() const
 {
-    return _parent;
+    return _parent.lock();
 }
 
 void SceneNode::attachEntity(std::shared_ptr<Entity> entity)

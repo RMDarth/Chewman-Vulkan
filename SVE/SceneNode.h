@@ -36,7 +36,7 @@ public:
 
 private:
     std::string _name;
-    std::shared_ptr<SceneNode> _parent;
+    std::weak_ptr<SceneNode> _parent;
     std::list<std::shared_ptr<Entity>> _entityList;
     std::list<std::shared_ptr<SceneNode>> _sceneNodeList;
 

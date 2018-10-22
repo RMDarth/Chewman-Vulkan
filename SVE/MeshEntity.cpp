@@ -20,7 +20,7 @@ MeshEntity::MeshEntity(std::string name)
 
 }
 
-MeshEntity::MeshEntity(std::shared_ptr<Mesh> mesh)
+MeshEntity::MeshEntity(Mesh* mesh)
     : _mesh(mesh)
     , _material(Engine::getInstance()->getMaterialManager()->getMaterial(mesh->getDefaultMaterialName()))
 {

@@ -11,13 +11,13 @@ void MeshManager::registerMesh(std::shared_ptr<Mesh> mesh)
     _meshMap.insert({mesh->getName(), mesh});
 }
 
-std::shared_ptr<Mesh> MeshManager::getMesh(const std::string& name) const
+Mesh* MeshManager::getMesh(const std::string& name) const
 {
     auto meshIter = _meshMap.find(name);
     if (meshIter == _meshMap.end())
     {
         return nullptr;
     }
-    return meshIter->second;
+    return meshIter->second.get();
 }
 } // namespace SVE

@@ -389,10 +389,13 @@ void VulkanWater::deleteImages()
         vkDestroySampler(_vulkanInstance->getLogicalDevice(), _colorSampler[passIndex], nullptr);
         vkDestroyImageView(_vulkanInstance->getLogicalDevice(), _colorImageView[passIndex], nullptr);
         vkDestroyImageView(_vulkanInstance->getLogicalDevice(), _depthImageView[passIndex], nullptr);
+        vkDestroyImageView(_vulkanInstance->getLogicalDevice(), _resolveImageView[passIndex], nullptr);
         vkDestroyImage(_vulkanInstance->getLogicalDevice(), _colorImage[passIndex], nullptr);
         vkDestroyImage(_vulkanInstance->getLogicalDevice(), _depthImage[passIndex], nullptr);
+        vkDestroyImage(_vulkanInstance->getLogicalDevice(), _resolveImage[passIndex], nullptr);
         vkFreeMemory(_vulkanInstance->getLogicalDevice(), _colorImageMemory[passIndex], nullptr);
         vkFreeMemory(_vulkanInstance->getLogicalDevice(), _depthImageMemory[passIndex], nullptr);
+        vkFreeMemory(_vulkanInstance->getLogicalDevice(), _resolveImageMemory[passIndex], nullptr);
     }
 }
 

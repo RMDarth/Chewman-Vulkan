@@ -14,7 +14,7 @@ class MeshEntity : public Entity
 {
 public:
     explicit MeshEntity(std::string name);
-    explicit MeshEntity(std::shared_ptr<Mesh> mesh);
+    explicit MeshEntity(Mesh* mesh);
     ~MeshEntity();
 
     void setMaterial(const std::string& materialName) override;
@@ -30,8 +30,8 @@ private:
     void setupMaterial();
 
 private:
-    std::shared_ptr<Mesh> _mesh;
-    std::shared_ptr<Material> _material;
+    Mesh* _mesh;
+    Material* _material;
     bool _isReflected = true;
     bool _castShadows = true;
 
@@ -39,7 +39,7 @@ private:
     uint32_t _reflectionMaterialIndex;
     uint32_t _refractionMaterialIndex;
 
-    std::shared_ptr<Material> _shadowMaterial;
+    Material* _shadowMaterial;
     uint32_t _shadowMaterialIndex;
 };
 

@@ -13,7 +13,7 @@ class MeshManager
 {
 public:
     void registerMesh(std::shared_ptr<Mesh> mesh);
-    std::shared_ptr<Mesh> getMesh(const std::string& name) const;
+    Mesh* getMesh(const std::string& name) const;
 
 private:
     std::unordered_map<std::string, std::shared_ptr<Mesh>> _meshMap;

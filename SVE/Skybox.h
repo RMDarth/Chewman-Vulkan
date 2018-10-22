@@ -23,7 +23,7 @@ public:
 
 private:
     std::shared_ptr<Mesh> _mesh;
-    std::shared_ptr<Material> _material;
+    Material* _material;
     uint32_t _materialIndex;
 };
 

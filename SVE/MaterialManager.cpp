@@ -11,14 +11,14 @@ void MaterialManager::registerMaterial(std::shared_ptr<Material> material)
     _materialMap.insert({material->getName(), material});
 }
 
-std::shared_ptr<Material> SVE::MaterialManager::getMaterial(const std::string& name) const
+Material* SVE::MaterialManager::getMaterial(const std::string& name) const
 {
     auto materialIter = _materialMap.find(name);
     if (materialIter == _materialMap.end())
     {
         return nullptr;
     }
-    return materialIter->second;
+    return materialIter->second.get();
 }
 
 void MaterialManager::resetPipelines()
