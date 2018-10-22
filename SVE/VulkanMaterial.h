@@ -25,7 +25,7 @@ public:
     VkPipeline getPipeline() const;
     VkPipelineLayout getPipelineLayout() const;
 
-    void applyDrawingCommands(uint32_t bufferIndex, uint32_t materialIndex);
+    void applyDrawingCommands(uint32_t bufferIndex, uint32_t imageIndex, uint32_t materialIndex);
 
     void resetDescriptorSets();
     void resetPipeline();

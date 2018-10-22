@@ -23,8 +23,8 @@ public:
     ~VulkanShadowMap();
 
     void reallocateCommandBuffers();
-    uint32_t startRenderCommandBufferCreation(uint32_t index);
-    void endRenderCommandBufferCreation(uint32_t index);
+    uint32_t startRenderCommandBufferCreation(uint32_t bufferIndex, uint32_t imageIndex);
+    void endRenderCommandBufferCreation(uint32_t bufferIndex);
 
 private:
     void createShadowImageView();

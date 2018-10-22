@@ -43,7 +43,6 @@ void SceneNode::attachEntity(std::shared_ptr<Entity> entity)
 {
     entity->setParent(shared_from_this());
     _entityList.push_back(std::move(entity));
-    Engine::getInstance()->getSceneManager()->queueCommandBuffersUpdate();
 }
 
 void SceneNode::detachEntity(std::shared_ptr<Entity> entity)
@@ -52,7 +51,6 @@ void SceneNode::detachEntity(std::shared_ptr<Entity> entity)
     {
         _entityList.remove(entity);
         entity->clearParent();
-        Engine::getInstance()->getSceneManager()->queueCommandBuffersUpdate();
     }
 }
 
@@ -65,8 +63,6 @@ void SceneNode::attachSceneNode(std::shared_ptr<SceneNode> sceneNode)
 {
     sceneNode->setParent(shared_from_this());
     _sceneNodeList.push_back(sceneNode);
-
-    Engine::getInstance()->getSceneManager()->queueCommandBuffersUpdate();
 }
 
 void SceneNode::detachSceneNode(std::shared_ptr<SceneNode> sceneNode)
@@ -75,8 +71,6 @@ void SceneNode::detachSceneNode(std::shared_ptr<SceneNode> sceneNode)
     {
         _sceneNodeList.remove(sceneNode);
         sceneNode->_parent.reset();
-
-        Engine::getInstance()->getSceneManager()->queueCommandBuffersUpdate();
     }
 }
 

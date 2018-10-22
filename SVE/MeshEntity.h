@@ -24,7 +24,7 @@ public:
     void setIsReflected(bool isReflected);
 
     void updateUniforms(UniformDataList uniformDataList) const override;
-    void applyDrawingCommands(uint32_t bufferIndex) const override;
+    void applyDrawingCommands(uint32_t bufferIndex, uint32_t imageIndex) const override;
 
 private:
     void setupMaterial();

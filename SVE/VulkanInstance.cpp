@@ -214,7 +214,7 @@ VkDevice VulkanInstance::getLogicalDevice() const
     return _device;
 }
 
-VkCommandPool VulkanInstance::getCommandPool(uint32_t index) const
+VkCommandPool VulkanInstance::getCommandPool(PoolID index) const
 {
     return _commandPools[index];
 }
@@ -244,6 +244,11 @@ size_t VulkanInstance::getSwapchainSize() const
     return _swapchainImages.size();
 }
 
+size_t VulkanInstance::getInFlightSize() const
+{
+    return MAX_FRAMES_IN_FLIGHT;
+}
+
 VkFormat VulkanInstance::getSurfaceColorFormat() const
 {
     return _surfaceFormat.format;
@@ -263,8 +268,15 @@ VkFramebuffer VulkanInstance::getFramebuffer(size_t index) const
     return _swapchainFramebuffers[index];
 }
 
-VkCommandBuffer VulkanInstance::createCommandBuffer(uint32_t bufferIndex)
+VkCommandBuffer VulkanInstance::createCommandBuffer(BufferIndex bufferIndex)
 {
+    auto existingBufferIter = _poolBufferMap.find({_currentPool, bufferIndex});
+    if (existingBufferIter != _poolBufferMap.end())
+    {
+        _externalBufferMap[bufferIndex] = existingBufferIter->second;
+        return existingBufferIter->second;
+    }
+
     VkCommandBufferAllocateInfo commandBufferAllocateInfo{};
     commandBufferAllocateInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
     commandBufferAllocateInfo.commandPool = _commandPools[_currentPool];
@@ -278,10 +290,11 @@ VkCommandBuffer VulkanInstance::createCommandBuffer(uint32_t bufferIndex)
     }
 
     _externalBufferMap[bufferIndex] = buffer;
+    _poolBufferMap.emplace(std::make_pair(_currentPool, bufferIndex), buffer);
     return buffer;
 }
 
-VkCommandBuffer VulkanInstance::getCommandBuffer(uint32_t index)
+VkCommandBuffer VulkanInstance::getCommandBuffer(BufferIndex index)
 {
     if (index < _commandBuffers.size())
     {
@@ -498,19 +511,11 @@ void VulkanInstance::reallocateCommandBuffers()
     }
     _externalBufferMap.clear();
 
-    VkCommandBufferAllocateInfo commandBufferAllocateInfo{};
-    commandBufferAllocateInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-    commandBufferAllocateInfo.commandPool = _commandPools[_currentPool];
-    commandBufferAllocateInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-    commandBufferAllocateInfo.commandBufferCount = (uint32_t) _commandBuffers.size();
-
-    if (vkAllocateCommandBuffers(_device, &commandBufferAllocateInfo, _commandBuffers.data()) != VK_SUCCESS)
-    {
-        throw VulkanException("Can't create Vulkan Command Buffers");
-    }
+    for (auto i = 0u; i < MAX_FRAMES_IN_FLIGHT; i ++)
+        _commandBuffers[i] = createCommandBuffer(i);
 }
 
-void VulkanInstance::startRenderCommandBufferCreation(uint32_t index)
+void VulkanInstance::startRenderCommandBufferCreation()
 {
     VkCommandBufferBeginInfo beginInfo{};
     beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
@@ -519,7 +524,7 @@ void VulkanInstance::startRenderCommandBufferCreation(uint32_t index)
 
     // TODO: Instead of single command buffer recreation for every object, secondary buffers can be used.
     // Start recording
-    if (vkBeginCommandBuffer(_commandBuffers[index], &beginInfo) != VK_SUCCESS)
+    if (vkBeginCommandBuffer(_commandBuffers[_currentFrame], &beginInfo) != VK_SUCCESS)
     {
         throw VulkanException("Failed to begin recording Vulkan command buffer");
     }
@@ -532,13 +537,13 @@ void VulkanInstance::startRenderCommandBufferCreation(uint32_t index)
     VkRenderPassBeginInfo renderPassBeginInfo{};
     renderPassBeginInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
     renderPassBeginInfo.renderPass = _renderPass;
-    renderPassBeginInfo.framebuffer = _swapchainFramebuffers[index];
+    renderPassBeginInfo.framebuffer = _swapchainFramebuffers[_currentImageIndex];
     renderPassBeginInfo.renderArea.offset = {0, 0};
     renderPassBeginInfo.renderArea.extent = _extent;
     renderPassBeginInfo.clearValueCount = clearValues.size();
     renderPassBeginInfo.pClearValues = clearValues.data();
 
-    vkCmdBeginRenderPass(_commandBuffers[index], &renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
+    vkCmdBeginRenderPass(_commandBuffers[_currentFrame], &renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
 
     VkViewport viewport;
     viewport.x = 0.0f;
@@ -548,21 +553,21 @@ void VulkanInstance::startRenderCommandBufferCreation(uint32_t index)
     viewport.minDepth = 0.0f;
     viewport.maxDepth = 1.0f;
 
-    vkCmdSetViewport(_commandBuffers[index], 0, 1, &viewport);
+    vkCmdSetViewport(_commandBuffers[_currentFrame], 0, 1, &viewport);
 
     VkRect2D scissor{};
     scissor.offset = {0, 0};
     scissor.extent = _extent;
 
-    vkCmdSetScissor(_commandBuffers[index], 0, 1, &scissor);
+    vkCmdSetScissor(_commandBuffers[_currentFrame], 0, 1, &scissor);
 }
 
-void VulkanInstance::endRenderCommandBufferCreation(uint32_t index)
+void VulkanInstance::endRenderCommandBufferCreation()
 {
-    vkCmdEndRenderPass(_commandBuffers[index]);
+    vkCmdEndRenderPass(_commandBuffers[_currentFrame]);
 
     // finish recording
-    if (vkEndCommandBuffer(_commandBuffers[index]) != VK_SUCCESS)
+    if (vkEndCommandBuffer(_commandBuffers[_currentFrame]) != VK_SUCCESS)
     {
         throw VulkanException("Failed to record Vulkan command buffer");
     }
@@ -1020,6 +1025,7 @@ void VulkanInstance::createCommandPool()
     {
         VkCommandPoolCreateInfo poolCreateInfo{};
         poolCreateInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
+        poolCreateInfo.flags = VK_COMMAND_POOL_CREATE_TRANSIENT_BIT;
         poolCreateInfo.queueFamilyIndex = _queueIndex;
 
         if (vkCreateCommandPool(_device, &poolCreateInfo, nullptr, &commandPool) != VK_SUCCESS)
@@ -1028,7 +1034,7 @@ void VulkanInstance::createCommandPool()
         }
     }
 
-    _commandBuffers.resize(_swapchainImages.size());
+    _commandBuffers.resize(getInFlightSize());
 }
 
 void VulkanInstance::deleteCommandPool()
@@ -1037,6 +1043,7 @@ void VulkanInstance::deleteCommandPool()
     {
         vkDestroyCommandPool(_device, commandPool, nullptr);
     }
+    _poolBufferMap.clear();
 }
 
 void VulkanInstance::createMSAABuffer()

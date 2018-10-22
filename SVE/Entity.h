@@ -27,7 +27,7 @@ public:
     virtual void setMaterial(const std::string& materialName);
 
     virtual void updateUniforms(UniformDataList uniformDataList) const = 0;
-    virtual void applyDrawingCommands(uint32_t bufferIndex) const = 0;
+    virtual void applyDrawingCommands(uint32_t bufferIndex, uint32_t imageIndex) const = 0;
 
 protected:
     std::shared_ptr<SceneNode> _parent;

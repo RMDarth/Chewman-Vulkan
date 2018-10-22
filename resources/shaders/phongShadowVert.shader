@@ -15,7 +15,6 @@
         { "uniformType": "ViewMatrix" },
         { "uniformType": "ProjectionMatrix" },
         { "uniformType": "LightViewProjection" },
-        { "uniformType": "ClipPlane" },
-        { "uniformType": "Time" }
+        { "uniformType": "ClipPlane" }
     ]
 }

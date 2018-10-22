@@ -93,22 +93,22 @@ void VulkanShadowMap::deleteFramebuffer()
 
 void VulkanShadowMap::reallocateCommandBuffers()
 {
-    _commandBuffers.resize(_vulkanInstance->getSwapchainSize());
-    for (auto i = 0u; i < _vulkanInstance->getSwapchainSize(); i++)
+    _commandBuffers.resize(_vulkanInstance->getInFlightSize());
+    for (auto i = 0u; i < _vulkanInstance->getInFlightSize(); i++)
     {
         // TODO: maybe just shift instead of multiplying
         _commandBuffers[i] = _vulkanInstance->createCommandBuffer(BUFFER_INDEX_SHADOWMAP + i * _vulkanShadowImage.getLayersSize());
     }
 }
 
-uint32_t VulkanShadowMap::startRenderCommandBufferCreation(uint32_t index)
+uint32_t VulkanShadowMap::startRenderCommandBufferCreation(uint32_t bufferIndex, uint32_t imageIndex)
 {
     VkCommandBufferBeginInfo beginInfo{};
     beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
     beginInfo.flags = VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT;
     beginInfo.pInheritanceInfo = nullptr;
 
-    if (vkBeginCommandBuffer(_commandBuffers[index], &beginInfo) != VK_SUCCESS)
+    if (vkBeginCommandBuffer(_commandBuffers[bufferIndex], &beginInfo) != VK_SUCCESS)
     {
         throw VulkanException("Failed to begin recording Vulkan command buffer");
     }
@@ -120,18 +120,18 @@ uint32_t VulkanShadowMap::startRenderCommandBufferCreation(uint32_t index)
     VkRenderPassBeginInfo renderPassBeginInfo{};
     renderPassBeginInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
     renderPassBeginInfo.renderPass = _vulkanShadowImage.getRenderPass();
-    renderPassBeginInfo.framebuffer = _framebuffers[index];
+    renderPassBeginInfo.framebuffer = _framebuffers[imageIndex];
     renderPassBeginInfo.renderArea.offset = {0, 0};
     renderPassBeginInfo.renderArea.extent.width = _width;
     renderPassBeginInfo.renderArea.extent.height = _height;
     renderPassBeginInfo.clearValueCount = 1;
     renderPassBeginInfo.pClearValues = &clearValue;
 
-    vkCmdBeginRenderPass(_commandBuffers[index], &renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
+    vkCmdBeginRenderPass(_commandBuffers[bufferIndex], &renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
 
     // TODO: Add depth bias constants to configuration
     vkCmdSetDepthBias(
-            _commandBuffers[index],
+            _commandBuffers[bufferIndex],
             5.25f,
             0.0f,
             5.75f);
@@ -144,24 +144,24 @@ uint32_t VulkanShadowMap::startRenderCommandBufferCreation(uint32_t index)
     viewport.minDepth = 0.0f;
     viewport.maxDepth = 1.0f;
 
-    vkCmdSetViewport(_commandBuffers[index], 0, 1, &viewport);
+    vkCmdSetViewport(_commandBuffers[bufferIndex], 0, 1, &viewport);
 
     VkRect2D scissor{};
     scissor.offset = {0, 0};
     scissor.extent.width = _width;
     scissor.extent.height = _height;
 
-    vkCmdSetScissor(_commandBuffers[index], 0, 1, &scissor);
+    vkCmdSetScissor(_commandBuffers[bufferIndex], 0, 1, &scissor);
 
-    return BUFFER_INDEX_SHADOWMAP + index * _vulkanShadowImage.getLayersSize();
+    return BUFFER_INDEX_SHADOWMAP + bufferIndex * _vulkanShadowImage.getLayersSize();
 }
 
-void VulkanShadowMap::endRenderCommandBufferCreation(uint32_t index)
+void VulkanShadowMap::endRenderCommandBufferCreation(uint32_t bufferIndex)
 {
-    vkCmdEndRenderPass(_commandBuffers[index]);
+    vkCmdEndRenderPass(_commandBuffers[bufferIndex]);
 
     // finish recording
-    if (vkEndCommandBuffer(_commandBuffers[index]) != VK_SUCCESS)
+    if (vkEndCommandBuffer(_commandBuffers[bufferIndex]) != VK_SUCCESS)
     {
         throw VulkanException("Failed to record Vulkan command buffer");
     }

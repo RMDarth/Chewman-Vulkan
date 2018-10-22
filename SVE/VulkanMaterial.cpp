@@ -124,15 +124,12 @@ VkPipelineLayout VulkanMaterial::getPipelineLayout() const
     return _pipelineLayout;
 }
 
-void VulkanMaterial::applyDrawingCommands(uint32_t bufferIndex, uint32_t materialIndex)
+void VulkanMaterial::applyDrawingCommands(uint32_t bufferIndex, uint32_t imageIndex, uint32_t materialIndex)
 {
     auto commandBuffer = _vulkanInstance->getCommandBuffer(bufferIndex);
     vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, _pipeline);
 
-    if (bufferIndex > _vulkanInstance->getSwapchainSize())
-        bufferIndex = 0;
-
-    auto descriptorSets = getDescriptorSets(materialIndex, bufferIndex);
+    auto descriptorSets = getDescriptorSets(materialIndex, imageIndex);
     vkCmdBindDescriptorSets(
             commandBuffer,
             VK_PIPELINE_BIND_POINT_GRAPHICS,
@@ -908,7 +905,7 @@ void VulkanMaterial::createDescriptorSets()
                     imageInfoList.push_back(imageInfo);
                 } else {
                     const auto& samplerInfoList = _vulkanInstance->getSamplerHolder()->getSamplerInfo(_textureExternalName[index]);
-                    if (!samplerInfoList.empty() && samplerInfoList[i].imageView != VK_NULL_HANDLE)
+                    if (!samplerInfoList.empty())
                     {
                         VkDescriptorImageInfo imageInfo{};
                         imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;

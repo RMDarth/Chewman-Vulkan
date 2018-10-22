@@ -9,7 +9,6 @@
     },
     "uniformList": [
         { "uniformType": "ModelMatrix" },
-        { "uniformType": "ViewProjectionMatrix" },
-        { "uniformType": "Time" }
+        { "uniformType": "ViewProjectionMatrix" }
     ]
 }

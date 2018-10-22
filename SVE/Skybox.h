@@ -18,7 +18,7 @@ public:
     explicit Skybox(const std::string& materialName);
     ~Skybox() override;
 
-    void applyDrawingCommands(uint32_t bufferIndex) const override;
+    void applyDrawingCommands(uint32_t bufferIndex, uint32_t imageIndex) const override;
     void updateUniforms(UniformDataList uniformDataList) const override;
 
 private:

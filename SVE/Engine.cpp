@@ -128,7 +128,6 @@ MeshManager* Engine::getMeshManager()
 
 void Engine::resizeWindow()
 {
-    _sceneManager->queueCommandBuffersUpdate();
     _vulkanInstance->resizeWindow();
     _materialManager->resetPipelines();
 
@@ -141,16 +140,16 @@ void Engine::finishRendering()
     _vulkanInstance->finishRendering();
 }
 
-void createNodeDrawCommands(const std::shared_ptr<SceneNode>& node, uint32_t bufferIndex)
+void createNodeDrawCommands(const std::shared_ptr<SceneNode>& node, uint32_t bufferIndex, uint32_t imageIndex)
 {
     for (auto& entity : node->getAttachedEntities())
     {
-        entity->applyDrawingCommands(bufferIndex);
+        entity->applyDrawingCommands(bufferIndex, imageIndex);
     }
 
     for (auto& child : node->getChildren())
     {
-        createNodeDrawCommands(child, bufferIndex);
+        createNodeDrawCommands(child, bufferIndex, imageIndex);
     }
 }
 
@@ -178,85 +177,80 @@ void updateNode(const std::shared_ptr<SceneNode>& node, UniformDataList& uniform
 
 void Engine::renderFrame()
 {
+    _vulkanInstance->waitAvailableFramebuffer();
     updateTime();
     auto skybox = _sceneManager->getSkybox();
+    auto currentFrame = _vulkanInstance->getCurrentFrameIndex();
+    auto currentImage = _vulkanInstance->getCurrentImageIndex();
 
-    // update command buffers if scene changed
-    //if (_sceneManager->isCommandBufferUpdateQueued())
+    // update command buffers
+
+    _vulkanInstance->reallocateCommandBuffers();
+
+    _commandsType = CommandsType::ShadowPass;
+    for (auto i = 0; i < _sceneManager->getLightManager()->getLightCount(); i++)
     {
-        finishRendering();
-        _materialManager->resetDescriptors();
+        auto shadowMap = _sceneManager->getLightManager()->getLight(i)->getShadowMap();
 
-        _vulkanInstance->reallocateCommandBuffers();
-
-        _commandsType = CommandsType::ShadowPass;
-
-        for (auto i = 0; i < _sceneManager->getLightManager()->getLightCount(); i++)
+        if (shadowMap && shadowMap->isEnabled())
         {
-            auto shadowMap = _sceneManager->getLightManager()->getLight(i)->getShadowMap();
+            shadowMap->getVulkanShadowMap()->reallocateCommandBuffers();
 
-            if (shadowMap && shadowMap->isEnabled())
-            {
-                shadowMap->getVulkanShadowMap()->reallocateCommandBuffers();
-                for (auto r = 0u; r < _vulkanInstance->getSwapchainSize(); ++r)
-                {
-                    auto bufferIndex = shadowMap->getVulkanShadowMap()->startRenderCommandBufferCreation(r);
-                    createNodeDrawCommands(_sceneManager->getRootNode(), bufferIndex);
-                    shadowMap->getVulkanShadowMap()->endRenderCommandBufferCreation(r);
-                }
-            }
+            auto bufferIndex =
+                    shadowMap->getVulkanShadowMap()->startRenderCommandBufferCreation(
+                            _vulkanInstance->getCurrentFrameIndex(),
+                            _vulkanInstance->getCurrentImageIndex());
+            createNodeDrawCommands(_sceneManager->getRootNode(), bufferIndex, currentImage);
+            shadowMap->getVulkanShadowMap()->endRenderCommandBufferCreation(
+                    _vulkanInstance->getCurrentFrameIndex());
         }
-
-        if (auto water = _sceneManager->getWater())
-        {
-            water->getVulkanWater()->reallocateCommandBuffers();
-            _commandsType = CommandsType::ReflectionPass;
-            water->getVulkanWater()->startRenderCommandBufferCreation(VulkanWater::PassType::Reflection);
-            if (skybox)
-                skybox->applyDrawingCommands(BUFFER_INDEX_WATER_REFLECTION);
-            createNodeDrawCommands(_sceneManager->getRootNode(), BUFFER_INDEX_WATER_REFLECTION);
-            water->getVulkanWater()->endRenderCommandBufferCreation(VulkanWater::PassType::Reflection);
-
-            _commandsType = CommandsType::RefractionPass;
-            water->getVulkanWater()->startRenderCommandBufferCreation(VulkanWater::PassType::Refraction);
-            if (skybox)
-                skybox->applyDrawingCommands(BUFFER_INDEX_WATER_REFRACTION);
-            createNodeDrawCommands(_sceneManager->getRootNode(), BUFFER_INDEX_WATER_REFRACTION);
-            water->getVulkanWater()->endRenderCommandBufferCreation(VulkanWater::PassType::Refraction);
-        }
-
-        if (auto* screenQuad = _vulkanInstance->getScreenQuad())
-        {
-            _commandsType = CommandsType::ScreenQuadPass;
-            screenQuad->reallocateCommandBuffers();
-            screenQuad->startRenderCommandBufferCreation();
-            if (skybox)
-                skybox->applyDrawingCommands(BUFFER_INDEX_SCREEN_QUAD);
-            createNodeDrawCommands(_sceneManager->getRootNode(), BUFFER_INDEX_SCREEN_QUAD);
-            screenQuad->endRenderCommandBufferCreation();
-        }
-
-        _commandsType = CommandsType::MainPass;
-        for (auto i = 0u; i < _vulkanInstance->getSwapchainSize(); ++i)
-        {
-            _vulkanInstance->startRenderCommandBufferCreation(i);
-            if (auto* screenQuad = _vulkanInstance->getScreenQuad())
-            {
-                _engineInstance->getMaterialManager()->getMaterial("ScreenQuad")->getVulkanMaterial()->getInstanceForEntity(nullptr);
-                _materialManager->getMaterial("ScreenQuad")->getVulkanMaterial()->applyDrawingCommands(i, 1);
-                auto commandBuffer = _vulkanInstance->getCommandBuffer(i);
-                vkCmdDraw(commandBuffer, 6, 1, 0, 0);
-            } else
-            {
-                if (skybox)
-                    skybox->applyDrawingCommands(i);
-                createNodeDrawCommands(_sceneManager->getRootNode(), _vulkanInstance->getCurrentImageIndex());
-            }
-            _vulkanInstance->endRenderCommandBufferCreation(i);
-        }
-
-        _sceneManager->dequeueCommandBufferUpdate();
     }
+
+    if (auto water = _sceneManager->getWater())
+    {
+        water->getVulkanWater()->reallocateCommandBuffers();
+        _commandsType = CommandsType::ReflectionPass;
+        water->getVulkanWater()->startRenderCommandBufferCreation(VulkanWater::PassType::Reflection);
+        if (skybox)
+            skybox->applyDrawingCommands(BUFFER_INDEX_WATER_REFLECTION, currentImage);
+        createNodeDrawCommands(_sceneManager->getRootNode(), BUFFER_INDEX_WATER_REFLECTION, currentImage);
+        water->getVulkanWater()->endRenderCommandBufferCreation(VulkanWater::PassType::Reflection);
+
+        _commandsType = CommandsType::RefractionPass;
+        water->getVulkanWater()->startRenderCommandBufferCreation(VulkanWater::PassType::Refraction);
+        if (skybox)
+            skybox->applyDrawingCommands(BUFFER_INDEX_WATER_REFRACTION, currentImage);
+        createNodeDrawCommands(_sceneManager->getRootNode(), BUFFER_INDEX_WATER_REFRACTION, currentImage);
+        water->getVulkanWater()->endRenderCommandBufferCreation(VulkanWater::PassType::Refraction);
+    }
+
+    if (auto* screenQuad = _vulkanInstance->getScreenQuad())
+    {
+        _commandsType = CommandsType::ScreenQuadPass;
+        screenQuad->reallocateCommandBuffers();
+        screenQuad->startRenderCommandBufferCreation();
+        if (skybox)
+            skybox->applyDrawingCommands(BUFFER_INDEX_SCREEN_QUAD, currentImage);
+        createNodeDrawCommands(_sceneManager->getRootNode(), BUFFER_INDEX_SCREEN_QUAD, currentImage);
+        screenQuad->endRenderCommandBufferCreation();
+    }
+
+    _commandsType = CommandsType::MainPass;
+    _vulkanInstance->startRenderCommandBufferCreation();
+    if (auto* screenQuad = _vulkanInstance->getScreenQuad())
+    {
+        _engineInstance->getMaterialManager()->getMaterial("ScreenQuad")->getVulkanMaterial()->getInstanceForEntity(nullptr);
+        _materialManager->getMaterial("ScreenQuad")->getVulkanMaterial()->applyDrawingCommands(currentFrame, currentImage, 1);
+        auto commandBuffer = _vulkanInstance->getCommandBuffer(currentFrame);
+        vkCmdDraw(commandBuffer, 6, 1, 0, 0);
+    } else
+    {
+        if (skybox)
+            skybox->applyDrawingCommands(currentFrame, currentImage);
+        createNodeDrawCommands(_sceneManager->getRootNode(), currentFrame, currentImage);
+    }
+    _vulkanInstance->endRenderCommandBufferCreation();
+
 
     // Fill uniform data (from camera and lights)
     auto mainCamera = _sceneManager->getMainCamera();
@@ -299,8 +293,6 @@ void Engine::renderFrame()
         water->getVulkanWater()->fillUniformData(*uniformDataList[toInt(CommandsType::RefractionPass)],
                                                  VulkanWater::PassType::Refraction);
     }
-
-    _vulkanInstance->waitAvailableFramebuffer();
 
     // update uniforms
     if (skybox)

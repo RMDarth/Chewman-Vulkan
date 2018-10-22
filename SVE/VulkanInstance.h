@@ -18,13 +18,16 @@ class VulkanSamplerHolder;
 class VulkanPassInfo;
 
 // TODO: Create some mapping to external indexes instead of hardcoding
-enum BufferIndex
+enum
 {
     BUFFER_INDEX_SHADOWMAP = 100,
     BUFFER_INDEX_WATER_REFLECTION = 200,
     BUFFER_INDEX_WATER_REFRACTION = 201,
     BUFFER_INDEX_SCREEN_QUAD = 300
 };
+
+using PoolID = uint32_t;
+using BufferIndex = uint32_t;
 
 class VulkanInstance
 {
@@ -40,18 +43,19 @@ public:
     VkInstance getInstance() const;
     VkPhysicalDevice getGPU() const;
     VkDevice getLogicalDevice() const;
-    VkCommandPool getCommandPool(uint32_t index) const;
+    VkCommandPool getCommandPool(PoolID index) const;
     VkRenderPass getRenderPass() const;
     VkExtent2D getExtent() const;
     VkSampleCountFlagBits getMSAASamples() const;
     VkQueue getGraphicsQueue() const;
     size_t getSwapchainSize() const;
+    size_t getInFlightSize() const;
     VkFormat getSurfaceColorFormat() const;
     VkFormat getDepthFormat() const;
     VkFramebuffer getFramebuffer(size_t index) const;
 
-    VkCommandBuffer createCommandBuffer(uint32_t bufferIndex);
-    VkCommandBuffer getCommandBuffer(uint32_t index);
+    VkCommandBuffer createCommandBuffer(BufferIndex bufferIndex);
+    VkCommandBuffer getCommandBuffer(BufferIndex index);
 
     const std::vector<VkCommandBuffer>& getCommandBuffersList();
 
@@ -62,8 +66,8 @@ public:
     uint32_t getCurrentFrameIndex() const;
 
     void reallocateCommandBuffers();
-    void startRenderCommandBufferCreation(uint32_t index);
-    void endRenderCommandBufferCreation(uint32_t index);
+    void startRenderCommandBufferCreation();
+    void endRenderCommandBufferCreation();
 
     VulkanScreenQuad* getScreenQuad();
     VulkanSamplerHolder* getSamplerHolder();
@@ -140,10 +144,11 @@ private:
     std::vector<VkImageView> _swapchainImageViews;
     std::vector<VkFramebuffer> _swapchainFramebuffers;
 
-    uint32_t _currentPool;
+    PoolID _currentPool;
     std::vector<VkCommandPool> _commandPools;
     std::vector<VkCommandBuffer> _commandBuffers;
     std::map<uint32_t, VkCommandBuffer> _externalBufferMap;
+    std::map<std::pair<PoolID, BufferIndex>, VkCommandBuffer> _poolBufferMap;
 
     // color attachment for anti-aliasing
     VkImage _colorImage;

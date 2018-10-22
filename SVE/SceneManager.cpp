@@ -88,19 +88,4 @@ std::shared_ptr<Water> SceneManager::getWater()
     return _water;
 }
 
-void SceneManager::queueCommandBuffersUpdate()
-{
-    _recreateCommandBuffers = true;
-}
-
-void SceneManager::dequeueCommandBufferUpdate()
-{
-    _recreateCommandBuffers = false;
-}
-
-bool SceneManager::isCommandBufferUpdateQueued()
-{
-    return _recreateCommandBuffers;
-}
-
 } // namespace SVE

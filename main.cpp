@@ -40,7 +40,7 @@ void moveCamera(const Uint8* keystates, float deltaTime, std::shared_ptr<SVE::Ca
     if (keystates[SDL_SCANCODE_S])
         camera->movePosition(glm::vec3(0,0,12.0f*deltaTime));
 
-    camera->movePosition(glm::vec3(0,0,5.0f*deltaTime));
+    //camera->movePosition(glm::vec3(0,0,5.0f*deltaTime));
 }
 
 void configFloor(SDL_Keycode key, std::shared_ptr<SVE::SceneNode>& floor)

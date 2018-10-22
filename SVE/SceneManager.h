@@ -40,10 +40,6 @@ public:
     std::shared_ptr<Water> createWater(float height);
     std::shared_ptr<Water> getWater();
 
-    void queueCommandBuffersUpdate();
-    void dequeueCommandBufferUpdate();
-    bool isCommandBufferUpdateQueued();
-
 private:
     bool _recreateCommandBuffers = true;
     std::shared_ptr<SceneNode> _root;

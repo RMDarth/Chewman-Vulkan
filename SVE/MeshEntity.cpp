@@ -80,29 +80,29 @@ void MeshEntity::updateUniforms(UniformDataList uniformDataList) const
     }
 }
 
-void MeshEntity::applyDrawingCommands(uint32_t bufferIndex) const
+void MeshEntity::applyDrawingCommands(uint32_t bufferIndex, uint32_t imageIndex) const
 {
     if (Engine::getInstance()->getPassType() == CommandsType::ReflectionPass)
     {
         if (!_isReflected)
             return;
-        _material->getVulkanMaterial()->applyDrawingCommands(bufferIndex, _reflectionMaterialIndex);
+        _material->getVulkanMaterial()->applyDrawingCommands(bufferIndex, imageIndex, _reflectionMaterialIndex);
 
     } else if (Engine::getInstance()->getPassType() == CommandsType::RefractionPass)
     {
         if (!_isReflected)
             return;
 
-        _material->getVulkanMaterial()->applyDrawingCommands(bufferIndex, _refractionMaterialIndex);
+        _material->getVulkanMaterial()->applyDrawingCommands(bufferIndex, imageIndex, _refractionMaterialIndex);
     }
     else if (Engine::getInstance()->getPassType() == CommandsType::ShadowPass)
     {
         if (_shadowMaterial && _castShadows)
-            _shadowMaterial->getVulkanMaterial()->applyDrawingCommands(bufferIndex, _shadowMaterialIndex);
+            _shadowMaterial->getVulkanMaterial()->applyDrawingCommands(bufferIndex, imageIndex,_shadowMaterialIndex);
     }
     else
     {
-        _material->getVulkanMaterial()->applyDrawingCommands(bufferIndex, _materialIndex);
+        _material->getVulkanMaterial()->applyDrawingCommands(bufferIndex, imageIndex, _materialIndex);
     }
 
     _mesh->getVulkanMesh()->applyDrawingCommands(bufferIndex);
