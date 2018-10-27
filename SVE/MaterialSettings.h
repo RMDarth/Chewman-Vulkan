@@ -66,7 +66,7 @@ struct MaterialSettings
     bool useDepthBias = false;
     bool useMultisampling = true;
     MaterialCullFace cullFace = MaterialCullFace::FrontFace;
-    CommandsType passType = CommandsType::MainPass;
+    CommandsType passType = CommandsType::MainPass; // used to select correct renderpass
 };
 
 } // namespace SVE

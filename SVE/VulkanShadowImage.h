@@ -2,7 +2,7 @@
 // Copyright (c) 2018-2019, Igor Barinov
 // Licensed under CC BY 4.0
 #pragma once
-#include <vulkan\vulkan.h>
+#include <vulkan/vulkan.h>
 #include <vector>
 
 namespace SVE
@@ -23,6 +23,8 @@ public:
     VkImageView getImageView(uint32_t index) const;
     VkSampler getSampler(uint32_t index) const;
     VkRenderPass getRenderPass() const;
+
+    uint32_t getBufferID(uint32_t lightIndex, uint32_t bufferNum) const;
 
 private:
     void createRenderPass();

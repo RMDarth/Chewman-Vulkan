@@ -19,7 +19,7 @@ layout(location = 0) out vec3 fragColor;
 layout(location = 1) out vec2 fragTexCoord;
 layout(location = 2) out vec3 fragNormal;
 layout(location = 3) out vec3 fragPos;
-layout(location = 4) out vec4 fragLightSpacePos;
+layout(location = 4) out vec4 fragLightSpacePos[MAX_LIGHTS];
 
 out gl_PerVertex {
     vec4 gl_Position;
@@ -41,14 +41,15 @@ void main() {
     fragPos = vec3(worldPos);
     fragNormal = vec3(transpose(inverse(uniforms.model)) * vec4(inNormal.xyz, 1.0)); // transpose(inverse(uniforms.model)) not working for assimp
 
-    fragLightSpacePos =  uniforms.lightViewProjection[0] * worldPos;
-    //fragLightSpacePos.xy = fragLightSpacePos.xy / fragLightSpacePos.w;
-
-    //toCameraVector = (inverse(viewMatrix) * vec4(0.0, 0.0, 0.0, 1.0)).xyz - worldPosition.xyz;
-
     float distance = length(camPos.xyz);
     distance = distance - (shadowDistance - transitionDistance);
     distance = distance / transitionDistance;
 
-    fragLightSpacePos.w = clamp(1.0 - distance, 0.0, 1.0);
+    for (uint i = 0; i < MAX_LIGHTS; i++)
+    {
+        fragLightSpacePos[i] =  uniforms.lightViewProjection[i] * worldPos;
+        fragLightSpacePos[i].xyz = fragLightSpacePos[i].xyz / fragLightSpacePos[i].w;
+
+        fragLightSpacePos[i].w = clamp(1.0 - distance, 0.0, 1.0);
+    }
 }

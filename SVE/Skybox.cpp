@@ -77,7 +77,7 @@ Skybox::Skybox(const std::string& materialName)
     _mesh = std::make_shared<Mesh>(meshSettings);
 
     if (_material)
-        _materialIndex = _material->getVulkanMaterial()->getInstanceForEntity(this);
+        setupMaterial();
 }
 
 Skybox::~Skybox() = default;
@@ -85,13 +85,45 @@ Skybox::~Skybox() = default;
 void Skybox::applyDrawingCommands(uint32_t bufferIndex, uint32_t imageIndex) const
 {
     // TODO: Probably should not be rendered on shadow pass (and possibly refraction)
-    _material->getVulkanMaterial()->applyDrawingCommands(bufferIndex, imageIndex, _materialIndex);
+    uint32_t materialIndex;
+    switch (Engine::getInstance()->getPassType())
+    {
+        case CommandsType::MainPass:
+            materialIndex = _materialIndex;
+            break;
+        case CommandsType::ReflectionPass:
+            materialIndex = _reflectionMaterialIndex;
+            break;
+        case CommandsType::RefractionPass:
+            materialIndex = _refractionMaterialIndex;
+            break;
+        default:
+            materialIndex = _materialIndex;
+    }
+    _material->getVulkanMaterial()->applyDrawingCommands(bufferIndex, imageIndex, materialIndex);
     _mesh->getVulkanMesh()->applyDrawingCommands(bufferIndex);
 }
 
-void Skybox::updateUniforms(UniformDataList uniformDataList) const
+void Skybox::updateUniforms(UniformDataList uniformDataList, const UniformDataIndexMap& indexMap) const
 {
-    _material->getVulkanMaterial()->setUniformData(_materialIndex, *uniformDataList[toInt(CommandsType::MainPass)]);
+    _material->getVulkanMaterial()->setUniformData(_materialIndex, *uniformDataList[indexMap.at(CommandsType::MainPass)]);
+
+    if (Engine::getInstance()->isWaterEnabled())
+    {
+        _material->getVulkanMaterial()->setUniformData(_reflectionMaterialIndex, *uniformDataList[indexMap.at(CommandsType::ReflectionPass)]);
+        _material->getVulkanMaterial()->setUniformData(_refractionMaterialIndex, *uniformDataList[indexMap.at(CommandsType::RefractionPass)]);
+    }
+}
+
+void Skybox::setupMaterial()
+{
+    _materialIndex = _material->getVulkanMaterial()->getInstanceForEntity(this);
+
+    if (Engine::getInstance()->isWaterEnabled())
+    {
+        _reflectionMaterialIndex = _material->getVulkanMaterial()->getInstanceForEntity(this, 1);
+        _refractionMaterialIndex = _material->getVulkanMaterial()->getInstanceForEntity(this, 2);
+    }
 }
 
 

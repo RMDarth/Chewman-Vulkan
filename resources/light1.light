@@ -4,6 +4,6 @@
     "specularStrength": 0.5,
     "ambientStrength": 0.0,
     "shininess": 16,
-    "lightColor": [ 0.0, 1.0, 0.0 ],
-    "castShadows": false
+    "lightColor": [ 1.0, 1.0, 1.0 ],
+    "castShadows": true
 }

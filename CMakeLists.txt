@@ -1,12 +1,12 @@
 cmake_minimum_required(VERSION 3.10)
 project(Chewman)
 
-include_directories(deps/include)
+include_directories(./deps/include)
 
-link_directories(deps/lib)
-link_directories(deps/lib/Vulkan)
-link_directories(deps/lib/assimp)
-link_directories(deps/lib/cppfs)
+link_directories(./deps/lib)
+link_directories(./deps/lib/Vulkan)
+link_directories(./deps/lib/assimp)
+link_directories(./deps/lib/cppfs)
 
 set(CMAKE_CXX_STANDARD 14)
 
@@ -78,5 +78,27 @@ add_executable(Chewman
         SVE/VulkanScreenQuad.cpp
         SVE/VulkanScreenQuad.h
         SVE/LightManager.cpp
-        SVE/LightManager.h SVE/VulkanSamplerHolder.cpp SVE/VulkanSamplerHolder.h SVE/VulkanShadowImage.cpp SVE/VulkanShadowImage.h SVE/VulkanPassInfo.cpp SVE/VulkanPassInfo.h)
-target_link_libraries(Chewman mingw32 SDL2main SDL2 vulkan-1.lib VkLayer_core_validation.lib libassimp libcppfsd)
+        SVE/LightManager.h
+        SVE/VulkanSamplerHolder.cpp
+        SVE/VulkanSamplerHolder.h
+        SVE/VulkanShadowImage.cpp
+        SVE/VulkanShadowImage.h
+        SVE/VulkanPassInfo.cpp
+        SVE/VulkanPassInfo.h)
+
+if (WIN32)
+    target_link_libraries(Chewman mingw32 SDL2main SDL2 vulkan-1.lib VkLayer_core_validation.lib libassimp libcppfsd)
+endif(WIN32)
+
+if (UNIX)
+    find_package(SDL2 REQUIRED)
+    include_directories(${SDL2_INCLUDE_DIRS})
+
+    find_package(assimp REQUIRED)
+    include_directories(${assimp_INCLUDE_DIRS})
+
+    find_package(cppfs REQUIRED)
+    include_directories(${cppfs_INCLUDE_DIRS})
+
+    target_link_libraries(Chewman ${SDL2_LIBRARIES} assimp cppfs vulkan)
+endif(UNIX)

@@ -19,12 +19,18 @@ public:
     ~Skybox() override;
 
     void applyDrawingCommands(uint32_t bufferIndex, uint32_t imageIndex) const override;
-    void updateUniforms(UniformDataList uniformDataList) const override;
+    void updateUniforms(UniformDataList uniformDataList, const UniformDataIndexMap& indexMap) const override;
+
+private:
+    void setupMaterial();
 
 private:
     std::shared_ptr<Mesh> _mesh;
     Material* _material;
+
     uint32_t _materialIndex;
+    uint32_t _reflectionMaterialIndex;
+    uint32_t _refractionMaterialIndex;
 };
 
 } // namespace SVE

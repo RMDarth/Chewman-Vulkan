@@ -181,7 +181,7 @@ int runGame()
                 glm::translate(glm::mat4(1), glm::vec3(15, 15, -15)));
         if (engine->getSceneManager()->getLightManager()->getLightCount() > 1)
             engine->getSceneManager()->getLightManager()->getLight(1)->setNodeTransformation(
-                    glm::translate(glm::mat4(1), glm::vec3(1, 1, 1)));
+                    glm::translate(glm::mat4(1), glm::vec3(5, 5, 5)));
 
         // create camera
         auto camera = engine->getSceneManager()->createMainCamera();

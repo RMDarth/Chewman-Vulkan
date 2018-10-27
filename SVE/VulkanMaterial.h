@@ -32,7 +32,7 @@ public:
 
     std::vector<VkDescriptorSet> getDescriptorSets(uint32_t materialIndex, size_t index) const;
 
-    uint32_t getInstanceForEntity(Entity* entity, uint32_t index = 0);
+    uint32_t getInstanceForEntity(const Entity* entity, uint32_t index = 0);
     bool isSkeletal() const;
 
     void setUniformData(uint32_t materialIndex, const UniformData& data) const;
@@ -110,7 +110,7 @@ private:
         std::vector<VkDescriptorSet> geometryDescriptorSets;
     };
 
-    std::map<Entity*, std::vector<uint32_t>> _entityInstanceMap;
+    std::map<const Entity*, std::vector<uint32_t>> _entityInstanceMap;
     std::vector<PerInstanceData> _instanceData;
 };
 

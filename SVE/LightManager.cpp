@@ -32,14 +32,14 @@ LightManager::LightManager()
 
 LightManager::~LightManager() = default;
 
-void LightManager::setLight(std::shared_ptr<LightNode> light, uint16_t index)
+void LightManager::setLight(std::shared_ptr<LightNode> light, uint32_t index)
 {
     if (_lightList.size() <= index)
         _lightList.resize(index + 1);
     _lightList[index] = std::move(light);
 }
 
-std::shared_ptr<LightNode> LightManager::getLight(uint16_t index) const
+std::shared_ptr<LightNode> LightManager::getLight(uint32_t index) const
 {
     assert(index < _lightList.size());
     return _lightList[index];

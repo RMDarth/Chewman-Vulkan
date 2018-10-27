@@ -23,7 +23,7 @@ public:
     // TODO: add IsRefracted method
     void setIsReflected(bool isReflected);
 
-    void updateUniforms(UniformDataList uniformDataList) const override;
+    void updateUniforms(UniformDataList uniformDataList, const UniformDataIndexMap& indexMap) const override;
     void applyDrawingCommands(uint32_t bufferIndex, uint32_t imageIndex) const override;
 
 private:
@@ -40,7 +40,7 @@ private:
     uint32_t _refractionMaterialIndex;
 
     Material* _shadowMaterial;
-    uint32_t _shadowMaterialIndex;
+    //std::vector<uint32_t> _shadowMaterialIndexes;
 };
 
 } // namespace SVE

@@ -21,6 +21,7 @@ public:
     void updateViewMatrix(glm::vec3 cameraPos);
     void fillUniformData(UniformData& data, uint32_t lightNum, bool asViewSource);
     std::shared_ptr<ShadowMap> getShadowMap();
+    bool castShadows() const;
 
     void setNodeTransformation(glm::mat4 transform) override;
 

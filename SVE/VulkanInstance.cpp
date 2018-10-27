@@ -294,7 +294,7 @@ VkCommandBuffer VulkanInstance::createCommandBuffer(BufferIndex bufferIndex)
     return buffer;
 }
 
-VkCommandBuffer VulkanInstance::getCommandBuffer(BufferIndex index)
+VkCommandBuffer VulkanInstance::getCommandBuffer(BufferIndex index) const
 {
     if (index < _commandBuffers.size())
     {
@@ -464,6 +464,43 @@ void VulkanInstance::submitCommands(CommandsType commandsType) const
         _currentWaitSemaphore = _renderFinishedSemaphores[_currentFrame];
     }
 
+}
+
+void VulkanInstance::submitCommands(CommandsType commandsType, BufferIndex bufferIndex) const
+{
+    static VkPipelineStageFlags waitStages[] = { VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT };
+
+    static const std::map<CommandsType, const std::vector<VkSemaphore>&> semaphoresMap = {
+            { CommandsType::ShadowPass, _shadowMapReadySemaphores },
+            { CommandsType::ReflectionPass, _waterReflectionReadySemaphores },
+            { CommandsType::RefractionPass, _waterRefractionReadySemaphores },
+            { CommandsType::ScreenQuadPass, _screenQuadReadySemaphores },
+            { CommandsType::MainPass, _renderFinishedSemaphores }
+    };
+
+    auto commandBuffer = getCommandBuffer(bufferIndex);
+    auto semaphore = semaphoresMap.at(commandsType)[_currentFrame];
+    VkSubmitInfo submitInfo{};
+    submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+    submitInfo.waitSemaphoreCount = 1;
+    submitInfo.pWaitSemaphores = &_currentWaitSemaphore;
+    submitInfo.pWaitDstStageMask = waitStages;
+    submitInfo.commandBufferCount = 1;
+    submitInfo.pCommandBuffers = &commandBuffer;
+    submitInfo.signalSemaphoreCount = 1;
+    submitInfo.pSignalSemaphores = &semaphore;
+
+    auto result = vkQueueSubmit(
+            _queue,
+            1, &submitInfo,
+            commandsType == CommandsType::MainPass ? _inFlightFences[_currentFrame] : VK_NULL_HANDLE);
+
+    if (result != VK_SUCCESS)
+    {
+        throw VulkanException("Can't submit Vulkan command buffers to queue (shadow pass)");
+    }
+
+    _currentWaitSemaphore = semaphore;
 }
 
 void VulkanInstance::renderCommands() const

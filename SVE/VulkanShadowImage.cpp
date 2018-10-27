@@ -211,4 +211,9 @@ void VulkanShadowImage::deleteRenderPass()
     vkDestroyRenderPass(_vulkanInstance->getLogicalDevice(), _renderPass, nullptr);
 }
 
+uint32_t VulkanShadowImage::getBufferID(uint32_t lightIndex, uint32_t bufferNum) const
+{
+    return BUFFER_INDEX_SHADOWMAP + lightIndex * _vulkanInstance->getInFlightSize() + bufferNum;
+}
+
 } // namespace SVE

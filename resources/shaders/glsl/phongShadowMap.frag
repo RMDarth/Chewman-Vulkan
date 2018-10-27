@@ -1,5 +1,6 @@
 #version 450
 #extension GL_ARB_separate_shader_objects : enable
+#define MAX_LIGHTS 6
 #include "lighting.glsl"
 
 layout(set = 1, binding = 0) uniform sampler2D diffuseTex;
@@ -18,7 +19,7 @@ layout(location = 0) in vec3 fragColor;
 layout(location = 1) in vec2 fragTexCoord;
 layout(location = 2) in vec3 fragNormal;
 layout(location = 3) in vec3 fragPos;
-layout(location = 4) in vec4 fragLightSpacePos;
+layout(location = 4) in vec4 fragLightSpacePos[MAX_LIGHTS];
 
 layout(location = 0) out vec4 outColor;
 
@@ -76,7 +77,8 @@ float filterPCF(vec4 lightSpacePos, uint layer)
 	return shadowFactor / count;
 }
 
-void main() {
+void main()
+{
     vec3 diffuse = vec3(texture(diffuseTex, fragTexCoord).rgb);
 
     vec3 norm = normalize(fragNormal);
@@ -93,6 +95,13 @@ void main() {
     if ((ubo.lightInfo.lightFlags & LI_SpotLight) != 0)
         lightEffect += CalcSpotLight(ubo.spotLight, norm, fragPos, viewDir, ubo.materialInfo);
 
-    vec3 result = diffuse * lightEffect * fragColor * filterPCF(fragLightSpacePos, 0);
+    uint layers = textureSize(shadowTex, 0).z;
+    float shadow = 1.0;
+    for (uint i = 0; i < layers; i++)
+    {
+        shadow *= filterPCF(fragLightSpacePos[i], i);
+    }
+
+    vec3 result = diffuse * lightEffect * fragColor * shadow;
     outColor = vec4(result, 1.0);
 }

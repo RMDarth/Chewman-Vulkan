@@ -166,7 +166,7 @@ std::vector<VkDescriptorSet> VulkanMaterial::getDescriptorSets(uint32_t material
     return sets;
 }
 
-uint32_t VulkanMaterial::getInstanceForEntity(Entity* entity, uint32_t index)
+uint32_t VulkanMaterial::getInstanceForEntity(const Entity* entity, uint32_t index)
 {
     auto instanceIter = _entityInstanceMap.find(entity);
     if (instanceIter != _entityInstanceMap.end())

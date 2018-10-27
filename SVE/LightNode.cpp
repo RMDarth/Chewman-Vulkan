@@ -33,7 +33,8 @@ const LightSettings& LightNode::getLightSettings()
 
 void LightNode::updateViewMatrix(glm::vec3 cameraPos)
 {
-    _viewMatrix = glm::lookAt(_originalPos + cameraPos, glm::vec3(0, 0, 0) + cameraPos, glm::vec3(0.0f, 1.0f, 0.0f));
+    if (_lightSettings.lightType == LightType::SunLight)
+        _viewMatrix = glm::lookAt(_originalPos + cameraPos, glm::vec3(0, 0, 0) + cameraPos, glm::vec3(0.0f, 1.0f, 0.0f));
 }
 
 void LightNode::fillUniformData(UniformData& data, uint32_t lightNum, bool asViewSource)
@@ -104,6 +105,11 @@ std::shared_ptr<ShadowMap> LightNode::getShadowMap()
     return _shadowmap;
 }
 
+bool LightNode::castShadows() const
+{
+    return _lightSettings.castShadows;
+}
+
 const glm::mat4& LightNode::getViewMatrix()
 {
     return _viewMatrix;
@@ -126,9 +132,9 @@ void LightNode::createProjectionMatrix()
     switch (_lightSettings.lightType)
     {
         case LightType::PointLight:
-            _projectionMatrix =  glm::perspective(glm::radians(80.0f),
+            _projectionMatrix =  glm::perspective(glm::radians(90.0f),
                                                   1.0f,
-                                                  0.01f,
+                                                  0.1f,
                                                   100.0f);
             _projectionMatrix[1][1] *= -1;
             break;
@@ -140,7 +146,7 @@ void LightNode::createProjectionMatrix()
             _projectionMatrix =  glm::perspective(glm::radians(80.0f),
                                                   1.0f,
                                                   0.01f,
-                                                  100.0f);
+                                                  20.0f);
             _projectionMatrix[1][1] *= -1;
             break;
         case LightType::RectLight:

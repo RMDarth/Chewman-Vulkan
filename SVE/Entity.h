@@ -4,13 +4,16 @@
 #pragma once
 #include <memory>
 #include <vector>
+#include <map>
 
 namespace SVE
 {
 struct UniformData;
 class SceneNode;
+enum class CommandsType : uint8_t;
 
 using UniformDataList = std::vector<std::shared_ptr<UniformData>>;
+using UniformDataIndexMap = std::map<CommandsType, uint32_t>;
 
 // Base class for entities that can be attached to scene nodes
 class Entity : public std::enable_shared_from_this<Entity>
@@ -26,7 +29,7 @@ public:
 
     virtual void setMaterial(const std::string& materialName);
 
-    virtual void updateUniforms(UniformDataList uniformDataList) const = 0;
+    virtual void updateUniforms(UniformDataList uniformDataList, const UniformDataIndexMap& indexMap) const = 0;
     virtual void applyDrawingCommands(uint32_t bufferIndex, uint32_t imageIndex) const = 0;
 
 protected:

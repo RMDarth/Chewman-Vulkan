@@ -55,12 +55,13 @@ public:
     VkFramebuffer getFramebuffer(size_t index) const;
 
     VkCommandBuffer createCommandBuffer(BufferIndex bufferIndex);
-    VkCommandBuffer getCommandBuffer(BufferIndex index);
+    VkCommandBuffer getCommandBuffer(BufferIndex index) const;
 
     const std::vector<VkCommandBuffer>& getCommandBuffersList();
 
     void waitAvailableFramebuffer();
     void submitCommands(CommandsType commandsType) const;
+    void submitCommands(CommandsType commandsType, BufferIndex bufferIndex) const;
     void renderCommands() const;
     uint32_t getCurrentImageIndex() const;
     uint32_t getCurrentFrameIndex() const;
@@ -159,7 +160,7 @@ private:
     VkDeviceMemory _depthImageMemory;
     VkImageView _depthImageView;
 
-    const int MAX_FRAMES_IN_FLIGHT = 2; // max parallel processing frame
+    const uint32_t MAX_FRAMES_IN_FLIGHT = 2; // max parallel processing frame
     std::vector<VkSemaphore> _shadowMapReadySemaphores;
     std::vector<VkSemaphore> _waterReflectionReadySemaphores;
     std::vector<VkSemaphore> _waterRefractionReadySemaphores;

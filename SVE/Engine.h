@@ -28,7 +28,7 @@ enum class CommandsType : uint8_t
     ScreenQuadPass,
 };
 
-static const uint8_t PassCount = 5;
+static const uint8_t PassTypeCount = 5;
 
 class Engine
 {
@@ -53,6 +53,7 @@ public:
     bool isWaterEnabled() const;
 
     CommandsType getPassType() const;
+    uint32_t getPassSubIndex() const;
     float getTime();
 
     void renderFrame();
@@ -66,6 +67,7 @@ private:
     static Engine* _engineInstance;
     std::unique_ptr<VulkanInstance> _vulkanInstance;
     CommandsType _commandsType = CommandsType::MainPass;
+    uint32_t _passSubIndex = 0;
     std::unique_ptr<MaterialManager> _materialManager;
     std::unique_ptr<SceneManager> _sceneManager;
     std::unique_ptr<MeshManager> _meshManager;

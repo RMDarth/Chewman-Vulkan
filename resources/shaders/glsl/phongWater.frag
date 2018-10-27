@@ -48,5 +48,5 @@ void main() {
     float fresnelKoef = dot(viewDir, norm);
 
     vec3 result =  mix(reflectionResult, refractionResult, fresnelKoef);
-    outColor = vec4(lightEffect * mix(result, vec3(0.0, 0.3, 0.5), 0.4), 1.0);
+    outColor = vec4(lightEffect * mix(result, vec3(0.0, 0.3, 0.5), 0.3), 1.0);
 }

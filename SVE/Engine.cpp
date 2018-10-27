@@ -9,6 +9,7 @@
 #include "VulkanScreenQuad.h"
 #include "VulkanException.h"
 #include "VulkanMaterial.h"
+#include "VulkanShadowImage.h"
 #include "MaterialManager.h"
 #include "SceneManager.h"
 #include "ShaderManager.h"
@@ -153,25 +154,25 @@ void createNodeDrawCommands(const std::shared_ptr<SceneNode>& node, uint32_t buf
     }
 }
 
-void updateNode(const std::shared_ptr<SceneNode>& node, UniformDataList& uniformDataList)
+void updateNode(const std::shared_ptr<SceneNode>& node, UniformDataList& uniformDataList, const UniformDataIndexMap& indexMap)
 {
-    auto oldModel = uniformDataList[toInt(CommandsType::MainPass)]->model;
-    uniformDataList[toInt(CommandsType::MainPass)]->model *= node->getNodeTransformation();
-    for (auto i = 1u; i < PassCount; i++)
-        uniformDataList[i]->model = uniformDataList[toInt(CommandsType::MainPass)]->model;
+    auto oldModel = uniformDataList[0]->model;
+    uniformDataList[0]->model *= node->getNodeTransformation();
+    for (auto i = 1u; i < uniformDataList.size(); i++)
+        uniformDataList[i]->model = uniformDataList[0]->model;
 
     // update uniforms
     for (auto& entity : node->getAttachedEntities())
     {
-        entity->updateUniforms(uniformDataList);
+        entity->updateUniforms(uniformDataList, indexMap);
     }
 
     for (auto& child : node->getChildren())
     {
-        updateNode(child, uniformDataList);
+        updateNode(child, uniformDataList, indexMap);
     }
 
-    for (auto i = 0u; i < PassCount; i++)
+    for (auto i = 0u; i < uniformDataList.size(); i++)
         uniformDataList[i]->model = oldModel;
 }
 
@@ -183,13 +184,14 @@ void Engine::renderFrame()
     auto currentFrame = _vulkanInstance->getCurrentFrameIndex();
     auto currentImage = _vulkanInstance->getCurrentImageIndex();
 
-    // update command buffers
+    ////// update command buffers
 
     _vulkanInstance->reallocateCommandBuffers();
 
     _commandsType = CommandsType::ShadowPass;
-    for (auto i = 0; i < _sceneManager->getLightManager()->getLightCount(); i++)
+    for (auto i = 0u; i < _sceneManager->getLightManager()->getLightCount(); i++)
     {
+        _passSubIndex = i;
         auto shadowMap = _sceneManager->getLightManager()->getLight(i)->getShadowMap();
 
         if (shadowMap && shadowMap->isEnabled())
@@ -252,10 +254,26 @@ void Engine::renderFrame()
     _vulkanInstance->endRenderCommandBufferCreation();
 
 
-    // Fill uniform data (from camera and lights)
+    ////// Fill uniform data (from camera and lights)
+
     auto mainCamera = _sceneManager->getMainCamera();
     if (!mainCamera)
         throw VulkanException("Camera not set");
+
+    uint32_t PassCount = 0;
+    UniformDataIndexMap indexMap;
+    for (auto i = 0u; i < PassTypeCount; i++)
+    {
+        indexMap[static_cast<CommandsType>(i)] = PassCount;
+        if (i == toInt(CommandsType::ShadowPass))
+        {
+            PassCount += _sceneManager->getLightManager()->getLightCount();
+        } else {
+            PassCount ++;
+        }
+    }
+
+
 
     // TODO: Init this once
     UniformDataList uniformDataList(PassCount);
@@ -264,7 +282,7 @@ void Engine::renderFrame()
     {
         uniformDataList[i] = std::make_shared<UniformData>();
     }
-    auto& mainUniform = uniformDataList[toInt(CommandsType::MainPass)];
+    auto& mainUniform = uniformDataList[indexMap.at(CommandsType::MainPass)];
 
     mainUniform->clipPlane = glm::vec4(0.0, 1.0, 0.0, 100);
     mainUniform->time = getTime();
@@ -279,40 +297,56 @@ void Engine::renderFrame()
     {
         _sceneManager->getLightManager()->getLight(i)->updateViewMatrix(_sceneManager->getMainCamera()->getPosition());
     }
+
+    for (auto l = 0; l < _sceneManager->getLightManager()->getLightCount(); l++)
+    {
+        _sceneManager->getLightManager()->fillUniformData(*uniformDataList[indexMap.at(CommandsType::ShadowPass) + l], l);
+    }
     for (auto i = 0; i < PassCount; i++)
     {
-        // TODO: Refactor interface for setting view source
-        _sceneManager->getLightManager()->fillUniformData(*uniformDataList[i], i == toInt(CommandsType::ShadowPass) ? 0 : -1);
+        if (i >= indexMap.at(CommandsType::ShadowPass) && i < indexMap.at(CommandsType::ShadowPass) + _sceneManager->getLightManager()->getLightCount())
+            continue;
+        _sceneManager->getLightManager()->fillUniformData(*uniformDataList[i]);
     }
-
 
     if (auto water = _sceneManager->getWater())
     {
-        water->getVulkanWater()->fillUniformData(*uniformDataList[toInt(CommandsType::ReflectionPass)],
+        water->getVulkanWater()->fillUniformData(*uniformDataList[indexMap.at(CommandsType::ReflectionPass)],
                                                  VulkanWater::PassType::Reflection);
-        water->getVulkanWater()->fillUniformData(*uniformDataList[toInt(CommandsType::RefractionPass)],
+        water->getVulkanWater()->fillUniformData(*uniformDataList[indexMap.at(CommandsType::RefractionPass)],
                                                  VulkanWater::PassType::Refraction);
     }
 
-    // update uniforms
-    if (skybox)
-        skybox->updateUniforms(uniformDataList);
-    updateNode(_sceneManager->getRootNode(), uniformDataList);
-    //_materialManager->getMaterial("ScreenQuad")->getVulkanMaterial()->setUniformData(1, *uniformDataList[toInt(CommandsType::MainPass)]);
 
-    // submit command buffers
+    /////// Update uniforms
+
+    if (skybox)
+        skybox->updateUniforms(uniformDataList, indexMap);
+    updateNode(_sceneManager->getRootNode(), uniformDataList, indexMap);
+
+    ///////  Submit command buffers
     if (isShadowMappingEnabled())
     {
-        _vulkanInstance->submitCommands(CommandsType::ShadowPass);
+        for (auto i = 0u; i < _sceneManager->getLightManager()->getLightCount(); i++)
+        {
+            if (_sceneManager->getLightManager()->getLight(i)->castShadows())
+            {
+                _vulkanInstance->submitCommands(
+                        CommandsType::ShadowPass,
+                        _sceneManager->getLightManager()->getVulkanShadowImage()->getBufferID(
+                                i, _vulkanInstance->getCurrentFrameIndex()));
+            }
+        }
     }
     if (auto water = _sceneManager->getWater())
     {
-        _vulkanInstance->submitCommands(CommandsType::ReflectionPass);
-        _vulkanInstance->submitCommands(CommandsType::RefractionPass);
+        _vulkanInstance->submitCommands(CommandsType::ReflectionPass, BUFFER_INDEX_WATER_REFLECTION);
+        _vulkanInstance->submitCommands(CommandsType::RefractionPass, BUFFER_INDEX_WATER_REFRACTION);
     }
     // TODO: Check if screen quad rendering enabled
-    _vulkanInstance->submitCommands(CommandsType::ScreenQuadPass);
-    _vulkanInstance->submitCommands(CommandsType::MainPass);
+    if (_vulkanInstance->getScreenQuad())
+        _vulkanInstance->submitCommands(CommandsType::ScreenQuadPass, BUFFER_INDEX_SCREEN_QUAD);
+    _vulkanInstance->submitCommands(CommandsType::MainPass, _vulkanInstance->getCurrentFrameIndex());
 
     _vulkanInstance->renderCommands();
 }
@@ -331,6 +365,11 @@ void Engine::updateTime()
 CommandsType Engine::getPassType() const
 {
     return _commandsType;
+}
+
+uint32_t Engine::getPassSubIndex() const
+{
+    return _passSubIndex;
 }
 
 bool Engine::isShadowMappingEnabled() const
