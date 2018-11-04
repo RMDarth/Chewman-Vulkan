@@ -16,6 +16,8 @@ class VulkanShaderInfo;
 class VulkanInstance;
 class Entity;
 
+enum class TextureType : uint8_t;
+
 class VulkanMaterial
 {
 public:
@@ -94,7 +96,7 @@ private:
 
     bool _hasExternals;
     std::vector<bool> _textureExternal;
-    std::vector<std::string> _textureExternalName;
+    std::vector<TextureType> _textureExternalType;
 
     struct PerInstanceData
     {

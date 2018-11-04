@@ -20,7 +20,6 @@ public:
     const LightSettings& getLightSettings();
     void updateViewMatrix(glm::vec3 cameraPos);
     void fillUniformData(UniformData& data, uint32_t lightNum, bool asViewSource);
-    std::shared_ptr<ShadowMap> getShadowMap();
     bool castShadows() const;
 
     void setNodeTransformation(glm::mat4 transform) override;
@@ -38,7 +37,7 @@ private:
     glm::mat4 _viewMatrix;
     glm::mat4 _projectionMatrix;
 
-    std::shared_ptr<ShadowMap> _shadowmap;
+    std::vector<glm::mat4> _projectionList;
 };
 
 } // namespace SVE

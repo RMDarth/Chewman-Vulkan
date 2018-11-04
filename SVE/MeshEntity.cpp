@@ -48,7 +48,7 @@ void MeshEntity::setIsReflected(bool isReflected)
     _isReflected = isReflected;
 }
 
-void MeshEntity::updateUniforms(UniformDataList uniformDataList, const UniformDataIndexMap& indexMap) const
+void MeshEntity::updateUniforms(UniformDataList uniformDataList) const
 {
     for (auto& uniformData : uniformDataList)
     {
@@ -57,32 +57,32 @@ void MeshEntity::updateUniforms(UniformDataList uniformDataList, const UniformDa
         uniformData->materialInfo = std::move(materialInfo);
     }
 
-    UniformData newData = *uniformDataList[indexMap.at(CommandsType::MainPass)];
+    UniformData newData = *uniformDataList[toInt(CommandsType::MainPass)];
 
     _mesh->updateUniformDataBones(newData, Engine::getInstance()->getTime());
     _material->getVulkanMaterial()->setUniformData(_materialIndex, newData);
 
     if (_shadowMaterial)
     {
-        auto nextPassType = static_cast<CommandsType>(toInt(CommandsType::ShadowPass) + 1);
-        uint32_t lightIndex = 0;
-        for (auto i = indexMap.at(CommandsType::ShadowPass); i < indexMap.at(nextPassType); i++)
-        {
-            UniformData newShadowData = *uniformDataList[i];
-            newShadowData.bones = newData.bones;
-            _shadowMaterial->getVulkanMaterial()->setUniformData(
-                    _shadowMaterial->getVulkanMaterial()->getInstanceForEntity(this, lightIndex),
-                    newShadowData);
-            lightIndex++;
-        }
+        UniformData newShadowData = *uniformDataList[toInt(CommandsType::ShadowPassDirectLight)];
+        newShadowData.bones = newData.bones;
+        _shadowMaterial->getVulkanMaterial()->setUniformData(
+                _shadowMaterial->getVulkanMaterial()->getInstanceForEntity(this, 0),
+                newShadowData);
+
+        UniformData newShadowData2 = *uniformDataList[toInt(CommandsType::ShadowPassPointLights)];
+        newShadowData2.bones = newData.bones;
+        _shadowMaterial->getVulkanMaterial()->setUniformData(
+                _shadowMaterial->getVulkanMaterial()->getInstanceForEntity(this, 1),
+                newShadowData2);
     }
     if (Engine::getInstance()->isWaterEnabled())
     {
-        UniformData newReflectionData = *uniformDataList[indexMap.at(CommandsType::ReflectionPass)];
+        UniformData newReflectionData = *uniformDataList[toInt(CommandsType::ReflectionPass)];
         newReflectionData.bones = newData.bones;
         _material->getVulkanMaterial()->setUniformData(_reflectionMaterialIndex, newReflectionData);
 
-        UniformData newRefractionData = *uniformDataList[indexMap.at(CommandsType::RefractionPass)];
+        UniformData newRefractionData = *uniformDataList[toInt(CommandsType::RefractionPass)];
         newRefractionData.bones = newData.bones;
         _material->getVulkanMaterial()->setUniformData(_refractionMaterialIndex, newRefractionData);
     }
@@ -103,13 +103,21 @@ void MeshEntity::applyDrawingCommands(uint32_t bufferIndex, uint32_t imageIndex)
 
         _material->getVulkanMaterial()->applyDrawingCommands(bufferIndex, imageIndex, _refractionMaterialIndex);
     }
-    else if (Engine::getInstance()->getPassType() == CommandsType::ShadowPass)
+    else if (Engine::getInstance()->getPassType() == CommandsType::ShadowPassDirectLight)
     {
         if (_shadowMaterial && _castShadows)
             _shadowMaterial->getVulkanMaterial()->applyDrawingCommands(
                     bufferIndex,
                     imageIndex,
-                    _shadowMaterial->getVulkanMaterial()->getInstanceForEntity(this, Engine::getInstance()->getPassSubIndex()));
+                    _shadowMaterial->getVulkanMaterial()->getInstanceForEntity(this, 0));
+    }
+    else if (Engine::getInstance()->getPassType() == CommandsType::ShadowPassPointLights)
+    {
+        if (_shadowMaterial && _castShadows)
+            _shadowMaterial->getVulkanMaterial()->applyDrawingCommands(
+                    bufferIndex,
+                    imageIndex,
+                    _shadowMaterial->getVulkanMaterial()->getInstanceForEntity(this, 1));
     }
     else
     {

@@ -13,8 +13,6 @@
 namespace SVE
 {
 
-const std::string ScreenQuadSamplerName = "screenquad";
-
 VulkanScreenQuad::VulkanScreenQuad()
     : _vulkanInstance(Engine::getInstance()->getVulkanInstance())
     , _width(_vulkanInstance->getExtent().width)
@@ -27,7 +25,7 @@ VulkanScreenQuad::VulkanScreenQuad()
 
     VulkanSamplerHolder::SamplerInfo samplerInfo { _resolveImageView, _colorSampler };
     VulkanSamplerInfoList list(3, samplerInfo);
-    _vulkanInstance->getSamplerHolder()->setSamplerInfo(ScreenQuadSamplerName, list);
+    _vulkanInstance->getSamplerHolder()->setSamplerInfo(TextureType::ScreenQuad, list);
 }
 
 VulkanScreenQuad::~VulkanScreenQuad()

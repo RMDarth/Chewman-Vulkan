@@ -154,7 +154,7 @@ void createNodeDrawCommands(const std::shared_ptr<SceneNode>& node, uint32_t buf
     }
 }
 
-void updateNode(const std::shared_ptr<SceneNode>& node, UniformDataList& uniformDataList, const UniformDataIndexMap& indexMap)
+void updateNode(const std::shared_ptr<SceneNode>& node, UniformDataList& uniformDataList)
 {
     auto oldModel = uniformDataList[0]->model;
     uniformDataList[0]->model *= node->getNodeTransformation();
@@ -164,12 +164,12 @@ void updateNode(const std::shared_ptr<SceneNode>& node, UniformDataList& uniform
     // update uniforms
     for (auto& entity : node->getAttachedEntities())
     {
-        entity->updateUniforms(uniformDataList, indexMap);
+        entity->updateUniforms(uniformDataList);
     }
 
     for (auto& child : node->getChildren())
     {
-        updateNode(child, uniformDataList, indexMap);
+        updateNode(child, uniformDataList);
     }
 
     for (auto i = 0u; i < uniformDataList.size(); i++)
@@ -188,7 +188,7 @@ void Engine::renderFrame()
 
     _vulkanInstance->reallocateCommandBuffers();
 
-    _commandsType = CommandsType::ShadowPass;
+    /*_commandsType = CommandsType::ShadowPass;
     for (auto i = 0u; i < _sceneManager->getLightManager()->getLightCount(); i++)
     {
         _passSubIndex = i;
@@ -206,6 +206,37 @@ void Engine::renderFrame()
             shadowMap->getVulkanShadowMap()->endRenderCommandBufferCreation(
                     _vulkanInstance->getCurrentFrameIndex());
         }
+    }*/
+
+    _commandsType = CommandsType::ShadowPassDirectLight;
+    if (auto directLight = _sceneManager->getLightManager()->getDirectionLight())
+    {
+        if (auto sunLightShadowMap = _sceneManager->getLightManager()->getDirectLightShadowMap())
+        {
+            sunLightShadowMap->getVulkanShadowMap()->reallocateCommandBuffers();
+
+            auto bufferIndex =
+                    sunLightShadowMap->getVulkanShadowMap()->startRenderCommandBufferCreation(
+                            _vulkanInstance->getCurrentFrameIndex(),
+                            _vulkanInstance->getCurrentImageIndex());
+            createNodeDrawCommands(_sceneManager->getRootNode(), bufferIndex, currentImage);
+            sunLightShadowMap->getVulkanShadowMap()->endRenderCommandBufferCreation(
+                    _vulkanInstance->getCurrentFrameIndex());
+        }
+    }
+
+    _commandsType = CommandsType::ShadowPassPointLights;
+    if (auto pointLightShadowMap = _sceneManager->getLightManager()->getPointLightShadowMap())
+    {
+        pointLightShadowMap->getVulkanShadowMap()->reallocateCommandBuffers();
+
+        auto bufferIndex =
+                pointLightShadowMap->getVulkanShadowMap()->startRenderCommandBufferCreation(
+                        _vulkanInstance->getCurrentFrameIndex(),
+                        _vulkanInstance->getCurrentImageIndex());
+        createNodeDrawCommands(_sceneManager->getRootNode(), bufferIndex, currentImage);
+        pointLightShadowMap->getVulkanShadowMap()->endRenderCommandBufferCreation(
+                _vulkanInstance->getCurrentFrameIndex());
     }
 
     if (auto water = _sceneManager->getWater())
@@ -260,21 +291,6 @@ void Engine::renderFrame()
     if (!mainCamera)
         throw VulkanException("Camera not set");
 
-    uint32_t PassCount = 0;
-    UniformDataIndexMap indexMap;
-    for (auto i = 0u; i < PassTypeCount; i++)
-    {
-        indexMap[static_cast<CommandsType>(i)] = PassCount;
-        if (i == toInt(CommandsType::ShadowPass))
-        {
-            PassCount += _sceneManager->getLightManager()->getLightCount();
-        } else {
-            PassCount ++;
-        }
-    }
-
-
-
     // TODO: Init this once
     UniformDataList uniformDataList(PassCount);
 
@@ -282,7 +298,7 @@ void Engine::renderFrame()
     {
         uniformDataList[i] = std::make_shared<UniformData>();
     }
-    auto& mainUniform = uniformDataList[indexMap.at(CommandsType::MainPass)];
+    auto& mainUniform = uniformDataList[toInt(CommandsType::MainPass)];
 
     mainUniform->clipPlane = glm::vec4(0.0, 1.0, 0.0, 100);
     mainUniform->time = getTime();
@@ -293,27 +309,24 @@ void Engine::renderFrame()
         *uniformDataList[i] = *mainUniform;
     }
 
-    for (auto i = 0u; i < _sceneManager->getLightManager()->getLightCount(); i++)
-    {
-        _sceneManager->getLightManager()->getLight(i)->updateViewMatrix(_sceneManager->getMainCamera()->getPosition());
-    }
-
+    _sceneManager->getLightManager()->getDirectionLight()->updateViewMatrix(_sceneManager->getMainCamera()->getPosition());
+    _sceneManager->getLightManager()->fillUniformData(*uniformDataList[toInt(CommandsType::ShadowPassDirectLight)], 0);
     for (auto l = 0; l < _sceneManager->getLightManager()->getLightCount(); l++)
     {
-        _sceneManager->getLightManager()->fillUniformData(*uniformDataList[indexMap.at(CommandsType::ShadowPass) + l], l);
+        _sceneManager->getLightManager()->fillUniformData(*uniformDataList[toInt(CommandsType::ShadowPassPointLights)], l + 1);
     }
-    for (auto i = 0; i < PassCount; i++)
+    for (auto i = 0u; i < PassCount; i++)
     {
-        if (i >= indexMap.at(CommandsType::ShadowPass) && i < indexMap.at(CommandsType::ShadowPass) + _sceneManager->getLightManager()->getLightCount())
+        if (i == toInt(CommandsType::ShadowPassDirectLight) || i == toInt(CommandsType::ShadowPassPointLights))
             continue;
         _sceneManager->getLightManager()->fillUniformData(*uniformDataList[i]);
     }
 
     if (auto water = _sceneManager->getWater())
     {
-        water->getVulkanWater()->fillUniformData(*uniformDataList[indexMap.at(CommandsType::ReflectionPass)],
+        water->getVulkanWater()->fillUniformData(*uniformDataList[toInt(CommandsType::ReflectionPass)],
                                                  VulkanWater::PassType::Reflection);
-        water->getVulkanWater()->fillUniformData(*uniformDataList[indexMap.at(CommandsType::RefractionPass)],
+        water->getVulkanWater()->fillUniformData(*uniformDataList[toInt(CommandsType::RefractionPass)],
                                                  VulkanWater::PassType::Refraction);
     }
 
@@ -321,22 +334,19 @@ void Engine::renderFrame()
     /////// Update uniforms
 
     if (skybox)
-        skybox->updateUniforms(uniformDataList, indexMap);
-    updateNode(_sceneManager->getRootNode(), uniformDataList, indexMap);
+        skybox->updateUniforms(uniformDataList);
+    updateNode(_sceneManager->getRootNode(), uniformDataList);
 
     ///////  Submit command buffers
     if (isShadowMappingEnabled())
     {
-        for (auto i = 0u; i < _sceneManager->getLightManager()->getLightCount(); i++)
-        {
-            if (_sceneManager->getLightManager()->getLight(i)->castShadows())
-            {
-                _vulkanInstance->submitCommands(
-                        CommandsType::ShadowPass,
-                        _sceneManager->getLightManager()->getVulkanShadowImage()->getBufferID(
-                                i, _vulkanInstance->getCurrentFrameIndex()));
-            }
-        }
+        _vulkanInstance->submitCommands(
+                CommandsType::ShadowPassDirectLight,
+                BUFFER_INDEX_SHADOWMAP_SUN + _vulkanInstance->getCurrentFrameIndex());
+
+      /*  _vulkanInstance->submitCommands(
+                CommandsType::ShadowPassPointLights,
+                BUFFER_INDEX_SHADOWMAP_POINT + _vulkanInstance->getCurrentFrameIndex());*/
     }
     if (auto water = _sceneManager->getWater())
     {
@@ -365,11 +375,6 @@ void Engine::updateTime()
 CommandsType Engine::getPassType() const
 {
     return _commandsType;
-}
-
-uint32_t Engine::getPassSubIndex() const
-{
-    return _passSubIndex;
 }
 
 bool Engine::isShadowMappingEnabled() const

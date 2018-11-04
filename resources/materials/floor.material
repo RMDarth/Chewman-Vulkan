@@ -10,7 +10,7 @@
         },
         {
             "samplerName": "shadowTex",
-            "textureType": "ShadowMap"
+            "textureType": "ShadowMapDirect"
         }
     ]
 }

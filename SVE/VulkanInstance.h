@@ -20,10 +20,11 @@ class VulkanPassInfo;
 // TODO: Create some mapping to external indexes instead of hardcoding
 enum
 {
-    BUFFER_INDEX_SHADOWMAP = 100,
-    BUFFER_INDEX_WATER_REFLECTION = 200,
-    BUFFER_INDEX_WATER_REFRACTION = 201,
-    BUFFER_INDEX_SCREEN_QUAD = 300
+    BUFFER_INDEX_SHADOWMAP_SUN = 100,
+    BUFFER_INDEX_SHADOWMAP_POINT = 200,
+    BUFFER_INDEX_WATER_REFLECTION = 300,
+    BUFFER_INDEX_WATER_REFRACTION = 301,
+    BUFFER_INDEX_SCREEN_QUAD = 400
 };
 
 using PoolID = uint32_t;
@@ -60,7 +61,6 @@ public:
     const std::vector<VkCommandBuffer>& getCommandBuffersList();
 
     void waitAvailableFramebuffer();
-    void submitCommands(CommandsType commandsType) const;
     void submitCommands(CommandsType commandsType, BufferIndex bufferIndex) const;
     void renderCommands() const;
     uint32_t getCurrentImageIndex() const;
@@ -161,7 +161,8 @@ private:
     VkImageView _depthImageView;
 
     const uint32_t MAX_FRAMES_IN_FLIGHT = 2; // max parallel processing frame
-    std::vector<VkSemaphore> _shadowMapReadySemaphores;
+    std::vector<VkSemaphore> _shadowMapDirectReadySemaphores;
+    std::vector<VkSemaphore> _shadowMapPointReadySemaphores;
     std::vector<VkSemaphore> _waterReflectionReadySemaphores;
     std::vector<VkSemaphore> _waterRefractionReadySemaphores;
     std::vector<VkSemaphore> _screenQuadReadySemaphores;

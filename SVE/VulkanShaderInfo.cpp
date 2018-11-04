@@ -5,6 +5,7 @@
 #include "VulkanException.h"
 #include "VulkanInstance.h"
 #include "Engine.h"
+#include "LightManager.h"
 #include <fstream>
 
 namespace SVE
@@ -89,9 +90,16 @@ size_t VulkanShaderInfo::getShaderUniformsSize() const
         } else if (info.uniformType == UniformType::LightPoint)
         {
             size += sizeMap.at(info.uniformType) * _shaderSettings.maxPointLightSize;
-        } else if (info.uniformType == UniformType::LightViewProjection)
+        } else if (info.uniformType == UniformType::LightPointViewProjectionList)
         {
             size += sizeMap.at(info.uniformType) * _shaderSettings.maxLightSize;
+        } else if (info.uniformType == UniformType::LightDirectViewProjectionList)
+        {
+            size += sizeMap.at(info.uniformType) * _shaderSettings.maxCascadeLightSize;
+        }
+        else if (info.uniformType == UniformType::ViewProjectionMatrixList)
+        {
+            size += sizeMap.at(info.uniformType) * _shaderSettings.maxViewProjectionMatrices;
         }
         else
         {
@@ -265,6 +273,12 @@ void VulkanShaderInfo::createDescriptorSetLayout()
         descriptorList.push_back(uboLayoutBinding);
     }
 
+    if (descriptorList.empty())
+    {
+        _descriptorSetLayout = VK_NULL_HANDLE;
+        return;
+    }
+
     VkDescriptorSetLayoutCreateInfo descriptorSetLayoutCreateInfo {};
     descriptorSetLayoutCreateInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
     descriptorSetLayoutCreateInfo.bindingCount = descriptorList.size();
@@ -304,6 +318,5 @@ VkShaderModule VulkanShaderInfo::createShaderModule(const std::vector<char> &cod
 
     return shaderModule;
 }
-
 
 } // namespace SVE

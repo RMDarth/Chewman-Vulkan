@@ -385,7 +385,9 @@ void VulkanMaterial::createPipelineLayout()
 
     for (auto* shader : _shaderList)
     {
-        descriptorLayouts.push_back(shader->getDescriptorSetLayout());
+        auto descriptorLayout = shader->getDescriptorSetLayout();
+        if (descriptorLayout != VK_NULL_HANDLE)
+            descriptorLayouts.push_back(descriptorLayout);
     }
 
     VkPipelineLayoutCreateInfo pipelineLayoutCreateInfo{};
@@ -415,7 +417,7 @@ void VulkanMaterial::createTextureImages()
     size_t imageCount = _materialSettings.textures.size();
     _mipLevels.resize(imageCount);
     _textureExternal.resize(imageCount);
-    _textureExternalName.resize(imageCount);
+    _textureExternalType.resize(imageCount);
     _textureImages.resize(imageCount);
     _textureImageMemoryList.resize(imageCount);
     _textureNames.resize(imageCount);
@@ -430,33 +432,9 @@ void VulkanMaterial::createTextureImages()
             _hasExternals = true;
             _textureExternal[i] = true;
 
-            // TODO: Revise texture type enum, probably it should be string
-            switch (_materialSettings.textures[i].textureType)
-            {
-                // TODO: Add checks for if external object exists
-                case TextureType::ShadowMap:
-                {
-                    _textureExternalName[i] = "shadowmap";
-                    continue;
-                }
-                case TextureType::Reflection:
-                {
-                    _textureExternalName[i] = "reflection";
-                    continue;
-                }
-                case TextureType::Refraction:
-                {
-                    _textureExternalName[i] = "refraction";
-                    continue;
-                }
-                case TextureType::ScreenQuad:
-                {
-                    _textureExternalName[i] = "screenquad";
-                    continue;
-                }
-                default:
-                    throw VulkanException("Image file is not external image in material");
-            }
+            // TODO: For more generic cases, texture type should be string (or custom with additional string attr)
+            _textureExternalType[i] = _materialSettings.textures[i].textureType;
+            continue;
         } else {
             _textureExternal[i] = false;
         }
@@ -535,7 +513,7 @@ void VulkanMaterial::createCubemapTextureImages()
     _textureImageMemoryList.resize(1);
     _textureNames.resize(1);
     _textureExternal.resize(1);
-    _textureExternalName.resize(1);
+    _textureExternalType.resize(1);
     _textureImageViews.resize(1);
     _textureSamplers.resize(1);
     std::vector<stbi_uc*> pixelsData;
@@ -760,11 +738,15 @@ void VulkanMaterial::createUniformBuffers()
             return;
 
         VkDeviceSize bufferSize = shaderInfo->getShaderUniformsSize();
+        data.uniformBuffersMemory.resize(data.uniformBuffersMemory.size() + swapchainSize);
         if (bufferSize == 0)
+        {
+            memoryBufferOffset += swapchainSize;
             return;
+        }
+
 
         buffers.resize(swapchainSize);
-        data.uniformBuffersMemory.resize(data.uniformBuffersMemory.size() + swapchainSize);
 
         for (auto i = 0u; i < swapchainSize; i++)
         {
@@ -904,7 +886,7 @@ void VulkanMaterial::createDescriptorSets()
 
                     imageInfoList.push_back(imageInfo);
                 } else {
-                    const auto& samplerInfoList = _vulkanInstance->getSamplerHolder()->getSamplerInfo(_textureExternalName[index]);
+                    const auto& samplerInfoList = _vulkanInstance->getSamplerHolder()->getSamplerInfo(_textureExternalType[index]);
                     if (!samplerInfoList.empty())
                     {
                         VkDescriptorImageInfo imageInfo{};
@@ -1023,7 +1005,7 @@ void VulkanMaterial::updateDescriptorSet(
 
             imageInfoList.push_back(imageInfo);
         } else {
-            const auto& samplerInfoList = _vulkanInstance->getSamplerHolder()->getSamplerInfo(_textureExternalName[index]);
+            const auto& samplerInfoList = _vulkanInstance->getSamplerHolder()->getSamplerInfo(_textureExternalType[index]);
             if (!samplerInfoList.empty() && samplerInfoList[imageIndex].imageView != VK_NULL_HANDLE)
             {
                 VkDescriptorImageInfo imageInfo{};
@@ -1101,6 +1083,11 @@ std::vector<char> VulkanMaterial::getUniformDataByType(const UniformData& data, 
             const char* byteData = reinterpret_cast<const char*>(&vp);
             return std::vector<char>(byteData, byteData + sizeof(vp));
         }
+        case UniformType::ViewProjectionMatrixList:
+        {
+            const char* byteData = reinterpret_cast<const char*>(data.viewProjectionList.data());
+            return std::vector<char>(byteData, byteData + sizeMap.at(type) * data.viewProjectionList.size());
+        }
         case UniformType::CameraPosition:
         {
             const char* byteData = reinterpret_cast<const char*>(&data.cameraPos);
@@ -1131,10 +1118,15 @@ std::vector<char> VulkanMaterial::getUniformDataByType(const UniformData& data, 
             const char* byteData = reinterpret_cast<const char*>(&data.spotLight);
             return std::vector<char>(byteData, byteData + sizeMap.at(type));
         }
-        case UniformType::LightViewProjection:
+        case UniformType::LightPointViewProjectionList:
         {
-            const char* byteData = reinterpret_cast<const char*>(data.lightViewProjectionList.data());
-            return std::vector<char>(byteData, byteData + sizeMap.at(type) * data.lightViewProjectionList.size());
+            const char* byteData = reinterpret_cast<const char*>(data.lightPointViewProjectionList.data());
+            return std::vector<char>(byteData, byteData + sizeMap.at(type) * data.lightPointViewProjectionList.size());
+        }
+        case UniformType::LightDirectViewProjectionList:
+        {
+            const char* byteData = reinterpret_cast<const char*>(data.lightDirectViewProjectionList.data());
+            return std::vector<char>(byteData, byteData + sizeMap.at(type) * data.lightDirectViewProjectionList.size());
         }
         case UniformType::BoneMatrices:
         {

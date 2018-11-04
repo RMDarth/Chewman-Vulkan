@@ -12,7 +12,8 @@ namespace SVE
 enum class TextureType : uint8_t
 {
     ImageFile,
-    ShadowMap,
+    ShadowMapDirect,
+    ShadowMapPoint,
     Reflection,
     Refraction,
     ScreenQuad

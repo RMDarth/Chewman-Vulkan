@@ -338,140 +338,13 @@ void VulkanInstance::waitAvailableFramebuffer()
     }
 }
 
-void VulkanInstance::submitCommands(CommandsType commandsType) const
-{
-    static VkPipelineStageFlags waitStages[] = { VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT };
-
-    if (commandsType == CommandsType::ShadowPass)
-    {
-        // TODO: index calculation should be placed in some function
-        auto shadowMapIter = _externalBufferMap.find(BUFFER_INDEX_SHADOWMAP + _currentFrame * 6);
-        if (shadowMapIter != _externalBufferMap.end())
-        {
-            VkSubmitInfo submitInfo{};
-            submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-            submitInfo.waitSemaphoreCount = 1;
-            submitInfo.pWaitSemaphores = &_currentWaitSemaphore;
-            submitInfo.pWaitDstStageMask = waitStages;
-            submitInfo.commandBufferCount = 1;
-            submitInfo.pCommandBuffers = &shadowMapIter->second;
-            submitInfo.signalSemaphoreCount = 1;
-            submitInfo.pSignalSemaphores = &_shadowMapReadySemaphores[_currentFrame];
-
-            auto result = vkQueueSubmit(_queue, 1, &submitInfo, VK_NULL_HANDLE);
-            if (result != VK_SUCCESS)
-            {
-                throw VulkanException("Can't submit Vulkan command buffers to queue (shadow pass)");
-            }
-
-            _currentWaitSemaphore = _shadowMapReadySemaphores[_currentFrame];
-        }
-    }
-
-    if (commandsType == CommandsType::ReflectionPass)
-    {
-        auto waterReflectionIter = _externalBufferMap.find(BUFFER_INDEX_WATER_REFLECTION);
-        if (waterReflectionIter != _externalBufferMap.end())
-        {
-            VkSubmitInfo submitInfo{};
-            submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-            submitInfo.waitSemaphoreCount = 1;
-            submitInfo.pWaitSemaphores = &_currentWaitSemaphore;
-            submitInfo.pWaitDstStageMask = waitStages;
-            submitInfo.commandBufferCount = 1;
-            submitInfo.pCommandBuffers = &waterReflectionIter->second;
-            submitInfo.signalSemaphoreCount = 1;
-            submitInfo.pSignalSemaphores = &_waterReflectionReadySemaphores[_currentFrame];
-
-            auto result = vkQueueSubmit(_queue, 1, &submitInfo, VK_NULL_HANDLE);
-            if (result != VK_SUCCESS)
-            {
-                throw VulkanException("Can't submit Vulkan command buffers to queue");
-            }
-
-            _currentWaitSemaphore = _waterReflectionReadySemaphores[_currentFrame];
-        }
-    }
-
-    if (commandsType == CommandsType::RefractionPass)
-    {
-        auto waterRefractionIter = _externalBufferMap.find(BUFFER_INDEX_WATER_REFRACTION);
-        if (waterRefractionIter != _externalBufferMap.end())
-        {
-            VkSubmitInfo submitInfo{};
-            submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-            submitInfo.waitSemaphoreCount = 1;
-            submitInfo.pWaitSemaphores = &_currentWaitSemaphore;
-            submitInfo.pWaitDstStageMask = waitStages;
-            submitInfo.commandBufferCount = 1;
-            submitInfo.pCommandBuffers = &waterRefractionIter->second;
-            submitInfo.signalSemaphoreCount = 1;
-            submitInfo.pSignalSemaphores = &_waterRefractionReadySemaphores[_currentFrame];
-
-            auto result = vkQueueSubmit(_queue, 1, &submitInfo, VK_NULL_HANDLE);
-            if (result != VK_SUCCESS)
-            {
-                throw VulkanException("Can't submit Vulkan command buffers to queue");
-            }
-
-            _currentWaitSemaphore = _waterRefractionReadySemaphores[_currentFrame];
-        }
-    }
-
-    if (commandsType == CommandsType::ScreenQuadPass)
-    {
-        auto screenQuadIter = _externalBufferMap.find(BUFFER_INDEX_SCREEN_QUAD);
-        if (screenQuadIter != _externalBufferMap.end())
-        {
-            VkSubmitInfo submitInfo{};
-            submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-            submitInfo.waitSemaphoreCount = 1;
-            submitInfo.pWaitSemaphores = &_currentWaitSemaphore;
-            submitInfo.pWaitDstStageMask = waitStages;
-            submitInfo.commandBufferCount = 1;
-            submitInfo.pCommandBuffers = &screenQuadIter->second;
-            submitInfo.signalSemaphoreCount = 1;
-            submitInfo.pSignalSemaphores = &_screenQuadReadySemaphores[_currentFrame];
-
-            auto result = vkQueueSubmit(_queue, 1, &submitInfo, VK_NULL_HANDLE);
-            if (result != VK_SUCCESS)
-            {
-                throw VulkanException("Can't submit Vulkan command buffers to queue (screen quad pass)");
-            }
-
-            _currentWaitSemaphore = _screenQuadReadySemaphores[_currentFrame];
-        }
-    }
-
-    if (commandsType == CommandsType::MainPass)
-    {
-        VkSubmitInfo submitInfo{};
-        submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-        submitInfo.waitSemaphoreCount = 1;
-        submitInfo.pWaitSemaphores = &_currentWaitSemaphore;
-        submitInfo.pWaitDstStageMask = waitStages; // should be same size as wait semaphores
-        submitInfo.commandBufferCount = 1;
-        submitInfo.pCommandBuffers = &_commandBuffers[_currentFrame]; // command buffer to submit (should be the one with current swap chain image attachment)
-        submitInfo.signalSemaphoreCount = 1;
-        submitInfo.pSignalSemaphores = &_renderFinishedSemaphores[_currentFrame];
-
-        //vkResetFences(_device, 1, &_inFlightFences[_currentFrame]);
-        if (vkQueueSubmit(_queue, 1, &submitInfo, _inFlightFences[_currentFrame]) != VK_SUCCESS)
-        {
-            throw VulkanException("Can't submit Vulkan command buffers to queue (main pass)");
-        }
-
-        _currentWaitSemaphore = _renderFinishedSemaphores[_currentFrame];
-    }
-
-}
-
 void VulkanInstance::submitCommands(CommandsType commandsType, BufferIndex bufferIndex) const
 {
     static VkPipelineStageFlags waitStages[] = { VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT };
 
     static const std::map<CommandsType, const std::vector<VkSemaphore>&> semaphoresMap = {
-            { CommandsType::ShadowPass, _shadowMapReadySemaphores },
+            { CommandsType::ShadowPassDirectLight, _shadowMapDirectReadySemaphores },
+            { CommandsType::ShadowPassPointLights, _shadowMapPointReadySemaphores },
             { CommandsType::ReflectionPass, _waterReflectionReadySemaphores },
             { CommandsType::RefractionPass, _waterRefractionReadySemaphores },
             { CommandsType::ScreenQuadPass, _screenQuadReadySemaphores },
@@ -739,6 +612,7 @@ void VulkanInstance::createDevice()
     VkPhysicalDeviceFeatures deviceFeatures {};
     deviceFeatures.samplerAnisotropy = VK_TRUE;
     deviceFeatures.shaderClipDistance = VK_TRUE;
+    deviceFeatures.geometryShader = VK_TRUE;
 
     VkDeviceCreateInfo deviceCreateInfo{};
     deviceCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
@@ -1194,7 +1068,8 @@ void VulkanInstance::createSyncPrimitives()
 
     _imageAvailableSemaphores.resize(MAX_FRAMES_IN_FLIGHT);
     _renderFinishedSemaphores.resize(MAX_FRAMES_IN_FLIGHT);
-    _shadowMapReadySemaphores.resize(MAX_FRAMES_IN_FLIGHT);
+    _shadowMapDirectReadySemaphores.resize(MAX_FRAMES_IN_FLIGHT);
+    _shadowMapPointReadySemaphores.resize(MAX_FRAMES_IN_FLIGHT);
     _waterReflectionReadySemaphores.resize(MAX_FRAMES_IN_FLIGHT);
     _waterRefractionReadySemaphores.resize(MAX_FRAMES_IN_FLIGHT);
     _screenQuadReadySemaphores.resize(MAX_FRAMES_IN_FLIGHT);
@@ -1212,7 +1087,11 @@ void VulkanInstance::createSyncPrimitives()
         {
             throw std::runtime_error("Failed to create Vulkan semaphore");
         }
-        if (vkCreateSemaphore(_device, &semaphoreCreateInfo, nullptr, &_shadowMapReadySemaphores[i]) != VK_SUCCESS)
+        if (vkCreateSemaphore(_device, &semaphoreCreateInfo, nullptr, &_shadowMapDirectReadySemaphores[i]) != VK_SUCCESS)
+        {
+            throw std::runtime_error("Failed to create Vulkan semaphore");
+        }
+        if (vkCreateSemaphore(_device, &semaphoreCreateInfo, nullptr, &_shadowMapPointReadySemaphores[i]) != VK_SUCCESS)
         {
             throw std::runtime_error("Failed to create Vulkan semaphore");
         }
@@ -1249,7 +1128,8 @@ void VulkanInstance::deleteSyncPrimitives()
     {
         vkDestroySemaphore(_device, _imageAvailableSemaphores[i], nullptr);
         vkDestroySemaphore(_device, _renderFinishedSemaphores[i], nullptr);
-        vkDestroySemaphore(_device, _shadowMapReadySemaphores[i], nullptr);
+        vkDestroySemaphore(_device, _shadowMapDirectReadySemaphores[i], nullptr);
+        vkDestroySemaphore(_device, _shadowMapPointReadySemaphores[i], nullptr);
         vkDestroySemaphore(_device, _waterRefractionReadySemaphores[i], nullptr);
         vkDestroySemaphore(_device, _waterReflectionReadySemaphores[i], nullptr);
         vkDestroySemaphore(_device, _screenQuadReadySemaphores[i], nullptr);

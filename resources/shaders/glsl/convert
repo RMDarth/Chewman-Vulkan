@@ -1,5 +1,5 @@
 #!/bin/bash
-for file in ./*.{vert,frag}
+for file in ./*.{vert,frag,geom}
 do
     echo "Compiling $file."
     /home/darth/Software/shaderc/bin/glslc/glslc -c $file -o $file.spv

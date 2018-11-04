@@ -177,10 +177,10 @@ int runGame()
         engine->getResourceManager()->loadFolder("resources");
 
         // configure light
-        engine->getSceneManager()->getLightManager()->getLight(0)->setNodeTransformation(
+        engine->getSceneManager()->getLightManager()->getDirectionLight()->setNodeTransformation(
                 glm::translate(glm::mat4(1), glm::vec3(15, 15, -15)));
-        if (engine->getSceneManager()->getLightManager()->getLightCount() > 1)
-            engine->getSceneManager()->getLightManager()->getLight(1)->setNodeTransformation(
+        if (engine->getSceneManager()->getLightManager()->getLightCount() > 0)
+            engine->getSceneManager()->getLightManager()->getLight(0)->setNodeTransformation(
                     glm::translate(glm::mat4(1), glm::vec3(5, 5, 5)));
 
         // create camera

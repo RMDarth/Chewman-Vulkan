@@ -14,5 +14,5 @@ out gl_PerVertex {
 };
 
 void main() {
-	gl_Position = matrices.viewProjection * matrices.model * vec4(inPosition, 1.0);
+	gl_Position = matrices.model * vec4(inPosition, 1.0);
 }

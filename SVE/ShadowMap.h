@@ -8,19 +8,17 @@ namespace SVE
 {
 class LightNode;
 class VulkanShadowMap;
+enum class LightType : uint8_t;
 
 class ShadowMap
 {
 public:
-    ShadowMap(uint32_t lightIndex);
+    explicit ShadowMap(LightType lightType);
     ~ShadowMap();
 
     VulkanShadowMap* getVulkanShadowMap();
-    void enableShadowMap();
-    bool isEnabled();
 
 private:
-    bool _isEnabled;
     std::unique_ptr<VulkanShadowMap> _vulkanShadowMap;
 };
 

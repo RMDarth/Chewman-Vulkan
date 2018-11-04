@@ -7,7 +7,6 @@
 #include "Engine.h"
 #include "SceneManager.h"
 #include "LightManager.h"
-#include "ShadowMap.h"
 
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -19,11 +18,6 @@ LightNode::LightNode(LightSettings lightSettings, uint32_t lightIndex)
     , _lightSettings(std::move(lightSettings))
 {
     createProjectionMatrix();
-    if (_lightSettings.castShadows)
-    {
-        _shadowmap = std::make_shared<ShadowMap>(_lightIndex);
-        _shadowmap->enableShadowMap();
-    }
 }
 
 const LightSettings& LightNode::getLightSettings()
@@ -47,7 +41,7 @@ void LightNode::fillUniformData(UniformData& data, uint32_t lightNum, bool asVie
     {
         case LightType::PointLight:
         {
-            data.lightViewProjectionList[lightNum] = _projectionMatrix * _viewMatrix;
+            data.lightPointViewProjectionList[lightNum] = _projectionMatrix * _viewMatrix;
 
             PointLight pointLight{};
             pointLight.diffuse = glm::vec4(_lightSettings.diffuseStrength);
@@ -67,8 +61,11 @@ void LightNode::fillUniformData(UniformData& data, uint32_t lightNum, bool asVie
         }
         case LightType::SunLight:
         {
-            // TODO: Probably this data should be for each shadow (if multiple shadowmaps are used)
-            data.lightViewProjectionList[lightNum] = _projectionMatrix * _viewMatrix;
+            data.lightDirectViewProjectionList.clear();
+            for (auto& projectionMatrix : _projectionList)
+            {
+                data.lightDirectViewProjectionList.push_back(projectionMatrix * _viewMatrix);
+            }
 
             data.dirLight.diffuse = glm::vec4(_lightSettings.diffuseStrength);
             data.dirLight.specular = glm::vec4(_lightSettings.specularStrength);
@@ -80,7 +77,7 @@ void LightNode::fillUniformData(UniformData& data, uint32_t lightNum, bool asVie
         }
         case LightType::SpotLight:
             // TODO: Add spotlight
-            data.lightViewProjectionList[lightNum] = _projectionMatrix * _viewMatrix;
+            data.lightPointViewProjectionList[lightNum] = _projectionMatrix * _viewMatrix;
             data.spotLight.diffuse = glm::vec4(_lightSettings.diffuseStrength);
             data.spotLight.specular = glm::vec4(_lightSettings.specularStrength);
             data.spotLight.ambient = glm::vec4(_lightSettings.ambientStrength);
@@ -97,12 +94,13 @@ void LightNode::fillUniformData(UniformData& data, uint32_t lightNum, bool asVie
     {
         data.view = _viewMatrix;
         data.projection = _projectionMatrix;
-    }
-}
 
-std::shared_ptr<ShadowMap> LightNode::getShadowMap()
-{
-    return _shadowmap;
+        data.viewProjectionList.clear();
+        for (auto& projectionMatrix : _projectionList)
+        {
+            data.viewProjectionList.push_back(projectionMatrix * _viewMatrix);
+        }
+    }
 }
 
 bool LightNode::castShadows() const
@@ -139,9 +137,24 @@ void LightNode::createProjectionMatrix()
             _projectionMatrix[1][1] *= -1;
             break;
         case LightType::SunLight:
+        {
             _projectionMatrix = glm::ortho(-20.0f, 20.0f, -20.0f, 20.0f, 0.01f, 50.0f);
             _projectionMatrix[1][1] *= -1;
+
+            // TODO: Get far/near view distance from camera
+            float far = 500;
+            float near = 1;
+            _projectionList.clear();
+            for (auto i = 0u; i < MAX_CASCADES; i++)
+            {
+                float distance = near * powf(far / near, (float)(i + 1) / MAX_CASCADES);
+                auto projectionMatrix = glm::ortho(-distance, distance, -distance, distance, 0.01f, distance*2 + 30);
+                projectionMatrix[1][1] *= -1;
+                _projectionList.push_back(projectionMatrix);
+            }
+
             break;
+        }
         case LightType::SpotLight:
             _projectionMatrix =  glm::perspective(glm::radians(80.0f),
                                                   1.0f,

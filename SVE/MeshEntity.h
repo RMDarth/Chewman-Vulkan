@@ -23,7 +23,7 @@ public:
     // TODO: add IsRefracted method
     void setIsReflected(bool isReflected);
 
-    void updateUniforms(UniformDataList uniformDataList, const UniformDataIndexMap& indexMap) const override;
+    void updateUniforms(UniformDataList uniformDataList) const override;
     void applyDrawingCommands(uint32_t bufferIndex, uint32_t imageIndex) const override;
 
 private:

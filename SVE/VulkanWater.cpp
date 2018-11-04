@@ -20,9 +20,6 @@
 namespace SVE
 {
 
-const std::string ReflectionSamplerName = "reflection";
-const std::string RefractionSamplerName = "refraction";
-
 VulkanWater::VulkanWater(float height)
     : _vulkanInstance(Engine::getInstance()->getVulkanInstance())
     , _width {300, _vulkanInstance->getExtent().width}
@@ -37,11 +34,11 @@ VulkanWater::VulkanWater(float height)
 
     VulkanSamplerHolder::SamplerInfo reflectionSamplerInfo { _resolveImageView[0], _colorSampler[0] };
     VulkanSamplerInfoList reflectionList(3, reflectionSamplerInfo);
-    _vulkanInstance->getSamplerHolder()->setSamplerInfo(ReflectionSamplerName, reflectionList);
+    _vulkanInstance->getSamplerHolder()->setSamplerInfo(TextureType::Reflection, reflectionList);
 
     VulkanSamplerHolder::SamplerInfo refractionSamplerInfo { _resolveImageView[1], _colorSampler[1] };
     VulkanSamplerInfoList refractionList(3, refractionSamplerInfo);
-    _vulkanInstance->getSamplerHolder()->setSamplerInfo(RefractionSamplerName, refractionList);
+    _vulkanInstance->getSamplerHolder()->setSamplerInfo(TextureType::Refraction, refractionList);
 }
 
 VulkanWater::~VulkanWater()

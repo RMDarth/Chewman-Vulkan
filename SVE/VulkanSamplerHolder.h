@@ -2,10 +2,13 @@
 // Copyright (c) 2018-2019, Igor Barinov
 // Licensed under CC BY 4.0
 #pragma once
+#include "MaterialSettings.h"
+
 #include <vulkan/vulkan.h>
 #include <string>
 #include <vector>
-#include <unordered_map>
+#include <map>
+
 
 namespace SVE
 {
@@ -20,11 +23,11 @@ public:
     };
 
     // info for each swapchain image
-    std::vector<SamplerInfo> getSamplerInfo(const std::string& name) const;
-    void setSamplerInfo(const std::string& name, std::vector<VulkanSamplerHolder::SamplerInfo> samplerInfoList);
+    std::vector<SamplerInfo> getSamplerInfo(TextureType type) const;
+    void setSamplerInfo(TextureType type, std::vector<VulkanSamplerHolder::SamplerInfo> samplerInfoList);
 
 private:
-    std::unordered_map<std::string, std::vector<SamplerInfo>> _samplerMap;
+    std::map<TextureType, std::vector<SamplerInfo>> _samplerMap;
 
 };
 

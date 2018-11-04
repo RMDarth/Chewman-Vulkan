@@ -104,14 +104,14 @@ void Skybox::applyDrawingCommands(uint32_t bufferIndex, uint32_t imageIndex) con
     _mesh->getVulkanMesh()->applyDrawingCommands(bufferIndex);
 }
 
-void Skybox::updateUniforms(UniformDataList uniformDataList, const UniformDataIndexMap& indexMap) const
+void Skybox::updateUniforms(UniformDataList uniformDataList) const
 {
-    _material->getVulkanMaterial()->setUniformData(_materialIndex, *uniformDataList[indexMap.at(CommandsType::MainPass)]);
+    _material->getVulkanMaterial()->setUniformData(_materialIndex, *uniformDataList[toInt(CommandsType::MainPass)]);
 
     if (Engine::getInstance()->isWaterEnabled())
     {
-        _material->getVulkanMaterial()->setUniformData(_reflectionMaterialIndex, *uniformDataList[indexMap.at(CommandsType::ReflectionPass)]);
-        _material->getVulkanMaterial()->setUniformData(_refractionMaterialIndex, *uniformDataList[indexMap.at(CommandsType::RefractionPass)]);
+        _material->getVulkanMaterial()->setUniformData(_reflectionMaterialIndex, *uniformDataList[toInt(CommandsType::ReflectionPass)]);
+        _material->getVulkanMaterial()->setUniformData(_refractionMaterialIndex, *uniformDataList[toInt(CommandsType::RefractionPass)]);
     }
 }
 

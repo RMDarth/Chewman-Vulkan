@@ -11,8 +11,9 @@
 namespace SVE
 {
 
-VulkanShadowImage::VulkanShadowImage(uint32_t layersCount, uint32_t shadowMapSize)
+VulkanShadowImage::VulkanShadowImage(uint32_t layersCount, uint32_t shadowMapSize, CommandsType commandsType)
     : _vulkanInstance(Engine::getInstance()->getVulkanInstance())
+    , _commandsType(commandsType)
     , _layersCount(layersCount)
     , _shadowMapSize(shadowMapSize)
 {
@@ -203,7 +204,7 @@ void VulkanShadowImage::createRenderPass()
     VulkanPassInfo::PassData data {
             _renderPass
     };
-    _vulkanInstance->getPassInfo()->setPassData(CommandsType::ShadowPass, data);
+    _vulkanInstance->getPassInfo()->setPassData(_commandsType, data);
 }
 
 void VulkanShadowImage::deleteRenderPass()
@@ -211,9 +212,17 @@ void VulkanShadowImage::deleteRenderPass()
     vkDestroyRenderPass(_vulkanInstance->getLogicalDevice(), _renderPass, nullptr);
 }
 
-uint32_t VulkanShadowImage::getBufferID(uint32_t lightIndex, uint32_t bufferNum) const
+uint32_t VulkanShadowImage::getBufferID(uint32_t inflightBufferNum) const
 {
-    return BUFFER_INDEX_SHADOWMAP + lightIndex * _vulkanInstance->getInFlightSize() + bufferNum;
+    switch (_commandsType)
+    {
+        case CommandsType::ShadowPassDirectLight:
+            return BUFFER_INDEX_SHADOWMAP_SUN + inflightBufferNum;
+        case CommandsType::ShadowPassPointLights:
+            return BUFFER_INDEX_SHADOWMAP_POINT + inflightBufferNum;
+        default:
+            throw VulkanException("Incorrect pass id");
+    }
 }
 
 } // namespace SVE

@@ -9,12 +9,13 @@ namespace SVE
 {
 
 class VulkanInstance;
+enum class CommandsType : uint8_t;
 
 // Class for creating and providing single multilayered image for shadow maps
 class VulkanShadowImage
 {
 public:
-    VulkanShadowImage(uint32_t layersCount, uint32_t shadowMapSize);
+    VulkanShadowImage(uint32_t layersCount, uint32_t shadowMapSize, CommandsType commandsType);
     ~VulkanShadowImage();
 
     uint32_t getSize() const;
@@ -24,7 +25,7 @@ public:
     VkSampler getSampler(uint32_t index) const;
     VkRenderPass getRenderPass() const;
 
-    uint32_t getBufferID(uint32_t lightIndex, uint32_t bufferNum) const;
+    uint32_t getBufferID(uint32_t inflightBufferNum) const;
 
 private:
     void createRenderPass();
@@ -34,6 +35,7 @@ private:
 
 private:
     VulkanInstance* _vulkanInstance;
+    CommandsType _commandsType;
 
     uint32_t _layersCount;
     uint32_t _shadowMapSize;

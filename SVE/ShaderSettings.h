@@ -17,6 +17,7 @@ enum class UniformType : uint8_t
     ViewMatrix,
     ProjectionMatrix,
     ViewProjectionMatrix,
+    ViewProjectionMatrixList, // for cases when several viewprojection matrices are used (cascade shadows, point lights)
     ModelViewProjectionMatrix,
     CameraPosition,
     MaterialInfo,
@@ -24,7 +25,8 @@ enum class UniformType : uint8_t
     LightDirectional,
     LightPoint,
     LightSpot,
-    LightViewProjection,
+    LightPointViewProjectionList,
+    LightDirectViewProjectionList,
     BoneMatrices,
     ClipPlane,
     Time
@@ -54,7 +56,9 @@ struct UniformData
     glm::mat4 model;
     glm::mat4 view;
     glm::mat4 projection;
-    std::vector<glm::mat4> lightViewProjectionList;
+    std::vector<glm::mat4> viewProjectionList;
+    std::vector<glm::mat4> lightDirectViewProjectionList;
+    std::vector<glm::mat4> lightPointViewProjectionList;
     glm::vec4 cameraPos;
     glm::vec4 clipPlane;  // (Nx, Ny, Nz, DistanceFromOrigin)
     float time;
@@ -97,6 +101,8 @@ struct ShaderSettings
     uint32_t maxBonesSize = 0;
     uint32_t maxPointLightSize = 4;
     uint32_t maxLightSize = 6;
+    uint32_t maxCascadeLightSize = 5;
+    uint32_t maxViewProjectionMatrices = 6;
 
     std::string entryPoint = "main";
 };

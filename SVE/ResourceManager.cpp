@@ -71,21 +71,23 @@ EngineSettings loadEngine(const std::string& data)
 std::vector<UniformInfo> getUniformInfoList(rj::Document& document)
 {
     static const std::map<std::string, UniformType> uniformMap{
-            {"ModelMatrix",               UniformType::ModelMatrix},
-            {"ViewMatrix",                UniformType::ViewMatrix},
-            {"ProjectionMatrix",          UniformType::ProjectionMatrix},
-            {"ModelViewProjectionMatrix", UniformType::ModelViewProjectionMatrix},
-            {"ViewProjectionMatrix",      UniformType::ViewProjectionMatrix},
-            {"CameraPosition",            UniformType::CameraPosition},
-            {"MaterialInfo",              UniformType::MaterialInfo},
-            {"LightInfo",                 UniformType::LightInfo},
-            {"LightDirectional",          UniformType::LightDirectional},
-            {"LightPoint",                UniformType::LightPoint},
-            {"LightSpot",                 UniformType::LightSpot},
-            {"LightViewProjection",       UniformType::LightViewProjection},
-            {"BoneMatrices",              UniformType::BoneMatrices},
-            {"ClipPlane",                 UniformType::ClipPlane},
-            {"Time",                      UniformType::Time},
+            {"ModelMatrix",                     UniformType::ModelMatrix},
+            {"ViewMatrix",                      UniformType::ViewMatrix},
+            {"ProjectionMatrix",                UniformType::ProjectionMatrix},
+            {"ModelViewProjectionMatrix",       UniformType::ModelViewProjectionMatrix},
+            {"ViewProjectionMatrix",            UniformType::ViewProjectionMatrix},
+            {"ViewProjectionMatrixList",        UniformType::ViewProjectionMatrixList},
+            {"CameraPosition",                  UniformType::CameraPosition},
+            {"MaterialInfo",                    UniformType::MaterialInfo},
+            {"LightInfo",                       UniformType::LightInfo},
+            {"LightDirectional",                UniformType::LightDirectional},
+            {"LightPoint",                      UniformType::LightPoint},
+            {"LightSpot",                       UniformType::LightSpot},
+            {"LightPointViewProjectionList",    UniformType::LightPointViewProjectionList},
+            {"LightDirectViewProjectionList",   UniformType::LightDirectViewProjectionList},
+            {"BoneMatrices",                    UniformType::BoneMatrices},
+            {"ClipPlane",                       UniformType::ClipPlane},
+            {"Time",                            UniformType::Time},
     };
 
     std::vector<UniformInfo> uniformList;
@@ -153,6 +155,10 @@ ShaderSettings loadShader(const cppfs::FilePath& directory, const std::string& d
     ShaderSettings shaderSettings {};
     shaderSettings.name = document["name"].GetString();
     setOptional(shaderSettings.maxBonesSize = document["maxBonesSize"].GetUint());
+    setOptional(shaderSettings.maxLightSize = document["maxLightSize"].GetUint());
+    setOptional(shaderSettings.maxCascadeLightSize = document["maxCascadeLightSize"].GetUint());
+    setOptional(shaderSettings.maxPointLightSize = document["maxPointLightSize"].GetUint());
+    setOptional(shaderSettings.maxViewProjectionMatrices = document["maxViewProjectionMatrices"].GetUint());
     setOptional(shaderSettings.uniformList = getUniformInfoList(document));
     setOptional(shaderSettings.vertexInfo = getVertexInfo(document));
     setOptional(shaderSettings.samplerNamesList = getStringList(document, "samplerNamesList"));
@@ -166,11 +172,12 @@ ShaderSettings loadShader(const cppfs::FilePath& directory, const std::string& d
 std::vector<TextureInfo> getTextureInfos(const cppfs::FilePath& directory, rj::Document& document)
 {
     static const std::map<std::string, TextureType> textureTypeMap{
-            {"ImageFile",   TextureType::ImageFile},
-            {"ShadowMap",   TextureType::ShadowMap},
-            {"Reflection",  TextureType::Reflection},
-            {"Refraction",  TextureType::Refraction},
-            {"ScreenQuad",  TextureType::ScreenQuad},
+            {"ImageFile",       TextureType::ImageFile},
+            {"ShadowMapDirect", TextureType::ShadowMapDirect},
+            {"ShadowMapPoint",  TextureType::ShadowMapPoint},
+            {"Reflection",      TextureType::Reflection},
+            {"Refraction",      TextureType::Refraction},
+            {"ScreenQuad",      TextureType::ScreenQuad},
     };
 
     static const std::map<std::string, TextureAddressMode> addressModeMap {
@@ -220,11 +227,12 @@ MaterialSettings loadMaterial(const cppfs::FilePath& directory, const std::strin
     };
 
     static const std::map<std::string, CommandsType> passTypeMap {
-            { "MainPass",       CommandsType::MainPass },
-            { "ScreenQuadPass", CommandsType::ScreenQuadPass },
-            { "RefractionPass", CommandsType::RefractionPass },
-            { "ReflectionPass", CommandsType::ReflectionPass },
-            { "ShadowPass",     CommandsType::ShadowPass },
+            { "MainPass",               CommandsType::MainPass },
+            { "ScreenQuadPass",         CommandsType::ScreenQuadPass },
+            { "RefractionPass",         CommandsType::RefractionPass },
+            { "ReflectionPass",         CommandsType::ReflectionPass },
+            { "ShadowPassDirectLight",  CommandsType::ShadowPassDirectLight },
+            { "ShadowPassPointLights",  CommandsType::ShadowPassPointLights },
     };
 
     rj::Document document;

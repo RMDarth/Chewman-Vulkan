@@ -18,7 +18,7 @@
         },
         {
             "samplerName": "shadowSampler",
-            "textureType": "ShadowMap"
+            "textureType": "ShadowMapDirect"
         }
     ]
 }

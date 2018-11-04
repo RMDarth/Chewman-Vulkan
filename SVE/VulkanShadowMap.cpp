@@ -15,46 +15,19 @@
 namespace SVE
 {
 
-VulkanShadowMap::VulkanShadowMap(uint32_t lightIndex, const VulkanShadowImage& vulkanShadowImage)
-        : _lightIndex(lightIndex)
-        , _width(vulkanShadowImage.getSize())
+VulkanShadowMap::VulkanShadowMap(const VulkanShadowImage& vulkanShadowImage)
+        : _width(vulkanShadowImage.getSize())
         , _height(vulkanShadowImage.getSize())
         , _vulkanInstance(Engine::getInstance()->getVulkanInstance())
         , _vulkanUtils(_vulkanInstance->getVulkanUtils())
         , _vulkanShadowImage(vulkanShadowImage)
 {
-    createShadowImageView();
     createFramebuffer();
 }
 
 VulkanShadowMap::~VulkanShadowMap()
 {
     deleteFramebuffer();
-    deleteShadowImageView();
-}
-
-void VulkanShadowMap::createShadowImageView()
-{
-    auto depthFormat = _vulkanInstance->getDepthFormat();
-
-    VkImageAspectFlags aspectFlags = VK_IMAGE_ASPECT_DEPTH_BIT;
-    if (depthFormat == VK_FORMAT_D32_SFLOAT_S8_UINT || depthFormat == VK_FORMAT_D24_UNORM_S8_UINT)
-        aspectFlags |= VK_IMAGE_ASPECT_STENCIL_BIT;
-
-    _shadowImageViews.resize(_vulkanInstance->getSwapchainSize());
-    for (auto i = 0u; i < _vulkanInstance->getSwapchainSize(); i++)
-    {
-        _shadowImageViews[i] = _vulkanUtils.createImageView(
-                _vulkanShadowImage.getImage(i), depthFormat, 1, aspectFlags, VK_IMAGE_VIEW_TYPE_2D_ARRAY, 1, _lightIndex);
-    }
-}
-
-void VulkanShadowMap::deleteShadowImageView()
-{
-    for (auto i = 0u; i < _vulkanInstance->getSwapchainSize(); i++)
-    {
-        vkDestroyImageView(_vulkanInstance->getLogicalDevice(), _shadowImageViews[i], nullptr);
-    }
 }
 
 void VulkanShadowMap::createFramebuffer()
@@ -62,7 +35,7 @@ void VulkanShadowMap::createFramebuffer()
     _framebuffers.resize(_vulkanInstance->getSwapchainSize());
     for (auto i = 0u; i < _vulkanInstance->getSwapchainSize(); i++)
     {
-        std::vector<VkImageView> attachments = { _shadowImageViews[i] };
+        std::vector<VkImageView> attachments = { _vulkanShadowImage.getImageView(i) };
 
         VkFramebufferCreateInfo framebufferCreateInfo{};
         framebufferCreateInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
@@ -71,7 +44,7 @@ void VulkanShadowMap::createFramebuffer()
         framebufferCreateInfo.pAttachments = attachments.data();
         framebufferCreateInfo.width = _width;
         framebufferCreateInfo.height = _height;
-        framebufferCreateInfo.layers = 1;
+        framebufferCreateInfo.layers = _vulkanShadowImage.getLayersSize();
 
         if (vkCreateFramebuffer(_vulkanInstance->getLogicalDevice(), &framebufferCreateInfo, nullptr, &_framebuffers[i]) !=
             VK_SUCCESS)
@@ -94,7 +67,7 @@ void VulkanShadowMap::reallocateCommandBuffers()
     _commandBuffers.resize(_vulkanInstance->getInFlightSize());
     for (auto i = 0u; i < _vulkanInstance->getInFlightSize(); i++)
     {
-        _commandBuffers[i] = _vulkanInstance->createCommandBuffer(getBufferID(i));
+        _commandBuffers[i] = _vulkanInstance->createCommandBuffer(_vulkanShadowImage.getBufferID(i));
     }
 }
 
@@ -150,12 +123,7 @@ uint32_t VulkanShadowMap::startRenderCommandBufferCreation(uint32_t bufferNumber
 
     vkCmdSetScissor(_commandBuffers[bufferNumber], 0, 1, &scissor);
 
-    return getBufferID(bufferNumber);
-}
-
-uint32_t VulkanShadowMap::getBufferID(uint32_t bufferNumer) const
-{
-    return _vulkanShadowImage.getBufferID(_lightIndex, bufferNumer);
+    return _vulkanShadowImage.getBufferID(bufferNumber);
 }
 
 void VulkanShadowMap::endRenderCommandBufferCreation(uint32_t bufferIndex)
