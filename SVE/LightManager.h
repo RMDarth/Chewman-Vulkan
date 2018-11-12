@@ -9,6 +9,7 @@ namespace SVE
 {
 
 class VulkanShadowImage;
+class VulkanPointShadowMap;
 class ShadowMap;
 
 static const uint32_t MAX_CASCADES = 5;
@@ -27,10 +28,7 @@ public:
     std::shared_ptr<ShadowMap> getPointLightShadowMap();
     std::shared_ptr<ShadowMap> getDirectLightShadowMap();
 
-    VulkanShadowImage* getDirectLightVulkanShadowImage();
-    VulkanShadowImage* getPointLightVulkanShadowImage();
-
-    void fillUniformData(UniformData& data, int viewSource = -1);
+    void fillUniformData(UniformData& data, LightType viewSourceLightType = LightType::None);
 
 private:
     std::vector<std::shared_ptr<LightNode>> _lightList;
@@ -39,9 +37,6 @@ private:
 
     std::shared_ptr<ShadowMap> _pointLightShadowMap;
     std::shared_ptr<ShadowMap> _directLightShadowMap;
-
-    std::unique_ptr<VulkanShadowImage> _shadowImageDirectLight;
-    std::unique_ptr<VulkanShadowImage> _shadowImagePointLights;
 };
 
 } // namespace SVE

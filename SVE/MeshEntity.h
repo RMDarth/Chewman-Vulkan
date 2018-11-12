@@ -40,6 +40,7 @@ private:
     uint32_t _refractionMaterialIndex;
 
     Material* _shadowMaterial;
+    Material* _pointLightShadowMaterial;
     //std::vector<uint32_t> _shadowMaterialIndexes;
 };
 

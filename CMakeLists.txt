@@ -66,8 +66,8 @@ add_executable(Chewman
         SVE/Skybox.h
         SVE/ResourceManager.cpp
         SVE/ResourceManager.h
-        SVE/VulkanShadowMap.cpp
-        SVE/VulkanShadowMap.h
+        SVE/VulkanDirectShadowMap.cpp
+        SVE/VulkanDirectShadowMap.h
         SVE/ShadowMap.cpp
         SVE/ShadowMap.h
         SVE/VulkanWater.cpp
@@ -81,10 +81,10 @@ add_executable(Chewman
         SVE/LightManager.h
         SVE/VulkanSamplerHolder.cpp
         SVE/VulkanSamplerHolder.h
-        SVE/VulkanShadowImage.cpp
-        SVE/VulkanShadowImage.h
         SVE/VulkanPassInfo.cpp
-        SVE/VulkanPassInfo.h)
+        SVE/VulkanPassInfo.h
+        SVE/VulkanPointShadowMap.cpp
+        SVE/VulkanPointShadowMap.h SVE/VulkanCommandsManager.h)
 
 if (WIN32)
     target_link_libraries(Chewman mingw32 SDL2main SDL2 vulkan-1.lib VkLayer_core_validation.lib libassimp libcppfsd)

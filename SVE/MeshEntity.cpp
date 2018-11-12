@@ -22,7 +22,7 @@ MeshEntity::MeshEntity(std::string name)
 
 MeshEntity::MeshEntity(Mesh* mesh)
     : _mesh(mesh)
-    , _material(Engine::getInstance()->getMaterialManager()->getMaterial(mesh->getDefaultMaterialName()))
+    , _material(Engine::getInstance()->getMaterialManager()->getMaterial(mesh->getDefaultMaterialName(), true))
 {
     if (_material)
     {
@@ -67,14 +67,16 @@ void MeshEntity::updateUniforms(UniformDataList uniformDataList) const
         UniformData newShadowData = *uniformDataList[toInt(CommandsType::ShadowPassDirectLight)];
         newShadowData.bones = newData.bones;
         _shadowMaterial->getVulkanMaterial()->setUniformData(
-                _shadowMaterial->getVulkanMaterial()->getInstanceForEntity(this, 0),
+                _shadowMaterial->getVulkanMaterial()->getInstanceForEntity(this),
                 newShadowData);
-
-        UniformData newShadowData2 = *uniformDataList[toInt(CommandsType::ShadowPassPointLights)];
-        newShadowData2.bones = newData.bones;
-        _shadowMaterial->getVulkanMaterial()->setUniformData(
-                _shadowMaterial->getVulkanMaterial()->getInstanceForEntity(this, 1),
-                newShadowData2);
+    }
+    if (_pointLightShadowMaterial)
+    {
+        UniformData newShadowData = *uniformDataList[toInt(CommandsType::ShadowPassPointLights)];
+        newShadowData.bones = newData.bones;
+        _pointLightShadowMaterial->getVulkanMaterial()->setUniformData(
+                _pointLightShadowMaterial->getVulkanMaterial()->getInstanceForEntity(this),
+                newShadowData);
     }
     if (Engine::getInstance()->isWaterEnabled())
     {
@@ -109,15 +111,15 @@ void MeshEntity::applyDrawingCommands(uint32_t bufferIndex, uint32_t imageIndex)
             _shadowMaterial->getVulkanMaterial()->applyDrawingCommands(
                     bufferIndex,
                     imageIndex,
-                    _shadowMaterial->getVulkanMaterial()->getInstanceForEntity(this, 0));
+                    _shadowMaterial->getVulkanMaterial()->getInstanceForEntity(this));
     }
     else if (Engine::getInstance()->getPassType() == CommandsType::ShadowPassPointLights)
     {
-        if (_shadowMaterial && _castShadows)
-            _shadowMaterial->getVulkanMaterial()->applyDrawingCommands(
+        if (_pointLightShadowMaterial && _castShadows)
+            _pointLightShadowMaterial->getVulkanMaterial()->applyDrawingCommands(
                     bufferIndex,
                     imageIndex,
-                    _shadowMaterial->getVulkanMaterial()->getInstanceForEntity(this, 1));
+                    _pointLightShadowMaterial->getVulkanMaterial()->getInstanceForEntity(this));
     }
     else
     {
@@ -141,9 +143,15 @@ void MeshEntity::setupMaterial()
     {
         // TODO: Get shadow materials (or their names) from shadowmap class or special function in MatManager
         if (_material->getVulkanMaterial()->isSkeletal())
+        {
             _shadowMaterial = Engine::getInstance()->getMaterialManager()->getMaterial("SimpleSkeletalDepth");
+            _pointLightShadowMaterial = Engine::getInstance()->getMaterialManager()->getMaterial("FullSkeletalDepth");
+        }
         else
+        {
             _shadowMaterial = Engine::getInstance()->getMaterialManager()->getMaterial("SimpleDepth");
+            _pointLightShadowMaterial = Engine::getInstance()->getMaterialManager()->getMaterial("FullDepth");
+        }
     }
 }
 

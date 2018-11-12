@@ -1,0 +1,9 @@
+{
+    "name": "FullDepth",
+    "vertexShaderName": "simpleDepthVertexShader",
+    "geometryShaderName": "simpleDepthGeomShader",
+    "fragmentShaderName": "fullDepthFragmentShader",
+    "useDepthBias": true,
+    "useMultisampling": false,
+    "passType": "ShadowPassPointLights"
+}

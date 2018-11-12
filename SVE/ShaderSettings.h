@@ -18,6 +18,7 @@ enum class UniformType : uint8_t
     ProjectionMatrix,
     ViewProjectionMatrix,
     ViewProjectionMatrixList, // for cases when several viewprojection matrices are used (cascade shadows, point lights)
+    ViewProjectionMatrixSize,
     ModelViewProjectionMatrix,
     CameraPosition,
     MaterialInfo,
@@ -48,8 +49,6 @@ struct MaterialInfo
     float shininess;
     float _padding[3];
 };
-
-
 
 struct UniformData
 {
@@ -102,7 +101,7 @@ struct ShaderSettings
     uint32_t maxPointLightSize = 4;
     uint32_t maxLightSize = 6;
     uint32_t maxCascadeLightSize = 5;
-    uint32_t maxViewProjectionMatrices = 6;
+    uint32_t maxViewProjectionMatrices = 6 * maxPointLightSize;
 
     std::string entryPoint = "main";
 };

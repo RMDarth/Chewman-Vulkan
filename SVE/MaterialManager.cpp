@@ -11,11 +11,13 @@ void MaterialManager::registerMaterial(std::shared_ptr<Material> material)
     _materialMap.insert({material->getName(), material});
 }
 
-Material* SVE::MaterialManager::getMaterial(const std::string& name) const
+Material* SVE::MaterialManager::getMaterial(const std::string& name, bool emptyAllowed) const
 {
     auto materialIter = _materialMap.find(name);
     if (materialIter == _materialMap.end())
     {
+        if (!emptyAllowed)
+            throw VulkanException(std::string("Can't find material ") + name);
         return nullptr;
     }
     return materialIter->second.get();

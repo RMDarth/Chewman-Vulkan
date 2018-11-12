@@ -12,7 +12,8 @@ enum class LightType : uint8_t
     PointLight,
     SunLight,
     SpotLight,
-    RectLight
+    RectLight,
+    None
 };
 
 struct LightSettings

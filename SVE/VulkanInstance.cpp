@@ -263,6 +263,15 @@ VkFormat VulkanInstance::getDepthFormat() const
     );
 }
 
+VkImageAspectFlags VulkanInstance::getDepthAspectFlags(VkFormat depthFormat) const
+{
+    VkImageAspectFlags aspectFlags = VK_IMAGE_ASPECT_DEPTH_BIT;
+    if (depthFormat == VK_FORMAT_D32_SFLOAT_S8_UINT || depthFormat == VK_FORMAT_D24_UNORM_S8_UINT)
+        aspectFlags |= VK_IMAGE_ASPECT_STENCIL_BIT;
+
+    return aspectFlags;
+}
+
 VkFramebuffer VulkanInstance::getFramebuffer(size_t index) const
 {
     return _swapchainFramebuffers[index];
@@ -613,6 +622,7 @@ void VulkanInstance::createDevice()
     deviceFeatures.samplerAnisotropy = VK_TRUE;
     deviceFeatures.shaderClipDistance = VK_TRUE;
     deviceFeatures.geometryShader = VK_TRUE;
+    deviceFeatures.imageCubeArray = VK_TRUE;
 
     VkDeviceCreateInfo deviceCreateInfo{};
     deviceCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;

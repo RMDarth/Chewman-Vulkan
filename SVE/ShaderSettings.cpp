@@ -16,6 +16,7 @@ const std::map<UniformType, size_t>& getUniformSizeMap()
             { UniformType::ModelViewProjectionMatrix, sizeof(glm::mat4) },
             { UniformType::ViewProjectionMatrix, sizeof(glm::mat4) },
             { UniformType::ViewProjectionMatrixList, sizeof(glm::mat4) },
+            { UniformType::ViewProjectionMatrixSize, sizeof(glm::ivec4) }, // float[3] padding
             { UniformType::CameraPosition, sizeof(glm::vec4) },
             { UniformType::MaterialInfo, sizeof(MaterialInfo) },
             { UniformType::LightInfo, sizeof(LightInfo) },

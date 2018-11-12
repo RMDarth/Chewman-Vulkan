@@ -77,6 +77,7 @@ std::vector<UniformInfo> getUniformInfoList(rj::Document& document)
             {"ModelViewProjectionMatrix",       UniformType::ModelViewProjectionMatrix},
             {"ViewProjectionMatrix",            UniformType::ViewProjectionMatrix},
             {"ViewProjectionMatrixList",        UniformType::ViewProjectionMatrixList},
+            {"ViewProjectionMatrixSize",        UniformType::ViewProjectionMatrixSize},
             {"CameraPosition",                  UniformType::CameraPosition},
             {"MaterialInfo",                    UniformType::MaterialInfo},
             {"LightInfo",                       UniformType::LightInfo},

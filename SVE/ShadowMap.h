@@ -7,19 +7,19 @@
 namespace SVE
 {
 class LightNode;
-class VulkanShadowMap;
+class VulkanCommandsManager;
 enum class LightType : uint8_t;
 
 class ShadowMap
 {
 public:
-    explicit ShadowMap(LightType lightType);
+    ShadowMap(LightType lightType, uint32_t layersCount, uint32_t shadowMapSize);
     ~ShadowMap();
 
-    VulkanShadowMap* getVulkanShadowMap();
+    VulkanCommandsManager* getVulkanShadowMap();
 
 private:
-    std::unique_ptr<VulkanShadowMap> _vulkanShadowMap;
+    std::unique_ptr<VulkanCommandsManager> _vulkanShadowMap;
 };
 
 } // namespace SVE

@@ -179,15 +179,18 @@ int runGame()
         // configure light
         engine->getSceneManager()->getLightManager()->getDirectionLight()->setNodeTransformation(
                 glm::translate(glm::mat4(1), glm::vec3(15, 15, -15)));
-        if (engine->getSceneManager()->getLightManager()->getLightCount() > 0)
+        if (engine->getSceneManager()->getLightManager()->getLightCount() >= 1)
             engine->getSceneManager()->getLightManager()->getLight(0)->setNodeTransformation(
                     glm::translate(glm::mat4(1), glm::vec3(5, 5, 5)));
+        if (engine->getSceneManager()->getLightManager()->getLightCount() >= 2)
+            engine->getSceneManager()->getLightManager()->getLight(1)->setNodeTransformation(
+                    glm::translate(glm::mat4(1), glm::vec3(-5, 5, 5)));
 
         // create camera
         auto camera = engine->getSceneManager()->createMainCamera();
         camera->setNearFarPlane(0.1f, 500.0f);
         camera->setPosition(glm::vec3(5.0f, 5.0f, 5.0f));
-        camera->setYawPitchRoll(glm::vec3(glm::radians(20.0f), glm::radians(-30.0f), 0.0f));
+        //camera->setYawPitchRoll(glm::vec3(glm::radians(20.0f), glm::radians(-30.0f), 0.0f));
         //camera->setLookAt(glm::vec3(5.0f, 5.0f, 5.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 
         // create shadowmap

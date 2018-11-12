@@ -5,7 +5,7 @@
 #include "VulkanException.h"
 #include "VulkanInstance.h"
 #include "VulkanScreenQuad.h"
-#include "VulkanShadowMap.h"
+#include "VulkanDirectShadowMap.h"
 #include "VulkanSamplerHolder.h"
 #include "VulkanPassInfo.h"
 #include "ShaderManager.h"
@@ -74,16 +74,17 @@ SVE::VulkanMaterial::VulkanMaterial(MaterialSettings materialSettings)
         _vertexShader = shaderManager->getShader(_materialSettings.vertexShaderName)->getVulkanShaderInfo();
         _shaderList.push_back(_vertexShader);
     }
-    if (!_materialSettings.fragmentShaderName.empty())
-    {
-        _fragmentShader = shaderManager->getShader(_materialSettings.fragmentShaderName)->getVulkanShaderInfo();
-        _shaderList.push_back(_fragmentShader);
-    }
     if (!_materialSettings.geometryShaderName.empty())
     {
         _geometryShader = shaderManager->getShader(_materialSettings.geometryShaderName)->getVulkanShaderInfo();
         _shaderList.push_back(_geometryShader);
     }
+    if (!_materialSettings.fragmentShaderName.empty())
+    {
+        _fragmentShader = shaderManager->getShader(_materialSettings.fragmentShaderName)->getVulkanShaderInfo();
+        _shaderList.push_back(_fragmentShader);
+    }
+
 
     createPipelineLayout();
     createPipeline();
@@ -158,10 +159,11 @@ std::vector<VkDescriptorSet> VulkanMaterial::getDescriptorSets(uint32_t material
     sets.reserve(_shaderList.size());
     if (!_instanceData[materialIndex].vertexDescriptorSets.empty())
         sets.push_back(_instanceData[materialIndex].vertexDescriptorSets[index]);
-    if (!_instanceData[materialIndex].fragmentDescriptorSets.empty())
-        sets.push_back(_instanceData[materialIndex].fragmentDescriptorSets[index]);
     if (!_instanceData[materialIndex].geometryDescriptorSets.empty())
         sets.push_back(_instanceData[materialIndex].geometryDescriptorSets[index]);
+    if (!_instanceData[materialIndex].fragmentDescriptorSets.empty())
+        sets.push_back(_instanceData[materialIndex].fragmentDescriptorSets[index]);
+
 
     return sets;
 }
@@ -745,7 +747,6 @@ void VulkanMaterial::createUniformBuffers()
             return;
         }
 
-
         buffers.resize(swapchainSize);
 
         for (auto i = 0u; i < swapchainSize; i++)
@@ -761,8 +762,8 @@ void VulkanMaterial::createUniformBuffers()
     };
 
     createUniformBuffers(data.vertexUniformBuffers, _vertexShader);
-    createUniformBuffers(data.fragmentUniformBuffer, _fragmentShader);
     createUniformBuffers(data.geometryUniformBuffer, _geometryShader);
+    createUniformBuffers(data.fragmentUniformBuffer, _fragmentShader);
 
     _instanceData.push_back(data);
 }
@@ -775,14 +776,15 @@ void VulkanMaterial::deleteUniformBuffers()
         {
             vkDestroyBuffer(_device, buffer, nullptr);
         }
-        for (auto buffer : instance.fragmentUniformBuffer)
-        {
-            vkDestroyBuffer(_device, buffer, nullptr);
-        }
         for (auto buffer : instance.geometryUniformBuffer)
         {
             vkDestroyBuffer(_device, buffer, nullptr);
         }
+        for (auto buffer : instance.fragmentUniformBuffer)
+        {
+            vkDestroyBuffer(_device, buffer, nullptr);
+        }
+
         for (auto memory : instance.uniformBuffersMemory)
         {
             vkFreeMemory(_device, memory, nullptr);
@@ -935,8 +937,8 @@ void VulkanMaterial::createDescriptorSets()
     };
 
     makeDescriptorSet(_instanceData.back().vertexUniformBuffers, _vertexShader, _instanceData.back().vertexDescriptorSets);
-    makeDescriptorSet(_instanceData.back().fragmentUniformBuffer, _fragmentShader, _instanceData.back().fragmentDescriptorSets);
     makeDescriptorSet(_instanceData.back().geometryUniformBuffer, _geometryShader, _instanceData.back().geometryDescriptorSets);
+    makeDescriptorSet(_instanceData.back().fragmentUniformBuffer, _fragmentShader, _instanceData.back().fragmentDescriptorSets);
 }
 
 void VulkanMaterial::deleteDescriptorSets()
@@ -965,8 +967,8 @@ void VulkanMaterial::updateDescriptorSets()
     };
 
     makeDescriptorSet(_instanceData.back().vertexUniformBuffers, _vertexShader, _instanceData.back().vertexDescriptorSets);
-    makeDescriptorSet(_instanceData.back().fragmentUniformBuffer, _fragmentShader, _instanceData.back().fragmentDescriptorSets);
     makeDescriptorSet(_instanceData.back().geometryUniformBuffer, _geometryShader, _instanceData.back().geometryDescriptorSets);
+    makeDescriptorSet(_instanceData.back().fragmentUniformBuffer, _fragmentShader, _instanceData.back().fragmentDescriptorSets);
 }
 
 void VulkanMaterial::updateDescriptorSet(
@@ -1087,6 +1089,13 @@ std::vector<char> VulkanMaterial::getUniformDataByType(const UniformData& data, 
         {
             const char* byteData = reinterpret_cast<const char*>(data.viewProjectionList.data());
             return std::vector<char>(byteData, byteData + sizeMap.at(type) * data.viewProjectionList.size());
+        }
+        case UniformType::ViewProjectionMatrixSize:
+        {
+            uint32_t vpListSize[4] =
+                             { static_cast<uint32_t>(data.viewProjectionList.size()) };
+            const char* byteData = reinterpret_cast<const char*>(vpListSize);
+            return std::vector<char>(byteData, byteData + sizeMap.at(type));
         }
         case UniformType::CameraPosition:
         {

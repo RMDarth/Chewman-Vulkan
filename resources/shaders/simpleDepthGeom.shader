@@ -3,7 +3,8 @@
     "filename": "glsl/simpleDepth.geom.spv",
     "shaderType": "GeometryShader",
     "uniformList": [
+        { "uniformType": "ViewProjectionMatrixSize" },
         { "uniformType": "ViewProjectionMatrixList" }
     ],
-    "maxViewProjectionMatrices": 5
+    "maxViewProjectionMatrices": 18
 }

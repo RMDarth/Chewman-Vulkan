@@ -4,12 +4,11 @@
 
 #include "Engine.h"
 #include "VulkanInstance.h"
-#include "VulkanShadowMap.h"
+#include "VulkanDirectShadowMap.h"
 #include "VulkanWater.h"
 #include "VulkanScreenQuad.h"
 #include "VulkanException.h"
 #include "VulkanMaterial.h"
-#include "VulkanShadowImage.h"
 #include "MaterialManager.h"
 #include "SceneManager.h"
 #include "ShaderManager.h"
@@ -310,11 +309,8 @@ void Engine::renderFrame()
     }
 
     _sceneManager->getLightManager()->getDirectionLight()->updateViewMatrix(_sceneManager->getMainCamera()->getPosition());
-    _sceneManager->getLightManager()->fillUniformData(*uniformDataList[toInt(CommandsType::ShadowPassDirectLight)], 0);
-    for (auto l = 0; l < _sceneManager->getLightManager()->getLightCount(); l++)
-    {
-        _sceneManager->getLightManager()->fillUniformData(*uniformDataList[toInt(CommandsType::ShadowPassPointLights)], l + 1);
-    }
+    _sceneManager->getLightManager()->fillUniformData(*uniformDataList[toInt(CommandsType::ShadowPassDirectLight)], LightType::SunLight);
+    _sceneManager->getLightManager()->fillUniformData(*uniformDataList[toInt(CommandsType::ShadowPassPointLights)], LightType::PointLight);
     for (auto i = 0u; i < PassCount; i++)
     {
         if (i == toInt(CommandsType::ShadowPassDirectLight) || i == toInt(CommandsType::ShadowPassPointLights))
@@ -344,9 +340,9 @@ void Engine::renderFrame()
                 CommandsType::ShadowPassDirectLight,
                 BUFFER_INDEX_SHADOWMAP_SUN + _vulkanInstance->getCurrentFrameIndex());
 
-      /*  _vulkanInstance->submitCommands(
+        _vulkanInstance->submitCommands(
                 CommandsType::ShadowPassPointLights,
-                BUFFER_INDEX_SHADOWMAP_POINT + _vulkanInstance->getCurrentFrameIndex());*/
+                BUFFER_INDEX_SHADOWMAP_POINT + _vulkanInstance->getCurrentFrameIndex());
     }
     if (auto water = _sceneManager->getWater())
     {

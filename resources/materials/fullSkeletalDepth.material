@@ -1,0 +1,9 @@
+{
+    "name": "FullSkeletalDepth",
+    "vertexShaderName": "simpleSkeletalDepthVertexShader",
+    "geometryShaderName": "simpleDepthGeomShader",
+    "fragmentShaderName": "fullDepthFragmentShader",
+    "useDepthBias": true,
+    "useMultisampling": false,
+    "passType": "ShadowPassPointLights"
+}

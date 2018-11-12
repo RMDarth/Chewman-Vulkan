@@ -2,7 +2,8 @@
 // Copyright (c) 2018-2019, Igor Barinov
 // Licensed under CC BY 4.0
 #include "ShadowMap.h"
-#include "VulkanShadowMap.h"
+#include "VulkanPointShadowMap.h"
+#include "VulkanDirectShadowMap.h"
 #include "Engine.h"
 #include "SceneManager.h"
 #include "LightManager.h"
@@ -15,14 +16,15 @@ namespace SVE
 namespace
 {
 
-const VulkanShadowImage& getVulkanShadowImage(LightType lightType)
+std::unique_ptr<VulkanCommandsManager> createVulkanShadowMap(
+        LightType lightType, uint32_t layersCount, uint32_t shadowMapSize)
 {
     switch (lightType)
     {
         case LightType::PointLight:
-            return *Engine::getInstance()->getSceneManager()->getLightManager()->getPointLightVulkanShadowImage();
+            return std::make_unique<VulkanPointShadowMap>(layersCount, shadowMapSize);
         case LightType::SunLight:
-            return *Engine::getInstance()->getSceneManager()->getLightManager()->getDirectLightVulkanShadowImage();
+            return std::make_unique<VulkanDirectShadowMap>(layersCount, shadowMapSize);
         case LightType::SpotLight:
             throw VulkanException("Spot light currently unsupported");
         case LightType::RectLight:
@@ -33,14 +35,14 @@ const VulkanShadowImage& getVulkanShadowImage(LightType lightType)
 
 }
 
-ShadowMap::ShadowMap(LightType lightType)
-    : _vulkanShadowMap(std::make_unique<VulkanShadowMap>(getVulkanShadowImage(lightType)))
+ShadowMap::ShadowMap(LightType lightType, uint32_t layersCount, uint32_t shadowMapSize)
+    : _vulkanShadowMap(createVulkanShadowMap(lightType, layersCount, shadowMapSize))
 {
 }
 
 ShadowMap::~ShadowMap() = default;
 
-VulkanShadowMap* ShadowMap::getVulkanShadowMap()
+VulkanCommandsManager* ShadowMap::getVulkanShadowMap()
 {
     return _vulkanShadowMap.get();
 }

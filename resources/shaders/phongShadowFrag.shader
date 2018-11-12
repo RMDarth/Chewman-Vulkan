@@ -4,7 +4,8 @@
     "shaderType": "FragmentShader",
     "samplerNamesList": [
         "diffuseTex",
-        "shadowTex"
+        "directShadowTex",
+        "pointShadowTex"
     ],
     "uniformList": [
         { "uniformType": "CameraPosition" },

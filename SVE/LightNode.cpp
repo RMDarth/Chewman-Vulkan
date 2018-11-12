@@ -35,70 +35,74 @@ void LightNode::fillUniformData(UniformData& data, uint32_t lightNum, bool asVie
 {
     //updateViewMatrix(data.cameraPos);
 
-    auto model = getTotalTransformation();
-
-    switch (_lightSettings.lightType)
+    if (!asViewSource)
     {
-        case LightType::PointLight:
+        auto model = getTotalTransformation();
+        switch (_lightSettings.lightType)
         {
-            data.lightPointViewProjectionList[lightNum] = _projectionMatrix * _viewMatrix;
-
-            PointLight pointLight{};
-            pointLight.diffuse = glm::vec4(_lightSettings.diffuseStrength);
-            pointLight.specular = glm::vec4(_lightSettings.specularStrength);
-            pointLight.ambient = glm::vec4(_lightSettings.ambientStrength);
-            pointLight.position = model[3];
-
-            // TODO: Move light attenuation to light settings
-            pointLight.constant = 1.0f * 0.05f;
-            pointLight.linear = 1.35f * 0.05f;
-            pointLight.quadratic = 0.44f * 0.05f;
-
-            data.pointLightList.push_back(pointLight);
-            data.lightInfo.lightFlags |= (LightInfo::PointLight1 << (data.pointLightList.size() - 1));
-
-            break;
-        }
-        case LightType::SunLight:
-        {
-            data.lightDirectViewProjectionList.clear();
-            for (auto& projectionMatrix : _projectionList)
+            case LightType::PointLight:
             {
-                data.lightDirectViewProjectionList.push_back(projectionMatrix * _viewMatrix);
+                data.lightPointViewProjectionList[lightNum] = _projectionMatrix * _viewMatrix;
+
+                PointLight pointLight{};
+                pointLight.diffuse = glm::vec4(_lightSettings.diffuseStrength);
+                pointLight.specular = glm::vec4(_lightSettings.specularStrength);
+                pointLight.ambient = glm::vec4(_lightSettings.ambientStrength);
+                pointLight.position = model[3];
+
+                // TODO: Move light attenuation to light settings
+                pointLight.constant = 1.0f * 0.05f;
+                pointLight.linear = 1.35f * 0.05f;
+                pointLight.quadratic = 0.44f * 0.05f;
+
+                data.pointLightList.push_back(pointLight);
+                data.lightInfo.lightFlags |= (LightInfo::PointLight1 << (data.pointLightList.size() - 1));
+
+                break;
             }
+            case LightType::SunLight:
+            {
+                data.lightDirectViewProjectionList.clear();
+                for (auto &projectionMatrix : _projectionList)
+                {
+                    data.lightDirectViewProjectionList.push_back(projectionMatrix * _viewMatrix);
+                }
 
-            data.dirLight.diffuse = glm::vec4(_lightSettings.diffuseStrength);
-            data.dirLight.specular = glm::vec4(_lightSettings.specularStrength);
-            data.dirLight.ambient = glm::vec4(_lightSettings.ambientStrength);
-            data.dirLight.direction = glm::vec4(-glm::normalize(model[3]));
+                data.dirLight.diffuse = glm::vec4(_lightSettings.diffuseStrength);
+                data.dirLight.specular = glm::vec4(_lightSettings.specularStrength);
+                data.dirLight.ambient = glm::vec4(_lightSettings.ambientStrength);
+                data.dirLight.direction = glm::vec4(-glm::normalize(model[3]));
 
-            data.lightInfo.lightFlags |= LightInfo::DirectionalLight;
-            break;
+                data.lightInfo.lightFlags |= LightInfo::DirectionalLight;
+                break;
+            }
+            case LightType::SpotLight:
+                // TODO: Add spotlight
+                data.lightPointViewProjectionList[lightNum] = _projectionMatrix * _viewMatrix;
+                data.spotLight.diffuse = glm::vec4(_lightSettings.diffuseStrength);
+                data.spotLight.specular = glm::vec4(_lightSettings.specularStrength);
+                data.spotLight.ambient = glm::vec4(_lightSettings.ambientStrength);
+                //data.spotLight.direction = glm::vec4(-glm::normalize(model[3]));
+
+                data.lightInfo.lightFlags |= LightInfo::SpotLight;
+                break;
+            case LightType::RectLight:
+                break;
         }
-        case LightType::SpotLight:
-            // TODO: Add spotlight
-            data.lightPointViewProjectionList[lightNum] = _projectionMatrix * _viewMatrix;
-            data.spotLight.diffuse = glm::vec4(_lightSettings.diffuseStrength);
-            data.spotLight.specular = glm::vec4(_lightSettings.specularStrength);
-            data.spotLight.ambient = glm::vec4(_lightSettings.ambientStrength);
-            //data.spotLight.direction = glm::vec4(-glm::normalize(model[3]));
-
-            data.lightInfo.lightFlags |= LightInfo::SpotLight;
-            break;
-        case LightType::RectLight:
-            break;
     }
-
-
-    if (asViewSource)
+    else // as viewsource
     {
         data.view = _viewMatrix;
         data.projection = _projectionMatrix;
 
-        data.viewProjectionList.clear();
+        //data.viewProjectionList.clear();
         for (auto& projectionMatrix : _projectionList)
         {
             data.viewProjectionList.push_back(projectionMatrix * _viewMatrix);
+        }
+        for (auto& viewMatrix : _viewList)
+        {
+            data.viewProjectionList.push_back(_projectionMatrix * viewMatrix);
         }
     }
 }
@@ -122,7 +126,19 @@ void LightNode::createViewMatrix()
 {
     auto model = getTotalTransformation();
     _originalPos = glm::vec3(model[3]);
-    _viewMatrix = glm::lookAt(glm::vec3(model[3]), glm::vec3(0, 0, 0), glm::vec3(0.0f, 1.0f, 0.0f));
+
+    if (_lightSettings.lightType == LightType::SunLight)
+        _viewMatrix = glm::lookAt(glm::vec3(model[3]), glm::vec3(0, 0, 0), glm::vec3(0.0f, 1.0f, 0.0f));
+    else
+    {
+        _viewList.clear();
+        _viewList.push_back(glm::lookAt(_originalPos, _originalPos + glm::vec3(1.0, 0.0, 0.0), glm::vec3( 0.0, 1.0, 0.0)));
+        _viewList.push_back(glm::lookAt(_originalPos, _originalPos + glm::vec3(-1.0, 0.0, 0.0), glm::vec3( 0.0, 1.0, 0.0)));
+        _viewList.push_back(glm::lookAt(_originalPos, _originalPos + glm::vec3( 0.0, 1.0, 0.0), glm::vec3(0.0, 0.0, 1.0)));
+        _viewList.push_back(glm::lookAt(_originalPos, _originalPos + glm::vec3( 0.0,-1.0, 0.0), glm::vec3(0.0, 0.0, -1.0)));
+        _viewList.push_back(glm::lookAt(_originalPos, _originalPos + glm::vec3( 0.0, 0.0,-1.0), glm::vec3( 0.0, 1.0, 0.0)));
+        _viewList.push_back(glm::lookAt(_originalPos, _originalPos + glm::vec3( 0.0, 0.0,1.0), glm::vec3( 0.0, 1.0, 0.0)));
+    }
 }
 
 void LightNode::createProjectionMatrix()
@@ -130,12 +146,15 @@ void LightNode::createProjectionMatrix()
     switch (_lightSettings.lightType)
     {
         case LightType::PointLight:
-            _projectionMatrix =  glm::perspective(glm::radians(90.0f),
-                                                  1.0f,
-                                                  0.1f,
-                                                  100.0f);
+        {
+            _projectionMatrix = glm::perspective(glm::radians(90.0f),
+                                                 1.0f,
+                                                 0.1f,
+                                                 100.0f);
+
             _projectionMatrix[1][1] *= -1;
             break;
+        }
         case LightType::SunLight:
         {
             _projectionMatrix = glm::ortho(-20.0f, 20.0f, -20.0f, 20.0f, 0.01f, 50.0f);

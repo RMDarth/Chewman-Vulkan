@@ -1,6 +1,10 @@
 #!/bin/bash
-for file in ./*.{vert,frag,geom}
+for file in *.{vert,frag,geom}
 do
-    echo "Compiling $file."
-    /home/darth/Software/shaderc/bin/glslc/glslc -c $file -o $file.spv
+    if /home/darth/Software/shaderc/bin/glslc/glslc -c $file -o $file.spv
+    then
+        echo "Compiled $file."
+    else
+        exit 1
+    fi
 done

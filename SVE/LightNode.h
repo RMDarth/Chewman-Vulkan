@@ -37,7 +37,8 @@ private:
     glm::mat4 _viewMatrix;
     glm::mat4 _projectionMatrix;
 
-    std::vector<glm::mat4> _projectionList;
+    std::vector<glm::mat4> _projectionList; // list of projections for different layers of CSM
+    std::vector<glm::mat4> _viewList; // list of view matrix for different views (cubemap) of point light
 };
 
 } // namespace SVE

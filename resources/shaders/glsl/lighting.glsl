@@ -20,7 +20,7 @@ struct PointLight
     float constant;
     float linear;
     float quadratic;
-    // float[1] padding
+     float padding;
 };
 
 struct SpotLight

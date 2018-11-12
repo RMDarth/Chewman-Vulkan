@@ -53,6 +53,7 @@ public:
     size_t getInFlightSize() const;
     VkFormat getSurfaceColorFormat() const;
     VkFormat getDepthFormat() const;
+    VkImageAspectFlags getDepthAspectFlags(VkFormat depthFormat) const;
     VkFramebuffer getFramebuffer(size_t index) const;
 
     VkCommandBuffer createCommandBuffer(BufferIndex bufferIndex);

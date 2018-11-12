@@ -6,7 +6,6 @@
 #include "Engine.h"
 #include "VulkanInstance.h"
 #include "VulkanSamplerHolder.h"
-#include "VulkanShadowImage.h"
 #include "ShadowMap.h"
 #include <utility>
 
@@ -17,27 +16,9 @@ static const uint32_t DirectShadowSize = 4096;
 static const uint32_t PointShadowSize = 512;
 
 LightManager::LightManager()
-    : _shadowImageDirectLight(std::make_unique<VulkanShadowImage>(MAX_CASCADES, DirectShadowSize, CommandsType::ShadowPassDirectLight))
-    , _shadowImagePointLights(std::make_unique<VulkanShadowImage>(MAX_LIGHTS * 6, PointShadowSize, CommandsType::ShadowPassPointLights))
+    : _directLightShadowMap(std::make_shared<ShadowMap>(LightType::SunLight, MAX_CASCADES, DirectShadowSize))
+    , _pointLightShadowMap(std::make_shared<ShadowMap>(LightType::PointLight, MAX_LIGHTS * 6, PointShadowSize))
 {
-    VulkanSamplerInfoList directSamplerInfoList;
-    VulkanSamplerInfoList pointSamplerInfoList;
-    for (auto i = 0; i < Engine::getInstance()->getVulkanInstance()->getSwapchainSize(); i++)
-    {
-        VulkanSamplerHolder::SamplerInfo directSamplerInfo{
-                _shadowImageDirectLight->getImageView(i),
-                _shadowImageDirectLight->getSampler(i)
-        };
-        directSamplerInfoList.push_back(directSamplerInfo);
-
-        VulkanSamplerHolder::SamplerInfo pointSamplerInfo{
-                _shadowImagePointLights->getImageView(i),
-                _shadowImagePointLights->getSampler(i)
-        };
-        pointSamplerInfoList.push_back(pointSamplerInfo);
-    }
-    Engine::getInstance()->getVulkanInstance()->getSamplerHolder()->setSamplerInfo(TextureType::ShadowMapDirect, directSamplerInfoList);
-    Engine::getInstance()->getVulkanInstance()->getSamplerHolder()->setSamplerInfo(TextureType::ShadowMapPoint, pointSamplerInfoList);
 }
 
 LightManager::~LightManager() = default;
@@ -75,32 +56,36 @@ size_t LightManager::getLightCount() const
 
 std::shared_ptr<ShadowMap> LightManager::getPointLightShadowMap()
 {
-    if (!_pointLightShadowMap)
-    {
-        _pointLightShadowMap = std::make_shared<ShadowMap>(LightType::PointLight);
-    }
     return _pointLightShadowMap;
 }
 
 std::shared_ptr<ShadowMap> LightManager::getDirectLightShadowMap()
 {
-    if (!_directLightShadowMap)
-    {
-        _directLightShadowMap = std::make_shared<ShadowMap>(LightType::SunLight);
-    }
     return _directLightShadowMap;
 }
 
-void LightManager::fillUniformData(UniformData& data, int viewSource)
+void LightManager::fillUniformData(UniformData& data, LightType viewSourceLightType)
 {
-    // TODO: Make 6 some const
     data.lightPointViewProjectionList.resize(MAX_LIGHTS);
     for (auto i = 0u; i < _lightList.size(); i++)
     {
         if (_lightList[i])
-            _lightList[i]->fillUniformData(data, i + 1, viewSource == i + 1);
+            _lightList[i]->fillUniformData(data, i + 1, false);
     }
-    _directLight->fillUniformData(data, 0, viewSource == 0);
+    _directLight->fillUniformData(data, 0, false);
+
+
+    if (viewSourceLightType == LightType::SunLight)
+    {
+        _directLight->fillUniformData(data, 0, true);
+    } else if (viewSourceLightType == LightType::PointLight)
+    {
+        for (auto i = 0u; i < _lightList.size(); i++)
+        {
+            if (_lightList[i])
+                _lightList[i]->fillUniformData(data, i + 1, true);
+        }
+    }
 
     // TODO: Replace 4 with constant or data from shader
     if (data.pointLightList.size() != 4)
@@ -109,16 +94,6 @@ void LightManager::fillUniformData(UniformData& data, int viewSource)
         // TODO: Refactor to remove dummy lights if light count < 4
         data.pointLightList.resize(4);
     }
-}
-
-VulkanShadowImage* LightManager::getDirectLightVulkanShadowImage()
-{
-    return _shadowImageDirectLight.get();
-}
-
-VulkanShadowImage *LightManager::getPointLightVulkanShadowImage()
-{
-    return _shadowImagePointLights.get();
 }
 
 } // namespace SVE
