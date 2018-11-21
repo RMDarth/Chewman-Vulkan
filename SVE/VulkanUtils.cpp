@@ -98,6 +98,39 @@ void VulkanUtils::copyBufferToImage(VkBuffer buffer, VkImage image, uint32_t wid
     endRecordingAndSubmitCommands(commandBuffer);
 }
 
+void VulkanUtils::createOptimizedBuffer(const void *bufferData, VkDeviceSize bufferSize, VkBuffer &buffer,
+                                        VkDeviceMemory &deviceMemory, VkBufferUsageFlags usage) const
+{
+    // create temporary slow CPU visible memory
+    VkBuffer stagingBuffer;
+    VkDeviceMemory stagingBufferMemory;
+    createBuffer(bufferSize,
+                 VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
+                 VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+                 stagingBuffer,
+                 stagingBufferMemory);
+
+    // Fill temporary buffer with vertex/index data
+    void* data;
+    vkMapMemory(_vulkanInstance->getLogicalDevice(), stagingBufferMemory, 0, bufferSize, 0, &data);
+    memcpy(data, bufferData, (size_t) bufferSize);
+    vkUnmapMemory(_vulkanInstance->getLogicalDevice(), stagingBufferMemory);
+
+    // create fast GPU-local buffer for data
+    createBuffer(bufferSize,
+                 VK_BUFFER_USAGE_TRANSFER_DST_BIT | usage,
+                 VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+                 buffer,
+                 deviceMemory);
+
+    // copy slow CPU-visible buffer to fast GPU-local
+    copyBuffer(stagingBuffer, buffer, bufferSize);
+
+    // destroy CPU-visible buffer
+    vkDestroyBuffer(_vulkanInstance->getLogicalDevice(), stagingBuffer, nullptr);
+    vkFreeMemory(_vulkanInstance->getLogicalDevice(), stagingBufferMemory, nullptr);
+}
+
 void VulkanUtils::createImage(uint32_t width,
                               uint32_t height,
                               uint32_t mipLevels,
@@ -442,7 +475,5 @@ VkFormat VulkanUtils::findSupportedFormat(const std::vector<VkFormat>& candidate
 
     throw VulkanException("Can't find suitable Vulkan format");
 }
-
-
 
 } // namespace SVE

@@ -1,5 +1,5 @@
 #!/bin/bash
-for file in *.{vert,frag,geom}
+for file in *.{vert,frag,geom,comp}
 do
     if /home/darth/Software/shaderc/bin/glslc/glslc -c $file -o $file.spv
     then

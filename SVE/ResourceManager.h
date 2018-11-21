@@ -13,6 +13,7 @@ struct EngineSettings;
 struct ShaderSettings;
 struct MeshLoadSettings;
 struct LightSettings;
+struct ParticleSystemSettings;
 
 class ResourceManager
 {
@@ -24,6 +25,7 @@ public:
         std::vector<ShaderSettings> shaderList;
         std::vector<MeshLoadSettings> meshList;
         std::vector<LightSettings> lightList;
+        std::vector<ParticleSystemSettings> particleSystemList;
     };
 
     explicit ResourceManager(std::vector<std::string> folderList);
@@ -41,6 +43,7 @@ private:
         Material,
         Mesh,
         Light,
+        ParticleSystem
     };
 
 private:
@@ -51,7 +54,6 @@ private:
     static void loadFile(const std::string& filename, LoadData& loadData);
 
 private:
-
     std::vector<std::string> _folderList;
 
 };

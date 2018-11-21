@@ -253,7 +253,7 @@ void VulkanPointShadowMap::createImageResources()
                 VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
                 _depthImage[i],
                 _depthImageMemory[i],
-                0,
+                VK_IMAGE_CREATE_CUBE_COMPATIBLE_BIT,
                 _layersCount);
         _depthImageView[i] =
                 _vulkanUtils.createImageView(

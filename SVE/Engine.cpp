@@ -14,6 +14,7 @@
 #include "ShaderManager.h"
 #include "MeshManager.h"
 #include "LightManager.h"
+#include "ParticleSystemEntity.h"
 #include "ResourceManager.h"
 #include "Entity.h"
 #include "Skybox.h"
@@ -207,6 +208,10 @@ void Engine::renderFrame()
         }
     }*/
 
+    auto particleSystem = _sceneManager->getParticleSystem();
+    if (particleSystem)
+        particleSystem->applyComputeCommands();
+
     _commandsType = CommandsType::ShadowPassDirectLight;
     if (auto directLight = _sceneManager->getLightManager()->getDirectionLight())
     {
@@ -301,6 +306,7 @@ void Engine::renderFrame()
 
     mainUniform->clipPlane = glm::vec4(0.0, 1.0, 0.0, 100);
     mainUniform->time = getTime();
+    mainUniform->deltaTime = getDeltaTime();
     _sceneManager->getMainCamera()->fillUniformData(*mainUniform);
 
     for (auto i = 1; i < PassCount; i++)
@@ -333,7 +339,12 @@ void Engine::renderFrame()
         skybox->updateUniforms(uniformDataList);
     updateNode(_sceneManager->getRootNode(), uniformDataList);
 
-    ///////  Submit command buffers
+    ///////  Submit command buffers to queue
+    if (particleSystem)
+    {
+        // TODO: Use special compute queue instead of graphics queue for compute shader (they can be different)
+        _vulkanInstance->submitCommands(CommandsType::ComputeParticlesPass, BUFFER_INDEX_COMPUTE_PARTICLES);
+    }
     if (isShadowMappingEnabled())
     {
         _vulkanInstance->submitCommands(
@@ -362,10 +373,17 @@ float Engine::getTime()
     return _duration;
 }
 
+float Engine::getDeltaTime()
+{
+    return _deltaTime;
+}
+
 void Engine::updateTime()
 {
+    _prevTime = _currentTime;
     _currentTime = std::chrono::high_resolution_clock::now();
     _duration = std::chrono::duration<float, std::chrono::seconds::period>(_currentTime - _startTime).count();
+    _deltaTime = std::chrono::duration<float, std::chrono::seconds::period>(_prevTime - _currentTime).count();
 }
 
 CommandsType Engine::getPassType() const

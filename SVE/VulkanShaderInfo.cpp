@@ -37,7 +37,8 @@ VkShaderStageFlagBits getVulkanShaderStage(const ShaderSettings& shaderSettings)
             {
                     VK_SHADER_STAGE_VERTEX_BIT,
                     VK_SHADER_STAGE_FRAGMENT_BIT,
-                    VK_SHADER_STAGE_GEOMETRY_BIT
+                    VK_SHADER_STAGE_GEOMETRY_BIT,
+                    VK_SHADER_STAGE_COMPUTE_BIT
             };
 
     return stageMap[static_cast<uint8_t>(shaderSettings.shaderType)];
@@ -124,59 +125,77 @@ std::vector<VkVertexInputBindingDescription> VulkanShaderInfo::getBindingDescrip
 {
     std::vector<VkVertexInputBindingDescription> bindingDescriptions;
     uint32_t binding = 0;
+    uint32_t stride = 0;
 
     if (_shaderSettings.vertexInfo.vertexDataFlags & VertexInfo::Position)
     {
         VkVertexInputBindingDescription positionBinding {};
         positionBinding.binding = binding++;
-        positionBinding.stride = sizeof(glm::vec3);
+        positionBinding.stride = getVertexDataSize(VertexInfo::Position);
         positionBinding.inputRate = VK_VERTEX_INPUT_RATE_VERTEX; // per vertex or per instance
         bindingDescriptions.push_back(positionBinding);
+        stride += positionBinding.stride;
     }
 
     if (_shaderSettings.vertexInfo.vertexDataFlags & VertexInfo::Color)
     {
         VkVertexInputBindingDescription colorBinding {};
         colorBinding.binding = binding++;
-        colorBinding.stride = sizeof(glm::vec3);
+        colorBinding.stride = getVertexDataSize(VertexInfo::Color);
         colorBinding.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
         bindingDescriptions.push_back(colorBinding);
+        stride += colorBinding.stride;
     }
 
     if (_shaderSettings.vertexInfo.vertexDataFlags & VertexInfo::TexCoord)
     {
         VkVertexInputBindingDescription texCoordBinding {};
         texCoordBinding.binding = binding++;
-        texCoordBinding.stride = sizeof(glm::vec2);
+        texCoordBinding.stride = getVertexDataSize(VertexInfo::TexCoord);
         texCoordBinding.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
         bindingDescriptions.push_back(texCoordBinding);
+        stride += texCoordBinding.stride;
     }
 
     if (_shaderSettings.vertexInfo.vertexDataFlags & VertexInfo::Normal)
     {
         VkVertexInputBindingDescription normalBinding {};
         normalBinding.binding = binding++;
-        normalBinding.stride = sizeof(glm::vec3);
+        normalBinding.stride = getVertexDataSize(VertexInfo::Normal);
         normalBinding.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
         bindingDescriptions.push_back(normalBinding);
+        stride += normalBinding.stride;
     }
 
     if (_shaderSettings.vertexInfo.vertexDataFlags & VertexInfo::BoneWeights)
     {
         VkVertexInputBindingDescription boneWeightBinding {};
         boneWeightBinding.binding = binding++;
-        boneWeightBinding.stride = sizeof(glm::vec4);
+        boneWeightBinding.stride = getVertexDataSize(VertexInfo::BoneWeights);
         boneWeightBinding.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
         bindingDescriptions.push_back(boneWeightBinding);
+        stride += boneWeightBinding.stride;
     }
 
     if (_shaderSettings.vertexInfo.vertexDataFlags & VertexInfo::BoneIds)
     {
         VkVertexInputBindingDescription boneIdsBinding {};
         boneIdsBinding.binding = binding++;
-        boneIdsBinding.stride = sizeof(glm::ivec4);
+        boneIdsBinding.stride = getVertexDataSize(VertexInfo::BoneIds);
         boneIdsBinding.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
         bindingDescriptions.push_back(boneIdsBinding);
+        stride += boneIdsBinding.stride;
+    }
+
+    // for combined binding only one struct should be set
+    if (!_shaderSettings.vertexInfo.separateBinding)
+    {
+        bindingDescriptions.clear();
+        VkVertexInputBindingDescription combinedBindingDescription {};
+        combinedBindingDescription.binding = 0;
+        combinedBindingDescription.stride = stride;
+        combinedBindingDescription.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+        bindingDescriptions.push_back(combinedBindingDescription);
     }
 
     return bindingDescriptions;
@@ -185,60 +204,79 @@ std::vector<VkVertexInputBindingDescription> VulkanShaderInfo::getBindingDescrip
 std::vector<VkVertexInputAttributeDescription> VulkanShaderInfo::getAttributeDescriptions() const
 {
     std::vector<VkVertexInputAttributeDescription> attributeDescriptions;
-    uint32_t bindingAndLoc = 0;
+    uint32_t binding = 0;
+    uint32_t location = 0;
+    uint32_t offset = 0;
 
     if (_shaderSettings.vertexInfo.vertexDataFlags & VertexInfo::Position)
     {
         VkVertexInputAttributeDescription vertexAttrib {};
-        vertexAttrib.binding = bindingAndLoc;
-        vertexAttrib.location = bindingAndLoc++;
+        vertexAttrib.binding = _shaderSettings.vertexInfo.separateBinding ? binding++ : binding;
+        vertexAttrib.location = location++;
         vertexAttrib.format = VK_FORMAT_R32G32B32_SFLOAT;
         attributeDescriptions.push_back(vertexAttrib);
+
+        offset += getVertexDataSize(VertexInfo::Position);
     }
 
     if (_shaderSettings.vertexInfo.vertexDataFlags & VertexInfo::Color)
     {
         VkVertexInputAttributeDescription colorAttrib {};
-        colorAttrib.binding = bindingAndLoc;
-        colorAttrib.location = bindingAndLoc++;
+        colorAttrib.binding = _shaderSettings.vertexInfo.separateBinding ? binding++ : binding;
+        colorAttrib.location = location++;
         colorAttrib.format = VK_FORMAT_R32G32B32_SFLOAT;
+        colorAttrib.offset = _shaderSettings.vertexInfo.separateBinding ? 0 : offset;
         attributeDescriptions.push_back(colorAttrib);
+
+        offset += getVertexDataSize(VertexInfo::Color);
     }
 
     if (_shaderSettings.vertexInfo.vertexDataFlags & VertexInfo::TexCoord)
     {
         VkVertexInputAttributeDescription texCoordAttrib {};
-        texCoordAttrib.binding = bindingAndLoc;
-        texCoordAttrib.location = bindingAndLoc++;
+        texCoordAttrib.binding = _shaderSettings.vertexInfo.separateBinding ? binding++ : binding;
+        texCoordAttrib.location = location++;
         texCoordAttrib.format = VK_FORMAT_R32G32_SFLOAT;
+        texCoordAttrib.offset = _shaderSettings.vertexInfo.separateBinding ? 0 : offset;
         attributeDescriptions.push_back(texCoordAttrib);
+
+        offset += getVertexDataSize(VertexInfo::TexCoord);
     }
 
     if (_shaderSettings.vertexInfo.vertexDataFlags & VertexInfo::Normal)
     {
         VkVertexInputAttributeDescription normalAttrib {};
-        normalAttrib.binding = bindingAndLoc;
-        normalAttrib.location = bindingAndLoc++;
+        normalAttrib.binding = _shaderSettings.vertexInfo.separateBinding ? binding++ : binding;
+        normalAttrib.location = location++;
         normalAttrib.format = VK_FORMAT_R32G32B32_SFLOAT;
+        normalAttrib.offset = _shaderSettings.vertexInfo.separateBinding ? 0 : offset;
         attributeDescriptions.push_back(normalAttrib);
+
+        offset += getVertexDataSize(VertexInfo::Normal);
     }
 
     if (_shaderSettings.vertexInfo.vertexDataFlags & VertexInfo::BoneWeights)
     {
         VkVertexInputAttributeDescription boneWeightAttrib {};
-        boneWeightAttrib.binding = bindingAndLoc;
-        boneWeightAttrib.location = bindingAndLoc++;
+        boneWeightAttrib.binding = _shaderSettings.vertexInfo.separateBinding ? binding++ : binding;
+        boneWeightAttrib.location = location++;
         boneWeightAttrib.format = VK_FORMAT_R32G32B32A32_SFLOAT;
+        boneWeightAttrib.offset = _shaderSettings.vertexInfo.separateBinding ? 0 : offset;
         attributeDescriptions.push_back(boneWeightAttrib);
+
+        offset += getVertexDataSize(VertexInfo::BoneWeights);
     }
 
     if (_shaderSettings.vertexInfo.vertexDataFlags & VertexInfo::BoneIds)
     {
         VkVertexInputAttributeDescription boneIndexAttrib {};
-        boneIndexAttrib.binding = bindingAndLoc;
-        boneIndexAttrib.location = bindingAndLoc++;
+        boneIndexAttrib.binding = _shaderSettings.vertexInfo.separateBinding ? binding++ : binding;
+        boneIndexAttrib.location = location++;
         boneIndexAttrib.format = VK_FORMAT_R32G32B32A32_SINT;
+        boneIndexAttrib.offset = _shaderSettings.vertexInfo.separateBinding ? 0 : offset;
         attributeDescriptions.push_back(boneIndexAttrib);
+
+        offset += getVertexDataSize(VertexInfo::BoneIds);
     }
 
     return attributeDescriptions;
@@ -248,6 +286,20 @@ void VulkanShaderInfo::createDescriptorSetLayout()
 {
     std::vector<VkDescriptorSetLayoutBinding> descriptorList;
     uint32_t bindingNum = 0;
+
+    if (_shaderSettings.shaderType == ShaderType::ComputeShader)
+    {
+        VkDescriptorSetLayoutBinding texelStorageLayoutBinding {};
+        texelStorageLayoutBinding.binding = bindingNum;
+        texelStorageLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER;
+        texelStorageLayoutBinding.descriptorCount = 1;
+        texelStorageLayoutBinding.stageFlags = _shaderStage;
+        texelStorageLayoutBinding.pImmutableSamplers = nullptr;
+
+        descriptorList.push_back(texelStorageLayoutBinding);
+        bindingNum++;
+    }
+
     for (auto i = 0u; i < _shaderSettings.samplerNamesList.size(); i++)
     {
         VkDescriptorSetLayoutBinding samplerLayoutBinding {};
@@ -317,6 +369,27 @@ VkShaderModule VulkanShaderInfo::createShaderModule(const std::vector<char> &cod
     }
 
     return shaderModule;
+}
+
+uint32_t VulkanShaderInfo::getVertexDataSize(VertexInfo::VertexDataType vertexDataType) const
+{
+    switch (vertexDataType)
+    {
+        case VertexInfo::Position:
+            return sizeof(float) * _shaderSettings.vertexInfo.positionSize;
+        case VertexInfo::Color:
+            return sizeof(float) * _shaderSettings.vertexInfo.colorSize;
+        case VertexInfo::TexCoord:
+            return sizeof(glm::vec2);
+        case VertexInfo::Normal:
+            return sizeof(glm::vec3);
+        case VertexInfo::BoneWeights:
+            return sizeof(glm::vec4);
+        case VertexInfo::BoneIds:
+            return sizeof(glm::ivec4);
+    }
+
+    throw VulkanException("Unsupported vertex type");
 }
 
 } // namespace SVE

@@ -4,6 +4,7 @@
 #include "SceneManager.h"
 #include "LightManager.h"
 #include "LightNode.h"
+#include "ParticleSystemEntity.h"
 #include "ShadowMap.h"
 #include "Skybox.h"
 #include "Water.h"
@@ -57,6 +58,18 @@ LightManager* SceneManager::getLightManager()
     return _lightManager.get();
 }
 
+std::shared_ptr<ParticleSystemEntity> SceneManager::createParticleSystem(ParticleSystemSettings particleSystemSettings)
+{
+    auto sceneNode = std::make_shared<SceneNode>(particleSystemSettings.name);
+    _root->attachSceneNode(sceneNode);
+    auto particleEntity = std::make_shared<ParticleSystemEntity>(std::move(particleSystemSettings));
+    sceneNode->attachEntity(particleEntity);
+
+    _particleSystem = particleEntity;
+
+    return particleEntity;
+}
+
 std::shared_ptr<SceneNode> SceneManager::createSceneNode(std::string name)
 {
     return std::make_shared<SceneNode>(name);
@@ -86,6 +99,11 @@ std::shared_ptr<Water> SceneManager::createWater(float height)
 std::shared_ptr<Water> SceneManager::getWater()
 {
     return _water;
+}
+
+std::shared_ptr<ParticleSystemEntity> SceneManager::getParticleSystem()
+{
+    return _particleSystem;
 }
 
 } // namespace SVE

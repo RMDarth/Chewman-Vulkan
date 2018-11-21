@@ -1,0 +1,8 @@
+{
+    "name": "ParticleMaterial",
+    "vertexShaderName": "particlesVertexShader",
+    "geometryShaderName": "particlesGeomShader",
+    "fragmentShaderName": "particlesFragmentShader",
+    "cullFace": "None",
+    "useAlphaBlending": true
+}

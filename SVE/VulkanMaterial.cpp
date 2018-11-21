@@ -85,7 +85,6 @@ SVE::VulkanMaterial::VulkanMaterial(MaterialSettings materialSettings)
         _shaderList.push_back(_fragmentShader);
     }
 
-
     createPipelineLayout();
     createPipeline();
 
@@ -320,12 +319,12 @@ void VulkanMaterial::createPipeline()
     VkPipelineColorBlendAttachmentState colorBlendAttachment{};
     colorBlendAttachment.colorWriteMask =
             VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
-    colorBlendAttachment.blendEnable = VK_FALSE;
-    colorBlendAttachment.srcColorBlendFactor = VK_BLEND_FACTOR_ONE;
-    colorBlendAttachment.dstColorBlendFactor = VK_BLEND_FACTOR_DST_ALPHA;
+    colorBlendAttachment.blendEnable = _materialSettings.useAlphaBlending ? VK_TRUE : VK_FALSE;
+    colorBlendAttachment.srcColorBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
+    colorBlendAttachment.dstColorBlendFactor = VK_BLEND_FACTOR_ONE;
     colorBlendAttachment.colorBlendOp = VK_BLEND_OP_ADD;
     colorBlendAttachment.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
-    colorBlendAttachment.dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
+    colorBlendAttachment.dstAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
     colorBlendAttachment.alphaBlendOp = VK_BLEND_OP_ADD;
 
     VkPipelineColorBlendStateCreateInfo blendingCreateInfo{};
@@ -334,7 +333,10 @@ void VulkanMaterial::createPipeline()
     blendingCreateInfo.logicOp = VK_LOGIC_OP_COPY;
     blendingCreateInfo.attachmentCount = 1;
     blendingCreateInfo.pAttachments = &colorBlendAttachment;
-    //blendingCreateInfo.blendConstants[0] = 0.0f;
+    blendingCreateInfo.blendConstants[0] = 1.0f;
+    blendingCreateInfo.blendConstants[1] = 1.0f;
+    blendingCreateInfo.blendConstants[2] = 1.0f;
+    blendingCreateInfo.blendConstants[3] = 1.0f;
 
     std::vector<VkDynamicState> dynamicStateList = { VK_DYNAMIC_STATE_VIEWPORT, VK_DYNAMIC_STATE_SCISSOR, VK_DYNAMIC_STATE_DEPTH_BIAS };
 
@@ -373,7 +375,6 @@ void VulkanMaterial::createPipeline()
         shader->freeShaderModule();
     }
 }
-
 
 void VulkanMaterial::deletePipeline()
 {
@@ -1051,110 +1052,6 @@ void VulkanMaterial::updateDescriptorSet(
     }
 
     vkUpdateDescriptorSets(_device, descriptorWrites.size(), descriptorWrites.data(), 0, nullptr);
-}
-
-std::vector<char> VulkanMaterial::getUniformDataByType(const UniformData& data, UniformType type) const
-{
-    const auto& sizeMap = getUniformSizeMap();
-    switch (type)
-    {
-        case UniformType::ModelMatrix:
-        {
-            const char* byteData = reinterpret_cast<const char*>(&data.model);
-            return std::vector<char>(byteData, byteData + sizeof(data.model));
-        }
-        case UniformType::ViewMatrix:
-        {
-            const char* byteData = reinterpret_cast<const char*>(&data.view);
-            return std::vector<char>(byteData, byteData + sizeof(data.view));
-        }
-        case UniformType::ProjectionMatrix:
-        {
-            const char* byteData = reinterpret_cast<const char*>(&data.projection);
-            return std::vector<char>(byteData, byteData + sizeof(data.projection));
-        }
-        case UniformType::ModelViewProjectionMatrix:
-        {
-            glm::mat4 mvp = data.projection * data.view * data.model;
-            const char* byteData = reinterpret_cast<const char*>(&mvp);
-            return std::vector<char>(byteData, byteData + sizeof(mvp));
-        }
-        case UniformType::ViewProjectionMatrix:
-        {
-            glm::mat4 vp = data.projection * data.view;
-            const char* byteData = reinterpret_cast<const char*>(&vp);
-            return std::vector<char>(byteData, byteData + sizeof(vp));
-        }
-        case UniformType::ViewProjectionMatrixList:
-        {
-            const char* byteData = reinterpret_cast<const char*>(data.viewProjectionList.data());
-            return std::vector<char>(byteData, byteData + sizeMap.at(type) * data.viewProjectionList.size());
-        }
-        case UniformType::ViewProjectionMatrixSize:
-        {
-            uint32_t vpListSize[4] =
-                             { static_cast<uint32_t>(data.viewProjectionList.size()) };
-            const char* byteData = reinterpret_cast<const char*>(vpListSize);
-            return std::vector<char>(byteData, byteData + sizeMap.at(type));
-        }
-        case UniformType::CameraPosition:
-        {
-            const char* byteData = reinterpret_cast<const char*>(&data.cameraPos);
-            return std::vector<char>(byteData, byteData + sizeof(data.cameraPos));
-        }
-        case UniformType::MaterialInfo:
-        {
-            const char* byteData = reinterpret_cast<const char*>(&data.materialInfo);
-            return std::vector<char>(byteData, byteData + sizeof(data.materialInfo));
-        }
-        case UniformType::LightInfo:
-        {
-            const char* byteData = reinterpret_cast<const char*>(&data.lightInfo);
-            return std::vector<char>(byteData, byteData + sizeof(data.lightInfo));
-        }
-        case UniformType::LightDirectional:
-        {
-            const char* byteData = reinterpret_cast<const char*>(&data.dirLight);
-            return std::vector<char>(byteData, byteData + sizeMap.at(type));
-        }
-        case UniformType::LightPoint:
-        {
-            const char* byteData = reinterpret_cast<const char*>(data.pointLightList.data());
-            return std::vector<char>(byteData, byteData + sizeMap.at(type) * data.pointLightList.size());
-        }
-        case UniformType::LightSpot:
-        {
-            const char* byteData = reinterpret_cast<const char*>(&data.spotLight);
-            return std::vector<char>(byteData, byteData + sizeMap.at(type));
-        }
-        case UniformType::LightPointViewProjectionList:
-        {
-            const char* byteData = reinterpret_cast<const char*>(data.lightPointViewProjectionList.data());
-            return std::vector<char>(byteData, byteData + sizeMap.at(type) * data.lightPointViewProjectionList.size());
-        }
-        case UniformType::LightDirectViewProjectionList:
-        {
-            const char* byteData = reinterpret_cast<const char*>(data.lightDirectViewProjectionList.data());
-            return std::vector<char>(byteData, byteData + sizeMap.at(type) * data.lightDirectViewProjectionList.size());
-        }
-        case UniformType::BoneMatrices:
-        {
-            const char* byteData = reinterpret_cast<const char*>(data.bones.data());
-            return std::vector<char>(byteData, byteData + sizeMap.at(type) * data.bones.size());
-        }
-        case UniformType::ClipPlane:
-        {
-            const char* byteData = reinterpret_cast<const char*>(&data.clipPlane);
-            return std::vector<char>(byteData, byteData + sizeof(data.clipPlane));
-        }
-        case UniformType::Time:
-        {
-            const char* byteData = reinterpret_cast<const char*>(&data.time);
-            return std::vector<char>(byteData, byteData + sizeof(data.time));
-        }
-    }
-
-    throw VulkanException("Unsupported uniform type");
 }
 
 } // namespace SVE

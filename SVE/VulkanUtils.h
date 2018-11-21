@@ -33,6 +33,14 @@ public:
     void copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size) const;
     void copyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height) const;
 
+    // This method will create fast GPU-local buffer (using transitional temporary CPU visible buffer)
+    void createOptimizedBuffer(
+            const void* bufferData,
+            VkDeviceSize bufferSize,
+            VkBuffer &buffer,
+            VkDeviceMemory &deviceMemory,
+            VkBufferUsageFlags usage) const;
+
     void createImage(uint32_t width,
                      uint32_t height,
                      uint32_t mipLevels,

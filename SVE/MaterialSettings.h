@@ -66,6 +66,7 @@ struct MaterialSettings
     bool useDepthTest = true;
     bool useDepthBias = false;
     bool useMultisampling = true;
+    bool useAlphaBlending = false;
     MaterialCullFace cullFace = MaterialCullFace::FrontFace;
     CommandsType passType = CommandsType::MainPass; // used to select correct renderpass
 };

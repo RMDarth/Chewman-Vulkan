@@ -30,7 +30,8 @@ enum class UniformType : uint8_t
     LightDirectViewProjectionList,
     BoneMatrices,
     ClipPlane,
-    Time
+    Time,
+    DeltaTime
     // TODO: Add material properties, other matrices types etc.
 };
 
@@ -38,7 +39,8 @@ enum class ShaderType : uint8_t
 {
     VertexShader = 0,
     FragmentShader,
-    GeometryShader
+    GeometryShader,
+    ComputeShader
 };
 
 struct MaterialInfo
@@ -61,6 +63,7 @@ struct UniformData
     glm::vec4 cameraPos;
     glm::vec4 clipPlane;  // (Nx, Ny, Nz, DistanceFromOrigin)
     float time;
+    float deltaTime;
     MaterialInfo materialInfo;
     DirLight dirLight;
     std::vector<PointLight> pointLightList;
@@ -87,6 +90,9 @@ struct VertexInfo
         BoneIds =       1 << 5
     };
     uint32_t vertexDataFlags = Position | Color | TexCoord | Normal | BoneWeights | BoneIds; // TODO: remove bones
+    uint8_t positionSize = 3;
+    uint8_t colorSize = 3;
+    bool separateBinding = true;
 };
 
 struct ShaderSettings
@@ -107,5 +113,6 @@ struct ShaderSettings
 };
 
 const std::map<UniformType, size_t>& getUniformSizeMap();
+std::vector<char> getUniformDataByType(const UniformData& data, UniformType type);
 
 } // namespace SVE

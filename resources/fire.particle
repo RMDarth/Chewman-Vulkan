@@ -1,0 +1,35 @@
+{
+    "name": "FireParticle",
+    "materialName": "ParticleMaterial",
+    "computeShaderName": "particlesComputeShader",
+
+    "width": 0.05,
+    "height": 0.05,
+    "quota": 2000,
+
+    "sort": true,
+
+    "particleEmitter":
+    {
+        "angle": 0.0,
+        "emissionRate": 200,
+        "minTimeToLive": 0.02,
+        "maxTimeToLive": 0.05,
+        "direction": [ 0.0, 1.0, 0.0 ],
+        "minVelocity": 0.2,
+        "maxVelocity": 0.5,
+        "colorRangeStart": [ 1.0, 1.0, 1.0 ],
+        "colorRangeEnd": [ 1.0, 1.0, 1.0 ]
+    },
+    "particleAffector":
+    {
+        "scaleRate": 1.0,
+        "applyScale": false,
+
+        "colorRate": [ 1.0, 1.0, 1.0, 1.0 ],
+        "applyColor": false,
+
+        "force": [0.0, 0.0, 0.0],
+        "applyForce": false
+    }
+}

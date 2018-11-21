@@ -3,6 +3,7 @@
 // Licensed under CC BY 4.0
 #include "ShaderSettings.h"
 #include "Libs.h"
+#include "VulkanException.h"
 
 namespace SVE
 {
@@ -28,8 +29,118 @@ const std::map<UniformType, size_t>& getUniformSizeMap()
             { UniformType::BoneMatrices, sizeof(glm::mat4) },
             { UniformType::ClipPlane, sizeof(glm::vec4) },
             { UniformType::Time, sizeof(float) },
+            { UniformType::DeltaTime, sizeof(float) },
     };
     return uniformSizeMap;
+}
+
+std::vector<char> getUniformDataByType(const UniformData& data, UniformType type)
+{
+    const auto& sizeMap = getUniformSizeMap();
+    switch (type)
+    {
+        case UniformType::ModelMatrix:
+        {
+            const char* byteData = reinterpret_cast<const char*>(&data.model);
+            return std::vector<char>(byteData, byteData + sizeof(data.model));
+        }
+        case UniformType::ViewMatrix:
+        {
+            const char* byteData = reinterpret_cast<const char*>(&data.view);
+            return std::vector<char>(byteData, byteData + sizeof(data.view));
+        }
+        case UniformType::ProjectionMatrix:
+        {
+            const char* byteData = reinterpret_cast<const char*>(&data.projection);
+            return std::vector<char>(byteData, byteData + sizeof(data.projection));
+        }
+        case UniformType::ModelViewProjectionMatrix:
+        {
+            glm::mat4 mvp = data.projection * data.view * data.model;
+            const char* byteData = reinterpret_cast<const char*>(&mvp);
+            return std::vector<char>(byteData, byteData + sizeof(mvp));
+        }
+        case UniformType::ViewProjectionMatrix:
+        {
+            glm::mat4 vp = data.projection * data.view;
+            const char* byteData = reinterpret_cast<const char*>(&vp);
+            return std::vector<char>(byteData, byteData + sizeof(vp));
+        }
+        case UniformType::ViewProjectionMatrixList:
+        {
+            const char* byteData = reinterpret_cast<const char*>(data.viewProjectionList.data());
+            return std::vector<char>(byteData, byteData + sizeMap.at(type) * data.viewProjectionList.size());
+        }
+        case UniformType::ViewProjectionMatrixSize:
+        {
+            uint32_t vpListSize[4] =
+                    { static_cast<uint32_t>(data.viewProjectionList.size()) };
+            const char* byteData = reinterpret_cast<const char*>(vpListSize);
+            return std::vector<char>(byteData, byteData + sizeMap.at(type));
+        }
+        case UniformType::CameraPosition:
+        {
+            const char* byteData = reinterpret_cast<const char*>(&data.cameraPos);
+            return std::vector<char>(byteData, byteData + sizeof(data.cameraPos));
+        }
+        case UniformType::MaterialInfo:
+        {
+            const char* byteData = reinterpret_cast<const char*>(&data.materialInfo);
+            return std::vector<char>(byteData, byteData + sizeof(data.materialInfo));
+        }
+        case UniformType::LightInfo:
+        {
+            const char* byteData = reinterpret_cast<const char*>(&data.lightInfo);
+            return std::vector<char>(byteData, byteData + sizeof(data.lightInfo));
+        }
+        case UniformType::LightDirectional:
+        {
+            const char* byteData = reinterpret_cast<const char*>(&data.dirLight);
+            return std::vector<char>(byteData, byteData + sizeMap.at(type));
+        }
+        case UniformType::LightPoint:
+        {
+            const char* byteData = reinterpret_cast<const char*>(data.pointLightList.data());
+            return std::vector<char>(byteData, byteData + sizeMap.at(type) * data.pointLightList.size());
+        }
+        case UniformType::LightSpot:
+        {
+            const char* byteData = reinterpret_cast<const char*>(&data.spotLight);
+            return std::vector<char>(byteData, byteData + sizeMap.at(type));
+        }
+        case UniformType::LightPointViewProjectionList:
+        {
+            const char* byteData = reinterpret_cast<const char*>(data.lightPointViewProjectionList.data());
+            return std::vector<char>(byteData, byteData + sizeMap.at(type) * data.lightPointViewProjectionList.size());
+        }
+        case UniformType::LightDirectViewProjectionList:
+        {
+            const char* byteData = reinterpret_cast<const char*>(data.lightDirectViewProjectionList.data());
+            return std::vector<char>(byteData, byteData + sizeMap.at(type) * data.lightDirectViewProjectionList.size());
+        }
+        case UniformType::BoneMatrices:
+        {
+            const char* byteData = reinterpret_cast<const char*>(data.bones.data());
+            return std::vector<char>(byteData, byteData + sizeMap.at(type) * data.bones.size());
+        }
+        case UniformType::ClipPlane:
+        {
+            const char* byteData = reinterpret_cast<const char*>(&data.clipPlane);
+            return std::vector<char>(byteData, byteData + sizeof(data.clipPlane));
+        }
+        case UniformType::Time:
+        {
+            const char* byteData = reinterpret_cast<const char*>(&data.time);
+            return std::vector<char>(byteData, byteData + sizeof(data.time));
+        }
+        case UniformType::DeltaTime:
+        {
+            const char* byteData = reinterpret_cast<const char*>(&data.deltaTime);
+            return std::vector<char>(byteData, byteData + sizeof(data.deltaTime));
+        }
+    }
+
+    throw VulkanException("Unsupported uniform type");
 }
 
 } // namespace SVE

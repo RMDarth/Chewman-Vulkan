@@ -19,6 +19,9 @@
 // Niko Kauppi for his Vulkan video tutorials
 // Alexander Overvoorde for his Vulkan tutorial website (https://vulkan-tutorial.com)
 // Sascha Willems for his Vulkan examples git repository
+// Joey de Vries for his OpenGL tutorials (learnopengl.com)
+// Eray Meiri for his OGL dev tutorials (ogldev.org)
+// Pawel Lapinski for his Vulkan Cookbook and compute shaders receipts
 
 void updateNode(std::shared_ptr<SVE::SceneNode>& node, float time)
 {

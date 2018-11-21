@@ -32,6 +32,7 @@ private:
     void deleteDescriptorSetLayout();
 
     VkShaderModule createShaderModule(const std::vector<char> &code) const;
+    uint32_t getVertexDataSize(VertexInfo::VertexDataType vertexDataType) const;
 
 private:
     VkDevice _device;

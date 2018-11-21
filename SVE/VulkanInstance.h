@@ -24,7 +24,8 @@ enum
     BUFFER_INDEX_SHADOWMAP_POINT = 200,
     BUFFER_INDEX_WATER_REFLECTION = 300,
     BUFFER_INDEX_WATER_REFRACTION = 301,
-    BUFFER_INDEX_SCREEN_QUAD = 400
+    BUFFER_INDEX_SCREEN_QUAD = 400,
+    BUFFER_INDEX_COMPUTE_PARTICLES = 500
 };
 
 using PoolID = uint32_t;
@@ -162,6 +163,7 @@ private:
     VkImageView _depthImageView;
 
     const uint32_t MAX_FRAMES_IN_FLIGHT = 2; // max parallel processing frame
+    std::vector<VkSemaphore> _computeParticlesReadySemaphore;
     std::vector<VkSemaphore> _shadowMapDirectReadySemaphores;
     std::vector<VkSemaphore> _shadowMapPointReadySemaphores;
     std::vector<VkSemaphore> _waterReflectionReadySemaphores;

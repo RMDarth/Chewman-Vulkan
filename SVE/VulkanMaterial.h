@@ -69,9 +69,6 @@ private:
                              const VulkanShaderInfo* shaderInfo,
                              VkDescriptorSet descriptorSet);
 
-    std::vector<char> getUniformDataByType(const UniformData& data, UniformType type) const;
-
-
 private:
     MaterialSettings _materialSettings;
 

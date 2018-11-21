@@ -28,6 +28,7 @@ enum class CommandsType : uint8_t
     ReflectionPass,
     RefractionPass,
     ScreenQuadPass,
+    ComputeParticlesPass
 };
 
 static const uint8_t PassCount = 6;
@@ -56,6 +57,7 @@ public:
 
     CommandsType getPassType() const;
     float getTime();
+    float getDeltaTime();
 
     void renderFrame();
 
@@ -75,8 +77,10 @@ private:
     std::unique_ptr<ResourceManager> _resourceManager;
 
     std::chrono::high_resolution_clock::time_point _startTime = std::chrono::high_resolution_clock::now();
-    std::chrono::high_resolution_clock::time_point _currentTime;
+    std::chrono::high_resolution_clock::time_point _currentTime = std::chrono::high_resolution_clock::now();
+    std::chrono::high_resolution_clock::time_point _prevTime = std::chrono::high_resolution_clock::now();
     float _duration;
+    float _deltaTime;
 };
 
 } // namespace SVE

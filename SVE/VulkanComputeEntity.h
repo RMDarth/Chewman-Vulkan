@@ -1,0 +1,71 @@
+// VSE (Vulkan Simple Engine) Library
+// Copyright (c) 2018-2019, Igor Barinov
+// Licensed under CC BY 4.0
+#pragma once
+#include "ComputeSettings.h"
+
+#include <vulkan/vulkan.h>
+#include <vector>
+
+namespace SVE
+{
+
+class VulkanUtils;
+class VulkanShaderInfo;
+class VulkanInstance;
+
+class VulkanComputeEntity
+{
+public:
+    explicit VulkanComputeEntity(ComputeSettings computeSettings);
+    ~VulkanComputeEntity();
+
+    VkBuffer getComputeBuffer() const;
+
+    void setUniformData(const UniformData& uniformData) const;
+
+    void applyComputeCommands() const;
+
+private:
+    void createPipelineLayout();
+    void deletePipelineLayout();
+
+    void createPipeline();
+    void deletePipeline();
+
+    void createBufferResources();
+    void deleteBufferResources();
+
+    void createUniformBuffers();
+    void deleteUniformBuffers();
+
+    void createDescriptorPool();
+    void deleteDescriptorPool();
+    void createDescriptorSets();
+    void deleteDescriptorSets();
+
+private:
+    ComputeSettings _computeSettings;
+
+    VulkanInstance* _vulkanInstance;
+    VkDevice _device;
+    const VulkanUtils& _vulkanUtils;
+
+    VulkanShaderInfo* _computeShader = nullptr;
+
+    VkPipelineLayout _pipelineLayout;
+    VkPipeline _pipeline;
+
+    VkDeviceMemory _bufferMemory;
+    VkBuffer _buffer;
+    VkBufferView _bufferView;
+
+    std::vector<VkDeviceMemory> _uniformBuffersMemory;
+    std::vector<VkBuffer> _uniformBuffers;
+
+    std::vector<VkDescriptorSet> _descriptorSets;
+    VkDescriptorPool _descriptorPool;
+
+};
+
+} // namespace SVE

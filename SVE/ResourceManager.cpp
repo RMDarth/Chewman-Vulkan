@@ -8,6 +8,7 @@
 #include "ShaderSettings.h"
 #include "MeshSettings.h"
 #include "LightSettings.h"
+#include "ParticleSystemSettings.h"
 
 #include "Engine.h"
 #include "ShaderManager.h"
@@ -32,6 +33,20 @@ namespace SVE
 namespace
 {
 namespace rj = rapidjson;
+
+template<size_t vectorSize = 3, typename ObjectType>
+glm::vec<vectorSize, float, glm::highp> loadVector(ObjectType &object, const std::string &name)
+{
+    auto vecArray = object[name.c_str()].GetArray();
+
+    glm::vec<vectorSize, float, glm::highp> v;
+    for (auto i = 0u; i < vectorSize; i++)
+    {
+        v[i] = vecArray[i].GetFloat();
+    }
+
+    return v;
+}
 
 EngineSettings loadEngine(const std::string& data)
 {
@@ -89,6 +104,7 @@ std::vector<UniformInfo> getUniformInfoList(rj::Document& document)
             {"BoneMatrices",                    UniformType::BoneMatrices},
             {"ClipPlane",                       UniformType::ClipPlane},
             {"Time",                            UniformType::Time},
+            {"DeltaTime",                       UniformType::DeltaTime},
     };
 
     std::vector<UniformInfo> uniformList;
@@ -125,6 +141,9 @@ VertexInfo getVertexInfo(rj::Document& document)
     {
         info.vertexDataFlags |= vertexDataTypeMap.at(item.GetString());
     }
+    setOptional(info.positionSize = static_cast<uint8_t>(vertexInfo["positionSize"].GetUint()));
+    setOptional(info.colorSize = static_cast<uint8_t>(vertexInfo["colorSize"].GetUint()));
+    setOptional(info.separateBinding = static_cast<uint8_t>(vertexInfo["separateBinding"].GetBool()));
 
     return info;
 }
@@ -147,7 +166,8 @@ ShaderSettings loadShader(const cppfs::FilePath& directory, const std::string& d
     static const std::map<std::string, ShaderType> shaderTypeMap{
             {"VertexShader",   ShaderType::VertexShader},
             {"FragmentShader", ShaderType::FragmentShader},
-            {"GeometryShader", ShaderType::GeometryShader}
+            {"GeometryShader", ShaderType::GeometryShader},
+            {"ComputeShader",  ShaderType::ComputeShader},
     };
 
     rj::Document document;
@@ -219,6 +239,44 @@ std::vector<TextureInfo> getTextureInfos(const cppfs::FilePath& directory, rj::D
     return textureInfosList;
 }
 
+ParticleSystemSettings loadParticleSystem(const cppfs::FilePath& directory, const std::string& data)
+{
+    rj::Document document;
+    document.Parse(data.c_str());
+
+    ParticleSystemSettings particleSettings {};
+    particleSettings.name = document["name"].GetString();
+    particleSettings.materialName = document["materialName"].GetString();
+    particleSettings.computeShaderName = document["computeShaderName"].GetString();
+    particleSettings.width = document["width"].GetFloat();
+    particleSettings.height = document["height"].GetFloat();
+    particleSettings.quota = document["quota"].GetUint();
+    particleSettings.sort = document["sort"].GetBool();
+
+    ParticleEmitter emitter {};
+    auto emitterObject = document["particleEmitter"].GetObject();
+    emitter.angle = emitterObject["angle"].GetFloat();
+    emitter.emissionRate = emitterObject["emissionRate"].GetFloat();
+    emitter.minTimeToLive = emitterObject["minTimeToLive"].GetFloat();
+    emitter.maxTimeToLive = emitterObject["maxTimeToLive"].GetFloat();
+    emitter.direction = loadVector(emitterObject, "direction");
+    emitter.minVelocity = emitterObject["minVelocity"].GetFloat();
+    emitter.maxVelocity = emitterObject["maxVelocity"].GetFloat();
+    emitter.colorRangeStart = loadVector(emitterObject, "colorRangeStart");
+    emitter.colorRangeEnd = loadVector(emitterObject, "colorRangeEnd");
+
+    ParticleAffector affector;
+    auto affectorObject = document["particleAffector"].GetObject();
+    affector.scaleRate = affectorObject["scaleRate"].GetFloat();
+    affector.colorRate = loadVector<4>(affectorObject, "colorRate");
+    affector.force = loadVector(affectorObject, "force");
+
+    particleSettings.particleEmitter = std::move(emitter);
+    particleSettings.particleAffector = std::move(affector);
+
+    return particleSettings;
+}
+
 MaterialSettings loadMaterial(const cppfs::FilePath& directory, const std::string& data)
 {
     static const std::map<std::string, MaterialCullFace> cullFaceMap {
@@ -245,6 +303,7 @@ MaterialSettings loadMaterial(const cppfs::FilePath& directory, const std::strin
     setOptional(materialSettings.useDepthTest = document["useDepthTest"].GetBool());
     setOptional(materialSettings.useDepthBias = document["useDepthBias"].GetBool());
     setOptional(materialSettings.useMultisampling = document["useMultisampling"].GetBool());
+    setOptional(materialSettings.useAlphaBlending = document["useAlphaBlending"].GetBool());
     setOptional(materialSettings.isCubemap = document["isCubemap"].GetBool());
     setOptional(materialSettings.passType = passTypeMap.at(document["passType"].GetString()));
     setOptional(materialSettings.fragmentShaderName = document["fragmentShaderName"].GetString());
@@ -269,19 +328,6 @@ MeshLoadSettings loadMesh(const cppfs::FilePath& directory, const std::string& d
     return meshLoadSettings;
 }
 
-glm::vec3 loadVector3(rj::Document& document, const std::string& name)
-{
-    auto vecArray = document[name.c_str()].GetArray();
-
-    glm::vec3 v;
-    for (auto i = 0u; i < 3; i++)
-    {
-        v[i] = vecArray[i].GetFloat();
-    }
-
-    return v;
-}
-
 LightSettings loadLight(const std::string& data)
 {
     static const std::map<std::string, LightType> lightTypeMap{
@@ -297,7 +343,7 @@ LightSettings loadLight(const std::string& data)
     LightSettings lightSettings {};
 
     lightSettings.lightType =  lightTypeMap.at(document["lightType"].GetString());
-    lightSettings.lightColor = loadVector3(document, "lightColor");
+    lightSettings.lightColor = loadVector(document, "lightColor");
     lightSettings.shininess = document["shininess"].GetFloat();
     lightSettings.ambientStrength = document["ambientStrength"].GetFloat();
     lightSettings.specularStrength = document["specularStrength"].GetFloat();
@@ -363,6 +409,10 @@ void ResourceManager::initializeResources(LoadData& data)
         std::shared_ptr<SVE::Mesh> mesh = std::make_shared<SVE::Mesh>(meshLoadSettings);
         engine->getMeshManager()->registerMesh(mesh);
     }
+    for (auto& particleSystemSettings : data.particleSystemList)
+    {
+        engine->getSceneManager()->createParticleSystem(particleSystemSettings);
+    }
 }
 
 void ResourceManager::loadFolder(const std::string& folder)
@@ -422,7 +472,8 @@ void ResourceManager::loadFile(const std::string& filename, LoadData& loadData)
         {"shader", ResourceType::Shader},
         {"material", ResourceType::Material},
         {"mesh", ResourceType::Mesh},
-        {"light", ResourceType::Light}
+        {"light", ResourceType::Light},
+        {"particle", ResourceType::ParticleSystem}
     };
 
     if (resourceTypeMap.find(type) == resourceTypeMap.end())
@@ -454,6 +505,9 @@ void ResourceManager::loadFile(const std::string& filename, LoadData& loadData)
                 break;
             case ResourceType::Light:
                 loadData.lightList.emplace_back(loadLight(fileContent));
+                break;
+            case ResourceType::ParticleSystem:
+                loadData.particleSystemList.emplace_back(loadParticleSystem(directory, fileContent));
                 break;
         }
     } catch (const std::exception& ex)

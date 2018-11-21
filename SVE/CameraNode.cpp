@@ -22,7 +22,7 @@ CameraNode::CameraNode(CameraSettings cameraSettings)
 }
 
 CameraNode::CameraNode()
-    : _cameraSettings({90.0f, 1.77f, 0.1f, 100.0f})
+    : _cameraSettings({45.0f, 1.77f, 0.1f, 100.0f})
 {
     auto extent = Engine::getInstance()->getVulkanInstance()->getExtent();
     _cameraSettings.aspectRatio = (float)extent.width / extent.height;

@@ -352,6 +352,7 @@ void VulkanInstance::submitCommands(CommandsType commandsType, BufferIndex buffe
     static VkPipelineStageFlags waitStages[] = { VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT };
 
     static const std::map<CommandsType, const std::vector<VkSemaphore>&> semaphoresMap = {
+            { CommandsType::ComputeParticlesPass, _computeParticlesReadySemaphore },
             { CommandsType::ShadowPassDirectLight, _shadowMapDirectReadySemaphores },
             { CommandsType::ShadowPassPointLights, _shadowMapPointReadySemaphores },
             { CommandsType::ReflectionPass, _waterReflectionReadySemaphores },
@@ -414,7 +415,7 @@ uint32_t VulkanInstance::getCurrentImageIndex() const
     return _currentImageIndex;
 }
 
-
+// Current parallel frame
 uint32_t VulkanInstance::getCurrentFrameIndex() const
 {
     return _currentFrame;
@@ -1083,6 +1084,7 @@ void VulkanInstance::createSyncPrimitives()
     _waterReflectionReadySemaphores.resize(MAX_FRAMES_IN_FLIGHT);
     _waterRefractionReadySemaphores.resize(MAX_FRAMES_IN_FLIGHT);
     _screenQuadReadySemaphores.resize(MAX_FRAMES_IN_FLIGHT);
+    _computeParticlesReadySemaphore.resize(MAX_FRAMES_IN_FLIGHT);
 
     VkSemaphoreCreateInfo semaphoreCreateInfo{};
     semaphoreCreateInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
@@ -1114,6 +1116,10 @@ void VulkanInstance::createSyncPrimitives()
             throw std::runtime_error("Failed to create Vulkan semaphore");
         }
         if (vkCreateSemaphore(_device, &semaphoreCreateInfo, nullptr, &_screenQuadReadySemaphores[i]) != VK_SUCCESS)
+        {
+            throw std::runtime_error("Failed to create Vulkan semaphore");
+        }
+        if (vkCreateSemaphore(_device, &semaphoreCreateInfo, nullptr, &_computeParticlesReadySemaphore[i]) != VK_SUCCESS)
         {
             throw std::runtime_error("Failed to create Vulkan semaphore");
         }

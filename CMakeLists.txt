@@ -84,7 +84,18 @@ add_executable(Chewman
         SVE/VulkanPassInfo.cpp
         SVE/VulkanPassInfo.h
         SVE/VulkanPointShadowMap.cpp
-        SVE/VulkanPointShadowMap.h SVE/VulkanCommandsManager.h)
+        SVE/VulkanPointShadowMap.h
+        SVE/VulkanCommandsManager.h
+        SVE/VulkanComputeEntity.cpp
+        SVE/VulkanComputeEntity.h
+        SVE/ComputeSettings.cpp
+        SVE/ComputeSettings.h
+        SVE/ParticleSystemEntity.cpp
+        SVE/ParticleSystemEntity.h
+        SVE/VulkanParticleSystem.cpp
+        SVE/VulkanParticleSystem.h
+        SVE/ParticleSystemSettings.cpp
+        SVE/ParticleSystemSettings.h)
 
 if (WIN32)
     target_link_libraries(Chewman mingw32 SDL2main SDL2 vulkan-1.lib VkLayer_core_validation.lib libassimp libcppfsd)
