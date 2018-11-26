@@ -36,6 +36,7 @@ public:
 
     uint32_t getInstanceForEntity(const Entity* entity, uint32_t index = 0);
     bool isSkeletal() const;
+    glm::ivec2 getSpritesheetSize() const;
 
     void setUniformData(uint32_t materialIndex, const UniformData& data) const;
 

@@ -4,11 +4,9 @@
     "shaderType": "VertexShader",
     "vertexInfo": {
         "vertexDataFlags": [
-            "Position",
-            "Color"
+            "Custom"
         ],
-        "positionSize": 4,
-        "colorSize": 4,
+        "customCount": 5,
         "separateBinding": false
     },
     "uniformList": [

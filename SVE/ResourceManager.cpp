@@ -15,6 +15,7 @@
 #include "SceneManager.h"
 #include "MaterialManager.h"
 #include "MeshManager.h"
+#include "Libs.h"
 
 #include <map>
 #include <cppfs/fs.h>
@@ -22,7 +23,9 @@
 #include <cppfs/FileIterator.h>
 #include <cppfs/FilePath.h>
 
+#define GLM_ENABLE_EXPERIMENTAL
 #include <rapidjson/document.h>
+#include <glm/gtx/quaternion.hpp>
 
 #define setOptional(expr)                \
     try { expr; }                        \
@@ -34,12 +37,12 @@ namespace
 {
 namespace rj = rapidjson;
 
-template<size_t vectorSize = 3, typename ObjectType>
-glm::vec<vectorSize, float, glm::highp> loadVector(ObjectType &object, const std::string &name)
+template<size_t vectorSize = 3, typename resultType = float, typename ObjectType>
+glm::vec<vectorSize, resultType, glm::highp> loadVector(ObjectType &object, const std::string &name)
 {
     auto vecArray = object[name.c_str()].GetArray();
 
-    glm::vec<vectorSize, float, glm::highp> v;
+    glm::vec<vectorSize, resultType, glm::highp> v;
     for (auto i = 0u; i < vectorSize; i++)
     {
         v[i] = vecArray[i].GetFloat();
@@ -103,6 +106,10 @@ std::vector<UniformInfo> getUniformInfoList(rj::Document& document)
             {"LightDirectViewProjectionList",   UniformType::LightDirectViewProjectionList},
             {"BoneMatrices",                    UniformType::BoneMatrices},
             {"ClipPlane",                       UniformType::ClipPlane},
+            {"ParticleEmitter",                 UniformType::ParticleEmitter},
+            {"ParticleAffector",                UniformType::ParticleAffector},
+            {"ParticleCount",                   UniformType::ParticleCount},
+            {"SpritesheetSize",                 UniformType::SpritesheetSize},
             {"Time",                            UniformType::Time},
             {"DeltaTime",                       UniformType::DeltaTime},
     };
@@ -120,6 +127,23 @@ std::vector<UniformInfo> getUniformInfoList(rj::Document& document)
     return uniformList;
 }
 
+std::vector<BufferType> getBufferTypeList(rj::Document& document)
+{
+    static const std::map<std::string, BufferType> bufferMap{
+            {"AtomicCounter",     BufferType::AtomicCounter },
+    };
+
+    std::vector<BufferType> bufferList;
+    auto list = document["bufferList"].GetArray();
+    for (auto& item : list)
+    {
+        auto bufferType = bufferMap.at(item.GetString());
+        bufferList.push_back(bufferType);
+    }
+
+    return bufferList;
+}
+
 VertexInfo getVertexInfo(rj::Document& document)
 {
     static const std::map<std::string, VertexInfo::VertexDataType> vertexDataTypeMap{
@@ -129,6 +153,7 @@ VertexInfo getVertexInfo(rj::Document& document)
             {"Normal",      VertexInfo::VertexDataType::Normal},
             {"BoneWeights", VertexInfo::VertexDataType::BoneWeights},
             {"BoneIds",     VertexInfo::VertexDataType::BoneIds},
+            {"Custom",      VertexInfo::VertexDataType::Custom},
     };
 
     VertexInfo info {};
@@ -143,6 +168,7 @@ VertexInfo getVertexInfo(rj::Document& document)
     }
     setOptional(info.positionSize = static_cast<uint8_t>(vertexInfo["positionSize"].GetUint()));
     setOptional(info.colorSize = static_cast<uint8_t>(vertexInfo["colorSize"].GetUint()));
+    setOptional(info.customCount = static_cast<uint8_t>(vertexInfo["customCount"].GetUint()));
     setOptional(info.separateBinding = static_cast<uint8_t>(vertexInfo["separateBinding"].GetBool()));
 
     return info;
@@ -181,6 +207,7 @@ ShaderSettings loadShader(const cppfs::FilePath& directory, const std::string& d
     setOptional(shaderSettings.maxPointLightSize = document["maxPointLightSize"].GetUint());
     setOptional(shaderSettings.maxViewProjectionMatrices = document["maxViewProjectionMatrices"].GetUint());
     setOptional(shaderSettings.uniformList = getUniformInfoList(document));
+    setOptional(shaderSettings.bufferList = getBufferTypeList(document));
     setOptional(shaderSettings.vertexInfo = getVertexInfo(document));
     setOptional(shaderSettings.samplerNamesList = getStringList(document, "samplerNamesList"));
     shaderSettings.filename = directory.resolve(document["filename"].GetString()).fullPath();
@@ -225,7 +252,8 @@ std::vector<TextureInfo> getTextureInfos(const cppfs::FilePath& directory, rj::D
         setOptional(textureInfo.textureType = textureTypeMap.at(item["textureType"].GetString()));
         setOptional(textureInfo.textureAddressMode = addressModeMap.at(item["textureAddressMode"].GetString()));
         setOptional(textureInfo.textureBorderColor = borderColorMap.at(item["textureBorderColor"].GetString()));
-        setOptional(textureInfo.layers = item["layers"].GetUint())
+        setOptional(textureInfo.layers = item["layers"].GetUint());
+        setOptional((textureInfo.spritesheetSize = loadVector<2,int>(item, "spritesheetSize")));
 
         if (textureInfo.textureType == TextureType::ImageFile)
         {
@@ -248,28 +276,38 @@ ParticleSystemSettings loadParticleSystem(const cppfs::FilePath& directory, cons
     particleSettings.name = document["name"].GetString();
     particleSettings.materialName = document["materialName"].GetString();
     particleSettings.computeShaderName = document["computeShaderName"].GetString();
-    particleSettings.width = document["width"].GetFloat();
-    particleSettings.height = document["height"].GetFloat();
     particleSettings.quota = document["quota"].GetUint();
     particleSettings.sort = document["sort"].GetBool();
 
     ParticleEmitter emitter {};
     auto emitterObject = document["particleEmitter"].GetObject();
+
+    glm::vec3 direction = loadVector(emitterObject, "direction");
+    emitter.toDirection = glm::toMat4(glm::rotation(glm::vec3(0,0,1), direction));
     emitter.angle = emitterObject["angle"].GetFloat();
+    emitter.originRadius = emitterObject["originRadius"].GetFloat();
+
     emitter.emissionRate = emitterObject["emissionRate"].GetFloat();
-    emitter.minTimeToLive = emitterObject["minTimeToLive"].GetFloat();
-    emitter.maxTimeToLive = emitterObject["maxTimeToLive"].GetFloat();
-    emitter.direction = loadVector(emitterObject, "direction");
-    emitter.minVelocity = emitterObject["minVelocity"].GetFloat();
-    emitter.maxVelocity = emitterObject["maxVelocity"].GetFloat();
-    emitter.colorRangeStart = loadVector(emitterObject, "colorRangeStart");
-    emitter.colorRangeEnd = loadVector(emitterObject, "colorRangeEnd");
+    emitter.minLife = emitterObject["minLife"].GetFloat();
+    emitter.maxLife = emitterObject["maxLife"].GetFloat();
+    emitter.minSpeed = emitterObject["minSpeed"].GetFloat();
+    emitter.maxSpeed = emitterObject["maxSpeed"].GetFloat();
+    emitter.minSize = emitterObject["minSize"].GetFloat();
+    emitter.maxSize = emitterObject["maxSize"].GetFloat();
+    emitter.minRotate = emitterObject["minRotate"].GetFloat();
+    emitter.maxRotate = emitterObject["maxRotate"].GetFloat();
+    emitter.colorRangeStart = loadVector<4>(emitterObject, "colorRangeStart");
+    emitter.colorRangeEnd = loadVector<4>(emitterObject, "colorRangeEnd");
 
     ParticleAffector affector;
     auto affectorObject = document["particleAffector"].GetObject();
-    affector.scaleRate = affectorObject["scaleRate"].GetFloat();
-    affector.colorRate = loadVector<4>(affectorObject, "colorRate");
-    affector.force = loadVector(affectorObject, "force");
+    affector.minAcceleration = affectorObject["minAcceleration"].GetFloat();
+    affector.maxAcceleration = affectorObject["maxAcceleration"].GetFloat();
+    affector.minRotateSpeed = affectorObject["minRotateSpeed"].GetFloat();
+    affector.maxRotateSpeed = affectorObject["maxRotateSpeed"].GetFloat();
+    affector.minScaleSpeed = affectorObject["minScaleSpeed"].GetFloat();
+    affector.maxScaleSpeed = affectorObject["maxScaleSpeed"].GetFloat();
+    affector.colorChanger = loadVector<4>(affectorObject, "colorChanger");
 
     particleSettings.particleEmitter = std::move(emitter);
     particleSettings.particleAffector = std::move(affector);

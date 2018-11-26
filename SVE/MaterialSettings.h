@@ -50,6 +50,7 @@ struct TextureInfo
     std::string samplerName;
     std::string filename;
     uint32_t layers = 1;
+    glm::ivec2 spritesheetSize;
     // TODO: Add possibility to enable/disable mipmap generation
 };
 

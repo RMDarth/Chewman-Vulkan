@@ -7,6 +7,7 @@
 #include <map>
 #include "Libs.h"
 #include "LightSettings.h"
+#include "ParticleSystemSettings.h"
 
 namespace SVE
 {
@@ -30,9 +31,18 @@ enum class UniformType : uint8_t
     LightDirectViewProjectionList,
     BoneMatrices,
     ClipPlane,
+    ParticleEmitter,
+    ParticleAffector,
+    ParticleCount,
+    SpritesheetSize,
     Time,
     DeltaTime
     // TODO: Add material properties, other matrices types etc.
+};
+
+enum class BufferType : uint8_t
+{
+    AtomicCounter
 };
 
 enum class ShaderType : uint8_t
@@ -70,6 +80,11 @@ struct UniformData
     SpotLight spotLight;
     LightInfo lightInfo;
     std::vector<glm::mat4> bones;
+
+    ParticleEmitter particleEmitter;
+    ParticleAffector particleAffector;
+    uint32_t particleCount;
+    glm::ivec2 spritesheetSize;
 };
 
 struct UniformInfo
@@ -87,11 +102,13 @@ struct VertexInfo
         TexCoord =      1 << 2,
         Normal =        1 << 3,
         BoneWeights =   1 << 4,
-        BoneIds =       1 << 5
+        BoneIds =       1 << 5,
+        Custom =        1 << 6,
     };
     uint32_t vertexDataFlags = Position | Color | TexCoord | Normal | BoneWeights | BoneIds; // TODO: remove bones
     uint8_t positionSize = 3;
     uint8_t colorSize = 3;
+    uint8_t customCount = 0;
     bool separateBinding = true;
 };
 
@@ -103,6 +120,7 @@ struct ShaderSettings
     VertexInfo vertexInfo;
     std::vector<UniformInfo> uniformList;
     std::vector<std::string> samplerNamesList;
+    std::vector<BufferType> bufferList; // currently only supported in compute shaders
     uint32_t maxBonesSize = 0;
     uint32_t maxPointLightSize = 4;
     uint32_t maxLightSize = 6;
@@ -113,6 +131,7 @@ struct ShaderSettings
 };
 
 const std::map<UniformType, size_t>& getUniformSizeMap();
+const std::map<BufferType, size_t>& getStorageBufferSizeMap();
 std::vector<char> getUniformDataByType(const UniformData& data, UniformType type);
 
 } // namespace SVE

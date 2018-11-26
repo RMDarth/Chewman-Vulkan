@@ -10,27 +10,55 @@ namespace SVE
 
 struct ParticleEmitter
 {
-    float angle;
-    float emissionRate;
-    float minTimeToLive;
-    float maxTimeToLive;
-    glm::vec3 direction;
-    float minVelocity;
-    float maxVelocity;
-    glm::vec3 colorRangeStart = glm::vec3(1.0f);
-    glm::vec3 colorRangeEnd = glm::vec3(1.0f);
+    // shape
+    glm::mat4 toDirection;          // 16
+    float angle;                    // 17
+    float originRadius;             // 18
+
+    // params
+    float emissionRate;             // 19
+    float minLife;                  // 20
+    float maxLife;                  // 21
+    float minSpeed;                 // 22
+    float maxSpeed;                 // 23
+    float minSize;                  // 24
+    float maxSize;                  // 25
+    float minRotate;                // 26
+    float maxRotate;                // 27
+    float _padding_2[1];            // 28
+
+    glm::vec4 colorRangeStart = glm::vec4(1.0f);  // 32
+    glm::vec4 colorRangeEnd = glm::vec4(1.0f);    // 36
+};
+
+struct ParticleData
+{
+    glm::vec3 position;
+    float life;
+
+    glm::vec4 color;
+
+    glm::vec3 speed;
+    float size;
+
+    float acceleration;
+    float currentRotation;
+    float rotationSpeed;
+    float scaleSpeed;
+
+    //glm::vec4 colorChanger;
 };
 
 struct ParticleAffector
 {
-    float scaleRate;
-    bool applyScale = false;
-
-    glm::vec4 colorRate;
-    bool applyColor = false;
-
-    glm::vec3 force;
-    bool applyForce = false;
+    float minAcceleration;      // 1
+    float maxAcceleration;      // 2
+    float minRotateSpeed;       // 3
+    float maxRotateSpeed;       // 4
+    float minScaleSpeed;        // 5
+    float maxScaleSpeed;        // 6
+    float _padding[2];          // 8
+    glm::vec4 colorChanger;     // 12
 };
 
 struct ParticleSystemSettings
@@ -38,10 +66,8 @@ struct ParticleSystemSettings
     std::string name;
     std::string materialName;
     std::string computeShaderName;
-    float width;
-    float height;
-    uint32_t quota;
 
+    uint32_t quota;
     bool sort;
 
     ParticleEmitter particleEmitter;

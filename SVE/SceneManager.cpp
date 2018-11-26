@@ -63,6 +63,7 @@ std::shared_ptr<ParticleSystemEntity> SceneManager::createParticleSystem(Particl
     auto sceneNode = std::make_shared<SceneNode>(particleSystemSettings.name);
     _root->attachSceneNode(sceneNode);
     auto particleEntity = std::make_shared<ParticleSystemEntity>(std::move(particleSystemSettings));
+    particleEntity->setRenderLast();
     sceneNode->attachEntity(particleEntity);
 
     _particleSystem = particleEntity;

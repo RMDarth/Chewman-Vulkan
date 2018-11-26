@@ -42,4 +42,14 @@ void Entity::setMaterial(const std::string& materialName)
     // default do nothing
 }
 
+void Entity::setRenderLast()
+{
+    _renderLast = true;
+}
+
+bool Entity::isRenderLast()
+{
+    return _renderLast;
+}
+
 } // namespace SVE

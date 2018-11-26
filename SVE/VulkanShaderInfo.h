@@ -24,6 +24,7 @@ public:
     std::vector<VkVertexInputAttributeDescription> getAttributeDescriptions() const;
 
     size_t getShaderUniformsSize() const;
+    size_t getShaderStorageBuffersSize() const;
     const ShaderSettings& getShaderSettings() const;
 
     VkDescriptorSetLayout getDescriptorSetLayout() const;

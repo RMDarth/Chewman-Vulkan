@@ -255,6 +255,7 @@ int runGame()
 
         // configure and attach objects to nodes
         newNode->attachEntity(meshEntity);
+        newNodeMid->setNodeTransformation(glm::translate(glm::mat4(1), glm::vec3(1, 0, 1)));
         newNode2->setNodeTransformation(glm::translate(glm::mat4(1), glm::vec3(5, 0, 2)));
 
         {

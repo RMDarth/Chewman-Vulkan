@@ -25,7 +25,7 @@ VulkanComputeEntity::VulkanComputeEntity(ComputeSettings computeSettings)
 
     createBufferResources();
 
-    createUniformBuffers();
+    createUniformAndStorageBuffers();
     createDescriptorPool();
     createDescriptorSets();
 }
@@ -34,7 +34,7 @@ VulkanComputeEntity::~VulkanComputeEntity()
 {
     deleteDescriptorSets();
     deleteDescriptorPool();
-    deleteUniformBuffers();
+    deleteUniformAndStorageBuffers();
 
     deleteBufferResources();
 
@@ -91,7 +91,7 @@ void VulkanComputeEntity::applyComputeCommands() const
             1,
             &_descriptorSets[_vulkanInstance->getCurrentImageIndex()], 0, nullptr);
 
-    vkCmdDispatch( commandBuffer, _computeSettings.elementsCount / 32, 1, 1);
+    vkCmdDispatch(commandBuffer, _computeSettings.elementsCount / 32, 1, 1);
 
     // finish recording
     if (vkEndCommandBuffer(commandBuffer) != VK_SUCCESS)
@@ -180,33 +180,54 @@ void VulkanComputeEntity::deleteBufferResources()
     vkFreeMemory(_device, _bufferMemory, nullptr);
 }
 
-void VulkanComputeEntity::createUniformBuffers()
+void VulkanComputeEntity::createUniformAndStorageBuffers()
 {
     auto swapchainSize = _vulkanInstance->getSwapchainSize();
 
-    VkDeviceSize bufferSize = _computeShader->getShaderUniformsSize();
+    VkDeviceSize uniformBufferSize = _computeShader->getShaderUniformsSize();
+    VkDeviceSize storageBufferSize = _computeShader->getShaderStorageBuffersSize();
     _uniformBuffersMemory.resize(swapchainSize);
     _uniformBuffers.resize(swapchainSize);
+    _storageBuffersMemory.resize(swapchainSize);
+    _storageBuffers.resize(swapchainSize);
+
 
     for (auto i = 0u; i < swapchainSize; i++)
     {
         _vulkanUtils.createBuffer(
-                bufferSize,
+                uniformBufferSize,
                 VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
                 VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
                 _uniformBuffers[i],
                 _uniformBuffersMemory[i]);
+
+        _vulkanUtils.createBuffer(
+                uniformBufferSize,
+                VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
+                VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+                _storageBuffers[i],
+                _storageBuffersMemory[i]);
     }
+
+
 }
 
-void VulkanComputeEntity::deleteUniformBuffers()
+void VulkanComputeEntity::deleteUniformAndStorageBuffers()
 {
     for (auto buffer : _uniformBuffers)
     {
         vkDestroyBuffer(_device, buffer, nullptr);
     }
+    for (auto buffer : _storageBuffers)
+    {
+        vkDestroyBuffer(_device, buffer, nullptr);
+    }
 
     for (auto memory : _uniformBuffersMemory)
+    {
+        vkFreeMemory(_device, memory, nullptr);
+    }
+    for (auto memory : _storageBuffersMemory)
     {
         vkFreeMemory(_device, memory, nullptr);
     }
@@ -216,11 +237,13 @@ void VulkanComputeEntity::createDescriptorPool()
 {
     auto swapchainSize = _vulkanInstance->getSwapchainSize();
 
-    std::vector<VkDescriptorPoolSize> poolSizes(2);
+    std::vector<VkDescriptorPoolSize> poolSizes(3);
     poolSizes[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
     poolSizes[0].descriptorCount = _uniformBuffers.size();
-    poolSizes[1].type = VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER;
-    poolSizes[1].descriptorCount = swapchainSize;
+    poolSizes[1].type = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
+    poolSizes[1].descriptorCount = _storageBuffers.size();
+    poolSizes[2].type = VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER;
+    poolSizes[2].descriptorCount = swapchainSize;
     for (auto& poolSize : poolSizes)
         if (poolSize.descriptorCount == 0)
             poolSize.descriptorCount = 1;
@@ -265,15 +288,23 @@ void VulkanComputeEntity::createDescriptorSets()
     }
 
     auto uniformSize = _computeShader->getShaderUniformsSize();
+    auto storageSize = _computeShader->getShaderStorageBuffersSize();
 
     for (auto i = 0u; i < swapchainSize; i++)
     {
         VkDescriptorBufferInfo uniformBufferInfo {};
+        VkDescriptorBufferInfo storageBufferInfo {};
         if (!_uniformBuffers.empty())
         {
             uniformBufferInfo.buffer = _uniformBuffers[i];
             uniformBufferInfo.offset = 0;
             uniformBufferInfo.range = uniformSize;
+        }
+        if (!_storageBuffers.empty())
+        {
+            storageBufferInfo.buffer = _storageBuffers[i];
+            storageBufferInfo.offset = 0;
+            storageBufferInfo.range = storageSize;
         }
 
         std::vector<VkWriteDescriptorSet> descriptorWrites;
@@ -304,6 +335,20 @@ void VulkanComputeEntity::createDescriptorSets()
             uniformsBuffer.descriptorCount = 1;
             uniformsBuffer.pBufferInfo = &uniformBufferInfo;
             descriptorWrites.push_back(uniformsBuffer);
+            bindingIndex++;
+        }
+
+        if (!_storageBuffers.empty())
+        {
+            VkWriteDescriptorSet storageBuffer {};
+            storageBuffer.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+            storageBuffer.dstSet = _descriptorSets[i];
+            storageBuffer.dstBinding = bindingIndex;
+            storageBuffer.dstArrayElement = 0;
+            storageBuffer.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
+            storageBuffer.descriptorCount = 1;
+            storageBuffer.pBufferInfo = &storageBufferInfo;
+            descriptorWrites.push_back(storageBuffer);
         }
 
         vkUpdateDescriptorSets(_device, descriptorWrites.size(), descriptorWrites.data(), 0, nullptr);

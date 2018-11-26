@@ -4,5 +4,13 @@
     "geometryShaderName": "particlesGeomShader",
     "fragmentShaderName": "particlesFragmentShader",
     "cullFace": "None",
-    "useAlphaBlending": true
+    "useAlphaBlending": true,
+    "textures": [
+        {
+            "samplerName": "spritesheet",
+            "textureType": "ImageFile",
+            "filename": "textures/spritesheets/flameNum.png",
+            "spritesheetSize": [ 6, 6 ]
+        }
+    ]
 }

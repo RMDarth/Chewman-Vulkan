@@ -141,17 +141,38 @@ void Engine::finishRendering()
     _vulkanInstance->finishRendering();
 }
 
-void createNodeDrawCommands(const std::shared_ptr<SceneNode>& node, uint32_t bufferIndex, uint32_t imageIndex)
+void createStartNodeDrawCommands(const std::shared_ptr<SceneNode>& node, uint32_t bufferIndex, uint32_t imageIndex)
 {
     for (auto& entity : node->getAttachedEntities())
     {
-        entity->applyDrawingCommands(bufferIndex, imageIndex);
+        if (!entity->isRenderLast())
+            entity->applyDrawingCommands(bufferIndex, imageIndex);
     }
 
     for (auto& child : node->getChildren())
     {
-        createNodeDrawCommands(child, bufferIndex, imageIndex);
+        createStartNodeDrawCommands(child, bufferIndex, imageIndex);
     }
+}
+
+void createLaterNodeDrawCommands(const std::shared_ptr<SceneNode>& node, uint32_t bufferIndex, uint32_t imageIndex)
+{
+    for (auto& entity : node->getAttachedEntities())
+    {
+        if (entity->isRenderLast())
+            entity->applyDrawingCommands(bufferIndex, imageIndex);
+    }
+
+    for (auto& child : node->getChildren())
+    {
+        createLaterNodeDrawCommands(child, bufferIndex, imageIndex);
+    }
+}
+
+void createNodeDrawCommands(const std::shared_ptr<SceneNode>& node, uint32_t bufferIndex, uint32_t imageIndex)
+{
+    createStartNodeDrawCommands(node, bufferIndex, imageIndex);
+    createLaterNodeDrawCommands(node, bufferIndex, imageIndex);
 }
 
 void updateNode(const std::shared_ptr<SceneNode>& node, UniformDataList& uniformDataList)
@@ -332,6 +353,12 @@ void Engine::renderFrame()
                                                  VulkanWater::PassType::Refraction);
     }
 
+    // fill particles data
+    if (particleSystem)
+    {
+        particleSystem->fillUniformData(*mainUniform);
+    }
+
 
     /////// Update uniforms
 
@@ -383,7 +410,7 @@ void Engine::updateTime()
     _prevTime = _currentTime;
     _currentTime = std::chrono::high_resolution_clock::now();
     _duration = std::chrono::duration<float, std::chrono::seconds::period>(_currentTime - _startTime).count();
-    _deltaTime = std::chrono::duration<float, std::chrono::seconds::period>(_prevTime - _currentTime).count();
+    _deltaTime = std::chrono::duration<float, std::chrono::seconds::period>(_currentTime - _prevTime).count();
 }
 
 CommandsType Engine::getPassType() const

@@ -36,8 +36,8 @@ private:
     void createBufferResources();
     void deleteBufferResources();
 
-    void createUniformBuffers();
-    void deleteUniformBuffers();
+    void createUniformAndStorageBuffers();
+    void deleteUniformAndStorageBuffers();
 
     void createDescriptorPool();
     void deleteDescriptorPool();
@@ -62,6 +62,9 @@ private:
 
     std::vector<VkDeviceMemory> _uniformBuffersMemory;
     std::vector<VkBuffer> _uniformBuffers;
+
+    std::vector<VkDeviceMemory> _storageBuffersMemory;
+    std::vector<VkBuffer> _storageBuffers;
 
     std::vector<VkDescriptorSet> _descriptorSets;
     VkDescriptorPool _descriptorPool;

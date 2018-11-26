@@ -26,12 +26,17 @@ public:
     void detachFromParent();
     void clearParent();
 
+    // TODO: Refactor, provide more agile ordering mechanism
+    void setRenderLast();
+    bool isRenderLast();
+
     virtual void setMaterial(const std::string& materialName);
 
     virtual void updateUniforms(UniformDataList uniformDataList) const = 0;
     virtual void applyDrawingCommands(uint32_t bufferIndex, uint32_t imageIndex) const = 0;
 
 protected:
+    bool _renderLast = false;
     std::shared_ptr<SceneNode> _parent;
 };
 

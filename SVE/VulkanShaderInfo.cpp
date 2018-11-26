@@ -111,6 +111,18 @@ size_t VulkanShaderInfo::getShaderUniformsSize() const
     return size;
 }
 
+size_t VulkanShaderInfo::getShaderStorageBuffersSize() const
+{
+    size_t size = 0;
+    const auto& sizeMap = getStorageBufferSizeMap();
+    for (const auto& type : _shaderSettings.bufferList)
+    {
+        size += sizeMap.at(type);
+    }
+
+    return size;
+}
+
 const ShaderSettings& VulkanShaderInfo::getShaderSettings() const
 {
     return _shaderSettings;
@@ -185,6 +197,18 @@ std::vector<VkVertexInputBindingDescription> VulkanShaderInfo::getBindingDescrip
         boneIdsBinding.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
         bindingDescriptions.push_back(boneIdsBinding);
         stride += boneIdsBinding.stride;
+    }
+    if (_shaderSettings.vertexInfo.vertexDataFlags & VertexInfo::Custom)
+    {
+        for (auto i = 0; i < _shaderSettings.vertexInfo.customCount; i++)
+        {
+            VkVertexInputBindingDescription customBinding {};
+            customBinding.binding = binding++;
+            customBinding.stride = getVertexDataSize(VertexInfo::Custom);
+            customBinding.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+            bindingDescriptions.push_back(customBinding);
+            stride += customBinding.stride;
+        }
     }
 
     // for combined binding only one struct should be set
@@ -279,6 +303,21 @@ std::vector<VkVertexInputAttributeDescription> VulkanShaderInfo::getAttributeDes
         offset += getVertexDataSize(VertexInfo::BoneIds);
     }
 
+    if (_shaderSettings.vertexInfo.vertexDataFlags & VertexInfo::Custom)
+    {
+        for (auto i = 0; i < _shaderSettings.vertexInfo.customCount; i++)
+        {
+            VkVertexInputAttributeDescription customAttribute {};
+            customAttribute.binding = _shaderSettings.vertexInfo.separateBinding ? binding++ : binding;
+            customAttribute.location = location++;
+            customAttribute.format = VK_FORMAT_R32G32B32A32_SFLOAT;
+            customAttribute.offset = _shaderSettings.vertexInfo.separateBinding ? 0 : offset;
+            attributeDescriptions.push_back(customAttribute);
+
+            offset += getVertexDataSize(VertexInfo::Custom);
+        }
+    }
+
     return attributeDescriptions;
 }
 
@@ -318,6 +357,19 @@ void VulkanShaderInfo::createDescriptorSetLayout()
         VkDescriptorSetLayoutBinding uboLayoutBinding{};
         uboLayoutBinding.binding = bindingNum; // binding in shader
         uboLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+        uboLayoutBinding.descriptorCount = 1;
+        uboLayoutBinding.stageFlags = _shaderStage;
+        uboLayoutBinding.pImmutableSamplers = nullptr; // used for image sampling
+
+        descriptorList.push_back(uboLayoutBinding);
+        bindingNum++;
+    }
+
+    if (!_shaderSettings.bufferList.empty())
+    {
+        VkDescriptorSetLayoutBinding uboLayoutBinding{};
+        uboLayoutBinding.binding = bindingNum; // binding in shader
+        uboLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
         uboLayoutBinding.descriptorCount = 1;
         uboLayoutBinding.stageFlags = _shaderStage;
         uboLayoutBinding.pImmutableSamplers = nullptr; // used for image sampling
@@ -387,6 +439,8 @@ uint32_t VulkanShaderInfo::getVertexDataSize(VertexInfo::VertexDataType vertexDa
             return sizeof(glm::vec4);
         case VertexInfo::BoneIds:
             return sizeof(glm::ivec4);
+        case VertexInfo::Custom:
+            return sizeof(glm::vec4);
     }
 
     throw VulkanException("Unsupported vertex type");

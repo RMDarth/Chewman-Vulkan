@@ -1054,4 +1054,15 @@ void VulkanMaterial::updateDescriptorSet(
     vkUpdateDescriptorSets(_device, descriptorWrites.size(), descriptorWrites.data(), 0, nullptr);
 }
 
+// TODO: Refactor this
+glm::ivec2 VulkanMaterial::getSpritesheetSize() const
+{
+    for (auto& texture :_materialSettings.textures)
+    {
+        if (texture.spritesheetSize.x > 0)
+            return texture.spritesheetSize;
+    }
+    return glm::ivec2();
+}
+
 } // namespace SVE

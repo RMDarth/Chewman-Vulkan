@@ -18,8 +18,13 @@ public:
     ~ParticleSystemEntity() override;
 
     void applyComputeCommands() const;
-    void updateUniforms(UniformDataList uniformDataList) const override;
     void applyDrawingCommands(uint32_t bufferIndex, uint32_t imageIndex) const override;
+    void updateUniforms(UniformDataList uniformDataList) const override;
+
+    // TODO: Move to manager
+    void fillUniformData(UniformData& data);
+
+    const ParticleSystemSettings& getSettings() const;
 
 private:
     void generateParticles();

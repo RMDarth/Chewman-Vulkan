@@ -1,8 +1,9 @@
 // VSE (Vulkan Simple Engine) Library
 // Copyright (c) 2018-2019, Igor Barinov
 // Licensed under CC BY 4.0
-#include "ShaderSettings.h"
 #include "Libs.h"
+#include "ShaderSettings.h"
+#include "ParticleSystemSettings.h"
 #include "VulkanException.h"
 
 namespace SVE
@@ -10,7 +11,7 @@ namespace SVE
 
 const std::map<UniformType, size_t>& getUniformSizeMap()
 {
-    static std::map<UniformType, size_t> uniformSizeMap {
+    static const std::map<UniformType, size_t> uniformSizeMap {
             { UniformType::ModelMatrix, sizeof(glm::mat4) },
             { UniformType::ViewMatrix, sizeof(glm::mat4) },
             { UniformType::ProjectionMatrix, sizeof(glm::mat4) },
@@ -28,10 +29,23 @@ const std::map<UniformType, size_t>& getUniformSizeMap()
             { UniformType::LightDirectViewProjectionList, sizeof(glm::mat4) },
             { UniformType::BoneMatrices, sizeof(glm::mat4) },
             { UniformType::ClipPlane, sizeof(glm::vec4) },
+            { UniformType::ParticleEmitter, sizeof(ParticleEmitter) },
+            { UniformType::ParticleAffector, sizeof(ParticleAffector) },
+            { UniformType::ParticleCount, sizeof(uint32_t) },
+            { UniformType::SpritesheetSize, sizeof(glm::ivec2) },
             { UniformType::Time, sizeof(float) },
             { UniformType::DeltaTime, sizeof(float) },
     };
     return uniformSizeMap;
+}
+
+const std::map<BufferType, size_t>& getStorageBufferSizeMap()
+{
+    static const std::map<BufferType, size_t> bufferSizeMap {
+            { BufferType::AtomicCounter, sizeof(uint32_t) }
+    };
+
+    return bufferSizeMap;
 }
 
 std::vector<char> getUniformDataByType(const UniformData& data, UniformType type)
@@ -127,6 +141,26 @@ std::vector<char> getUniformDataByType(const UniformData& data, UniformType type
         {
             const char* byteData = reinterpret_cast<const char*>(&data.clipPlane);
             return std::vector<char>(byteData, byteData + sizeof(data.clipPlane));
+        }
+        case UniformType::ParticleEmitter:
+        {
+            const char* byteData = reinterpret_cast<const char*>(&data.particleEmitter);
+            return std::vector<char>(byteData, byteData + sizeof(data.particleEmitter));
+        }
+        case UniformType::ParticleAffector:
+        {
+            const char* byteData = reinterpret_cast<const char*>(&data.particleAffector);
+            return std::vector<char>(byteData, byteData + sizeof(data.particleAffector));
+        }
+        case UniformType::ParticleCount:
+        {
+            const char* byteData = reinterpret_cast<const char*>(&data.particleCount);
+            return std::vector<char>(byteData, byteData + sizeof(data.particleCount));
+        }
+        case UniformType::SpritesheetSize:
+        {
+            const char* byteData = reinterpret_cast<const char*>(&data.spritesheetSize);
+            return std::vector<char>(byteData, byteData + sizeof(data.spritesheetSize));
         }
         case UniformType::Time:
         {
