@@ -5,7 +5,7 @@
 
 layout(local_size_x = 32, local_size_y = 1) in;
 
-layout(set = 0, binding = 0, rgba32f) uniform imageBuffer StorageTexelBuffer;
+layout(set = 0, binding = 0, rgba32f) uniform imageBuffer StorageTexelBuffer; // SSBO
 
 layout(set = 0, binding = 1) uniform UBO
 {
@@ -49,7 +49,7 @@ void recreateParticle()
 
     float xPos = getRandomValue(-ubo.emitter.originRadius, ubo.emitter.originRadius, 1);
     float yPos = getRandomValue(-ubo.emitter.originRadius, ubo.emitter.originRadius, 2);
-    vec3 position = vec3(xPos, yPos, 0);
+    vec3 position = vec3(xPos, 0, yPos);
 
     vec4 color = vec4(getRandomValue(ubo.emitter.colorRangeStart.r, ubo.emitter.colorRangeEnd.r, 3),
                       getRandomValue(ubo.emitter.colorRangeStart.g, ubo.emitter.colorRangeEnd.g, 4),

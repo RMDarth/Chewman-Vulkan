@@ -306,7 +306,7 @@ void VulkanMaterial::createPipeline()
     if (_materialSettings.useDepthTest)
     {
         depthStencilCreateInfo.depthTestEnable = VK_TRUE;
-        depthStencilCreateInfo.depthWriteEnable = VK_TRUE;
+        depthStencilCreateInfo.depthWriteEnable = _materialSettings.useDepthWrite ? VK_TRUE : VK_FALSE;
         depthStencilCreateInfo.depthCompareOp = VK_COMPARE_OP_LESS;
         depthStencilCreateInfo.depthBoundsTestEnable = VK_FALSE;
     } else {

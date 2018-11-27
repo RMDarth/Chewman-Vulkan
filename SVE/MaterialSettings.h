@@ -65,6 +65,7 @@ struct MaterialSettings
     std::vector<TextureInfo> textures;
     bool isCubemap = false;
     bool useDepthTest = true;
+    bool useDepthWrite = true;
     bool useDepthBias = false;
     bool useMultisampling = true;
     bool useAlphaBlending = false;

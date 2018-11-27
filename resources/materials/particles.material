@@ -5,11 +5,12 @@
     "fragmentShaderName": "particlesFragmentShader",
     "cullFace": "None",
     "useAlphaBlending": true,
+    "useDepthWrite": false,
     "textures": [
         {
             "samplerName": "spritesheet",
             "textureType": "ImageFile",
-            "filename": "textures/spritesheets/flameNum.png",
+            "filename": "textures/spritesheets/flame1.png",
             "spritesheetSize": [ 6, 6 ]
         }
     ]

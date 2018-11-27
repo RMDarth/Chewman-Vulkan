@@ -339,6 +339,7 @@ MaterialSettings loadMaterial(const cppfs::FilePath& directory, const std::strin
     materialSettings.name = document["name"].GetString();
     setOptional(materialSettings.cullFace = cullFaceMap.at(document["cullFace"].GetString()));
     setOptional(materialSettings.useDepthTest = document["useDepthTest"].GetBool());
+    setOptional(materialSettings.useDepthWrite = document["useDepthWrite"].GetBool());
     setOptional(materialSettings.useDepthBias = document["useDepthBias"].GetBool());
     setOptional(materialSettings.useMultisampling = document["useMultisampling"].GetBool());
     setOptional(materialSettings.useAlphaBlending = document["useAlphaBlending"].GetBool());
