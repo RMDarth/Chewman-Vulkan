@@ -6,13 +6,17 @@
 #include "SVE/LightManager.h"
 #include "SVE/MeshManager.h"
 
+#include "Game/GameMap.h"
+
 #include <SDL2/SDL.h>
 #include <vulkan/vulkan.h>
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/rotate_vector.hpp>
+#include <glm/gtx/quaternion.hpp>
 #include <iostream>
 #include <memory>
+
 
 // Thanks to:
 // Karl "ThinMatrix" for his video blogs on OpenGL techniques
@@ -103,6 +107,27 @@ void rotateCamera(SDL_MouseMotionEvent& event, std::shared_ptr<SVE::CameraNode>&
     camera->setYawPitchRoll(yawPitchRoll);
 }
 
+glm::quat rotationBetweenVectors(glm::vec3 start, glm::vec3 dest){
+    start = normalize(start);
+    dest = normalize(dest);
+
+    float cosTheta = dot(start, dest);
+    glm::vec3 rotationAxis;
+
+    rotationAxis = cross(start, dest);
+
+    float s = sqrt( (1+cosTheta)*2 );
+    float invs = 1 / s;
+
+    return glm::quat(
+            s * 0.5f,
+            rotationAxis.x * invs,
+            rotationAxis.y * invs,
+            rotationAxis.z * invs
+    );
+
+}
+
 SVE::MeshSettings constructPlane(std::string name, glm::vec3 center, float width, float height, glm::vec3 normal)
 {
     std::vector<glm::vec3> points =
@@ -130,8 +155,8 @@ SVE::MeshSettings constructPlane(std::string name, glm::vec3 center, float width
     uint32_t currentIndex = 0;
     for (auto& point : points)
     {
-        //auto mat = glm::orientation(glm::vec3(0.0f, 0.0f, 1.0f), normal);
-        auto mat = glm::mat4(1) * glm::scale(glm::mat4(1), glm::vec3(width, 0, height));
+        auto mat = glm::toMat4(rotationBetweenVectors(glm::vec3(0.0, 1.0, 0.0), normal));
+        mat = mat * glm::scale(glm::mat4(1), glm::vec3(width, 0, height));
         point = glm::vec3(mat * glm::vec4(point, 1.0f));
         point += center;
 
@@ -193,14 +218,7 @@ int runGame()
         auto camera = engine->getSceneManager()->createMainCamera();
         camera->setNearFarPlane(0.1f, 500.0f);
         camera->setPosition(glm::vec3(5.0f, 5.0f, 5.0f));
-        //camera->setYawPitchRoll(glm::vec3(glm::radians(20.0f), glm::radians(-30.0f), 0.0f));
-        //camera->setLookAt(glm::vec3(5.0f, 5.0f, 5.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 
-        // create shadowmap
-        //engine->getSceneManager()->enableShadowMap();
-
-        // init water
-        //engine->getSceneManager()->getWater()->setHeight(0.0f);
 
         // create skybox
         engine->getSceneManager()->setSkybox("Skybox2");
@@ -212,9 +230,9 @@ int runGame()
         engine->getMeshManager()->registerMesh(floorMesh);
 
         // create water mesh
-        meshSettings.name = "WaterMesh";
-        meshSettings.materialName = "WaterReflection";
-        auto waterMesh = std::make_shared<SVE::Mesh>(meshSettings);
+        auto waterMeshSettings = constructPlane("WaterMesh", glm::vec3(0, -0.5f, 0), 100.0f, 100.0f, glm::vec3(0.0f, 1.0f, 0.0f));
+        waterMeshSettings.materialName = "WaterReflection";
+        auto waterMesh = std::make_shared<SVE::Mesh>(waterMeshSettings);
         engine->getMeshManager()->registerMesh(waterMesh);
 
         auto bigFloorMeshSettings = constructPlane("BigFloor", glm::vec3(0, 0, 0), 30.0f, 30.0f,
@@ -222,6 +240,10 @@ int runGame()
         bigFloorMeshSettings.materialName = "Floor";
         auto bigFloorMesh = std::make_shared<SVE::Mesh>(bigFloorMeshSettings);
         engine->getMeshManager()->registerMesh(bigFloorMesh);
+
+        // Create level floor
+        Chewman::GameMap gameMap;
+        gameMap.LoadMap("resources/game/levels/level1.map");
 
         // create nodes
         auto newNodeMid = engine->getSceneManager()->createSceneNode();
@@ -247,7 +269,7 @@ int runGame()
         std::shared_ptr<SVE::MeshEntity> waterEntity = std::make_shared<SVE::MeshEntity>("WaterMesh");
         waterEntity->setMaterial("WaterReflection");
         waterEntity->setIsReflected(false);
-        waterEntity->setCastShadows(false);
+        waterEntity->setCastShadows(true);
         meshEntity->setMaterial("Yellow");
         meshEntity2->setMaterial("Blue");
         terrainEntity->setMaterial("Terrain");
@@ -270,6 +292,8 @@ int runGame()
         waterNode->attachEntity(waterEntity);
         //bigFloorNode->attachEntity(bigFloorEntity);
         //bigFloorNode->setNodeTransformation(glm::translate(glm::mat4(1), glm::vec3(0, -5, 0)));
+        //levelNode->setNodeTransformation(glm::translate(glm::mat4(1), glm::vec3(10, 5, 0)));
+        //levelNode->attachEntity(levelEntity);
 
         bool quit = false;
         bool skipRendering = false;

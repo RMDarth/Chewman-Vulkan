@@ -39,8 +39,8 @@ private:
 
 private:
     CameraSettings _cameraSettings;
-    glm::vec3 _yawPitchRoll;
-    glm::vec3 _position;
+    glm::vec3 _yawPitchRoll {};
+    glm::vec3 _position {};
     glm::mat4 _projection;
     glm::mat4 _view;
 };

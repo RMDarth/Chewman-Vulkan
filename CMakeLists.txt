@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.10)
 project(Chewman)
 
 include_directories(./deps/include)
+include_directories(.)
 
 link_directories(./deps/lib)
 link_directories(./deps/lib/Vulkan)
@@ -95,7 +96,11 @@ add_executable(Chewman
         SVE/VulkanParticleSystem.cpp
         SVE/VulkanParticleSystem.h
         SVE/ParticleSystemSettings.cpp
-        SVE/ParticleSystemSettings.h)
+        SVE/ParticleSystemSettings.h
+        Game/BlockMeshGenerator.cpp
+        Game/BlockMeshGenerator.h
+        Game/GameMap.cpp
+        Game/GameMap.h)
 
 if (WIN32)
     target_link_libraries(Chewman mingw32 SDL2main SDL2 vulkan-1.lib VkLayer_core_validation.lib libassimp libcppfsd)
