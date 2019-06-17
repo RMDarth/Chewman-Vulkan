@@ -16,6 +16,8 @@ struct Submesh
     Vec3List points;
     std::vector<glm::vec2> texCoords;
     Vec3List normals;
+    Vec3List tangents;
+    Vec3List binormals;
     Vec3List colors;
 };
 

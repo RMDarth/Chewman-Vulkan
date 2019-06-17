@@ -1,0 +1,30 @@
+{
+    "name": "WallParallax",
+    "vertexShaderName": "parallaxShadowVertexShader",
+    "fragmentShaderName": "parallaxShadowFragmentShader",
+    "textures": [
+        {
+            "samplerName": "diffuseTex",
+            "textureType": "ImageFile",
+            "filename": "textures/wall1.png"
+        },
+        {
+            "samplerName": "normalTex",
+            "textureType": "ImageFile",
+            "filename": "textures/wallNormal1.png"
+        },
+        {
+            "samplerName": "depthTex",
+            "textureType": "ImageFile",
+            "filename": "textures/wallDisp1.png"
+        },
+        {
+            "samplerName": "directShadowTex",
+            "textureType": "ShadowMapDirect"
+        },
+        {
+            "samplerName": "pointShadowTex",
+            "textureType": "ShadowMapPoint"
+        }
+    ]
+}

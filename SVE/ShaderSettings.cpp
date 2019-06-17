@@ -15,6 +15,7 @@ const std::map<UniformType, size_t>& getUniformSizeMap()
             { UniformType::ModelMatrix, sizeof(glm::mat4) },
             { UniformType::ViewMatrix, sizeof(glm::mat4) },
             { UniformType::ProjectionMatrix, sizeof(glm::mat4) },
+            { UniformType::InverseModelMatrix, sizeof(glm::mat4) },
             { UniformType::ModelViewProjectionMatrix, sizeof(glm::mat4) },
             { UniformType::ViewProjectionMatrix, sizeof(glm::mat4) },
             { UniformType::ViewProjectionMatrixList, sizeof(glm::mat4) },
@@ -67,6 +68,12 @@ std::vector<char> getUniformDataByType(const UniformData& data, UniformType type
         {
             const char* byteData = reinterpret_cast<const char*>(&data.projection);
             return std::vector<char>(byteData, byteData + sizeof(data.projection));
+        }
+        case UniformType::InverseModelMatrix:
+        {
+            auto inverseModel = glm::inverse(data.model);
+            const char* byteData = reinterpret_cast<const char*>(&inverseModel);
+            return std::vector<char>(byteData, byteData + sizeof(inverseModel));
         }
         case UniformType::ModelViewProjectionMatrix:
         {

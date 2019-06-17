@@ -21,6 +21,7 @@ public:
     ~LightManager();
 
     void setLight(std::shared_ptr<LightNode> light, uint32_t index);
+    void removeLight(uint32_t index);
     std::shared_ptr<LightNode> getLight(uint32_t index) const;
     std::shared_ptr<LightNode> getDirectionLight() const;
     size_t getLightCount() const;

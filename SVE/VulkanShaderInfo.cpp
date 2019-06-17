@@ -179,6 +179,26 @@ std::vector<VkVertexInputBindingDescription> VulkanShaderInfo::getBindingDescrip
         stride += normalBinding.stride;
     }
 
+    if (_shaderSettings.vertexInfo.vertexDataFlags & VertexInfo::Binormal)
+    {
+        VkVertexInputBindingDescription binormalBinding {};
+        binormalBinding.binding = binding++;
+        binormalBinding.stride = getVertexDataSize(VertexInfo::Binormal);
+        binormalBinding.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+        bindingDescriptions.push_back(binormalBinding);
+        stride += binormalBinding.stride;
+    }
+
+    if (_shaderSettings.vertexInfo.vertexDataFlags & VertexInfo::Tangent)
+    {
+        VkVertexInputBindingDescription tangentBinding {};
+        tangentBinding.binding = binding++;
+        tangentBinding.stride = getVertexDataSize(VertexInfo::Tangent);
+        tangentBinding.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+        bindingDescriptions.push_back(tangentBinding);
+        stride += tangentBinding.stride;
+    }
+
     if (_shaderSettings.vertexInfo.vertexDataFlags & VertexInfo::BoneWeights)
     {
         VkVertexInputBindingDescription boneWeightBinding {};
@@ -277,6 +297,30 @@ std::vector<VkVertexInputAttributeDescription> VulkanShaderInfo::getAttributeDes
         attributeDescriptions.push_back(normalAttrib);
 
         offset += getVertexDataSize(VertexInfo::Normal);
+    }
+
+    if (_shaderSettings.vertexInfo.vertexDataFlags & VertexInfo::Binormal)
+    {
+        VkVertexInputAttributeDescription binormalAttrib {};
+        binormalAttrib.binding = _shaderSettings.vertexInfo.separateBinding ? binding++ : binding;
+        binormalAttrib.location = location++;
+        binormalAttrib.format = VK_FORMAT_R32G32B32_SFLOAT;
+        binormalAttrib.offset = _shaderSettings.vertexInfo.separateBinding ? 0 : offset;
+        attributeDescriptions.push_back(binormalAttrib);
+
+        offset += getVertexDataSize(VertexInfo::Binormal);
+    }
+
+    if (_shaderSettings.vertexInfo.vertexDataFlags & VertexInfo::Tangent)
+    {
+        VkVertexInputAttributeDescription tangentAttrib {};
+        tangentAttrib.binding = _shaderSettings.vertexInfo.separateBinding ? binding++ : binding;
+        tangentAttrib.location = location++;
+        tangentAttrib.format = VK_FORMAT_R32G32B32_SFLOAT;
+        tangentAttrib.offset = _shaderSettings.vertexInfo.separateBinding ? 0 : offset;
+        attributeDescriptions.push_back(tangentAttrib);
+
+        offset += getVertexDataSize(VertexInfo::Tangent);
     }
 
     if (_shaderSettings.vertexInfo.vertexDataFlags & VertexInfo::BoneWeights)
@@ -434,6 +478,10 @@ uint32_t VulkanShaderInfo::getVertexDataSize(VertexInfo::VertexDataType vertexDa
         case VertexInfo::TexCoord:
             return sizeof(glm::vec2);
         case VertexInfo::Normal:
+            return sizeof(glm::vec3);
+        case VertexInfo::Binormal:
+            return sizeof(glm::vec3);
+        case VertexInfo::Tangent:
             return sizeof(glm::vec3);
         case VertexInfo::BoneWeights:
             return sizeof(glm::vec4);

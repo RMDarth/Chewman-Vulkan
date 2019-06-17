@@ -17,6 +17,7 @@ enum class UniformType : uint8_t
     ModelMatrix,
     ViewMatrix,
     ProjectionMatrix,
+    InverseModelMatrix,
     ViewProjectionMatrix,
     ViewProjectionMatrixList, // for cases when several viewprojection matrices are used (cascade shadows, point lights)
     ViewProjectionMatrixSize,
@@ -104,8 +105,10 @@ struct VertexInfo
         BoneWeights =   1 << 4,
         BoneIds =       1 << 5,
         Custom =        1 << 6,
+        Binormal =      1 << 7,
+        Tangent =       1 << 8,
     };
-    uint32_t vertexDataFlags = Position | Color | TexCoord | Normal | BoneWeights | BoneIds; // TODO: remove bones
+    uint32_t vertexDataFlags = Position | Color | TexCoord | Normal | Binormal | Tangent | BoneWeights | BoneIds; // TODO: remove bones
     uint8_t positionSize = 3;
     uint8_t colorSize = 3;
     uint8_t customCount = 0;

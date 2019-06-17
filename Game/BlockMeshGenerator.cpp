@@ -33,7 +33,8 @@ glm::quat rotationBetweenVectors(glm::vec3 start, glm::vec3 dest){
     );
 }
 
-Submesh constructPlane(glm::vec3 center, float width, float height, glm::vec3 normal, float texX = 1.0f, float texY = 1.0f, float deltaX = 0, float deltaY = 0, bool switchTexXY = false)
+Submesh constructPlane(glm::vec3 center, float width, float height, glm::vec3 normal, float texX = 1.0f, float texY = 1.0f, float deltaX = 0, float deltaY = 0,
+        bool switchTexXY = false, bool revertX = false, bool revertY = false)
 {
     Submesh submesh {};
     submesh.points =
@@ -47,12 +48,12 @@ Submesh constructPlane(glm::vec3 center, float width, float height, glm::vec3 no
             };
     submesh.texCoords =
             {
-                    {0, 0},
+                    {1, 1},
                     {0, 1},
-                    {1, 1},
-                    {1, 1},
+                    {0, 0},
+                    {0, 0},
                     {1, 0},
-                    {0, 0}
+                    {1, 1}
             };
     submesh.normals = Vec3List(6, normal);
     submesh.colors = Vec3List(6, glm::vec3(1.0f, 1.0f, 1.0f));
@@ -68,12 +69,30 @@ Submesh constructPlane(glm::vec3 center, float width, float height, glm::vec3 no
             texCoord.x = texCoord.y;
             texCoord.y = temp;
         }
+        if (revertX)
+            texCoord.x = -texCoord.x;
+        if (revertY)
+            texCoord.y = -texCoord.y;
     }
+
+    auto mat = glm::toMat4(rotationBetweenVectors(glm::vec3(0.0, 1.0, 0.0), normal));
+
+    glm::vec3 tangent = switchTexXY ? glm::vec3(-1.0, 0.0, 0.0) : glm::vec3(0.0, 0.0, 1.0);
+    if (revertX)
+        tangent.x = -tangent.x;
+    if (revertY)
+        tangent.z = -tangent.z;
+    tangent = glm::vec3(mat * glm::vec4(tangent, 1.0));
+
+
+    glm::vec3 bitangent = glm::cross(normal, tangent);
+
+    submesh.binormals = Vec3List(6, bitangent);
+    submesh.tangents = Vec3List(6, tangent);
+
+    mat = mat * glm::scale(glm::mat4(1), glm::vec3(width / 2, 0, height / 2));
     for (auto& point : submesh.points)
     {
-        auto mat = glm::toMat4(rotationBetweenVectors(glm::vec3(0.0, 1.0, 0.0), normal));
-
-        mat = mat * glm::scale(glm::mat4(1), glm::vec3(width / 2, 0, height / 2));
         point = glm::vec3(mat * glm::vec4(point, 1.0f));
         point += center;
     }
@@ -100,16 +119,16 @@ std::vector<Submesh> BlockMeshGenerator::GenerateFloor(glm::vec3 position, Model
     {
         floorMeshes.push_back(
                 constructPlane(position + glm::vec3(_size / 2, -height / 2, 0), height, _size, glm::vec3(1, 0, 0),
-                               0.2f, 1.0f, 0.0f, 0.0f, true));
+                               1.0f, 0.0f, 0.0f, -0.2f, false, true, true));
         floorMeshes.push_back(
                 constructPlane(position + glm::vec3(-_size / 2, -height / 2, 0), height, _size, glm::vec3(-1, 0, 0),
-                               1.0f, 1.0f, 0.8f, 0.0f, true));
+                               1.0f, 1.2f, 0.0f, 1.0f, false, false));
         floorMeshes.push_back(
                 constructPlane(position + glm::vec3(0, -height / 2, _size / 2), _size, height, glm::vec3(0, 0, 1),
-                               1.0f, 1.0f, 0.0f, 0.8f));
+                               1.2f, 1.0f, 1.0f, 0.0f, true, true));
         floorMeshes.push_back(
                 constructPlane(position + glm::vec3(0, -height / 2, -_size / 2), _size, height, glm::vec3(0, 0, -1),
-                               1.0f, 0.2f, 0.0f, 0.0f));
+                               0.0f, 1.0f, -0.2f, 0.0f, true, false, true));
     }
     return floorMeshes;
 }
@@ -125,13 +144,13 @@ std::vector<Submesh> BlockMeshGenerator::GenerateWall(glm::vec3 position, ModelT
         floorMeshes.push_back(constructPlane(position + glm::vec3(0, mainheight, 0), _size, _size, glm::vec3(0, 1, 0)));
     } else if (type == ModelType::Vertical) {
         floorMeshes.push_back(constructPlane(position + glm::vec3(_size / 2,  mainheight/2 - subheight / 2, 0         ),
-                              height, _size, glm::vec3(1 , 0,  0), 1.2f, 1.0f,  0.0f,  0.0f, true));
+                              height, _size, glm::vec3(1 , 0,  0), 1.0f, 1.0f,  0.0f,  -0.2f, false, true, true));
         floorMeshes.push_back(constructPlane(position + glm::vec3(-_size / 2, mainheight/2 - subheight / 2, 0         ),
-                              height, _size, glm::vec3(-1, 0,  0), 1.0f, 1.0f, -0.2f,  0.0f, true));
+                              height, _size, glm::vec3(-1, 0,  0), 1.0f, 1.2f,  0.0f,  0.0f, false, false));
         floorMeshes.push_back(constructPlane(position + glm::vec3(0,          mainheight/2 - subheight / 2,  _size / 2),
-                              _size, height, glm::vec3(0 , 0,  1), 1.0f, 1.0f,  0.0f, -0.2f));
+                              _size, height, glm::vec3(0 , 0,  1), 1.2f, 1.0f,  0.0f, 0.0f, true, true));
         floorMeshes.push_back(constructPlane(position + glm::vec3(0,          mainheight/2 - subheight / 2, -_size / 2),
-                              _size, height, glm::vec3(0 , 0, -1), 1.0f, 1.2f,  0.0f,  0.0f));
+                              _size, height, glm::vec3(0 , 0, -1), 1.0f, 1.0f, -0.2f, 0.0f, true, false, true));
     }
 
     return floorMeshes;
@@ -160,6 +179,8 @@ SVE::MeshSettings BlockMeshGenerator::CombineMeshes(std::string name, std::vecto
         std::copy(submesh.points.begin(), submesh.points.end(), std::back_inserter(meshSettings.vertexPosData));
         std::copy(submesh.texCoords.begin(), submesh.texCoords.end(), std::back_inserter(meshSettings.vertexTexData));
         std::copy(submesh.normals.begin(), submesh.normals.end(), std::back_inserter(meshSettings.vertexNormalData));
+        std::copy(submesh.binormals.begin(), submesh.binormals.end(), std::back_inserter(meshSettings.vertexBinormalData));
+        std::copy(submesh.tangents.begin(), submesh.tangents.end(), std::back_inserter(meshSettings.vertexTangentData));
         std::copy(submesh.colors.begin(), submesh.colors.end(), std::back_inserter(meshSettings.vertexColorData));
         totalPoints += submesh.points.size();
     }

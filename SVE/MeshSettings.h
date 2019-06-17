@@ -39,6 +39,8 @@ struct MeshSettings
     std::vector<glm::vec3> vertexColorData;
     std::vector<glm::vec2> vertexTexData;
     std::vector<glm::vec3> vertexNormalData;
+    std::vector<glm::vec3> vertexBinormalData;
+    std::vector<glm::vec3> vertexTangentData;
     std::vector<uint32_t> indexData;
 
     uint32_t boneNum;

@@ -96,4 +96,9 @@ void LightManager::fillUniformData(UniformData& data, LightType viewSourceLightT
     }
 }
 
+void LightManager::removeLight(uint32_t index)
+{
+    _lightList.erase(_lightList.begin() + index);
+}
+
 } // namespace SVE

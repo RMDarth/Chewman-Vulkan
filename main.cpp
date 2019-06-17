@@ -50,13 +50,58 @@ void moveCamera(const Uint8* keystates, float deltaTime, std::shared_ptr<SVE::Ca
     //camera->movePosition(glm::vec3(0,0,5.0f*deltaTime));
 }
 
+void moveLight(SDL_Keycode key, std::shared_ptr<SVE::LightNode>& lightNode)
+{
+    static float x = 50;
+    static float y = 50;
+    static float z = -50;
+    const float speed = 5.0f;
+    bool updated = false;
+
+    if (key == SDLK_UP)
+    {
+        z = z + speed;
+        updated = true;
+
+    }
+    if (key == SDLK_RIGHT)
+    {
+        x = x + speed;
+        updated = true;
+    }
+    if (key == SDLK_DOWN)
+    {
+        z = z - speed;
+        updated = true;
+
+    }
+    if (key == SDLK_LEFT)
+    {
+        x = x - speed;
+        updated = true;
+    }
+    if (key == SDLK_n)
+    {
+        y -= speed;
+        updated = true;
+    }
+    if (key == SDLK_m)
+    {
+        y += speed;
+        updated = true;
+    }
+
+    lightNode->setNodeTransformation(
+            glm::translate(glm::mat4(1), glm::vec3(x, y, z)));
+}
+
 void configFloor(SDL_Keycode key, std::shared_ptr<SVE::SceneNode>& floor)
 {
     static float x = -12;
     static float z = -21;
     static float y = -11;
     bool updated = false;
-    if (key == SDLK_UP)
+    /*if (key == SDLK_UP)
     {
         z = z + 1;
         updated = true;
@@ -77,7 +122,7 @@ void configFloor(SDL_Keycode key, std::shared_ptr<SVE::SceneNode>& floor)
     {
         x = x - 1;
         updated = true;
-    }
+    }*/
     if (key == SDLK_z)
     {
         y = y + 1;
@@ -185,8 +230,7 @@ int runGame()
             "Chewman Vulkan",
             SDL_WINDOWPOS_CENTERED,
             SDL_WINDOWPOS_CENTERED,
-            800,
-            600,
+            1024, 768,
             SDL_WINDOW_SHOWN | SDL_WINDOW_VULKAN | SDL_WINDOW_RESIZABLE);
 
     if(!window)
@@ -205,20 +249,24 @@ int runGame()
         engine->getResourceManager()->loadFolder("resources");
 
         // configure light
-        engine->getSceneManager()->getLightManager()->getDirectionLight()->setNodeTransformation(
-                glm::translate(glm::mat4(1), glm::vec3(15, 15, -15)));
+        auto sunLight = engine->getSceneManager()->getLightManager()->getDirectionLight();
+        sunLight->setNodeTransformation(
+                glm::translate(glm::mat4(1), glm::vec3(50, 50, -50)));
         if (engine->getSceneManager()->getLightManager()->getLightCount() >= 1)
             engine->getSceneManager()->getLightManager()->getLight(0)->setNodeTransformation(
-                    glm::translate(glm::mat4(1), glm::vec3(5, 5, 5)));
+                    glm::translate(glm::mat4(1), glm::vec3(25, 5, 0)));
         if (engine->getSceneManager()->getLightManager()->getLightCount() >= 2)
             engine->getSceneManager()->getLightManager()->getLight(1)->setNodeTransformation(
                     glm::translate(glm::mat4(1), glm::vec3(-5, 5, 5)));
+
+
+        engine->getSceneManager()->getLightManager()->removeLight(0);
+        engine->getSceneManager()->getLightManager()->removeLight(1);
 
         // create camera
         auto camera = engine->getSceneManager()->createMainCamera();
         camera->setNearFarPlane(0.1f, 500.0f);
         camera->setPosition(glm::vec3(5.0f, 5.0f, 5.0f));
-
 
         // create skybox
         engine->getSceneManager()->setSkybox("Skybox2");
@@ -340,6 +388,7 @@ int runGame()
                     }
 
                     configFloor(event.key.keysym.sym, terrainNode);
+                    moveLight(event.key.keysym.sym, sunLight);
                 }
                 if (event.type == SDL_MOUSEMOTION)
                 {
@@ -373,14 +422,14 @@ int runGame()
 
 int main(int argv, char** args)
 {
-    try
+    //try
     {
         return runGame();
     }
-    catch (const std::exception& ex)
+    //catch (const std::exception& ex)
     {
-        std::cerr << "Unhandled exception: " << ex.what() << std::endl;
-        throw;
+    //    std::cerr << "Unhandled exception: " << ex.what() << std::endl;
+     //   throw;
         //return 2;
     }
 }

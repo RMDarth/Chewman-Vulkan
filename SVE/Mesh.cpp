@@ -88,6 +88,8 @@ Mesh::Mesh(MeshLoadSettings meshLoadSettings)
         meshSettings.vertexColorData.reserve(mesh->mNumVertices);
         meshSettings.vertexTexData.reserve(mesh->mNumVertices);
         meshSettings.vertexNormalData.reserve(mesh->mNumVertices);
+        meshSettings.vertexBinormalData.reserve(mesh->mNumVertices);
+        meshSettings.vertexTangentData.reserve(mesh->mNumVertices);
         for (auto v = 0u; v < mesh->mNumVertices; v++)
         {
             if (meshLoadSettings.switchYZ)
@@ -96,11 +98,15 @@ Mesh::Mesh(MeshLoadSettings meshLoadSettings)
                 meshSettings.vertexColorData.emplace_back(1.0f, 1.0f, 1.0f);
                 meshSettings.vertexTexData.emplace_back(mesh->mTextureCoords[0][v].x, 1.0f - mesh->mTextureCoords[0][v].y);
                 meshSettings.vertexNormalData.emplace_back(mesh->mNormals[v].x, mesh->mNormals[v].z, mesh->mNormals[v].y);
+                meshSettings.vertexBinormalData.emplace_back(mesh->mBitangents[v].x, mesh->mBitangents[v].z, mesh->mBitangents[v].y);
+                meshSettings.vertexTangentData.emplace_back(mesh->mTangents[v].x, mesh->mTangents[v].z, mesh->mTangents[v].y);
             } else {
                 meshSettings.vertexPosData.emplace_back(mesh->mVertices[v].x, mesh->mVertices[v].y, mesh->mVertices[v].z);
                 meshSettings.vertexColorData.emplace_back(1.0f, 1.0f, 1.0f);
                 meshSettings.vertexTexData.emplace_back(mesh->mTextureCoords[0][v].x, 1.0f - mesh->mTextureCoords[0][v].y);
                 meshSettings.vertexNormalData.emplace_back(mesh->mNormals[v].x, mesh->mNormals[v].y, mesh->mNormals[v].z);
+                meshSettings.vertexBinormalData.emplace_back(mesh->mBitangents[v].x, mesh->mBitangents[v].y, mesh->mBitangents[v].z);
+                meshSettings.vertexTangentData.emplace_back(mesh->mTangents[v].x, mesh->mTangents[v].y, mesh->mTangents[v].z);
             }
         }
         meshSettings.indexData.reserve(meshSettings.indexData.size() + mesh->mNumFaces * 3);

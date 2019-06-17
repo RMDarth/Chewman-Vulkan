@@ -1,0 +1,25 @@
+{
+    "name": "FloorNormals",
+    "vertexShaderName": "phongNormalShadowVertexShader",
+    "fragmentShaderName": "phongNormalShadowFragmentShader",
+    "textures": [
+        {
+            "samplerName": "diffuseTex",
+            "textureType": "ImageFile",
+            "filename": "textures/floor1.png"
+        },
+        {
+            "samplerName": "normalTex",
+            "textureType": "ImageFile",
+            "filename": "textures/floorNormal1.png"
+        },
+        {
+            "samplerName": "directShadowTex",
+            "textureType": "ShadowMapDirect"
+        },
+        {
+            "samplerName": "pointShadowTex",
+            "textureType": "ShadowMapPoint"
+        }
+    ]
+}

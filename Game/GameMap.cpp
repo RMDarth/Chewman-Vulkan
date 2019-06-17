@@ -96,11 +96,11 @@ void GameMap::InitMeshes()
     }
 
     auto meshSettingsT = _meshGenerator.CombineMeshes("MapT", top);
-    meshSettingsT.materialName = "Ceiling";
+    meshSettingsT.materialName = "CeilingNormals";
     auto meshSettingsB = _meshGenerator.CombineMeshes("MapB", bottom);
-    meshSettingsB.materialName = "Floor";
+    meshSettingsB.materialName = "FloorNormals";
     auto meshSettingsV = _meshGenerator.CombineMeshes("MapV", vertical);
-    meshSettingsV.materialName = "Wall";
+    meshSettingsV.materialName = "WallParallax";
 
     auto* engine = SVE::Engine::getInstance();
 

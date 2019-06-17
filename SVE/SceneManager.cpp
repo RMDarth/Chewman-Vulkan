@@ -1,6 +1,7 @@
 // VSE (Vulkan Simple Engine) Library
 // Copyright (c) 2018-2019, Igor Barinov
 // Licensed under CC BY 4.0
+#include <glm/gtc/matrix_transform.hpp>
 #include "SceneManager.h"
 #include "LightManager.h"
 #include "LightNode.h"
@@ -61,6 +62,7 @@ LightManager* SceneManager::getLightManager()
 std::shared_ptr<ParticleSystemEntity> SceneManager::createParticleSystem(ParticleSystemSettings particleSystemSettings)
 {
     auto sceneNode = std::make_shared<SceneNode>(particleSystemSettings.name);
+    sceneNode->setNodeTransformation(glm::translate(glm::mat4(1), glm::vec3(20, 5, 0)));
     _root->attachSceneNode(sceneNode);
     auto particleEntity = std::make_shared<ParticleSystemEntity>(std::move(particleSystemSettings));
     particleEntity->setRenderLast();

@@ -35,7 +35,7 @@ void main() {
 
     float timeMult = ubo.time * 0.05;
     float clampTime = timeMult - floor(timeMult);
-    vec2 dudvCoords =  fragTexCoord * 14;
+    vec2 dudvCoords =  fragTexCoord * 5;
     vec2 distortion1 = (texture(dudvSampler, vec2(dudvCoords.x + clampTime, dudvCoords.y)).rg * 2.0 - 1.0) * waveStrength;
     vec2 distortion2 = (texture(dudvSampler, vec2(-dudvCoords.x + clampTime, dudvCoords.y + clampTime)).rg * 2.0 - 1.0) * waveStrength;
     vec2 totalDistortion = distortion1 + distortion2;

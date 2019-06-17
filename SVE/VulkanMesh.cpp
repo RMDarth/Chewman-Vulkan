@@ -90,6 +90,26 @@ void VulkanMesh::createGeometryBuffers()
                               VK_BUFFER_USAGE_VERTEX_BUFFER_BIT);
     }
 
+    if (!_meshSettings.vertexBinormalData.empty())
+    {
+        _vertexBufferList.push_back(VK_NULL_HANDLE);
+        _vertexBufferMemoryList.push_back(VK_NULL_HANDLE);
+        createOptimizedBuffer(_meshSettings.vertexBinormalData,
+                              _vertexBufferList.back(),
+                              _vertexBufferMemoryList.back(),
+                              VK_BUFFER_USAGE_VERTEX_BUFFER_BIT);
+    }
+
+    if (!_meshSettings.vertexTangentData.empty())
+    {
+        _vertexBufferList.push_back(VK_NULL_HANDLE);
+        _vertexBufferMemoryList.push_back(VK_NULL_HANDLE);
+        createOptimizedBuffer(_meshSettings.vertexTangentData,
+                              _vertexBufferList.back(),
+                              _vertexBufferMemoryList.back(),
+                              VK_BUFFER_USAGE_VERTEX_BUFFER_BIT);
+    }
+
     if (_meshSettings.boneNum > 0)
     {
         _vertexBufferList.push_back(VK_NULL_HANDLE);
