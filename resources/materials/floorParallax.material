@@ -1,0 +1,30 @@
+{
+    "name": "FloorParallax",
+    "vertexShaderName": "parallaxShadowVertexShader",
+    "fragmentShaderName": "parallaxShadowFragmentShader",
+    "textures": [
+        {
+            "samplerName": "diffuseTex",
+            "textureType": "ImageFile",
+            "filename": "textures/floor1.png"
+        },
+        {
+            "samplerName": "normalTex",
+            "textureType": "ImageFile",
+            "filename": "textures/floorNormal1.png"
+        },
+        {
+            "samplerName": "depthTex",
+            "textureType": "ImageFile",
+            "filename": "textures/floorDisp1.png"
+        },
+        {
+            "samplerName": "directShadowTex",
+            "textureType": "ShadowMapDirect"
+        },
+        {
+            "samplerName": "pointShadowTex",
+            "textureType": "ShadowMapPoint"
+        }
+    ]
+}
