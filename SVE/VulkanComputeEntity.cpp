@@ -67,37 +67,24 @@ void VulkanComputeEntity::setUniformData(const UniformData &uniformData) const
     vkUnmapMemory(_device, _uniformBuffersMemory[imageIndex]);
 }
 
-void VulkanComputeEntity::applyComputeCommands() const
+void VulkanComputeEntity::reallocateCommandBuffers()
 {
     // TODO: have different command for each in-flight frame
-    auto commandBuffer = _vulkanInstance->createCommandBuffer(BUFFER_INDEX_COMPUTE_PARTICLES);
+    _commandBuffer = _vulkanInstance->createCommandBuffer(BUFFER_INDEX_COMPUTE_PARTICLES);
+}
 
-    VkCommandBufferBeginInfo beginInfo{};
-    beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-    beginInfo.flags = VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT;
-    beginInfo.pInheritanceInfo = nullptr;
-
-    if (vkBeginCommandBuffer(commandBuffer, &beginInfo) != VK_SUCCESS)
-    {
-        throw VulkanException("Failed to begin recording Vulkan command buffer");
-    }
-
-    vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, _pipeline);
+void VulkanComputeEntity::applyComputeCommands() const
+{
+    vkCmdBindPipeline(_commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, _pipeline);
     vkCmdBindDescriptorSets(
-            commandBuffer,
+            _commandBuffer,
             VK_PIPELINE_BIND_POINT_COMPUTE,
             _pipelineLayout,
             0,
             1,
             &_descriptorSets[_vulkanInstance->getCurrentImageIndex()], 0, nullptr);
 
-    vkCmdDispatch(commandBuffer, _computeSettings.elementsCount / 32, 1, 1);
-
-    // finish recording
-    if (vkEndCommandBuffer(commandBuffer) != VK_SUCCESS)
-    {
-        throw VulkanException("Failed to record Vulkan command buffer");
-    }
+    vkCmdDispatch(_commandBuffer, _computeSettings.elementsCount / 32, 1, 1);
 }
 
 void VulkanComputeEntity::createPipelineLayout()
@@ -360,6 +347,31 @@ void VulkanComputeEntity::deleteDescriptorSets()
 
 }
 
+void VulkanComputeEntity::finishComputeStep()
+{
+    auto commandBuffer = Engine::getInstance()->getVulkanInstance()->getCommandBuffer(BUFFER_INDEX_COMPUTE_PARTICLES);
 
+    // finish recording
+    if (vkEndCommandBuffer(commandBuffer) != VK_SUCCESS)
+    {
+        throw VulkanException("Failed to record Vulkan command buffer");
+    }
+
+}
+
+void VulkanComputeEntity::startComputeStep()
+{
+    auto commandBuffer = Engine::getInstance()->getVulkanInstance()->createCommandBuffer(BUFFER_INDEX_COMPUTE_PARTICLES);
+
+    VkCommandBufferBeginInfo beginInfo{};
+    beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+    beginInfo.flags = VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT;
+    beginInfo.pInheritanceInfo = nullptr;
+
+    if (vkBeginCommandBuffer(commandBuffer, &beginInfo) != VK_SUCCESS)
+    {
+        throw VulkanException("Failed to begin recording Vulkan command buffer");
+    }
+}
 
 } // namespace SVE

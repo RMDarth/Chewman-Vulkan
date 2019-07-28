@@ -22,15 +22,24 @@ ParticleSystemEntity::ParticleSystemEntity(ParticleSystemSettings settings)
 
 ParticleSystemEntity::~ParticleSystemEntity() = default;
 
-void ParticleSystemEntity::applyComputeCommands() const
+void ParticleSystemEntity::applyComputeCommands(uint32_t bufferIndex, uint32_t imageIndex) const
 {
+    // TODO: Change it to VulkanCommandsManager interface
+    _vulkanComputeEntity->reallocateCommandBuffers();
+    //_material->getVulkanMaterial()->applyComputeCommands(bufferIndex, imageIndex, _materialIndex);
     _vulkanComputeEntity->applyComputeCommands();
 }
 
 void ParticleSystemEntity::updateUniforms(UniformDataList uniformDataList) const
 {
-    _material->getVulkanMaterial()->setUniformData(_materialIndex, *uniformDataList[toInt(CommandsType::MainPass)]);
-    _vulkanComputeEntity->setUniformData(*uniformDataList[toInt(CommandsType::MainPass)]);
+    auto& data = *uniformDataList[toInt(CommandsType::MainPass)];
+    data.particleEmitter = _settings.particleEmitter;
+    data.particleAffector = _settings.particleAffector;
+    data.particleCount = _settings.quota;
+    data.spritesheetSize = _material->getVulkanMaterial()->getSpritesheetSize();
+
+    _material->getVulkanMaterial()->setUniformData(_materialIndex, data);
+    _vulkanComputeEntity->setUniformData(data);
 }
 
 void ParticleSystemEntity::applyDrawingCommands(uint32_t bufferIndex, uint32_t imageIndex) const
@@ -50,7 +59,7 @@ void ParticleSystemEntity::fillUniformData(UniformData &data)
     data.spritesheetSize = _material->getVulkanMaterial()->getSpritesheetSize();
 }
 
-const ParticleSystemSettings& ParticleSystemEntity::getSettings() const
+ParticleSystemSettings& ParticleSystemEntity::getSettings()
 {
     return _settings;
 }
@@ -67,6 +76,16 @@ void ParticleSystemEntity::generateParticles()
     computeSettings.name = _settings.name;
     _vulkanComputeEntity = std::make_unique<VulkanComputeEntity>(std::move(computeSettings));
     _vulkanParticleSystem = std::make_unique<VulkanParticleSystem>(_settings, *_vulkanComputeEntity);
+}
+
+void ParticleSystemEntity::finishComputeStep()
+{
+    VulkanComputeEntity::finishComputeStep();
+}
+
+void ParticleSystemEntity::startComputeStep()
+{
+    VulkanComputeEntity::startComputeStep();
 }
 
 

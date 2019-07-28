@@ -57,7 +57,8 @@ struct ParticleAffector
     float maxRotateSpeed;       // 4
     float minScaleSpeed;        // 5
     float maxScaleSpeed;        // 6
-    float _padding[2];          // 8
+    float lifeDrain;            // 7
+    float _padding[1];          // 8
     glm::vec4 colorChanger;     // 12
 };
 

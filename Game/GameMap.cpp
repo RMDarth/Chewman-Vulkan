@@ -11,7 +11,7 @@
 
 namespace Chewman
 {
-constexpr float CellSize = 5.0f;
+constexpr float CellSize = 2.5f;
 
 GameMap::GameMap()
     : _meshGenerator(CellSize)
@@ -98,7 +98,7 @@ void GameMap::InitMeshes()
     auto meshSettingsT = _meshGenerator.CombineMeshes("MapT", top);
     meshSettingsT.materialName = "CeilingNormals";
     auto meshSettingsB = _meshGenerator.CombineMeshes("MapB", bottom);
-    meshSettingsB.materialName = "FloorNormals";
+    meshSettingsB.materialName = "FloorParallax";
     auto meshSettingsV = _meshGenerator.CombineMeshes("MapV", vertical);
     meshSettingsV.materialName = "WallParallax";
 

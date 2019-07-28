@@ -10,7 +10,7 @@ layout(set = 2, binding = 1) uniform UBO
 layout(location = 0) in FragData
 {
     vec2 fragTexCoord;
-    vec3 fragColor;
+    vec4 fragColor;
     float fragLifePercent;
 };
 
@@ -31,5 +31,5 @@ vec4 sampleSpritesheet()
 
 void main()
 {
-    outColor = vec4(sampleSpritesheet());
+    outColor = vec4(sampleSpritesheet() + fragColor);
 }

@@ -13,49 +13,31 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f70505ef-ae5c-44c4-ba16-f4e316506723" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/resources/materials/ceiling.material" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/resources/materials/ceilingNormals.material" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/resources/materials/floorNormals.material" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/resources/materials/wall.material" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/resources/materials/wallNormals.material" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/resources/materials/wallParallax.material" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/resources/shaders/glsl/parallaxAndShadowMap.frag" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/resources/shaders/glsl/parallaxAndShadowMap.vert" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/resources/shaders/glsl/pbr.glsl" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/resources/shaders/glsl/phongNormalAndShadowMap.frag" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/resources/shaders/glsl/phongNormalAndShadowMap.vert" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/resources/shaders/parallaxShadowFrag.shader" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/resources/shaders/parallaxShadowVert.shader" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/resources/shaders/phongNormalShadowFrag.shader" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/resources/shaders/phongNormalShadowVert.shader" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/SVE/ParticleSystemManager.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/SVE/ParticleSystemManager.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Game/BlockMeshGenerator.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Game/BlockMeshGenerator.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Game/BlockMeshGenerator.h" beforeDir="false" afterPath="$PROJECT_DIR$/Game/BlockMeshGenerator.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Game/GameMap.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Game/GameMap.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SVE/LightManager.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/SVE/LightManager.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SVE/LightManager.h" beforeDir="false" afterPath="$PROJECT_DIR$/SVE/LightManager.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SVE/MaterialManager.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/SVE/MaterialManager.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SVE/Mesh.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/SVE/Mesh.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SVE/MeshSettings.h" beforeDir="false" afterPath="$PROJECT_DIR$/SVE/MeshSettings.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SVE/Engine.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/SVE/Engine.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SVE/ParticleSystemEntity.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/SVE/ParticleSystemEntity.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SVE/ParticleSystemEntity.h" beforeDir="false" afterPath="$PROJECT_DIR$/SVE/ParticleSystemEntity.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SVE/ParticleSystemSettings.h" beforeDir="false" afterPath="$PROJECT_DIR$/SVE/ParticleSystemSettings.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/SVE/ResourceManager.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/SVE/ResourceManager.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/SVE/SceneManager.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/SVE/SceneManager.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SVE/ShaderSettings.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/SVE/ShaderSettings.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SVE/ShaderSettings.h" beforeDir="false" afterPath="$PROJECT_DIR$/SVE/ShaderSettings.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SVE/VulkanMesh.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/SVE/VulkanMesh.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SVE/VulkanShaderInfo.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/SVE/VulkanShaderInfo.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SVE/SceneManager.h" beforeDir="false" afterPath="$PROJECT_DIR$/SVE/SceneManager.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SVE/VulkanComputeEntity.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/SVE/VulkanComputeEntity.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SVE/VulkanComputeEntity.h" beforeDir="false" afterPath="$PROJECT_DIR$/SVE/VulkanComputeEntity.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SVE/VulkanMaterial.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/SVE/VulkanMaterial.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/main.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/shaders/glsl/phongShadowMap.vert" beforeDir="false" afterPath="$PROJECT_DIR$/resources/shaders/glsl/phongShadowMap.vert" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/shaders/glsl/phongWater.frag" beforeDir="false" afterPath="$PROJECT_DIR$/resources/shaders/glsl/phongWater.frag" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/shaders/glsl/simpleSkeletalDepth.vert" beforeDir="false" afterPath="$PROJECT_DIR$/resources/shaders/glsl/simpleSkeletalDepth.vert" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/shaders/glsl/skeletalPhong.vert" beforeDir="false" afterPath="$PROJECT_DIR$/resources/shaders/glsl/skeletalPhong.vert" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/fire.particle" beforeDir="false" afterPath="$PROJECT_DIR$/resources/fire.particle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/shaders/glsl/parallaxAndShadowMap.frag" beforeDir="false" afterPath="$PROJECT_DIR$/resources/shaders/glsl/parallaxAndShadowMap.frag" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/shaders/glsl/particles.comp" beforeDir="false" afterPath="$PROJECT_DIR$/resources/shaders/glsl/particles.comp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/shaders/glsl/particles.frag" beforeDir="false" afterPath="$PROJECT_DIR$/resources/shaders/glsl/particles.frag" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/shaders/glsl/particles.geom" beforeDir="false" afterPath="$PROJECT_DIR$/resources/shaders/glsl/particles.geom" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/shaders/glsl/particles.glsl" beforeDir="false" afterPath="$PROJECT_DIR$/resources/shaders/glsl/particles.glsl" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/shaders/glsl/particles.vert" beforeDir="false" afterPath="$PROJECT_DIR$/resources/shaders/glsl/particles.vert" afterDir="false" />
     </list>
-    <ignored path="$PROJECT_DIR$/cmake-build-debug/" />
-    <ignored path="deps/" />
-    <ignored path="models/" />
-    <ignored path="shaders/frag.spv" />
-    <ignored path="shaders/vert.spv" />
-    <ignored path="textures/" />
-    <ignored path="$PROJECT_DIR$/cmake-build-release/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -80,106 +62,6 @@
     <select />
   </component>
   <component name="ExecutionTargetManager" SELECTED_TARGET="CMakeBuildProfile:Debug" />
-  <component name="FileEditorManager">
-    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/main.cpp">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="317">
-              <caret line="89" column="19" selection-start-line="89" selection-start-column="19" selection-end-line="89" selection-end-column="19" />
-              <folding>
-                <element signature="e#0#23#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/SVE/SceneNode.cpp">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="202">
-              <caret line="82" column="28" selection-start-line="82" selection-start-column="28" selection-end-line="82" selection-end-column="28" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/resources/shaders/glsl/phongNormalAndShadowMap.frag">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="285">
-              <caret line="115" column="9" selection-start-line="115" selection-start-column="9" selection-end-line="115" selection-end-column="9" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/resources/shaders/glsl/parallaxAndShadowMap.vert">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="402">
-              <caret line="51" column="29" selection-start-line="51" selection-start-column="29" selection-end-line="51" selection-end-column="29" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/resources/shaders/glsl/parallaxAndShadowMap.frag">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="224">
-              <caret line="56" column="25" lean-forward="true" selection-start-line="56" selection-start-column="25" selection-end-line="56" selection-end-column="25" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/resources/shaders/parallaxShadowVert.shader">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="17">
-              <caret line="1" column="21" selection-start-line="1" selection-start-column="21" selection-end-line="1" selection-end-column="21" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/resources/shaders/parallaxShadowFrag.shader">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="221">
-              <caret line="13" column="48" selection-start-line="13" selection-start-column="48" selection-end-line="13" selection-end-column="48" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/resources/materials/wallParallax.material">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="136">
-              <caret line="8" column="43" selection-start-line="8" selection-start-column="34" selection-end-line="8" selection-end-column="43" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Game/GameMap.cpp">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="368">
-              <caret line="102" column="46" selection-start-line="102" selection-start-column="46" selection-end-line="102" selection-end-column="46" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Game/BlockMeshGenerator.cpp">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-29">
-              <caret line="79" column="49" selection-start-line="79" selection-start-column="49" selection-end-line="79" selection-end-column="49" />
-              <folding>
-                <element signature="e#156#195#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-    </leaf>
-  </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
@@ -190,25 +72,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>VkRenderPassBeginInfo</find>
-      <find>depthbias</find>
-      <find>bias</find>
-      <find>MaterialSetting</find>
-      <find>_viewMatrix</find>
-      <find>vkCmdSetDepthBias</find>
-      <find>spritesheetSize</find>
-      <find>fragLifePercent</find>
-      <find>Life</find>
-      <find>start</find>
-      <find>glm::rotate</find>
-      <find>up</find>
-      <find>glm::ma</find>
-      <find>sampler2DArray</find>
-      <find>constructPlane</find>
-      <find>materialInfo</find>
-      <find>CalcPointLight</find>
-      <find>ambient</find>
-      <find>_castShadows</find>
       <find>PCFShadowSunLight</find>
       <find>PCFShadowPointLight</find>
       <find>frag</find>
@@ -220,6 +83,25 @@
       <find>Particle</find>
       <find>water</find>
       <find>fragTex</find>
+      <find>fragColor</find>
+      <find>geomColor</find>
+      <find>colorChanger</find>
+      <find>stbi_load</find>
+      <find>fillUniformData</find>
+      <find>getLightManager</find>
+      <find>getUniformDataByType</find>
+      <find>vkAllocateCommandBuffers</find>
+      <find>vkBeginCommandBuffer</find>
+      <find>cmdDraw</find>
+      <find>submitCommands</find>
+      <find>createCommandBuffer</find>
+      <find>vkEndCom</find>
+      <find>apply</find>
+      <find>reallocateCommandBuffers</find>
+      <find>VK_PIPELINE_BIND_POINT_COMPUTE</find>
+      <find>descriptorSets</find>
+      <find>Begin</find>
+      <find>startRenderCommandBufferCreation</find>
     </findStrings>
     <replaceStrings>
       <replace />
@@ -248,63 +130,6 @@
       </map>
     </option>
   </component>
-  <component name="IdeDocumentHistory">
-    <option name="CHANGED_PATHS">
-      <list>
-        <option value="$PROJECT_DIR$/resources/shaders/glsl/particles.frag" />
-        <option value="$PROJECT_DIR$/resources/fire.particle" />
-        <option value="$PROJECT_DIR$/resources/shaders/glsl/particles.geom" />
-        <option value="$PROJECT_DIR$/Game/FloorBlock.h" />
-        <option value="$PROJECT_DIR$/Game/FloorBlockMeshGenerator.h" />
-        <option value="$PROJECT_DIR$/CMakeLists.txt" />
-        <option value="$PROJECT_DIR$/SVE/CameraNode.h" />
-        <option value="$PROJECT_DIR$/resources/materials/floor.material" />
-        <option value="$PROJECT_DIR$/resources/materials/wall.material" />
-        <option value="$PROJECT_DIR$/resources/shaders/glsl/fullDepth.frag" />
-        <option value="$PROJECT_DIR$/resources/light0.light" />
-        <option value="$PROJECT_DIR$/resources/light1.light" />
-        <option value="$PROJECT_DIR$/resources/light2.light" />
-        <option value="$PROJECT_DIR$/Game/GameMap.h" />
-        <option value="$PROJECT_DIR$/resources/materials/ceiling.material" />
-        <option value="$PROJECT_DIR$/resources/shaders/glsl/pbr.glsl" />
-        <option value="$PROJECT_DIR$/resources/shaders/glsl/pbrShadowMap.frag" />
-        <option value="$PROJECT_DIR$/resources/shaders/glsl/convert" />
-        <option value="$PROJECT_DIR$/resources/shaders/glsl/phongNormalAndShadowMap.vert" />
-        <option value="$PROJECT_DIR$/SVE/ResourceManager.cpp" />
-        <option value="$PROJECT_DIR$/SVE/ShaderSettings.cpp" />
-        <option value="$PROJECT_DIR$/SVE/MeshSettings.h" />
-        <option value="$PROJECT_DIR$/SVE/Mesh.cpp" />
-        <option value="$PROJECT_DIR$/SVE/VulkanMesh.cpp" />
-        <option value="$PROJECT_DIR$/SVE/VulkanShaderInfo.cpp" />
-        <option value="$PROJECT_DIR$/resources/shaders/phongShadowVert.shader" />
-        <option value="$PROJECT_DIR$/resources/shaders/phongBonesVert.shader" />
-        <option value="$PROJECT_DIR$/resources/shaders/glsl/phongShadowMap.vert" />
-        <option value="$PROJECT_DIR$/SVE/ShaderSettings.h" />
-        <option value="$PROJECT_DIR$/resources/shaders/glsl/simpleSkeletalDepth.vert" />
-        <option value="$PROJECT_DIR$/resources/shaders/glsl/skeletalPhong.vert" />
-        <option value="$PROJECT_DIR$/Game/BlockMeshGenerator.h" />
-        <option value="$PROJECT_DIR$/resources/shaders/phongNormalShadowVert.shader" />
-        <option value="$PROJECT_DIR$/resources/shaders/phongNormalShadowFrag.shader" />
-        <option value="$PROJECT_DIR$/SVE/SceneManager.cpp" />
-        <option value="$PROJECT_DIR$/resources/materials/wallNormals.material" />
-        <option value="$PROJECT_DIR$/resources/materials/ceilingNormal.material" />
-        <option value="$PROJECT_DIR$/SVE/LightManager.h" />
-        <option value="$PROJECT_DIR$/SVE/LightManager.cpp" />
-        <option value="$PROJECT_DIR$/resources/materials/floorNormals.material" />
-        <option value="$PROJECT_DIR$/resources/materials/ceilingNormals.material" />
-        <option value="$PROJECT_DIR$/resources/shaders/glsl/phongWater.frag" />
-        <option value="$PROJECT_DIR$/resources/shaders/glsl/phongNormalAndShadowMap.frag" />
-        <option value="$PROJECT_DIR$/main.cpp" />
-        <option value="$PROJECT_DIR$/Game/BlockMeshGenerator.cpp" />
-        <option value="$PROJECT_DIR$/resources/shaders/parallaxShadowVert.shader" />
-        <option value="$PROJECT_DIR$/resources/shaders/parallaxShadowFrag.shader" />
-        <option value="$PROJECT_DIR$/Game/GameMap.cpp" />
-        <option value="$PROJECT_DIR$/resources/shaders/glsl/parallaxAndShadowMap.vert" />
-        <option value="$PROJECT_DIR$/resources/materials/wallParallax.material" />
-        <option value="$PROJECT_DIR$/resources/shaders/glsl/parallaxAndShadowMap.frag" />
-      </list>
-    </option>
-  </component>
   <component name="OCFindUsagesOptions" text="true" ivars="false" properties="true" derivedClasses="false" />
   <component name="ProjectFrameBounds" extendedState="6">
     <option name="x" value="775" />
@@ -312,78 +137,13 @@
     <option name="width" value="1145" />
     <option name="height" value="858" />
   </component>
+  <component name="ProjectId" id="1OdOLrQ3XiKMEC0Y50UDQi43dEM" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
-  <component name="ProjectView">
-    <navigator proportions="" version="1">
-      <autoscrollToSource ProjectPane="true" />
-      <foldersAlwaysOnTop value="true" />
-    </navigator>
-    <panes>
-      <pane id="ProjectPane">
-        <subPane>
-          <expand>
-            <path>
-              <item name="Chewman" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Chewman" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="Chewman" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Chewman" type="462c0819:PsiDirectoryNode" />
-              <item name="Game" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="Chewman" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Chewman" type="462c0819:PsiDirectoryNode" />
-              <item name="resources" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="Chewman" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Chewman" type="462c0819:PsiDirectoryNode" />
-              <item name="resources" type="462c0819:PsiDirectoryNode" />
-              <item name="game" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="Chewman" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Chewman" type="462c0819:PsiDirectoryNode" />
-              <item name="resources" type="462c0819:PsiDirectoryNode" />
-              <item name="materials" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="Chewman" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Chewman" type="462c0819:PsiDirectoryNode" />
-              <item name="resources" type="462c0819:PsiDirectoryNode" />
-              <item name="models" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="Chewman" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Chewman" type="462c0819:PsiDirectoryNode" />
-              <item name="resources" type="462c0819:PsiDirectoryNode" />
-              <item name="shaders" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="Chewman" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Chewman" type="462c0819:PsiDirectoryNode" />
-              <item name="resources" type="462c0819:PsiDirectoryNode" />
-              <item name="shaders" type="462c0819:PsiDirectoryNode" />
-              <item name="glsl" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="Chewman" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Chewman" type="462c0819:PsiDirectoryNode" />
-              <item name="SVE" type="462c0819:PsiDirectoryNode" />
-            </path>
-          </expand>
-          <select />
-        </subPane>
-      </pane>
-      <pane id="Scope" />
-    </panes>
-  </component>
   <component name="PropertiesComponent">
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="SearchEverywhereHistoryKey" value="&#9;FILE&#9;file://E:/Projects/Chewman/SVE/VulkanMaterial.h" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/resources/shaders" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/resources/materials" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.path.for.package.eslint" value="project" />
     <property name="node.js.selected.package.eslint" value="(autodetect)" />
@@ -395,18 +155,18 @@
     <property name="settings.editor.selected.configurable" value="preferences.keymap" />
   </component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/resources/materials" />
+      <recent name="$PROJECT_DIR$/resources/shaders" />
+      <recent name="E:\Projects\Chewman\resources\materials" />
+      <recent name="E:\Projects\Chewman\resources" />
+      <recent name="E:\Projects\Chewman\resources\shaders" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="E:\Projects\Chewman\resources\shaders" />
       <recent name="E:\Projects\Chewman\resources\models" />
       <recent name="E:\Projects\Chewman\resources\models\assets" />
       <recent name="E:\Projects\Chewman\resources\materials" />
-      <recent name="E:\Projects\Chewman\resources\shaders\glsl" />
-    </key>
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/resources/shaders" />
-      <recent name="E:\Projects\Chewman\resources\materials" />
-      <recent name="E:\Projects\Chewman\resources" />
-      <recent name="E:\Projects\Chewman\resources\shaders" />
       <recent name="E:\Projects\Chewman\resources\shaders\glsl" />
     </key>
   </component>
@@ -530,7 +290,12 @@
       <workItem from="1560602639857" duration="1626000" />
       <workItem from="1560605800457" duration="6687000" />
       <workItem from="1560621870746" duration="19377000" />
-      <workItem from="1560690217903" duration="21938000" />
+      <workItem from="1560690217903" duration="22639000" />
+      <workItem from="1560768059484" duration="86315000" />
+      <workItem from="1561322804718" duration="7746000" />
+      <workItem from="1561817027005" duration="521000" />
+      <workItem from="1564303822892" duration="110000" />
+      <workItem from="1564303958400" duration="1320000" />
     </task>
     <task id="LOCAL-00001" summary="Adding core SVE classes">
       <created>1536429263360</created>
@@ -721,11 +486,15 @@
       <option name="project" value="LOCAL" />
       <updated>1549112892362</updated>
     </task>
-    <option name="localTasksCounter" value="28" />
+    <task id="LOCAL-00028" summary="Add missing materials, add support for parallax lighting">
+      <created>1560729683529</created>
+      <option name="number" value="00028" />
+      <option name="presentableId" value="LOCAL-00028" />
+      <option name="project" value="LOCAL" />
+      <updated>1560729683530</updated>
+    </task>
+    <option name="localTasksCounter" value="29" />
     <servers />
-  </component>
-  <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="1202731000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -735,54 +504,6 @@
       <are-packages-shown value="true" />
       <is-autoscroll-to-source value="true" />
     </todo-panel>
-  </component>
-  <component name="ToolWindowManager">
-    <frame x="0" y="0" width="1920" height="1032" extended-state="6" />
-    <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.24599786" />
-      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
-      <window_info id="Favorites" order="2" side_tool="true" />
-      <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Find" order="1" sideWeight="0.48986125" weight="0.3968958" />
-      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.34364995" visible="true" weight="0.29822618" />
-      <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.6643543" weight="0.3292683" />
-      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
-      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
-      <window_info anchor="bottom" id="TODO" order="6" sideWeight="0.49946696" weight="0.20260021" />
-      <window_info anchor="bottom" id="Database Changes" order="7" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Messages" order="8" sideWeight="0.39327642" weight="0.36031044" />
-      <window_info anchor="bottom" id="Event Log" order="9" sideWeight="0.6563501" side_tool="true" visible="true" weight="0.29822618" />
-      <window_info anchor="bottom" id="Terminal" order="10" sideWeight="0.49946696" weight="0.3275488" />
-      <window_info anchor="bottom" id="Version Control" order="11" weight="0.1670282" />
-      <window_info anchor="bottom" id="CMake" order="12" sideWeight="0.46588486" weight="0.32936078" />
-      <window_info anchor="bottom" id="Inspection Results" order="13" weight="0.329718" />
-      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
-      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
-      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
-      <window_info anchor="right" id="Database" order="3" weight="0.32995737" />
-    </layout>
-    <layout-to-restore>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.2238806" />
-      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
-      <window_info id="Favorites" order="2" side_tool="true" />
-      <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Find" order="1" weight="0.20824295" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.18546638" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.4154013" />
-      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
-      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
-      <window_info anchor="bottom" id="TODO" order="6" weight="0.329718" />
-      <window_info anchor="bottom" id="Database Changes" order="7" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Messages" order="8" weight="0.25813448" />
-      <window_info anchor="bottom" id="Event Log" order="9" side_tool="true" />
-      <window_info anchor="bottom" id="Terminal" order="10" weight="0.329718" />
-      <window_info anchor="bottom" id="Version Control" order="11" weight="0.1670282" />
-      <window_info anchor="bottom" id="CMake" order="12" weight="0.329718" />
-      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
-      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
-      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
-      <window_info anchor="right" id="Database" order="3" weight="0.32995737" />
-    </layout-to-restore>
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="1" />
@@ -800,10 +521,20 @@
       </list>
     </option>
   </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
   <component name="VcsManagerConfiguration">
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_NEW_TODO" value="false" />
-    <MESSAGE value="Integrating ShaderInfo class, refactoring material" />
     <MESSAGE value="Adding camera class, refactoring matrices calculations" />
     <MESSAGE value="Refactoring materials, meshes, entities and rendering process" />
     <MESSAGE value="Adding animation support" />
@@ -828,7 +559,8 @@
     <MESSAGE value="Fixing resource deallocation" />
     <MESSAGE value="Adding old changes" />
     <MESSAGE value="Fix particles shader" />
-    <option name="LAST_COMMIT_MESSAGE" value="Fix particles shader" />
+    <MESSAGE value="Add missing materials, add support for parallax lighting" />
+    <option name="LAST_COMMIT_MESSAGE" value="Add missing materials, add support for parallax lighting" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -837,6 +569,11 @@
           <url>file://$PROJECT_DIR$/SVE/VulkanUtils.cpp</url>
           <line>216</line>
           <option name="timeStamp" value="61" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/main.cpp</url>
+          <line>473</line>
+          <option name="timeStamp" value="70" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
@@ -901,325 +638,6 @@
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
     </expressions>
-  </component>
-  <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/resources/shaders/particlesVert.shader">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/shaders/glsl/quadRender.vert">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/shaders/simpleSkeletalDepthVert.shader">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/shaders/fullDepthFrag.shader">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/shaders/simpleDepthFrag.shader">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/shaders/quadVert.shader">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="238">
-          <caret line="14" column="1" lean-forward="true" selection-start-line="14" selection-start-column="1" selection-end-line="14" selection-end-column="1" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/shaders/shadowMapRenderFrag.shader">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/shaders/phongBonesVert.shader">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="51">
-          <caret line="3" column="33" selection-start-line="3" selection-start-column="33" selection-end-line="3" selection-end-column="33" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/shaders/phongVert.shader">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="119">
-          <caret line="7" column="20" lean-forward="true" selection-start-line="7" selection-start-column="20" selection-end-line="7" selection-end-column="20" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/SVE/VulkanMesh.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="215">
-          <caret line="89" column="49" selection-start-line="89" selection-start-column="49" selection-end-line="89" selection-end-column="49" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/SVE/VulkanShaderInfo.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="215">
-          <caret line="310" column="8" selection-start-line="310" selection-start-column="8" selection-end-line="310" selection-end-column="8" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/SVE/ShaderSettings.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="223">
-          <caret line="110" column="90" selection-start-line="110" selection-start-column="90" selection-end-line="110" selection-end-column="90" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/shaders/glsl/phongShadowMap.vert">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="289">
-          <caret line="17" column="39" selection-start-line="17" selection-start-column="39" selection-end-line="17" selection-end-column="39" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/shaders/glsl/simpleSkeletalDepth.vert">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="255">
-          <caret line="15" selection-start-line="15" selection-end-line="16" selection-end-column="40" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/shaders/glsl/skeletalPhong.vert">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="340">
-          <caret line="20" column="20" selection-start-line="20" selection-start-column="20" selection-end-line="20" selection-end-column="20" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/shaders/phongShadowFrag.shader">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/shaders/phongShadowVert.shader">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="153">
-          <caret line="9" column="20" selection-start-line="9" selection-start-column="20" selection-end-line="9" selection-end-column="20" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Game/GameMap.h">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Game/BlockMeshGenerator.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="241">
-          <caret line="19" column="23" selection-start-line="19" selection-start-column="23" selection-end-line="19" selection-end-column="23" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/shaders/glsl/phongNormalAndShadowMap.vert">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="663">
-          <caret line="63" column="85" selection-start-line="63" selection-start-column="85" selection-end-line="63" selection-end-column="85" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/shaders/phongNormalShadowFrag.shader">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret column="1" selection-start-column="1" selection-end-column="1" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/main.engine">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/fire.particle">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="17">
-          <caret line="1" column="13" selection-start-line="1" selection-start-column="13" selection-end-line="1" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/SVE/ResourceManager.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="202">
-          <caret line="27" column="54" selection-start-line="27" selection-start-column="54" selection-end-line="27" selection-end-column="54" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/shaders/phongNormalShadowVert.shader">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret column="1" selection-start-column="1" selection-end-column="1" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/SVE/ResourceManager.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="239">
-          <caret line="455" column="39" selection-start-line="455" selection-start-column="39" selection-end-line="455" selection-end-column="39" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/materials/wall.material">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="34">
-          <caret line="2" column="48" selection-start-line="2" selection-start-column="25" selection-end-line="2" selection-end-column="48" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/materials/wallNormals.material">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="187">
-          <caret line="11" column="37" selection-start-line="11" selection-start-column="28" selection-end-line="11" selection-end-column="37" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/SVE/LightManager.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="343">
-          <caret line="34" column="44" selection-start-line="34" selection-start-column="44" selection-end-line="34" selection-end-column="44" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/materials/fullDepth.material">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/materials/ceilingNormals.material">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="221">
-          <caret line="13" column="48" selection-start-line="13" selection-start-column="48" selection-end-line="13" selection-end-column="48" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/materials/floorNormals.material">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="391">
-          <caret line="23" column="5" selection-start-line="23" selection-start-column="5" selection-end-line="23" selection-end-column="5" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/materials/waterReflection.material">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/shaders/phongWaterVert.shader">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/shaders/phongWaterFrag.shader">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/shaders/glsl/phongWater.vert">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="323">
-          <caret line="19" column="46" selection-start-line="19" selection-start-column="30" selection-end-line="19" selection-end-column="46" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/shaders/glsl/phongWater.frag">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="544">
-          <caret line="32" column="50" selection-start-line="32" selection-start-column="50" selection-end-line="32" selection-end-column="50" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/SVE/Water.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="272">
-          <caret line="17" column="18" selection-start-line="17" selection-start-column="18" selection-end-line="17" selection-end-column="18" />
-          <folding>
-            <element signature="e#288#359#0" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/SVE/Water.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="289">
-          <caret line="17" column="28" selection-start-line="17" selection-start-column="28" selection-end-line="17" selection-end-column="28" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/SVE/SceneManager.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="309">
-          <caret line="101" column="19" selection-start-line="101" selection-start-column="19" selection-end-line="101" selection-end-column="19" />
-          <folding>
-            <element signature="e#107#146#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/SVE/LightManager.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="193">
-          <caret line="46" column="41" selection-start-line="46" selection-start-column="41" selection-end-line="46" selection-end-column="41" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/SVE/SceneNode.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="202">
-          <caret line="82" column="28" selection-start-line="82" selection-start-column="28" selection-end-line="82" selection-end-column="28" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/main.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="317">
-          <caret line="89" column="19" selection-start-line="89" selection-start-column="19" selection-end-line="89" selection-end-column="19" />
-          <folding>
-            <element signature="e#0#23#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Game/BlockMeshGenerator.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-29">
-          <caret line="79" column="49" selection-start-line="79" selection-start-column="49" selection-end-line="79" selection-end-column="49" />
-          <folding>
-            <element signature="e#156#195#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/shaders/glsl/phongNormalAndShadowMap.frag">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="285">
-          <caret line="115" column="9" selection-start-line="115" selection-start-column="9" selection-end-line="115" selection-end-column="9" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Game/GameMap.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="368">
-          <caret line="102" column="46" selection-start-line="102" selection-start-column="46" selection-end-line="102" selection-end-column="46" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/shaders/glsl/parallaxAndShadowMap.vert">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="402">
-          <caret line="51" column="29" selection-start-line="51" selection-start-column="29" selection-end-line="51" selection-end-column="29" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/shaders/parallaxShadowVert.shader">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="17">
-          <caret line="1" column="21" selection-start-line="1" selection-start-column="21" selection-end-line="1" selection-end-column="21" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/shaders/parallaxShadowFrag.shader">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="221">
-          <caret line="13" column="48" selection-start-line="13" selection-start-column="48" selection-end-line="13" selection-end-column="48" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/materials/wallParallax.material">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="136">
-          <caret line="8" column="43" selection-start-line="8" selection-start-column="34" selection-end-line="8" selection-end-column="43" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/shaders/glsl/parallaxAndShadowMap.frag">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="224">
-          <caret line="56" column="25" lean-forward="true" selection-start-line="56" selection-start-column="25" selection-end-line="56" selection-end-column="25" />
-        </state>
-      </provider>
-    </entry>
   </component>
   <component name="masterDetails">
     <states>

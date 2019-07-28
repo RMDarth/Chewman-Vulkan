@@ -11,6 +11,7 @@ namespace SVE
 class LightManager;
 class LightNode;
 class LightSettings;
+class ParticleSystemManager;
 class ParticleSystemEntity;
 class ParticleSystemSettings;
 class Skybox;
@@ -37,7 +38,7 @@ public:
 
     // TODO: Add ParticleSystemManager
     std::shared_ptr<ParticleSystemEntity> createParticleSystem(ParticleSystemSettings particleSystemSettings);
-    std::shared_ptr<ParticleSystemEntity> getParticleSystem();
+    ParticleSystemManager* getParticleSystemManager();
 
     void setSkybox(const std::string& materialName);
     void setSkybox(std::shared_ptr<Skybox> skybox);
@@ -54,9 +55,8 @@ private:
     std::shared_ptr<Water> _water;
 
     std::unique_ptr<LightManager> _lightManager;
+    std::unique_ptr<ParticleSystemManager> _particleSystemManager;
 
-    // temp
-    std::shared_ptr<ParticleSystemEntity> _particleSystem;
 };
 
 } // namespace SVE

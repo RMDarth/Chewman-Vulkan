@@ -302,7 +302,7 @@ ParticleSystemSettings loadParticleSystem(const cppfs::FilePath& directory, cons
     emitter.colorRangeStart = loadVector<4>(emitterObject, "colorRangeStart");
     emitter.colorRangeEnd = loadVector<4>(emitterObject, "colorRangeEnd");
 
-    ParticleAffector affector;
+    ParticleAffector affector {};
     auto affectorObject = document["particleAffector"].GetObject();
     affector.minAcceleration = affectorObject["minAcceleration"].GetFloat();
     affector.maxAcceleration = affectorObject["maxAcceleration"].GetFloat();

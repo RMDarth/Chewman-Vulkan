@@ -14,7 +14,7 @@
 #include "ShaderManager.h"
 #include "MeshManager.h"
 #include "LightManager.h"
-#include "ParticleSystemEntity.h"
+#include "ParticleSystemManager.h"
 #include "ResourceManager.h"
 #include "Entity.h"
 #include "Skybox.h"
@@ -229,9 +229,11 @@ void Engine::renderFrame()
         }
     }*/
 
-    auto particleSystem = _sceneManager->getParticleSystem();
-    if (particleSystem)
-        particleSystem->applyComputeCommands();
+    auto particleSystemManager = _sceneManager->getParticleSystemManager();
+    if (particleSystemManager)
+    {
+        particleSystemManager->applyComputeCommands(BUFFER_INDEX_COMPUTE_PARTICLES, currentImage);
+    }
 
     _commandsType = CommandsType::ShadowPassDirectLight;
     if (auto directLight = _sceneManager->getLightManager()->getDirectionLight())
@@ -354,9 +356,9 @@ void Engine::renderFrame()
     }
 
     // fill particles data
-    if (particleSystem)
+    if (particleSystemManager)
     {
-        particleSystem->fillUniformData(*mainUniform);
+        particleSystemManager->fillUniformData(*mainUniform);
     }
 
 
@@ -367,7 +369,7 @@ void Engine::renderFrame()
     updateNode(_sceneManager->getRootNode(), uniformDataList);
 
     ///////  Submit command buffers to queue
-    if (particleSystem)
+    if (particleSystemManager)
     {
         // TODO: Use special compute queue instead of graphics queue for compute shader (they can be different)
         _vulkanInstance->submitCommands(CommandsType::ComputeParticlesPass, BUFFER_INDEX_COMPUTE_PARTICLES);

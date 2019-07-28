@@ -31,5 +31,6 @@ struct ParticleAffector
     float maxRotateSpeed;
     float minScaleSpeed;
     float maxScaleSpeed;
+    float lifeDrain;
     vec4 colorChanger;
 };

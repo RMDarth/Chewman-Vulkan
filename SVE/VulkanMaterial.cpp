@@ -444,6 +444,7 @@ void VulkanMaterial::createTextureImages()
 
         // Load image pixel data
         int texWidth, texHeight, texChannels;
+        //stbi_set_flip_vertically_on_load(true);
         stbi_uc* pixels = stbi_load(_materialSettings.textures[i].filename.c_str(), &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
         VkDeviceSize imageSize = static_cast<VkDeviceSize>(texWidth * texHeight * 4);
 

@@ -20,11 +20,15 @@ public:
     explicit VulkanComputeEntity(ComputeSettings computeSettings);
     ~VulkanComputeEntity();
 
+    void reallocateCommandBuffers();
+
     VkBuffer getComputeBuffer() const;
 
     void setUniformData(const UniformData& uniformData) const;
 
     void applyComputeCommands() const;
+    static void startComputeStep();
+    static void finishComputeStep();
 
 private:
     void createPipelineLayout();
@@ -68,6 +72,8 @@ private:
 
     std::vector<VkDescriptorSet> _descriptorSets;
     VkDescriptorPool _descriptorPool;
+
+    VkCommandBuffer _commandBuffer;
 
 };
 

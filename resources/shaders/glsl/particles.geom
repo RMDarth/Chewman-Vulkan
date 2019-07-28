@@ -6,7 +6,7 @@ layout(triangle_strip, max_vertices = 4) out;
 
 layout(location = 0) in InData
 {
-    vec3 geomColor;
+    vec4 geomColor;
     float geomLife;
     float geomStartLife;
     float geomSize;
@@ -21,7 +21,7 @@ layout(set = 1, binding = 0) uniform UBO
 layout(location = 0) out FragData
 {
     vec2 fragTexCoord;
-    vec3 fragColor;
+    vec4 fragColor;
     float fragLifePercent;
 };
 

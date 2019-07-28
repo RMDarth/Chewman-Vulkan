@@ -124,7 +124,7 @@ void main()
             rotation += rotationSpeed * ubo.deltaTime;
             size += scaleSpeed * ubo.deltaTime;
             color += ubo.affector.colorChanger * ubo.deltaTime;
-            life -= ubo.deltaTime;
+            life -= ubo.deltaTime + ubo.affector.lifeDrain * ubo.deltaTime;
 
             storeParticle(vec4(position.xyz, life),
                           color,

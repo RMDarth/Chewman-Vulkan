@@ -1,5 +1,5 @@
 {
-    "name": "FireParticle",
+    "name": "FireParticle2",
     "materialName": "ParticleMaterial",
     "computeShaderName": "particlesComputeShader",
 
@@ -21,8 +21,8 @@
         "maxSize": 1.4,
         "minRotate": -3.14,
         "maxRotate": 3.14,
-        "colorRangeStart": [ 1.0, 0.0, 0.0, 1.0 ],
-        "colorRangeEnd": [ 1.0, 0.0, 1.0, 1.0 ]
+        "colorRangeStart": [ 1.0, 0.0, 0.0, 0.0 ],
+        "colorRangeEnd": [ 1.0, 0.0, 1.0, 0.0 ]
     },
     "particleAffector":
     {

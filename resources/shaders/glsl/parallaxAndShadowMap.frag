@@ -34,37 +34,44 @@ layout(location = 0) in InData
 
 layout(location = 0) out vec4 outColor;
 
+float getHeight(vec2 texCoords)
+{
+    return texture(depthTex, texCoords).r - 0.5;
+}
+
 vec2 parallaxMapping(vec2 texCoords, vec3 viewDir)
 {
-    float heightScale = 0.1;
-    float height = texture(depthTex, texCoords).r;
-    vec2 p = viewDir.xy / viewDir.z * (height * heightScale);
-    return texCoords + p;
+    float heightScale = 0.2;
+    float height = getHeight(texCoords);
+    vec2 p = viewDir.xy * (height * heightScale);
+    return texCoords - p;
 }
 
 vec2 steepParallaxMapping(vec2 texCoords, vec3 viewDir)
 {
-    float height_scale = 0.21;
+    float heightScale = 0.1;
     // number of depth layers
-    const float numLayers = 30.0;
+    const float minLayers = 8;
+    const float maxLayers = 32;
+    float numLayers = mix(maxLayers, minLayers, abs(dot(vec3(0.0, 0.0, 1.0), viewDir)));
     // calculate the size of each layer
     float layerDepth = 1.0 / numLayers;
     // depth of current layer
     float currentLayerDepth = 0.0;
     // the amount to shift the texture coordinates per layer (from vector P)
-    vec2 P = viewDir.xy * height_scale;
+    vec2 P = viewDir.xy / viewDir.z * heightScale;
     vec2 deltaTexCoords = P / numLayers;
+
     // get initial values
     vec2  currentTexCoords     = texCoords;
-    float currentDepthMapValue = texture(depthTex, currentTexCoords).r;
-
+    float currentDepthMapValue = getHeight(currentTexCoords);
 
     while(currentLayerDepth < currentDepthMapValue)
     {
         // shift texture coordinates along direction of P
         currentTexCoords -= deltaTexCoords;
         // get depthmap value at current texture coordinates
-        currentDepthMapValue = texture(depthTex, currentTexCoords).r;
+        currentDepthMapValue = getHeight(currentTexCoords);
         // get depth of next layer
         currentLayerDepth += layerDepth;
     }
@@ -74,12 +81,13 @@ vec2 steepParallaxMapping(vec2 texCoords, vec3 viewDir)
 
     // get depth after and before collision for linear interpolation
     float afterDepth  = currentDepthMapValue - currentLayerDepth;
-    float beforeDepth = texture(depthTex, prevTexCoords).r - currentLayerDepth + layerDepth;
+    float beforeDepth = getHeight(prevTexCoords) - currentLayerDepth + layerDepth;
 
     // interpolation of texture coordinates
     float weight = afterDepth / (afterDepth - beforeDepth);
-    //return texCoords;
-    return prevTexCoords * weight + currentTexCoords * (1.0 - weight);
+    vec2 finalTexCoords = prevTexCoords * weight + currentTexCoords * (1.0 - weight);
+
+    return finalTexCoords;
 }
 
 // for point
@@ -169,8 +177,8 @@ float PCFShadowSunLight()
 
 void main()
 {
-    mat3 modelToTan = mat3(fragTangent, fragBinormal, fragNormal);
-    mat3 tanToModel = transpose(modelToTan);
+    mat3 tanToModel = mat3(fragTangent, fragBinormal, fragNormal);
+    mat3 modelToTan = transpose(tanToModel);
     vec3 viewDir = normalize(ubo.cameraPos.xyz - fragPos);
     vec3 tangentViewDir = normalize(modelToTan * viewDir);
     vec2 texCoord = steepParallaxMapping(fragTexCoord, tangentViewDir);
@@ -182,7 +190,7 @@ void main()
     vec3 normalData = vec3(texture(normalTex, texCoord).rgb);
 
     //vec3 norm = normalize(fragNormal);
-    vec3 normal = modelToTan * (normalData.xyz * 2.0 - 1.0); // to object space
+    vec3 normal = tanToModel * (normalData.xyz * 2.0 - 1.0); // to object space
 
     //normal = normalize(fragNormal);
 

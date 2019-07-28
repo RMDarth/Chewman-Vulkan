@@ -15,7 +15,7 @@ layout (location = 4) in vec4 inStartData;
 
 layout(location = 0) out OutData
 {
-    vec3 geomColor;
+    vec4 geomColor;
     float geomLife;
     float geomStartLife;
     float geomSize;
@@ -27,7 +27,7 @@ void main()
     gl_Position = ubo.view * ubo.model * vec4(inPositionLife.xyz, 1);
     geomLife = inPositionLife.w;
     geomStartLife = inStartData.x;
-    geomColor = inColor.rgb;
+    geomColor = inColor;
     geomSize = inSpeedSize.w;
     geomRotation = inData.y;
 }

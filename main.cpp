@@ -5,6 +5,8 @@
 #include "SVE/ResourceManager.h"
 #include "SVE/LightManager.h"
 #include "SVE/MeshManager.h"
+#include "SVE/ParticleSystemManager.h"
+#include "SVE/ParticleSystemEntity.h"
 
 #include "Game/GameMap.h"
 
@@ -91,8 +93,9 @@ void moveLight(SDL_Keycode key, std::shared_ptr<SVE::LightNode>& lightNode)
         updated = true;
     }
 
-    lightNode->setNodeTransformation(
-            glm::translate(glm::mat4(1), glm::vec3(x, y, z)));
+    if (updated)
+        lightNode->setNodeTransformation(
+                glm::translate(glm::mat4(1), glm::vec3(x, y, z)));
 }
 
 void configFloor(SDL_Keycode key, std::shared_ptr<SVE::SceneNode>& floor)
@@ -224,7 +227,7 @@ SVE::MeshSettings constructPlane(std::string name, glm::vec3 center, float width
 int runGame()
 {
     SDL_Window *window;
-    SDL_Init(SDL_INIT_VIDEO);
+    SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS);
 
     window = SDL_CreateWindow(
             "Chewman Vulkan",
@@ -241,7 +244,6 @@ int runGame()
 
     SVE::Engine* engine = SVE::Engine::createInstance(window, "resources/main.engine");
     {
-
         // load resources
         engine->getResourceManager()->loadFolder("resources/shaders");
         engine->getResourceManager()->loadFolder("resources/materials");
@@ -258,6 +260,14 @@ int runGame()
         if (engine->getSceneManager()->getLightManager()->getLightCount() >= 2)
             engine->getSceneManager()->getLightManager()->getLight(1)->setNodeTransformation(
                     glm::translate(glm::mat4(1), glm::vec3(-5, 5, 5)));
+
+        for (auto i = 0; i < engine->getSceneManager()->getParticleSystemManager()->getParticleSystemCount(); ++i)
+        {
+            engine->getSceneManager()->getParticleSystemManager()->getParticleSystem(i)->getParent()->setNodeTransformation(
+                    glm::translate(glm::mat4(1), glm::vec3(0, 5, 0)));
+        }
+
+        auto particleSystem = engine->getSceneManager()->getParticleSystemManager()->getParticleSystem(0);
 
 
         engine->getSceneManager()->getLightManager()->removeLight(0);
@@ -325,7 +335,7 @@ int runGame()
 
         // configure and attach objects to nodes
         newNode->attachEntity(meshEntity);
-        newNodeMid->setNodeTransformation(glm::translate(glm::mat4(1), glm::vec3(1, 0, 1)));
+        newNodeMid->setNodeTransformation(glm::translate(glm::mat4(1), glm::vec3(5, 0, -5)));
         newNode2->setNodeTransformation(glm::translate(glm::mat4(1), glm::vec3(5, 0, 2)));
 
         {
@@ -380,9 +390,25 @@ int runGame()
                         if (newNode2->getAttachedEntities().empty())
                         {
                             newNode2->attachEntity(meshEntity2);
+                            auto& emitter = particleSystem->getSettings().particleEmitter;
+                            auto& affector = particleSystem->getSettings().particleAffector;
+                            emitter.minLife = 0.0f;
+                            emitter.maxLife = 0.0f;
+
+                            affector.colorChanger = glm::vec4(0.0, 0.0, 0.0, -3.5f);
+                            affector.lifeDrain = 5.0f;
+
                         }
                         else
                         {
+                            auto& emitter = particleSystem->getSettings().particleEmitter;
+                            auto& affector = particleSystem->getSettings().particleAffector;
+                            emitter.minLife = 10.0f;
+                            emitter.maxLife = 10.0f;
+
+                            affector.colorChanger = glm::vec4(0.0, 0.0, 0.0, 0.0f);
+                            affector.lifeDrain = 0.0f;
+
                             newNode2->detachEntity(meshEntity2);
                         }
                     }
@@ -406,6 +432,34 @@ int runGame()
 
                 updateNode(newNode, curTime);
             }
+
+
+            // Temp : update fireline
+            /*auto& emitter = particleSystem->getSettings().particleEmitter;
+            auto& affector = particleSystem->getSettings().particleAffector;
+            static float currentLife = 0.0f;
+            if (currentLife > 0)
+            {
+                emitter.minLife = std::max(currentLife, 10.0f);
+                emitter.maxLife = std::max(currentLife, 10.0f);
+
+                affector.colorChanger = glm::vec4(0.0, 0.0, 0.0, 0.0f);
+                affector.lifeDrain = 0.0f;
+            } else {
+                emitter.minLife = 0;
+                emitter.maxLife = 0;
+
+                affector.colorChanger = glm::vec4(0.0, 0.0, 0.0, -3.5f);
+                affector.lifeDrain = 5.0f;
+            }
+            emitter.minSpeed = 5;
+            emitter.maxSpeed = 5;
+            emitter.emissionRate = 40;
+
+            currentLife += (curTime - prevTime);
+            if (currentLife > 10.0f)
+                currentLife = -10.0f;*/
+
             prevTime = curTime;
         }
 

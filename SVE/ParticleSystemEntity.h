@@ -17,14 +17,16 @@ public:
     explicit ParticleSystemEntity(ParticleSystemSettings settings);
     ~ParticleSystemEntity() override;
 
-    void applyComputeCommands() const;
+    void applyComputeCommands(uint32_t bufferIndex, uint32_t imageIndex) const;
+    static void startComputeStep();
+    static void finishComputeStep();
     void applyDrawingCommands(uint32_t bufferIndex, uint32_t imageIndex) const override;
     void updateUniforms(UniformDataList uniformDataList) const override;
 
     // TODO: Move to manager
     void fillUniformData(UniformData& data);
 
-    const ParticleSystemSettings& getSettings() const;
+    ParticleSystemSettings& getSettings();
 
 private:
     void generateParticles();
