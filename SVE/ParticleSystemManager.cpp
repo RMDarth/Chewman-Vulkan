@@ -16,48 +16,29 @@ ParticleSystemManager::~ParticleSystemManager()
 
 }
 
-void ParticleSystemManager::addParticleSystem(std::shared_ptr<ParticleSystemEntity> particleSystem)
+void ParticleSystemManager::registerParticleSystem(ParticleSystemSettings particleSystem)
 {
-    _particleSystemList.push_back(particleSystem);
+    _particleSystemMap.emplace(particleSystem.name, particleSystem);
 }
 
-void ParticleSystemManager::removeParticleSystem(uint32_t index)
+const ParticleSystemSettings* ParticleSystemManager::getParticleSystem(const std::string &name) const
 {
-    if (index < _particleSystemList.size())
+    auto ps = _particleSystemMap.find(name);
+    if (ps != _particleSystemMap.end())
     {
-        _particleSystemList.erase(_particleSystemList.begin() + index);
+        return &ps->second;
     }
+    return nullptr;
 }
 
-std::shared_ptr<ParticleSystemEntity> ParticleSystemManager::getParticleSystem(uint32_t index) const
+ParticleSystemSettings* ParticleSystemManager::getParticleSystem(const std::string &name)
 {
-    return index < _particleSystemList.size() ? _particleSystemList[index] : std::shared_ptr<ParticleSystemEntity>();
-}
-
-size_t ParticleSystemManager::getParticleSystemCount() const
-{
-    return _particleSystemList.size();
-}
-
-void ParticleSystemManager::fillUniformData(UniformData &data)
-{
-    for (auto i = 0u; i < _particleSystemList.size(); i++)
+    auto ps = _particleSystemMap.find(name);
+    if (ps != _particleSystemMap.end())
     {
-        if (_particleSystemList[i])
-            _particleSystemList[i]->fillUniformData(data);
+        return &ps->second;
     }
-}
-
-void ParticleSystemManager::applyComputeCommands(uint32_t bufferIndex, uint32_t imageIndex)
-{
-    ParticleSystemEntity::startComputeStep();
-    for (auto i = 0u; i < _particleSystemList.size(); i++)
-    {
-        if (_particleSystemList[i])
-            _particleSystemList[i]->applyComputeCommands(bufferIndex, imageIndex);
-    }
-
-    ParticleSystemEntity::finishComputeStep();
+    return nullptr;
 }
 
 } // namespace SVE

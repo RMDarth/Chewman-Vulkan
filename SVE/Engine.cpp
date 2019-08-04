@@ -21,6 +21,7 @@
 #include "ShadowMap.h"
 #include "Water.h"
 #include "Utils.h"
+#include "ComputeEntity.h"
 #include <chrono>
 #include <utility>
 
@@ -86,6 +87,7 @@ Engine::Engine(SDL_Window* window, EngineSettings settings)
     , _sceneManager(std::make_unique<SceneManager>())
     , _meshManager(std::make_unique<MeshManager>())
     , _resourceManager(std::make_unique<ResourceManager>())
+    , _particleSystemManager(std::make_unique<ParticleSystemManager>())
 {
     getTime();
 }
@@ -124,6 +126,11 @@ ResourceManager* Engine::getResourceManager()
 MeshManager* Engine::getMeshManager()
 {
     return _meshManager.get();
+}
+
+ParticleSystemManager* Engine::getParticleSystemManager()
+{
+    return _particleSystemManager.get();
 }
 
 
@@ -173,6 +180,23 @@ void createNodeDrawCommands(const std::shared_ptr<SceneNode>& node, uint32_t buf
 {
     createStartNodeDrawCommands(node, bufferIndex, imageIndex);
     createLaterNodeDrawCommands(node, bufferIndex, imageIndex);
+}
+
+void createNodeComputeCommands(const std::shared_ptr<SceneNode>& node, uint32_t bufferIndex, uint32_t imageIndex)
+{
+    for (auto& entity : node->getAttachedEntities())
+    {
+        if (entity->isComputeEntity())
+        {
+            auto* computeEntity = static_cast<ComputeEntity*>(entity.get());
+            computeEntity->applyComputeCommands(bufferIndex, imageIndex);
+        }
+    }
+
+    for (auto& child : node->getChildren())
+    {
+        createNodeComputeCommands(child, bufferIndex, imageIndex);
+    }
 }
 
 void updateNode(const std::shared_ptr<SceneNode>& node, UniformDataList& uniformDataList)
@@ -229,11 +253,9 @@ void Engine::renderFrame()
         }
     }*/
 
-    auto particleSystemManager = _sceneManager->getParticleSystemManager();
-    if (particleSystemManager)
-    {
-        particleSystemManager->applyComputeCommands(BUFFER_INDEX_COMPUTE_PARTICLES, currentImage);
-    }
+    ComputeEntity::startComputeStep();
+    createNodeComputeCommands(_sceneManager->getRootNode(), BUFFER_INDEX_COMPUTE_PARTICLES, currentImage);
+    ComputeEntity::finishComputeStep();
 
     _commandsType = CommandsType::ShadowPassDirectLight;
     if (auto directLight = _sceneManager->getLightManager()->getDirectionLight())
@@ -356,10 +378,10 @@ void Engine::renderFrame()
     }
 
     // fill particles data
-    if (particleSystemManager)
+    /*if (particleSystemManager)
     {
         particleSystemManager->fillUniformData(*mainUniform);
-    }
+    }*/
 
 
     /////// Update uniforms
@@ -369,7 +391,7 @@ void Engine::renderFrame()
     updateNode(_sceneManager->getRootNode(), uniformDataList);
 
     ///////  Submit command buffers to queue
-    if (particleSystemManager)
+    //if (particleSystemManager)
     {
         // TODO: Use special compute queue instead of graphics queue for compute shader (they can be different)
         _vulkanInstance->submitCommands(CommandsType::ComputeParticlesPass, BUFFER_INDEX_COMPUTE_PARTICLES);

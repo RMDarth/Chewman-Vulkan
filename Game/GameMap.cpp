@@ -11,7 +11,7 @@
 
 namespace Chewman
 {
-constexpr float CellSize = 2.5f;
+constexpr float CellSize = 3.0f;
 
 GameMap::GameMap()
     : _meshGenerator(CellSize)

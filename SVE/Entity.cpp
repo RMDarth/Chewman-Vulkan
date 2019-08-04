@@ -52,4 +52,9 @@ bool Entity::isRenderLast()
     return _renderLast;
 }
 
+bool Entity::isComputeEntity() const
+{
+    return false;
+}
+
 } // namespace SVE

@@ -36,10 +36,6 @@ public:
     std::shared_ptr<LightNode> createLight(LightSettings lightSettings);
     LightManager* getLightManager();
 
-    // TODO: Add ParticleSystemManager
-    std::shared_ptr<ParticleSystemEntity> createParticleSystem(ParticleSystemSettings particleSystemSettings);
-    ParticleSystemManager* getParticleSystemManager();
-
     void setSkybox(const std::string& materialName);
     void setSkybox(std::shared_ptr<Skybox> skybox);
     std::shared_ptr<Skybox> getSkybox();
@@ -55,7 +51,6 @@ private:
     std::shared_ptr<Water> _water;
 
     std::unique_ptr<LightManager> _lightManager;
-    std::unique_ptr<ParticleSystemManager> _particleSystemManager;
 
 };
 

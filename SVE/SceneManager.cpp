@@ -5,8 +5,6 @@
 #include "SceneManager.h"
 #include "LightManager.h"
 #include "LightNode.h"
-#include "ParticleSystemManager.h"
-#include "ParticleSystemEntity.h"
 #include "ShadowMap.h"
 #include "Skybox.h"
 #include "Water.h"
@@ -60,20 +58,6 @@ LightManager* SceneManager::getLightManager()
     return _lightManager.get();
 }
 
-std::shared_ptr<ParticleSystemEntity> SceneManager::createParticleSystem(ParticleSystemSettings particleSystemSettings)
-{
-    auto sceneNode = std::make_shared<SceneNode>(particleSystemSettings.name);
-    //sceneNode->setNodeTransformation(glm::translate(glm::mat4(1), glm::vec3(20, 5, 0)));
-    _root->attachSceneNode(sceneNode);
-    auto particleEntity = std::make_shared<ParticleSystemEntity>(std::move(particleSystemSettings));
-    particleEntity->setRenderLast();
-    sceneNode->attachEntity(particleEntity);
-
-    getParticleSystemManager()->addParticleSystem(particleEntity);
-
-    return particleEntity;
-}
-
 std::shared_ptr<SceneNode> SceneManager::createSceneNode(std::string name)
 {
     return std::make_shared<SceneNode>(name);
@@ -103,13 +87,6 @@ std::shared_ptr<Water> SceneManager::createWater(float height)
 std::shared_ptr<Water> SceneManager::getWater()
 {
     return _water;
-}
-
-ParticleSystemManager *SceneManager::getParticleSystemManager()
-{
-    if (!_particleSystemManager)
-        _particleSystemManager = std::make_unique<ParticleSystemManager>();
-    return _particleSystemManager.get();
 }
 
 } // namespace SVE

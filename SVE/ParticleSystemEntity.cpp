@@ -2,6 +2,7 @@
 // Copyright (c) 2018-2019, Igor Barinov
 // Licensed under CC BY 4.0
 #include "ParticleSystemEntity.h"
+#include "ParticleSystemManager.h"
 #include "VulkanParticleSystem.h"
 #include "VulkanComputeEntity.h"
 #include "MaterialManager.h"
@@ -16,8 +17,15 @@ ParticleSystemEntity::ParticleSystemEntity(ParticleSystemSettings settings)
     : _settings(std::move(settings))
     , _material(Engine::getInstance()->getMaterialManager()->getMaterial(_settings.materialName))
 {
+    _renderLast = true;
     _materialIndex = _material->getVulkanMaterial()->getInstanceForEntity(this);
     generateParticles();
+}
+
+ParticleSystemEntity::ParticleSystemEntity(const std::string &name)
+    : ParticleSystemEntity(*Engine::getInstance()->getParticleSystemManager()->getParticleSystem(name))
+{
+
 }
 
 ParticleSystemEntity::~ParticleSystemEntity() = default;
@@ -51,14 +59,6 @@ void ParticleSystemEntity::applyDrawingCommands(uint32_t bufferIndex, uint32_t i
     }
 }
 
-void ParticleSystemEntity::fillUniformData(UniformData &data)
-{
-    data.particleEmitter = _settings.particleEmitter;
-    data.particleAffector = _settings.particleAffector;
-    data.particleCount = _settings.quota;
-    data.spritesheetSize = _material->getVulkanMaterial()->getSpritesheetSize();
-}
-
 ParticleSystemSettings& ParticleSystemEntity::getSettings()
 {
     return _settings;
@@ -77,16 +77,5 @@ void ParticleSystemEntity::generateParticles()
     _vulkanComputeEntity = std::make_unique<VulkanComputeEntity>(std::move(computeSettings));
     _vulkanParticleSystem = std::make_unique<VulkanParticleSystem>(_settings, *_vulkanComputeEntity);
 }
-
-void ParticleSystemEntity::finishComputeStep()
-{
-    VulkanComputeEntity::finishComputeStep();
-}
-
-void ParticleSystemEntity::startComputeStep()
-{
-    VulkanComputeEntity::startComputeStep();
-}
-
 
 } // namespace SVE

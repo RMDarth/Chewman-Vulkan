@@ -2,7 +2,8 @@
 // Copyright (c) 2018-2019, Igor Barinov
 // Licensed under CC BY 4.0
 #pragma once
-#include "ParticleSystemEntity.h"
+#include "ParticleSystemSettings.h"
+#include <unordered_map>
 
 namespace SVE
 {
@@ -13,16 +14,12 @@ public:
     ParticleSystemManager();
     ~ParticleSystemManager();
 
-    void addParticleSystem(std::shared_ptr<ParticleSystemEntity> particleSystem);
-    void removeParticleSystem(uint32_t index);
-    std::shared_ptr<ParticleSystemEntity> getParticleSystem(uint32_t index) const;
-    size_t getParticleSystemCount() const;
-
-    void fillUniformData(UniformData& data);
-    void applyComputeCommands(uint32_t bufferIndex, uint32_t imageIndex);
+    void registerParticleSystem(ParticleSystemSettings particleSystem);
+    ParticleSystemSettings* getParticleSystem(const std::string& name);
+    const ParticleSystemSettings* getParticleSystem(const std::string& name) const;
 
 private:
-    std::vector<std::shared_ptr<ParticleSystemEntity>> _particleSystemList;
+    std::unordered_map<std::string, ParticleSystemSettings> _particleSystemMap;
 };
 
 } // namespace SVE

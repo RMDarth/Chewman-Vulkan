@@ -18,6 +18,7 @@ class SceneManager;
 class ShaderManager;
 class MeshManager;
 class ResourceManager;
+class ParticleSystemManager;
 
 enum class CommandsType : uint8_t
 {
@@ -48,6 +49,7 @@ public:
     ShaderManager* getShaderManager();
     SceneManager* getSceneManager();
     ResourceManager* getResourceManager();
+    ParticleSystemManager* getParticleSystemManager();
 
     void resizeWindow();
     void finishRendering();
@@ -75,6 +77,7 @@ private:
     std::unique_ptr<MeshManager> _meshManager;
     std::unique_ptr<ShaderManager> _shaderManager;
     std::unique_ptr<ResourceManager> _resourceManager;
+    std::unique_ptr<ParticleSystemManager> _particleSystemManager;
 
     std::chrono::high_resolution_clock::time_point _startTime = std::chrono::high_resolution_clock::now();
     std::chrono::high_resolution_clock::time_point _currentTime = std::chrono::high_resolution_clock::now();

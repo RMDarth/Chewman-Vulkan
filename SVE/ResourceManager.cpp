@@ -8,7 +8,7 @@
 #include "ShaderSettings.h"
 #include "MeshSettings.h"
 #include "LightSettings.h"
-#include "ParticleSystemSettings.h"
+#include "ParticleSystemManager.h"
 
 #include "Engine.h"
 #include "ShaderManager.h"
@@ -453,7 +453,7 @@ void ResourceManager::initializeResources(LoadData& data)
     }
     for (auto& particleSystemSettings : data.particleSystemList)
     {
-        engine->getSceneManager()->createParticleSystem(particleSystemSettings);
+        engine->getParticleSystemManager()->registerParticleSystem(particleSystemSettings);
     }
 }
 

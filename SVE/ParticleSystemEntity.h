@@ -2,7 +2,7 @@
 // Copyright (c) 2018-2019, Igor Barinov
 // Licensed under CC BY 4.0
 #pragma once
-#include "Entity.h"
+#include "ComputeEntity.h"
 #include "ParticleSystemSettings.h"
 
 namespace SVE
@@ -11,20 +11,16 @@ class VulkanComputeEntity;
 class VulkanParticleSystem;
 class Material;
 
-class ParticleSystemEntity : public Entity
+class ParticleSystemEntity : public ComputeEntity
 {
 public:
     explicit ParticleSystemEntity(ParticleSystemSettings settings);
+    explicit ParticleSystemEntity(const std::string& name);
     ~ParticleSystemEntity() override;
 
-    void applyComputeCommands(uint32_t bufferIndex, uint32_t imageIndex) const;
-    static void startComputeStep();
-    static void finishComputeStep();
+    void applyComputeCommands(uint32_t bufferIndex, uint32_t imageIndex) const override;
     void applyDrawingCommands(uint32_t bufferIndex, uint32_t imageIndex) const override;
     void updateUniforms(UniformDataList uniformDataList) const override;
-
-    // TODO: Move to manager
-    void fillUniformData(UniformData& data);
 
     ParticleSystemSettings& getSettings();
 

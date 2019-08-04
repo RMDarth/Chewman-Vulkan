@@ -13,30 +13,24 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f70505ef-ae5c-44c4-ba16-f4e316506723" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/SVE/ParticleSystemManager.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/SVE/ParticleSystemManager.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/SVE/ComputeEntity.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/SVE/ComputeEntity.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Game/BlockMeshGenerator.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Game/BlockMeshGenerator.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Game/GameMap.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Game/GameMap.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/SVE/Engine.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/SVE/Engine.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SVE/Engine.h" beforeDir="false" afterPath="$PROJECT_DIR$/SVE/Engine.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SVE/Entity.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/SVE/Entity.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SVE/Entity.h" beforeDir="false" afterPath="$PROJECT_DIR$/SVE/Entity.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/SVE/ParticleSystemEntity.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/SVE/ParticleSystemEntity.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/SVE/ParticleSystemEntity.h" beforeDir="false" afterPath="$PROJECT_DIR$/SVE/ParticleSystemEntity.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SVE/ParticleSystemSettings.h" beforeDir="false" afterPath="$PROJECT_DIR$/SVE/ParticleSystemSettings.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SVE/ParticleSystemManager.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/SVE/ParticleSystemManager.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SVE/ParticleSystemManager.h" beforeDir="false" afterPath="$PROJECT_DIR$/SVE/ParticleSystemManager.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/SVE/ResourceManager.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/SVE/ResourceManager.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/SVE/SceneManager.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/SVE/SceneManager.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/SVE/SceneManager.h" beforeDir="false" afterPath="$PROJECT_DIR$/SVE/SceneManager.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SVE/VulkanComputeEntity.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/SVE/VulkanComputeEntity.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SVE/VulkanComputeEntity.h" beforeDir="false" afterPath="$PROJECT_DIR$/SVE/VulkanComputeEntity.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SVE/VulkanMaterial.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/SVE/VulkanMaterial.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/main.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/fire.particle" beforeDir="false" afterPath="$PROJECT_DIR$/resources/fire.particle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/shaders/glsl/parallaxAndShadowMap.frag" beforeDir="false" afterPath="$PROJECT_DIR$/resources/shaders/glsl/parallaxAndShadowMap.frag" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/shaders/glsl/particles.comp" beforeDir="false" afterPath="$PROJECT_DIR$/resources/shaders/glsl/particles.comp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/shaders/glsl/particles.frag" beforeDir="false" afterPath="$PROJECT_DIR$/resources/shaders/glsl/particles.frag" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/shaders/glsl/particles.geom" beforeDir="false" afterPath="$PROJECT_DIR$/resources/shaders/glsl/particles.geom" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/shaders/glsl/particles.glsl" beforeDir="false" afterPath="$PROJECT_DIR$/resources/shaders/glsl/particles.glsl" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/shaders/glsl/particles.vert" beforeDir="false" afterPath="$PROJECT_DIR$/resources/shaders/glsl/particles.vert" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/fireline.particle" beforeDir="false" afterPath="$PROJECT_DIR$/resources/fireline.particle" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -70,53 +64,6 @@
     </option>
     <option name="SCHEME" value="Project" />
   </component>
-  <component name="FindInProjectRecents">
-    <findStrings>
-      <find>PCFShadowSunLight</find>
-      <find>PCFShadowPointLight</find>
-      <find>frag</find>
-      <find>norm</find>
-      <find>inNormal</find>
-      <find>vertexBuff</find>
-      <find>FireParticle</find>
-      <find>Fire</find>
-      <find>Particle</find>
-      <find>water</find>
-      <find>fragTex</find>
-      <find>fragColor</find>
-      <find>geomColor</find>
-      <find>colorChanger</find>
-      <find>stbi_load</find>
-      <find>fillUniformData</find>
-      <find>getLightManager</find>
-      <find>getUniformDataByType</find>
-      <find>vkAllocateCommandBuffers</find>
-      <find>vkBeginCommandBuffer</find>
-      <find>cmdDraw</find>
-      <find>submitCommands</find>
-      <find>createCommandBuffer</find>
-      <find>vkEndCom</find>
-      <find>apply</find>
-      <find>reallocateCommandBuffers</find>
-      <find>VK_PIPELINE_BIND_POINT_COMPUTE</find>
-      <find>descriptorSets</find>
-      <find>Begin</find>
-      <find>startRenderCommandBufferCreation</find>
-    </findStrings>
-    <replaceStrings>
-      <replace />
-      <replace>VulkanInstance</replace>
-      <replace>VulkanException</replace>
-      <replace>_vulkanInstance-&gt;getLogicalDevice()</replace>
-      <replace>SIZE</replace>
-      <replace>uniforms</replace>
-      <replace>VulkanScreenQuad:</replace>
-      <replace>MaterialInfo</replace>
-    </replaceStrings>
-    <dirStrings>
-      <dir>E:\Projects\Chewman\resources\shaders\glsl</dir>
-    </dirStrings>
-  </component>
   <component name="Git.Settings">
     <option name="PREVIOUS_COMMIT_AUTHORS">
       <list>
@@ -131,12 +78,6 @@
     </option>
   </component>
   <component name="OCFindUsagesOptions" text="true" ivars="false" properties="true" derivedClasses="false" />
-  <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="775" />
-    <option name="y" value="86" />
-    <option name="width" value="1145" />
-    <option name="height" value="858" />
-  </component>
   <component name="ProjectId" id="1OdOLrQ3XiKMEC0Y50UDQi43dEM" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="PropertiesComponent">
@@ -145,8 +86,11 @@
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/resources/materials" />
     <property name="node.js.detected.package.eslint" value="true" />
+    <property name="node.js.detected.package.tslint" value="true" />
     <property name="node.js.path.for.package.eslint" value="project" />
+    <property name="node.js.path.for.package.tslint" value="project" />
     <property name="node.js.selected.package.eslint" value="(autodetect)" />
+    <property name="node.js.selected.package.tslint" value="(autodetect)" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
     <property name="nodejs_package_manager_path" value="npm" />
@@ -295,7 +239,12 @@
       <workItem from="1561322804718" duration="7746000" />
       <workItem from="1561817027005" duration="521000" />
       <workItem from="1564303822892" duration="110000" />
-      <workItem from="1564303958400" duration="1320000" />
+      <workItem from="1564303958400" duration="1548000" />
+      <workItem from="1564307023585" duration="794000" />
+      <workItem from="1564312473329" duration="922000" />
+      <workItem from="1564342245561" duration="835000" />
+      <workItem from="1564833400508" duration="13265000" />
+      <workItem from="1564914575860" duration="5468000" />
     </task>
     <task id="LOCAL-00001" summary="Adding core SVE classes">
       <created>1536429263360</created>
@@ -493,7 +442,21 @@
       <option name="project" value="LOCAL" />
       <updated>1560729683530</updated>
     </task>
-    <option name="localTasksCounter" value="29" />
+    <task id="LOCAL-00029" summary="Fixing particle system, adding fireline support">
+      <created>1564305375837</created>
+      <option name="number" value="00029" />
+      <option name="presentableId" value="LOCAL-00029" />
+      <option name="project" value="LOCAL" />
+      <updated>1564305375837</updated>
+    </task>
+    <task id="LOCAL-00030" summary="Adding new materials and particles for Chewman">
+      <created>1564305433458</created>
+      <option name="number" value="00030" />
+      <option name="presentableId" value="LOCAL-00030" />
+      <option name="project" value="LOCAL" />
+      <updated>1564305433458</updated>
+    </task>
+    <option name="localTasksCounter" value="31" />
     <servers />
   </component>
   <component name="TodoView">
@@ -526,7 +489,9 @@
       <map>
         <entry key="MAIN">
           <value>
-            <State />
+            <State>
+              <option name="COLUMN_ORDER" />
+            </State>
           </value>
         </entry>
       </map>
@@ -535,8 +500,6 @@
   <component name="VcsManagerConfiguration">
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_NEW_TODO" value="false" />
-    <MESSAGE value="Adding camera class, refactoring matrices calculations" />
-    <MESSAGE value="Refactoring materials, meshes, entities and rendering process" />
     <MESSAGE value="Adding animation support" />
     <MESSAGE value="Adding skybox" />
     <MESSAGE value="Adding resource manager" />
@@ -560,7 +523,9 @@
     <MESSAGE value="Adding old changes" />
     <MESSAGE value="Fix particles shader" />
     <MESSAGE value="Add missing materials, add support for parallax lighting" />
-    <option name="LAST_COMMIT_MESSAGE" value="Add missing materials, add support for parallax lighting" />
+    <MESSAGE value="Fixing particle system, adding fireline support" />
+    <MESSAGE value="Adding new materials and particles for Chewman" />
+    <option name="LAST_COMMIT_MESSAGE" value="Adding new materials and particles for Chewman" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -572,7 +537,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/main.cpp</url>
-          <line>473</line>
+          <line>481</line>
           <option name="timeStamp" value="70" />
         </line-breakpoint>
       </breakpoints>

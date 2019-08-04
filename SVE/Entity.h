@@ -29,6 +29,7 @@ public:
     // TODO: Refactor, provide more agile ordering mechanism
     void setRenderLast();
     bool isRenderLast();
+    virtual bool isComputeEntity() const;
 
     virtual void setMaterial(const std::string& materialName);
 
