@@ -23,6 +23,21 @@ struct PointLight
     float padding;
 };
 
+struct PlaneLight
+{
+    vec4 position1;
+    vec4 position2;
+
+    vec4 ambient;
+    vec4 diffuse;
+    vec4 specular;
+
+    float constant;
+    float linear;
+    float quadratic;
+    float padding;
+};
+
 struct SpotLight
 {
     vec4 position;
@@ -41,6 +56,21 @@ struct SpotLight
     // float[3] padding
 };
 
+struct LineLight
+{
+    vec4 startPosition;
+    vec4 endPosition;
+
+    vec4 ambient;
+    vec4 diffuse;
+    vec4 specular;
+
+    float constant;
+    float linear;
+    float quadratic;
+    float padding;
+};
+
 const uint LI_DirectionalLight =   1 << 0;
 const uint LI_PointLight[4] =     {1 << 1,
                                    1 << 2,
@@ -51,7 +81,9 @@ const uint LI_SpotLight =          1 << 5;
 struct LightInfo
 {
     uint lightFlags;
-    // float[3] padding
+    uint lightShadowFlags;
+    uint lightLineNum;
+    // float[1] padding
 };
 
 struct MaterialInfo
@@ -99,6 +131,39 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir, M
     diffuse *= attenuation;
     specular *= attenuation;
     return (ambient + diffuse + specular);
+}
+
+vec3 CalcLineLight(LineLight light, vec3 normal, vec3 fragPos, vec3 viewDir, MaterialInfo material)
+{
+    vec3 AP = fragPos - vec3(light.startPosition);
+    vec3 AB = light.endPosition.xyz - light.startPosition.xyz;
+
+    float ABlenSquare = AB.x*AB.x + AB.y*AB.y + AB.z*AB.z;
+    float distance = dot(AP, AB) / ABlenSquare;
+
+    distance = clamp(distance, 0.0, 1.0);
+    vec3 lightPos = light.startPosition.xyz + AB * distance;
+
+    PointLight pl;
+    pl.position = vec4(lightPos, 1);
+    pl.ambient = light.ambient;
+    pl.diffuse = light.diffuse;
+    pl.specular = light.specular;
+    pl.constant = light.constant;
+    pl.linear = light.linear;
+    pl.quadratic = light.quadratic;
+
+    vec3 result = CalcPointLight(pl, normal, fragPos, viewDir, material);
+
+    for(float i = -0.2; i < 0.2; i += 0.05)
+    {
+        float shiftDist = clamp(distance + i, 0.0, 1.0);
+        pl.position = vec4(light.startPosition.xyz + AB * shiftDist, 1);
+        vec3 candidate = CalcPointLight(pl, normal, fragPos, viewDir, material);
+        result = max(result, candidate);
+    }
+
+    return result;
 }
 
 // calculates the color when using a spot light.

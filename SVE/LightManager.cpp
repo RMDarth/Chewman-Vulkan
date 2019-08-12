@@ -70,7 +70,11 @@ void LightManager::fillUniformData(UniformData& data, LightType viewSourceLightT
     for (auto i = 0u; i < _lightList.size(); i++)
     {
         if (_lightList[i])
+        {
+            if (viewSourceLightType == LightType::PointLight && !_lightList[i]->castShadows())
+                continue;
             _lightList[i]->fillUniformData(data, i + 1, false);
+        }
     }
     _directLight->fillUniformData(data, 0, false);
 
@@ -82,7 +86,7 @@ void LightManager::fillUniformData(UniformData& data, LightType viewSourceLightT
     {
         for (auto i = 0u; i < _lightList.size(); i++)
         {
-            if (_lightList[i])
+            if (_lightList[i] && _lightList[i]->castShadows())
                 _lightList[i]->fillUniformData(data, i + 1, true);
         }
     }
@@ -93,6 +97,11 @@ void LightManager::fillUniformData(UniformData& data, LightType viewSourceLightT
         // TODO: Should sort and give closest 4
         // TODO: Refactor to remove dummy lights if light count < 4
         data.pointLightList.resize(4);
+    }
+
+    if (data.lineLightList.size() != 15)
+    {
+        data.lineLightList.resize(15);
     }
 }
 

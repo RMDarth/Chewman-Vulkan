@@ -28,6 +28,7 @@ enum class UniformType : uint8_t
     LightDirectional,
     LightPoint,
     LightSpot,
+    LightLine,
     LightPointViewProjectionList,
     LightDirectViewProjectionList,
     BoneMatrices,
@@ -73,18 +74,19 @@ struct UniformData
     std::vector<glm::mat4> lightPointViewProjectionList;
     glm::vec4 cameraPos;
     glm::vec4 clipPlane;  // (Nx, Ny, Nz, DistanceFromOrigin)
-    float time;
-    float deltaTime;
-    MaterialInfo materialInfo;
-    DirLight dirLight;
+    float time = 0;
+    float deltaTime = 0;
+    MaterialInfo materialInfo {};
+    DirLight dirLight {};
     std::vector<PointLight> pointLightList;
-    SpotLight spotLight;
-    LightInfo lightInfo;
+    std::vector<LineLight> lineLightList;
+    SpotLight spotLight {};
+    LightInfo lightInfo {};
     std::vector<glm::mat4> bones;
 
-    ParticleEmitter particleEmitter;
-    ParticleAffector particleAffector;
-    uint32_t particleCount;
+    ParticleEmitter particleEmitter {};
+    ParticleAffector particleAffector {};
+    uint32_t particleCount = 0;
     glm::ivec2 spritesheetSize;
 };
 
@@ -126,6 +128,7 @@ struct ShaderSettings
     std::vector<BufferType> bufferList; // currently only supported in compute shaders
     uint32_t maxBonesSize = 0;
     uint32_t maxPointLightSize = 4;
+    uint32_t maxLineLightSize = 15;
     uint32_t maxLightSize = 6;
     uint32_t maxCascadeLightSize = 5;
     uint32_t maxViewProjectionMatrices = 6 * maxPointLightSize;

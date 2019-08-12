@@ -256,27 +256,17 @@ int runGame()
                 glm::translate(glm::mat4(1), glm::vec3(50, 50, -50)));
         if (engine->getSceneManager()->getLightManager()->getLightCount() >= 1)
             engine->getSceneManager()->getLightManager()->getLight(0)->setNodeTransformation(
-                    glm::translate(glm::mat4(1), glm::vec3(25, 5, 0)));
+                    glm::translate(glm::mat4(1), glm::vec3(25, 5, -5)));
         if (engine->getSceneManager()->getLightManager()->getLightCount() >= 2)
             engine->getSceneManager()->getLightManager()->getLight(1)->setNodeTransformation(
-                    glm::translate(glm::mat4(1), glm::vec3(-5, 5, 5)));
+                    glm::translate(glm::mat4(1), glm::vec3(-5, 10, 5)));
 
 
         auto particleNode = engine->getSceneManager()->createSceneNode();
         particleNode->setNodeTransformation(glm::translate(glm::mat4(1), glm::vec3(0, 5, 0)));
         engine->getSceneManager()->getRootNode()->attachSceneNode(particleNode);
         std::shared_ptr<SVE::ParticleSystemEntity> particleSystem = std::make_shared<SVE::ParticleSystemEntity>("FireParticle");
-        particleNode->attachEntity(particleSystem);
-
-        {
-            auto particleNode2 = engine->getSceneManager()->createSceneNode();
-            auto mat = glm::translate(glm::mat4(1), glm::vec3(2.0f, 5.0f, 0.0f));
-            mat = glm::rotate(mat, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-            particleNode2->setNodeTransformation(mat);
-            engine->getSceneManager()->getRootNode()->attachSceneNode(particleNode2);
-            std::shared_ptr<SVE::ParticleSystemEntity> particleSystem2 = std::make_shared<SVE::ParticleSystemEntity>("FireParticle");
-            particleNode2->attachEntity(particleSystem2);
-        }
+        //particleNode->attachEntity(particleSystem);
 
         engine->getSceneManager()->getLightManager()->removeLight(0);
         engine->getSceneManager()->getLightManager()->removeLight(1);
@@ -439,6 +429,7 @@ int runGame()
                 engine->renderFrame();
 
                 updateNode(newNode, curTime);
+                gameMap.Update(curTime - prevTime);
             }
 
 

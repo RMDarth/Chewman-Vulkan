@@ -60,10 +60,10 @@ void main() {
 
     for (uint i = 0; i < MAX_LIGHTS; i++)
     {
-        fragPointLightSpacePos[i] =  uniforms.lightPointViewProjection[i] * worldPos;
-        fragPointLightSpacePos[i].xyz = fragPointLightSpacePos[i].xyz / fragPointLightSpacePos[i].w;
+        //fragPointLightSpacePos[i] =  uniforms.lightPointViewProjection[i] * worldPos;
+        //fragPointLightSpacePos[i].xyz = fragPointLightSpacePos[i].xyz / fragPointLightSpacePos[i].w;
 
-        fragPointLightSpacePos[i].w = clamp(1.0 - distance, 0.0, 1.0);
+        //fragPointLightSpacePos[i].w = clamp(1.0 - distance, 0.0, 1.0);
     }
 
     for (uint i = 0; i < CASCADE_NUM; i++)

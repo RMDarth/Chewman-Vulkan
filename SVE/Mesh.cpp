@@ -95,6 +95,7 @@ Mesh::Mesh(MeshLoadSettings meshLoadSettings)
             if (meshLoadSettings.switchYZ)
             {
                 meshSettings.vertexPosData.emplace_back(mesh->mVertices[v].x, mesh->mVertices[v].z, mesh->mVertices[v].y);
+                meshSettings.vertexPosData.back() *= meshLoadSettings.scale;
                 meshSettings.vertexColorData.emplace_back(1.0f, 1.0f, 1.0f);
                 meshSettings.vertexTexData.emplace_back(mesh->mTextureCoords[0][v].x, 1.0f - mesh->mTextureCoords[0][v].y);
                 meshSettings.vertexNormalData.emplace_back(mesh->mNormals[v].x, mesh->mNormals[v].z, mesh->mNormals[v].y);

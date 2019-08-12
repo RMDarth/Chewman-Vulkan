@@ -102,6 +102,7 @@ std::vector<UniformInfo> getUniformInfoList(rj::Document& document)
             {"LightInfo",                       UniformType::LightInfo},
             {"LightDirectional",                UniformType::LightDirectional},
             {"LightPoint",                      UniformType::LightPoint},
+            {"LightLine",                       UniformType::LightLine},
             {"LightSpot",                       UniformType::LightSpot},
             {"LightPointViewProjectionList",    UniformType::LightPointViewProjectionList},
             {"LightDirectViewProjectionList",   UniformType::LightDirectViewProjectionList},
@@ -208,6 +209,7 @@ ShaderSettings loadShader(const cppfs::FilePath& directory, const std::string& d
     setOptional(shaderSettings.maxLightSize = document["maxLightSize"].GetUint());
     setOptional(shaderSettings.maxCascadeLightSize = document["maxCascadeLightSize"].GetUint());
     setOptional(shaderSettings.maxPointLightSize = document["maxPointLightSize"].GetUint());
+    setOptional(shaderSettings.maxLineLightSize = document["maxLineLightSize"].GetUint());
     setOptional(shaderSettings.maxViewProjectionMatrices = document["maxViewProjectionMatrices"].GetUint());
     setOptional(shaderSettings.uniformList = getUniformInfoList(document));
     setOptional(shaderSettings.bufferList = getBufferTypeList(document));
@@ -366,6 +368,7 @@ MeshLoadSettings loadMesh(const cppfs::FilePath& directory, const std::string& d
     meshLoadSettings.filename = directory.resolve(document["filename"].GetString()).fullPath();
     meshLoadSettings.name = document["name"].GetString();
     setOptional(meshLoadSettings.switchYZ = document["switchYZ"].GetBool());
+    setOptional(meshLoadSettings.scale = loadVector<3>(document, "scale"));
 
     return meshLoadSettings;
 }
@@ -377,6 +380,7 @@ LightSettings loadLight(const std::string& data)
             {"RectLight",   LightType::RectLight},
             {"SpotLight",   LightType::SpotLight},
             {"SunLight",    LightType::SunLight},
+            {"LineLight",   LightType::LineLight},
     };
 
     rj::Document document;
@@ -391,6 +395,10 @@ LightSettings loadLight(const std::string& data)
     lightSettings.specularStrength = document["specularStrength"].GetFloat();
     lightSettings.diffuseStrength = document["diffuseStrength"].GetFloat();
     setOptional(lightSettings.castShadows = document["castShadows"].GetBool());
+    setOptional(lightSettings.secondPoint = loadVector<3>(document, "secondPoint"));
+    setOptional(lightSettings.constAtten = document["constAttenuation"].GetFloat());
+    setOptional(lightSettings.linearAtten = document["linearAttenuation"].GetFloat());
+    setOptional(lightSettings.quadAtten = document["quadAttenuation"].GetFloat());
 
     return lightSettings;
 }

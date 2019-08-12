@@ -12,7 +12,7 @@
         "angle": 0.0,
         "originRadius": 0.1,
 
-        "emissionRate": 50,
+        "emissionRate": 200,
         "minLife": 6,
         "maxLife": 6,
         "minSpeed": 6.0,
@@ -28,8 +28,8 @@
     {
         "minAcceleration": 0.0,
         "maxAcceleration": 0.2,
-        "minRotateSpeed": -1.0,
-        "maxRotateSpeed": 1.0,
+        "minRotateSpeed": -3.0,
+        "maxRotateSpeed": 3.0,
         "minScaleSpeed": 0.5,
         "maxScaleSpeed": 0.5,
 

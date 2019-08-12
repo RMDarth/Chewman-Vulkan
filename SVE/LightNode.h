@@ -17,7 +17,7 @@ public:
     const glm::mat4& getViewMatrix();
     const glm::mat4& getProjectionMatrix();
 
-    const LightSettings& getLightSettings();
+    LightSettings& getLightSettings();
     void updateViewMatrix(glm::vec3 cameraPos);
     void fillUniformData(UniformData& data, uint32_t lightNum, bool asViewSource);
     bool castShadows() const;

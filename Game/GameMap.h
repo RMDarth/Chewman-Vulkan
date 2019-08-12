@@ -8,6 +8,7 @@
 #include <SVE/MeshEntity.h>
 #include "SVE/Mesh.h"
 #include "BlockMeshGenerator.h"
+#include "Gargoyle.h"
 
 namespace Chewman
 {
@@ -16,7 +17,9 @@ enum class CellType
 {
     Wall,
     Floor,
-    Liquid
+    Liquid,
+    InvisibleWallWithFloor,
+    InvisibleWallEmpty
 };
 
 using Map = std::vector<std::vector<CellType>>;
@@ -27,17 +30,21 @@ public:
     GameMap();
 
     void LoadMap(const std::string& filename);
+    void Update(float time);
 
 private:
     void InitMeshes();
+    void CreateGargoyle(int row, int column, char mapType);
+    void UpdateGargoyle(Gargoyle& gargoyle);
 
 private:
     BlockMeshGenerator _meshGenerator;
 
     std::shared_ptr<SVE::Mesh> _mapMesh[3];
-
     std::shared_ptr<SVE::SceneNode> _mapNode;
     std::shared_ptr<SVE::MeshEntity> _mapEntity[3];
+
+    std::vector<Gargoyle> _gargoyles;
 
     Map _mapData;
     size_t _width;

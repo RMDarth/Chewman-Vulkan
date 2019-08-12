@@ -5,5 +5,5 @@
     "ambientStrength": 0.2,
     "shininess": 16,
     "lightColor": [ 1.0, 1.0, 1.0 ],
-    "castShadows": true
+    "castShadows": false
 }

@@ -91,6 +91,9 @@ size_t VulkanShaderInfo::getShaderUniformsSize() const
         } else if (info.uniformType == UniformType::LightPoint)
         {
             size += sizeMap.at(info.uniformType) * _shaderSettings.maxPointLightSize;
+        } else if (info.uniformType == UniformType::LightLine)
+        {
+            size += sizeMap.at(info.uniformType) * _shaderSettings.maxLineLightSize;
         } else if (info.uniformType == UniformType::LightPointViewProjectionList)
         {
             size += sizeMap.at(info.uniformType) * _shaderSettings.maxLightSize;

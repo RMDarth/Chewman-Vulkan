@@ -29,6 +29,8 @@ std::unique_ptr<VulkanCommandsManager> createVulkanShadowMap(
             throw VulkanException("Spot light currently unsupported");
         case LightType::RectLight:
             throw VulkanException("Rect light currently unsupported");
+        case LightType::LineLight:
+            throw VulkanException("Line light currently unsupported");
     }
     throw VulkanException("Unknown light type");
 }

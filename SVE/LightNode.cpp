@@ -20,7 +20,7 @@ LightNode::LightNode(LightSettings lightSettings, uint32_t lightIndex)
     createProjectionMatrix();
 }
 
-const LightSettings& LightNode::getLightSettings()
+LightSettings& LightNode::getLightSettings()
 {
     return _lightSettings;
 }
@@ -57,6 +57,8 @@ void LightNode::fillUniformData(UniformData& data, uint32_t lightNum, bool asVie
 
                 data.pointLightList.push_back(pointLight);
                 data.lightInfo.lightFlags |= (LightInfo::PointLight1 << (data.pointLightList.size() - 1));
+                if (_lightSettings.castShadows)
+                    data.lightInfo.lightShadowFlags |= (LightInfo::PointLight1 << (data.pointLightList.size() - 1));
 
                 break;
             }
@@ -74,6 +76,8 @@ void LightNode::fillUniformData(UniformData& data, uint32_t lightNum, bool asVie
                 data.dirLight.direction = glm::vec4(-glm::normalize(model[3]));
 
                 data.lightInfo.lightFlags |= LightInfo::DirectionalLight;
+                if (_lightSettings.castShadows)
+                    data.lightInfo.lightShadowFlags |= LightInfo::DirectionalLight;
                 break;
             }
             case LightType::SpotLight:
@@ -85,7 +89,26 @@ void LightNode::fillUniformData(UniformData& data, uint32_t lightNum, bool asVie
                 //data.spotLight.direction = glm::vec4(-glm::normalize(model[3]));
 
                 data.lightInfo.lightFlags |= LightInfo::SpotLight;
+                if (_lightSettings.castShadows)
+                    data.lightInfo.lightShadowFlags |= LightInfo::SpotLight;
                 break;
+            case LightType::LineLight:
+            {
+                LineLight lineLight{};
+                lineLight.diffuse = glm::vec4(_lightSettings.diffuseStrength);
+                lineLight.specular = glm::vec4(_lightSettings.specularStrength);
+                lineLight.ambient = glm::vec4(_lightSettings.ambientStrength);
+                lineLight.startPosition = model[3];
+                lineLight.endPosition = glm::vec4(_lightSettings.secondPoint, 1.0f);
+
+                lineLight.constant = _lightSettings.constAtten;
+                lineLight.linear = _lightSettings.linearAtten;
+                lineLight.quadratic = _lightSettings.quadAtten;
+
+                data.lineLightList.push_back(lineLight);
+                data.lightInfo.lightLineNum = data.lineLightList.size();
+                break;
+            }
             case LightType::RectLight:
                 break;
         }
@@ -96,6 +119,7 @@ void LightNode::fillUniformData(UniformData& data, uint32_t lightNum, bool asVie
         data.projection = _projectionMatrix;
 
         //data.viewProjectionList.clear();
+        assert(_projectionList.empty() || _viewList.empty());
         for (auto& projectionMatrix : _projectionList)
         {
             data.viewProjectionList.push_back(projectionMatrix * _viewMatrix);
@@ -181,6 +205,7 @@ void LightNode::createProjectionMatrix()
                                                   20.0f);
             _projectionMatrix[1][1] *= -1;
             break;
+        case LightType::LineLight:
         case LightType::RectLight:
             break;
     }

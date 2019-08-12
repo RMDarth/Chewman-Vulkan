@@ -30,6 +30,7 @@ struct MeshLoadSettings
     std::string name;
     std::string filename;
     bool switchYZ = false;
+    glm::vec3 scale = {1.0f, 1.0f, 1.0f};
 };
 
 struct MeshSettings

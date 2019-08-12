@@ -100,7 +100,7 @@ add_executable(Chewman
         Game/BlockMeshGenerator.cpp
         Game/BlockMeshGenerator.h
         Game/GameMap.cpp
-        Game/GameMap.h SVE/ParticleSystemManager.cpp SVE/ParticleSystemManager.h SVE/ComputeEntity.cpp SVE/ComputeEntity.h)
+        Game/GameMap.h SVE/ParticleSystemManager.cpp SVE/ParticleSystemManager.h SVE/ComputeEntity.cpp SVE/ComputeEntity.h Game/Gargoyle.h)
 
 if (WIN32)
     target_link_libraries(Chewman mingw32 SDL2main SDL2 vulkan-1.lib VkLayer_core_validation.lib libassimp libcppfsd)

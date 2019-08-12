@@ -1,0 +1,1158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CMakeRunConfigurationManager" shouldGenerate="true" shouldDeleteObsolete="true">
+    <generated>
+      <config projectName="Chewman" targetName="Chewman" />
+    </generated>
+  </component>
+  <component name="CMakeSettings">
+    <configurations>
+      <configuration PROFILE_NAME="Debug" CONFIG_NAME="Debug" BUILD_OPTIONS="-j 8" />
+      <configuration PROFILE_NAME="Release" CONFIG_NAME="Release" />
+    </configurations>
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="f70505ef-ae5c-44c4-ba16-f4e316506723" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/SVE/MaterialManager.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/SVE/MaterialManager.cpp" afterDir="false" />
+    </list>
+    <ignored path="$PROJECT_DIR$/cmake-build-debug/" />
+    <ignored path="deps/" />
+    <ignored path="models/" />
+    <ignored path="shaders/frag.spv" />
+    <ignored path="shaders/vert.spv" />
+    <ignored path="textures/" />
+    <ignored path="$PROJECT_DIR$/cmake-build-release/" />
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="DatabaseView">
+    <option name="SHOW_INTERMEDIATE" value="true" />
+    <option name="GROUP_DATA_SOURCES" value="true" />
+    <option name="GROUP_SCHEMA" value="true" />
+    <option name="GROUP_CONTENTS" value="false" />
+    <option name="SORT_POSITIONED" value="false" />
+    <option name="SHOW_EMPTY_GROUPS" value="false" />
+    <option name="AUTO_SCROLL_FROM_SOURCE" value="false" />
+    <option name="HIDDEN_KINDS">
+      <set />
+    </option>
+    <expand />
+    <select />
+  </component>
+  <component name="ExecutionTargetManager" SELECTED_TARGET="CMakeBuildProfile:Debug" />
+  <component name="FileEditorManager">
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/resources/shaders/glsl/particles.comp">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="340">
+              <caret line="20" column="26" selection-start-line="20" selection-start-column="26" selection-end-line="20" selection-end-column="26" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/resources/shaders/glsl/lighting.glsl">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="408">
+              <caret line="40" column="23" lean-forward="true" selection-start-line="40" selection-start-column="23" selection-end-line="40" selection-end-column="23" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="GLSL Shader" />
+      </list>
+    </option>
+    <option name="SCHEME" value="Project" />
+  </component>
+  <component name="FindInProjectRecents">
+    <findStrings>
+      <find>affector</find>
+      <find>position</find>
+      <find>vertexDataFlags</find>
+      <find>customCount</find>
+      <find>colorSize</find>
+      <find>deltaTime</find>
+      <find>VK_FORMAT_R32G32B32A32_SINT</find>
+      <find>uniformList</find>
+      <find>toDirection</find>
+      <find>dist</find>
+      <find>/</find>
+      <find>poolInfo</find>
+      <find>_descriptorPool</find>
+      <find>VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER</find>
+      <find>getUniformInfoList</find>
+      <find>vkUpdateDescriptorSets</find>
+      <find>_uniformBuffers</find>
+      <find>newNode</find>
+      <find>_descriptorSetLayout</find>
+      <find>floatBitsToUint</find>
+      <find>sampler2D</find>
+      <find>samplerName</find>
+      <find>loadVector</find>
+      <find>ParticleCount</find>
+      <find>particleSy</find>
+      <find>SpritesheetSize</find>
+      <find>fillUniformData</find>
+      <find>spitesheetSize</find>
+      <find>particles</find>
+      <find>useDepthTest</find>
+    </findStrings>
+    <replaceStrings>
+      <replace />
+      <replace>VulkanInstance</replace>
+      <replace>VulkanException</replace>
+      <replace>_vulkanInstance-&gt;getLogicalDevice()</replace>
+      <replace>SIZE</replace>
+      <replace>uniforms</replace>
+      <replace>VulkanScreenQuad:</replace>
+      <replace>MaterialInfo</replace>
+      <replace>ubo.emitter</replace>
+      <replace>ubo.affector</replace>
+      <replace>ubo.deltaTime</replace>
+      <replace>spritesheetSize</replace>
+    </replaceStrings>
+    <dirStrings>
+      <dir>E:\Projects\Chewman\resources\shaders\glsl</dir>
+    </dirStrings>
+  </component>
+  <component name="Git.Settings">
+    <option name="PREVIOUS_COMMIT_AUTHORS">
+      <list>
+        <option value="igor.barinov" />
+      </list>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="SyncronizationResearch" />
+      </map>
+    </option>
+  </component>
+  <component name="IdeDocumentHistory">
+    <option name="CHANGED_PATHS">
+      <list>
+        <option value="$PROJECT_DIR$/SVE/VulkanUtils.h" />
+        <option value="$PROJECT_DIR$/SVE/VulkanUtils.cpp" />
+        <option value="$PROJECT_DIR$/SVE/VulkanPointShadowMap.cpp" />
+        <option value="$PROJECT_DIR$/resources/main.engine" />
+        <option value="$PROJECT_DIR$/SVE/VulkanParticleSystem.h" />
+        <option value="$PROJECT_DIR$/SVE/ParticleSystem.h" />
+        <option value="$PROJECT_DIR$/SVE/ComputeEntity.h" />
+        <option value="$PROJECT_DIR$/SVE/ComputeEntity.cpp" />
+        <option value="$PROJECT_DIR$/SVE/ComputeSettings.h" />
+        <option value="$PROJECT_DIR$/resources/shaders/glsl/particles.geom.glsl" />
+        <option value="$PROJECT_DIR$/resources/shaders/glsl/skeletalPhong.vert" />
+        <option value="$PROJECT_DIR$/resources/shaders/particlesGeom.shader" />
+        <option value="$PROJECT_DIR$/SVE/ResourceManager.h" />
+        <option value="$PROJECT_DIR$/SVE/SceneManager.h" />
+        <option value="$PROJECT_DIR$/SVE/VulkanParticleSystem.cpp" />
+        <option value="$PROJECT_DIR$/SVE/VulkanInstance.h" />
+        <option value="$PROJECT_DIR$/SVE/Engine.h" />
+        <option value="$PROJECT_DIR$/SVE/VulkanInstance.cpp" />
+        <option value="$PROJECT_DIR$/CMakeLists.txt" />
+        <option value="$PROJECT_DIR$/resources/shaders/glsl/random.glsl" />
+        <option value="$PROJECT_DIR$/SVE/MeshSettings.cpp" />
+        <option value="$PROJECT_DIR$/resources/shaders/glsl/particles.glsl" />
+        <option value="$PROJECT_DIR$/SVE/ParticleSystemSettings.h" />
+        <option value="$PROJECT_DIR$/SVE/VulkanShaderInfo.h" />
+        <option value="$PROJECT_DIR$/SVE/VulkanShaderInfo.cpp" />
+        <option value="$PROJECT_DIR$/SVE/VulkanComputeEntity.h" />
+        <option value="$PROJECT_DIR$/resources/shaders/particlesComp.shader" />
+        <option value="$PROJECT_DIR$/SVE/VulkanComputeEntity.cpp" />
+        <option value="$PROJECT_DIR$/main.cpp" />
+        <option value="$PROJECT_DIR$/resources/shaders/glsl/staticrandom.glsl" />
+        <option value="$PROJECT_DIR$/resources/shaders/glsl/spritesheet.glsl" />
+        <option value="$PROJECT_DIR$/resources/shaders/particlesFrag.shader" />
+        <option value="$PROJECT_DIR$/SVE/ShaderSettings.h" />
+        <option value="$PROJECT_DIR$/SVE/ShaderSettings.cpp" />
+        <option value="$PROJECT_DIR$/SVE/ParticleSystemEntity.h" />
+        <option value="$PROJECT_DIR$/SVE/VulkanMaterial.h" />
+        <option value="$PROJECT_DIR$/resources/shaders/glsl/particles.vert" />
+        <option value="$PROJECT_DIR$/SVE/ParticleSystemEntity.cpp" />
+        <option value="$PROJECT_DIR$/resources/shaders/particlesVert.shader" />
+        <option value="$PROJECT_DIR$/resources/shaders/glsl/particles.geom" />
+        <option value="$PROJECT_DIR$/SVE/Entity.cpp" />
+        <option value="$PROJECT_DIR$/SVE/Entity.h" />
+        <option value="$PROJECT_DIR$/SVE/SceneManager.cpp" />
+        <option value="$PROJECT_DIR$/SVE/Engine.cpp" />
+        <option value="$PROJECT_DIR$/SVE/MaterialSettings.h" />
+        <option value="$PROJECT_DIR$/SVE/VulkanMaterial.cpp" />
+        <option value="$PROJECT_DIR$/SVE/ResourceManager.cpp" />
+        <option value="$PROJECT_DIR$/resources/shaders/glsl/particles.frag" />
+        <option value="$PROJECT_DIR$/resources/shaders/glsl/particles.comp" />
+        <option value="$PROJECT_DIR$/resources/fire.particle" />
+        <option value="$PROJECT_DIR$/resources/materials/particles.material" />
+      </list>
+    </option>
+  </component>
+  <component name="OCFindUsagesOptions" text="true" ivars="false" properties="true" derivedClasses="false" />
+  <component name="ProjectFrameBounds" extendedState="6">
+    <option name="width" value="626" />
+    <option name="height" value="459" />
+  </component>
+  <component name="ProjectInspectionProfilesVisibleTreeState">
+    <entry key="Project Default">
+      <profile-state>
+        <expanded-state>
+          <State />
+        </expanded-state>
+        <selected-state>
+          <State>
+            <id>C/C++</id>
+          </State>
+        </selected-state>
+      </profile-state>
+    </entry>
+  </component>
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectView">
+    <navigator proportions="" version="1">
+      <autoscrollToSource ProjectPane="true" />
+      <foldersAlwaysOnTop value="true" />
+    </navigator>
+    <panes>
+      <pane id="Scope" />
+      <pane id="ProjectPane">
+        <subPane>
+          <expand>
+            <path>
+              <item name="Chewman" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Chewman" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Chewman" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Chewman" type="462c0819:PsiDirectoryNode" />
+              <item name="resources" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Chewman" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Chewman" type="462c0819:PsiDirectoryNode" />
+              <item name="resources" type="462c0819:PsiDirectoryNode" />
+              <item name="materials" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Chewman" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Chewman" type="462c0819:PsiDirectoryNode" />
+              <item name="resources" type="462c0819:PsiDirectoryNode" />
+              <item name="shaders" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Chewman" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Chewman" type="462c0819:PsiDirectoryNode" />
+              <item name="resources" type="462c0819:PsiDirectoryNode" />
+              <item name="shaders" type="462c0819:PsiDirectoryNode" />
+              <item name="glsl" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Chewman" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Chewman" type="462c0819:PsiDirectoryNode" />
+              <item name="SVE" type="462c0819:PsiDirectoryNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
+    </panes>
+  </component>
+  <component name="PropertiesComponent">
+    <property name="SearchEverywhereHistoryKey" value="&#9;FILE&#9;file://E:/Projects/Chewman/SVE/VulkanMaterial.h" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/resources/shaders/glsl/convert" />
+    <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
+    <property name="nodejs_npm_path_reset_for_default_project" value="true" />
+    <property name="run.code.analysis.last.selected.profile" value="pProject Default" />
+    <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="E:\Projects\Chewman\resources\shaders" />
+      <recent name="E:\Projects\Chewman\resources\models" />
+      <recent name="E:\Projects\Chewman\resources\models\assets" />
+      <recent name="E:\Projects\Chewman\resources\materials" />
+      <recent name="E:\Projects\Chewman\resources\shaders\glsl" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/resources/materials" />
+      <recent name="$PROJECT_DIR$/resources/shaders" />
+      <recent name="$PROJECT_DIR$/resources" />
+      <recent name="$PROJECT_DIR$/resources/shaders/glsl" />
+      <recent name="E:\Projects\Chewman\resources\materials" />
+    </key>
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="RunManager" selected="Application.Chewman">
+    <configuration name="Build All" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" CONFIG_NAME="Debug" EXPLICIT_BUILD_TARGET_NAME="all">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="Chewman" type="CMakeRunConfiguration" factoryName="Application" WORKING_DIR="file://$PROJECT_DIR$" PASS_PARENT_ENVS_2="true" PROJECT_NAME="Chewman" TARGET_NAME="Chewman" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="Chewman" RUN_TARGET_NAME="Chewman">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+        <option name="ToolBeforeRunTask" enabled="true" actionId="Tool_External Tools_CompileShaders" />
+      </method>
+    </configuration>
+    <list>
+      <item itemvalue="Application.Build All" />
+      <item itemvalue="Application.Chewman" />
+    </list>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration>$USER_HOME$/.subversion</configuration>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="f70505ef-ae5c-44c4-ba16-f4e316506723" name="Default Changelist" comment="" />
+      <created>1534762574386</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1534762574386</updated>
+      <workItem from="1534762576154" duration="5728000" />
+      <workItem from="1534875599788" duration="1217000" />
+      <workItem from="1534950785222" duration="25000" />
+      <workItem from="1534950846225" duration="612000" />
+      <workItem from="1535104679846" duration="7000" />
+      <workItem from="1535104722850" duration="12234000" />
+      <workItem from="1535190556915" duration="86639000" />
+      <workItem from="1535807659517" duration="35506000" />
+      <workItem from="1536022594827" duration="5995000" />
+      <workItem from="1536089424761" duration="24084000" />
+      <workItem from="1536184872070" duration="11924000" />
+      <workItem from="1536252369492" duration="31416000" />
+      <workItem from="1536357798498" duration="16046000" />
+      <workItem from="1536406713442" duration="36242000" />
+      <workItem from="1536489392370" duration="58210000" />
+      <workItem from="1536705934520" duration="19602000" />
+      <workItem from="1536865526753" duration="29760000" />
+      <workItem from="1536975760711" duration="17083000" />
+      <workItem from="1537035980911" duration="972000" />
+      <workItem from="1537036972679" duration="16194000" />
+      <workItem from="1537054742642" duration="16257000" />
+      <workItem from="1537108939400" duration="31958000" />
+      <workItem from="1537305199466" duration="86615000" />
+      <workItem from="1537702208410" duration="7344000" />
+      <workItem from="1537726593072" duration="21189000" />
+      <workItem from="1537818141169" duration="16138000" />
+      <workItem from="1537947950196" duration="1675000" />
+      <workItem from="1537988362845" duration="92458000" />
+      <workItem from="1538418756285" duration="27000" />
+      <workItem from="1538425648066" duration="914000" />
+      <workItem from="1538430148766" duration="11000" />
+      <workItem from="1538508107913" duration="44537000" />
+      <workItem from="1538779692095" duration="104819000" />
+      <workItem from="1539284476433" duration="29939000" />
+      <workItem from="1539388770253" duration="13961000" />
+      <workItem from="1539512429543" duration="19252000" />
+      <workItem from="1539633165355" duration="34257000" />
+      <workItem from="1539893584017" duration="1055000" />
+      <workItem from="1539895323363" duration="11402000" />
+      <workItem from="1539972414806" duration="17997000" />
+      <workItem from="1540035676385" duration="109636000" />
+      <workItem from="1540589797958" duration="452000" />
+      <workItem from="1540590294142" duration="2982000" />
+      <workItem from="1540646864603" duration="62000" />
+      <workItem from="1540646941821" duration="1998000" />
+      <workItem from="1540656049125" duration="3192000" />
+      <workItem from="1540661495371" duration="1498000" />
+      <workItem from="1540663415507" duration="682000" />
+      <workItem from="1540665187897" duration="15447000" />
+      <workItem from="1540683443138" duration="1978000" />
+      <workItem from="1540731545277" duration="599000" />
+      <workItem from="1540751367755" duration="1137000" />
+      <workItem from="1540757908901" duration="17808000" />
+      <workItem from="1540850985487" duration="15860000" />
+      <workItem from="1541116021827" duration="8487000" />
+      <workItem from="1541199250079" duration="3499000" />
+      <workItem from="1541336491857" duration="25906000" />
+      <workItem from="1541379302296" duration="599000" />
+      <workItem from="1541380221705" duration="5000" />
+      <workItem from="1541381293589" duration="6685000" />
+      <workItem from="1541534727936" duration="47261000" />
+      <workItem from="1541877943619" duration="3003000" />
+      <workItem from="1541959494122" duration="572000" />
+      <workItem from="1541960150976" duration="599000" />
+      <workItem from="1541963577347" duration="120000" />
+      <workItem from="1541964048172" duration="4000" />
+      <workItem from="1541964163582" duration="50000" />
+      <workItem from="1541964305977" duration="6281000" />
+      <workItem from="1541986260617" duration="555000" />
+      <workItem from="1541987212131" duration="5694000" />
+      <workItem from="1542147367476" duration="1709000" />
+      <workItem from="1542239046927" duration="626000" />
+      <workItem from="1542241646529" duration="1226000" />
+      <workItem from="1542457721191" duration="100000" />
+      <workItem from="1542457835856" duration="2655000" />
+      <workItem from="1542473763392" duration="2784000" />
+      <workItem from="1542480496806" duration="69619000" />
+      <workItem from="1542788629300" duration="599000" />
+      <workItem from="1542847118222" duration="66837000" />
+      <workItem from="1543173295119" duration="9468000" />
+      <workItem from="1543183744500" duration="12912000" />
+      <workItem from="1543355361028" duration="7698000" />
+      <workItem from="1544141242805" duration="603000" />
+      <workItem from="1544292891598" duration="1470000" />
+      <workItem from="1549049303234" duration="164000" />
+      <workItem from="1549049494881" duration="1003000" />
+    </task>
+    <task id="LOCAL-00001" summary="Adding core SVE classes">
+      <created>1536429263360</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1536429263360</updated>
+    </task>
+    <task id="LOCAL-00002" summary="Integrating ShaderInfo class, refactoring material">
+      <created>1536489723936</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1536489723936</updated>
+    </task>
+    <task id="LOCAL-00003" summary="Adding camera class, refactoring matrices calculations">
+      <created>1536511549349</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1536511549349</updated>
+    </task>
+    <task id="LOCAL-00004" summary="Refactoring materials, meshes, entities and rendering process">
+      <created>1536699095709</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1536699095709</updated>
+    </task>
+    <task id="LOCAL-00005" summary="Adding animation support">
+      <created>1537041764885</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1537041764885</updated>
+    </task>
+    <task id="LOCAL-00006" summary="Adding skybox">
+      <created>1537103742884</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1537103742884</updated>
+    </task>
+    <task id="LOCAL-00007" summary="Adding resource manager">
+      <created>1537134816641</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1537134816641</updated>
+    </task>
+    <task id="LOCAL-00008" summary="Fixing window resize">
+      <created>1537137343724</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1537137343724</updated>
+    </task>
+    <task id="LOCAL-00009" summary="Adding first version of shadowmapping">
+      <created>1537743181193</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1537743181193</updated>
+    </task>
+    <task id="LOCAL-00010" summary="Fixing shadowmap, refactoring interfaces">
+      <created>1537830416673</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1537830416673</updated>
+    </task>
+    <task id="LOCAL-00011" summary="Adding vulkan shadowmap class">
+      <created>1537830462848</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1537830462848</updated>
+    </task>
+    <task id="LOCAL-00012" summary="Adding basic water implementation">
+      <created>1538246647157</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1538246647157</updated>
+    </task>
+    <task id="LOCAL-00013" summary="Adding refraction to water">
+      <created>1538262770457</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1538262770457</updated>
+    </task>
+    <task id="LOCAL-00014" summary="Refactoring entities, materials and other classes, updating material data">
+      <created>1538517792755</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1538517792755</updated>
+    </task>
+    <task id="LOCAL-00015" summary="Updating keyboard movement, fixing refraction material">
+      <created>1538521272067</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1538521272067</updated>
+    </task>
+    <task id="LOCAL-00016" summary="Updating material settings, refactoring shadows">
+      <created>1538954477728</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1538954477728</updated>
+    </task>
+    <task id="LOCAL-00017" summary="Adding screen quad rendering (for post-effects), fixing shadows">
+      <created>1539044620559</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1539044620559</updated>
+    </task>
+    <task id="LOCAL-00018" summary="Some code cleanup">
+      <created>1539115198536</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1539115198536</updated>
+    </task>
+    <task id="LOCAL-00019" summary="Adding PCF for shadowmap">
+      <created>1539121216544</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1539121216544</updated>
+    </task>
+    <task id="LOCAL-00020" summary="Adding invert YZ option for mesh, adding lighting shader">
+      <created>1539211600713</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1539211600713</updated>
+    </task>
+    <task id="LOCAL-00021" summary="Adding basic multiple light support, refactoring uniforms">
+      <created>1539471799299</created>
+      <option name="number" value="00021" />
+      <option name="presentableId" value="LOCAL-00021" />
+      <option name="project" value="LOCAL" />
+      <updated>1539471799299</updated>
+    </task>
+    <task id="LOCAL-00022" summary="Refactoring shadows (creating shadow array for all lights), refactoring syncronization">
+      <created>1540158597699</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1540158597700</updated>
+    </task>
+    <task id="LOCAL-00023" summary="Refactoring syncronization, fixing blinking shadow artifacts">
+      <created>1540171678569</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1540171678569</updated>
+    </task>
+    <task id="LOCAL-00024" summary="Fixing resource deallocation">
+      <created>1540242193872</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1540242193872</updated>
+    </task>
+    <task id="LOCAL-00025" summary="Add support for multiple shadow passes for each light, fixing skybox reflection, updating multiple lights support">
+      <created>1540683965416</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1540683965416</updated>
+    </task>
+    <task id="LOCAL-00026" summary="Adding cascade shadow map for directional light">
+      <created>1541367878236</created>
+      <option name="number" value="00026" />
+      <option name="presentableId" value="LOCAL-00026" />
+      <option name="project" value="LOCAL" />
+      <updated>1541367878236</updated>
+    </task>
+    <task id="LOCAL-00027" summary="Adding point light omnidirectional shadows (using cubemap), shadow classes refactoring">
+      <created>1541990637393</created>
+      <option name="number" value="00027" />
+      <option name="presentableId" value="LOCAL-00027" />
+      <option name="project" value="LOCAL" />
+      <updated>1541990637393</updated>
+    </task>
+    <task id="LOCAL-00028" summary="Basic particle system implementation (with compute shaders particle processing)">
+      <created>1542761727753</created>
+      <option name="number" value="00028" />
+      <option name="presentableId" value="LOCAL-00028" />
+      <option name="project" value="LOCAL" />
+      <updated>1542761727753</updated>
+    </task>
+    <task id="LOCAL-00029" summary="Creating full configurable particle system with emitter and affector">
+      <created>1543192691238</created>
+      <option name="number" value="00029" />
+      <option name="presentableId" value="LOCAL-00029" />
+      <option name="project" value="LOCAL" />
+      <updated>1543192691238</updated>
+    </task>
+    <task id="LOCAL-00030" summary="Fixing particles blending, fixing emitter shape">
+      <created>1543356641502</created>
+      <option name="number" value="00030" />
+      <option name="presentableId" value="LOCAL-00030" />
+      <option name="project" value="LOCAL" />
+      <updated>1543356641502</updated>
+    </task>
+    <option name="localTasksCounter" value="31" />
+    <servers />
+  </component>
+  <component name="TimeTrackingManager">
+    <option name="totallyTimeSpent" value="1423425000" />
+  </component>
+  <component name="TodoView">
+    <todo-panel id="selected-file">
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+    <todo-panel id="all">
+      <are-packages-shown value="true" />
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+  </component>
+  <component name="ToolWindowManager">
+    <frame x="0" y="0" width="1920" height="1032" extended-state="6" />
+    <editor active="true" />
+    <layout>
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.2379936" />
+      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
+      <window_info id="Favorites" order="2" side_tool="true" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Find" order="1" sideWeight="0.49253732" weight="0.3107658" />
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.4307036" weight="0.25831485" />
+      <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.6673774" weight="0.36514983" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="bottom" id="TODO" order="6" weight="0.20223464" />
+      <window_info anchor="bottom" id="Database Changes" order="7" show_stripe_button="false" />
+      <window_info anchor="bottom" id="Messages" order="8" sideWeight="0.43816632" weight="0.23170732" />
+      <window_info anchor="bottom" id="Event Log" order="9" sideWeight="0.56929636" side_tool="true" weight="0.27982646" />
+      <window_info anchor="bottom" id="Terminal" order="10" sideWeight="0.49946696" weight="0.3273743" />
+      <window_info anchor="bottom" id="Version Control" order="11" weight="0.28379887" />
+      <window_info anchor="bottom" id="CMake" order="12" sideWeight="0.49946696" weight="0.32852387" />
+      <window_info anchor="bottom" id="Inspection Results" order="13" weight="0.329718" />
+      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
+      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+      <window_info anchor="right" id="Database" order="3" weight="0.32995737" />
+    </layout>
+    <layout-to-restore>
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.21291356" />
+      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
+      <window_info id="Favorites" order="2" side_tool="true" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Find" order="1" sideWeight="0.49253732" weight="0.3107658" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.4307036" visible="true" weight="0.26526082" />
+      <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.6673774" weight="0.36514983" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="bottom" id="TODO" order="6" weight="0.20223464" />
+      <window_info anchor="bottom" id="Database Changes" order="7" show_stripe_button="false" />
+      <window_info anchor="bottom" id="Messages" order="8" sideWeight="0.43816632" weight="0.23196448" />
+      <window_info anchor="bottom" id="Event Log" order="9" sideWeight="0.56929636" side_tool="true" weight="0.27982646" />
+      <window_info anchor="bottom" id="Terminal" order="10" sideWeight="0.49946696" weight="0.3273743" />
+      <window_info anchor="bottom" id="Version Control" order="11" weight="0.28379887" />
+      <window_info anchor="bottom" id="CMake" order="12" sideWeight="0.49946696" weight="0.32960895" />
+      <window_info anchor="bottom" id="Inspection Results" order="13" weight="0.329718" />
+      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
+      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+      <window_info anchor="right" id="Database" order="3" weight="0.32995737" />
+    </layout-to-restore>
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+  </component>
+  <component name="UnknownFeatures">
+    <option featureType="com.intellij.fileTypeFactory" implementationName="*.frag" />
+  </component>
+  <component name="Vcs.Log.History.Properties">
+    <option name="COLUMN_ORDER">
+      <list>
+        <option value="0" />
+        <option value="2" />
+        <option value="3" />
+        <option value="1" />
+      </list>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
+    <option name="CHECK_NEW_TODO" value="false" />
+    <MESSAGE value="Adding skybox" />
+    <MESSAGE value="Adding resource manager" />
+    <MESSAGE value="Fixing window resize" />
+    <MESSAGE value="Adding first version of shadowmapping" />
+    <MESSAGE value="Fixing shadowmap, refactoring interfaces" />
+    <MESSAGE value="Adding vulkan shadowmap class" />
+    <MESSAGE value="Adding basic water implementation" />
+    <MESSAGE value="Adding refraction to water" />
+    <MESSAGE value="Refactoring entities, materials and other classes, updating material data" />
+    <MESSAGE value="Updating keyboard movement, fixing refraction material" />
+    <MESSAGE value="Updating material settings, refactoring shadows" />
+    <MESSAGE value="Adding screen quad rendering (for post-effects), fixing shadows" />
+    <MESSAGE value="Some code cleanup" />
+    <MESSAGE value="Adding PCF for shadowmap" />
+    <MESSAGE value="Adding invert YZ option for mesh, adding lighting shader" />
+    <MESSAGE value="Adding basic multiple light support, refactoring uniforms" />
+    <MESSAGE value="Refactoring shadows (creating shadow array for all lights), refactoring syncronization" />
+    <MESSAGE value="Refactoring syncronization, fixing blinking shadow artifacts" />
+    <MESSAGE value="Fixing resource deallocation" />
+    <MESSAGE value="Add support for multiple shadow passes for each light, fixing skybox reflection, updating multiple lights support" />
+    <MESSAGE value="Adding cascade shadow map for directional light" />
+    <MESSAGE value="Adding point light omnidirectional shadows (using cubemap), shadow classes refactoring" />
+    <MESSAGE value="Basic particle system implementation (with compute shaders particle processing)" />
+    <MESSAGE value="Creating full configurable particle system with emitter and affector" />
+    <MESSAGE value="Fixing particles blending, fixing emitter shape" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fixing particles blending, fixing emitter shape" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/SVE/VulkanInstance.cpp</url>
+          <line>106</line>
+          <option name="timeStamp" value="76" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+  <component name="debuggerHistoryManager">
+    <expressions id="breakpointCondition">
+      <expression>
+        <expression-string>bufferMemory == 370</expression-string>
+        <language-id>ObjectiveC</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+    </expressions>
+    <expressions id="watch">
+      <expression>
+        <expression-string>uniformBytes.size()</expression-string>
+        <language-id>ObjectiveC</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>sizeof(data.particleEmitter)</expression-string>
+        <language-id>ObjectiveC</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>mesh-&gt;mNormals[v]</expression-string>
+        <language-id>ObjectiveC</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>instanceIter-&gt;second</expression-string>
+        <language-id>ObjectiveC</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>instanceIter-&gt;second[index]</expression-string>
+        <language-id>ObjectiveC</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>_shaderSettings.vertexInfo.vertexDataFlags</expression-string>
+        <language-id>ObjectiveC</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>pixelsData.size()</expression-string>
+        <language-id>ObjectiveC</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>boneInfo-&gt;boneId</expression-string>
+        <language-id>ObjectiveC</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>boneInfo-&gt;children</expression-string>
+        <language-id>ObjectiveC</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+    </expressions>
+  </component>
+  <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/resources/shaders/glsl/skybox.frag">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/shaders/glsl/phongShadowMap.frag">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="102">
+          <caret line="6" selection-start-line="6" selection-end-line="6" selection-end-column="58" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/shaders/glsl/spritesheet.glsl" />
+    <entry file="file://$PROJECT_DIR$/resources/shaders/glsl/simpleDepth.geom">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/shaders/glsl/quadRender.frag">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="51">
+          <caret line="3" column="13" selection-start-line="3" selection-start-column="13" selection-end-line="3" selection-end-column="14" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/shaders/glsl/phongWater.frag">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="119">
+          <caret line="7" column="29" selection-start-line="7" selection-start-column="29" selection-end-line="13" selection-end-column="6" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/shaders/glsl/particles.glsl">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="408">
+          <caret line="24" selection-start-line="24" selection-end-line="24" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/shaders/phongFrag.shader">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="68">
+          <caret line="4" column="4" selection-start-line="4" selection-start-column="4" selection-end-line="14" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/materials/floor.material">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="68">
+          <caret line="4" column="4" selection-start-line="4" selection-start-column="4" selection-end-line="9" selection-end-column="10" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/deps/include/glm/detail/type_vec.hpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="506">
+          <caret line="160" column="22" selection-start-line="160" selection-start-column="19" selection-end-line="160" selection-end-column="22" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/deps/include/glm/detail/type_vec2.hpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="147">
+          <caret line="18" column="11" selection-start-line="18" selection-start-column="11" selection-end-line="18" selection-end-column="11" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/SVE/VulkanShaderInfo.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="512">
+          <caret line="43" column="46" selection-start-line="43" selection-start-column="26" selection-end-line="43" selection-end-column="46" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/SVE/ShaderInfo.cpp">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/SVE/ShaderInfo.h">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/SVE/ShaderSettings.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="34">
+          <caret line="147" column="88" lean-forward="true" selection-start-line="147" selection-start-column="88" selection-end-line="147" selection-end-column="88" />
+          <folding>
+            <element signature="e#107#124#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/SVE/VulkanShaderInfo.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="397">
+          <caret line="394" column="33" selection-start-line="394" selection-start-column="13" selection-end-line="394" selection-end-column="33" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/SVE/ShaderSettings.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="196">
+          <caret line="69" column="46" lean-forward="true" selection-start-line="69" selection-start-column="46" selection-end-line="69" selection-end-column="46" />
+          <folding>
+            <element signature="e#120#137#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/SVE/MeshEntity.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="198">
+          <caret line="50" column="17" selection-start-line="50" selection-start-column="17" selection-end-line="50" selection-end-column="17" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/SVE/MeshEntity.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="408">
+          <caret line="25" column="16" lean-forward="true" selection-start-line="25" selection-start-column="16" selection-end-line="25" selection-end-column="16" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/SVE/LightNode.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="340">
+          <caret line="21" column="24" selection-start-line="21" selection-start-column="9" selection-end-line="21" selection-end-column="24" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/SVE/CameraNode.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="368">
+          <caret line="88" column="78" lean-forward="true" selection-start-line="80" selection-start-column="4" selection-end-line="88" selection-end-column="78" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/SVE/Material.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="187">
+          <caret line="12" column="15" selection-start-line="12" selection-start-column="15" selection-end-line="12" selection-end-column="15" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/SVE/Material.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="357">
+          <caret line="23" lean-forward="true" selection-start-line="23" selection-end-line="23" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/SVE/ParticleSystemEntity.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-26">
+          <caret line="11" column="9" lean-forward="true" selection-start-line="11" selection-start-column="9" selection-end-line="11" selection-end-column="9" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/SVE/VulkanMaterial.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-451">
+          <caret line="38" column="27" selection-start-line="38" selection-start-column="27" selection-end-line="38" selection-end-column="27" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/SVE/ParticleSystemEntity.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="543">
+          <caret line="60" selection-start-line="60" selection-end-line="60" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/shaders/particlesFrag.shader">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="170">
+          <caret line="10" column="1" selection-start-line="10" selection-start-column="1" selection-end-line="10" selection-end-column="1" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/shaders/glsl/particles.vert">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="210">
+          <caret line="13" column="20" selection-start-line="13" selection-start-column="20" selection-end-line="13" selection-end-column="20" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/SVE/Entity.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="246">
+          <caret line="28" column="60" selection-start-line="28" selection-start-column="60" selection-end-line="28" selection-end-column="60" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/SVE/SceneManager.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="325">
+          <caret line="68" column="4" selection-start-line="68" selection-start-column="4" selection-end-line="68" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/SVE/SceneNode.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="198">
+          <caret line="57" column="53" selection-start-line="57" selection-start-column="53" selection-end-line="57" selection-end-column="53" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/SVE/Entity.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="457">
+          <caret line="51" column="23" selection-start-line="51" selection-start-column="23" selection-end-line="51" selection-end-column="23" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/shaders/particlesVert.shader">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="136">
+          <caret line="8" column="24" selection-start-line="8" selection-start-column="24" selection-end-line="8" selection-end-column="24" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/shaders/particlesGeom.shader">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/shaders/glsl/particles.geom">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="279">
+          <caret line="36" column="30" selection-start-line="36" selection-start-column="30" selection-end-line="36" selection-end-column="30" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/shaders/particlesComp.shader">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="255">
+          <caret line="15" column="23" selection-start-line="15" selection-start-column="23" selection-end-line="15" selection-end-column="23" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/materials/fullSkeletalDepth.material">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/materials/skybox.material">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="544">
+          <caret line="32" column="17" selection-start-line="32" selection-start-column="5" selection-end-line="32" selection-end-column="17" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/SVE/VulkanMaterial.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="416">
+          <caret line="308" column="74" selection-start-line="308" selection-start-column="74" selection-end-line="308" selection-end-column="74" />
+          <folding>
+            <element signature="e#107#134#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/SVE/MaterialSettings.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="314">
+          <caret line="66" column="14" selection-start-line="66" selection-start-column="14" selection-end-line="66" selection-end-column="14" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/SVE/ResourceManager.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="172">
+          <caret line="339" column="94" selection-start-line="339" selection-start-column="94" selection-end-line="339" selection-end-column="94" />
+          <folding>
+            <element signature="e#107#135#0" expanded="true" />
+            <element signature="e#906#979#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/SVE/Engine.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="306">
+          <caret line="310" selection-start-line="310" selection-end-line="310" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/shaders/glsl/fullDepth.frag">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="170">
+          <caret line="10" column="50" selection-start-line="10" selection-start-column="33" selection-end-line="10" selection-end-column="50" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/shaders/glsl/simpleDepth.frag">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/shaders/glsl/shadowMapRender.frag">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="221">
+          <caret line="13" column="1" selection-start-line="13" selection-start-column="1" selection-end-line="13" selection-end-column="1" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/shaders/glsl/particles.frag">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="459">
+          <caret line="27" selection-start-line="27" selection-end-line="27" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/fire.particle">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="391">
+          <caret line="23" column="50" selection-start-line="23" selection-start-column="50" selection-end-line="23" selection-end-column="50" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/materials/particles.material">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="204">
+          <caret line="12" column="53" selection-start-line="12" selection-start-column="53" selection-end-line="12" selection-end-column="53" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/SVE/CameraNode.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="527">
+          <caret line="33" column="18" selection-start-line="33" selection-start-column="18" selection-end-line="33" selection-end-column="18" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/shaders/glsl/particles.comp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="340">
+          <caret line="20" column="26" selection-start-line="20" selection-start-column="26" selection-end-line="20" selection-end-column="26" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/shaders/glsl/lighting.glsl">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="408">
+          <caret line="40" column="23" lean-forward="true" selection-start-line="40" selection-start-column="23" selection-end-line="40" selection-end-column="23" />
+        </state>
+      </provider>
+    </entry>
+  </component>
+  <component name="masterDetails">
+    <states>
+      <state key="ScopeChooserConfigurable.UI">
+        <settings>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+    </states>
+  </component>
+</project>

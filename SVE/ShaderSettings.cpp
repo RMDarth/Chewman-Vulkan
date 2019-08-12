@@ -25,6 +25,7 @@ const std::map<UniformType, size_t>& getUniformSizeMap()
             { UniformType::LightInfo, sizeof(LightInfo) },
             { UniformType::LightSpot, sizeof(SpotLight) },
             { UniformType::LightPoint, sizeof(PointLight) },
+            { UniformType::LightLine, sizeof(LineLight) },
             { UniformType::LightDirectional, sizeof(DirLight) },
             { UniformType::LightPointViewProjectionList, sizeof(glm::mat4) },
             { UniformType::LightDirectViewProjectionList, sizeof(glm::mat4) },
@@ -123,6 +124,11 @@ std::vector<char> getUniformDataByType(const UniformData& data, UniformType type
         {
             const char* byteData = reinterpret_cast<const char*>(data.pointLightList.data());
             return std::vector<char>(byteData, byteData + sizeMap.at(type) * data.pointLightList.size());
+        }
+        case UniformType::LightLine:
+        {
+            const char* byteData = reinterpret_cast<const char*>(data.lineLightList.data());
+            return std::vector<char>(byteData, byteData + sizeMap.at(type) * data.lineLightList.size());
         }
         case UniformType::LightSpot:
         {

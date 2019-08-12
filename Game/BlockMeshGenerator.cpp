@@ -33,7 +33,7 @@ glm::quat rotationBetweenVectors(glm::vec3 start, glm::vec3 dest){
     );
 }
 
-enum class VerticalPlaneType
+enum class VerticalPlaneType : uint8_t
 {
     Left,
     Right,
