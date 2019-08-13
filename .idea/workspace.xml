@@ -13,24 +13,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f70505ef-ae5c-44c4-ba16-f4e316506723" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/SVE/ComputeEntity.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/SVE/ComputeEntity.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/resources/models/gargoyle.mesh" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Game/GameMap.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Game/GameMap.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SVE/Engine.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/SVE/Engine.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SVE/Engine.h" beforeDir="false" afterPath="$PROJECT_DIR$/SVE/Engine.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SVE/Entity.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/SVE/Entity.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SVE/Entity.h" beforeDir="false" afterPath="$PROJECT_DIR$/SVE/Entity.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SVE/ParticleSystemEntity.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/SVE/ParticleSystemEntity.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SVE/ParticleSystemEntity.h" beforeDir="false" afterPath="$PROJECT_DIR$/SVE/ParticleSystemEntity.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SVE/ParticleSystemManager.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/SVE/ParticleSystemManager.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SVE/ParticleSystemManager.h" beforeDir="false" afterPath="$PROJECT_DIR$/SVE/ParticleSystemManager.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SVE/ResourceManager.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/SVE/ResourceManager.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SVE/SceneManager.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/SVE/SceneManager.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SVE/SceneManager.h" beforeDir="false" afterPath="$PROJECT_DIR$/SVE/SceneManager.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/main.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/fireline.particle" beforeDir="false" afterPath="$PROJECT_DIR$/resources/fireline.particle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/shaders/glsl/lighting.glsl" beforeDir="false" afterPath="$PROJECT_DIR$/resources/shaders/glsl/lighting.glsl" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/shaders/glsl/phongNormalAndShadowMap.frag" beforeDir="false" afterPath="$PROJECT_DIR$/resources/shaders/glsl/phongNormalAndShadowMap.frag" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/shaders/glsl/phongShadowMap.frag" beforeDir="false" afterPath="$PROJECT_DIR$/resources/shaders/glsl/phongShadowMap.frag" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/shaders/phongNormalShadowFrag.shader" beforeDir="false" afterPath="$PROJECT_DIR$/resources/shaders/phongNormalShadowFrag.shader" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/shaders/phongShadowFrag.shader" beforeDir="false" afterPath="$PROJECT_DIR$/resources/shaders/phongShadowFrag.shader" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -81,6 +70,7 @@
   <component name="ProjectId" id="1OdOLrQ3XiKMEC0Y50UDQi43dEM" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="PropertiesComponent">
+    <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="SearchEverywhereHistoryKey" value="&#9;FILE&#9;file://E:/Projects/Chewman/SVE/VulkanMaterial.h" />
     <property name="WebServerToolWindowFactoryState" value="false" />
@@ -99,19 +89,19 @@
     <property name="settings.editor.selected.configurable" value="preferences.keymap" />
   </component>
   <component name="RecentsManager">
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/resources/materials" />
-      <recent name="$PROJECT_DIR$/resources/shaders" />
-      <recent name="E:\Projects\Chewman\resources\materials" />
-      <recent name="E:\Projects\Chewman\resources" />
-      <recent name="E:\Projects\Chewman\resources\shaders" />
-    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="E:\Projects\Chewman\resources\shaders" />
       <recent name="E:\Projects\Chewman\resources\models" />
       <recent name="E:\Projects\Chewman\resources\models\assets" />
       <recent name="E:\Projects\Chewman\resources\materials" />
       <recent name="E:\Projects\Chewman\resources\shaders\glsl" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/resources/materials" />
+      <recent name="$PROJECT_DIR$/resources/models" />
+      <recent name="$PROJECT_DIR$/resources/shaders" />
+      <recent name="E:\Projects\Chewman\resources\materials" />
+      <recent name="E:\Projects\Chewman\resources" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -244,7 +234,11 @@
       <workItem from="1564312473329" duration="922000" />
       <workItem from="1564342245561" duration="835000" />
       <workItem from="1564833400508" duration="13265000" />
-      <workItem from="1564914575860" duration="5468000" />
+      <workItem from="1564914575860" duration="26768000" />
+      <workItem from="1564961221379" duration="1238000" />
+      <workItem from="1565032951932" duration="2851000" />
+      <workItem from="1565511636404" duration="1586000" />
+      <workItem from="1565519216904" duration="63506000" />
     </task>
     <task id="LOCAL-00001" summary="Adding core SVE classes">
       <created>1536429263360</created>
@@ -456,17 +450,22 @@
       <option name="project" value="LOCAL" />
       <updated>1564305433458</updated>
     </task>
-    <option name="localTasksCounter" value="31" />
+    <task id="LOCAL-00031" summary="Updating particle system manager (adding particlesettings map to create PS by name)">
+      <created>1564927291856</created>
+      <option name="number" value="00031" />
+      <option name="presentableId" value="LOCAL-00031" />
+      <option name="project" value="LOCAL" />
+      <updated>1564927291856</updated>
+    </task>
+    <task id="LOCAL-00032" summary="Adding gargoyle support for Chewman, with correct models, effects and lighting">
+      <created>1565653633411</created>
+      <option name="number" value="00032" />
+      <option name="presentableId" value="LOCAL-00032" />
+      <option name="project" value="LOCAL" />
+      <updated>1565653633411</updated>
+    </task>
+    <option name="localTasksCounter" value="33" />
     <servers />
-  </component>
-  <component name="TodoView">
-    <todo-panel id="selected-file">
-      <is-autoscroll-to-source value="true" />
-    </todo-panel>
-    <todo-panel id="all">
-      <are-packages-shown value="true" />
-      <is-autoscroll-to-source value="true" />
-    </todo-panel>
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="1" />
@@ -500,8 +499,6 @@
   <component name="VcsManagerConfiguration">
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_NEW_TODO" value="false" />
-    <MESSAGE value="Adding animation support" />
-    <MESSAGE value="Adding skybox" />
     <MESSAGE value="Adding resource manager" />
     <MESSAGE value="Fixing window resize" />
     <MESSAGE value="Adding first version of shadowmapping" />
@@ -525,7 +522,9 @@
     <MESSAGE value="Add missing materials, add support for parallax lighting" />
     <MESSAGE value="Fixing particle system, adding fireline support" />
     <MESSAGE value="Adding new materials and particles for Chewman" />
-    <option name="LAST_COMMIT_MESSAGE" value="Adding new materials and particles for Chewman" />
+    <MESSAGE value="Updating particle system manager (adding particlesettings map to create PS by name)" />
+    <MESSAGE value="Adding gargoyle support for Chewman, with correct models, effects and lighting" />
+    <option name="LAST_COMMIT_MESSAGE" value="Adding gargoyle support for Chewman, with correct models, effects and lighting" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -536,73 +535,12 @@
           <option name="timeStamp" value="61" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/main.cpp</url>
-          <line>481</line>
-          <option name="timeStamp" value="70" />
+          <url>file://$PROJECT_DIR$/Game/GameMap.cpp</url>
+          <line>272</line>
+          <option name="timeStamp" value="73" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
-  </component>
-  <component name="debuggerHistoryManager">
-    <expressions id="breakpointCondition">
-      <expression>
-        <expression-string>bufferMemory == 370</expression-string>
-        <language-id>ObjectiveC</language-id>
-        <evaluation-mode>EXPRESSION</evaluation-mode>
-      </expression>
-    </expressions>
-    <expressions id="watch">
-      <expression>
-        <expression-string>mesh-&gt;mNormals[v]</expression-string>
-        <language-id>ObjectiveC</language-id>
-        <evaluation-mode>EXPRESSION</evaluation-mode>
-      </expression>
-      <expression>
-        <expression-string>instanceIter-&gt;second</expression-string>
-        <language-id>ObjectiveC</language-id>
-        <evaluation-mode>EXPRESSION</evaluation-mode>
-      </expression>
-      <expression>
-        <expression-string>instanceIter-&gt;second[index]</expression-string>
-        <language-id>ObjectiveC</language-id>
-        <evaluation-mode>EXPRESSION</evaluation-mode>
-      </expression>
-      <expression>
-        <expression-string>_shaderSettings.vertexInfo.vertexDataFlags</expression-string>
-        <language-id>ObjectiveC</language-id>
-        <evaluation-mode>EXPRESSION</evaluation-mode>
-      </expression>
-      <expression>
-        <expression-string>pixelsData.size()</expression-string>
-        <language-id>ObjectiveC</language-id>
-        <evaluation-mode>EXPRESSION</evaluation-mode>
-      </expression>
-      <expression>
-        <expression-string>boneInfo-&gt;boneId</expression-string>
-        <language-id>ObjectiveC</language-id>
-        <evaluation-mode>EXPRESSION</evaluation-mode>
-      </expression>
-      <expression>
-        <expression-string>boneInfo-&gt;children</expression-string>
-        <language-id>ObjectiveC</language-id>
-        <evaluation-mode>EXPRESSION</evaluation-mode>
-      </expression>
-      <expression>
-        <expression-string>boneInfo-&gt;positionData</expression-string>
-        <language-id>ObjectiveC</language-id>
-        <evaluation-mode>EXPRESSION</evaluation-mode>
-      </expression>
-      <expression>
-        <expression-string>node-&gt;mChildren[r]-&gt;mName</expression-string>
-        <language-id>ObjectiveC</language-id>
-        <evaluation-mode>EXPRESSION</evaluation-mode>
-      </expression>
-      <expression>
-        <expression-string>channel-&gt;mRotationKeys[r]</expression-string>
-        <language-id>ObjectiveC</language-id>
-        <evaluation-mode>EXPRESSION</evaluation-mode>
-      </expression>
-    </expressions>
   </component>
   <component name="masterDetails">
     <states>

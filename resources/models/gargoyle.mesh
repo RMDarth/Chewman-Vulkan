@@ -1,0 +1,6 @@
+{
+    "name": "gargoyle",
+    "filename": "assets/gargoyle.DAE",
+    "switchYZ": true,
+    "scale": [ 0.035, 0.035, 0.035]
+}

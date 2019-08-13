@@ -141,11 +141,32 @@ vec3 CalcLineLight(LineLight light, vec3 normal, vec3 fragPos, vec3 viewDir, Mat
     float ABlenSquare = AB.x*AB.x + AB.y*AB.y + AB.z*AB.z;
     float distance = dot(AP, AB) / ABlenSquare;
 
-    distance = clamp(distance, 0.0, 1.0);
+    //distance = clamp(distance, 0.0, 1.0);
     vec3 lightPos = light.startPosition.xyz + AB * distance;
 
+    // get plane normal
+    vec3 planeNormal = normalize(cross(AP, AB));
+    float normalProj = dot(normal, planeNormal);
+    vec3 finalNormalPos = (fragPos + normal) - planeNormal * normalProj;
+    vec3 finalNormal = normalize(finalNormalPos - fragPos);
+
+    vec3 PXNorm = normalize(lightPos - fragPos);
+    float PX = length(lightPos - fragPos);
+    vec3 GoodDir = normalize(finalNormal + PXNorm);
+    float cosA = dot(PXNorm, GoodDir);
+    float PY = PX / cosA;
+
+    vec3 Y = fragPos + GoodDir * PY;
+    vec3 AY = Y - light.startPosition.xyz;
+    float AYproj = dot(AY, AB);
+    vec3 finalPoint = Y;
+    if (AYproj < 0)
+        finalPoint = light.startPosition.xyz;
+    if (AYproj > ABlenSquare)
+        finalPoint = light.endPosition.xyz;
+
     PointLight pl;
-    pl.position = vec4(lightPos, 1);
+    pl.position = vec4(finalPoint, 1);
     pl.ambient = light.ambient;
     pl.diffuse = light.diffuse;
     pl.specular = light.specular;
@@ -153,17 +174,7 @@ vec3 CalcLineLight(LineLight light, vec3 normal, vec3 fragPos, vec3 viewDir, Mat
     pl.linear = light.linear;
     pl.quadratic = light.quadratic;
 
-    vec3 result = CalcPointLight(pl, normal, fragPos, viewDir, material);
-
-    for(float i = -0.2; i < 0.2; i += 0.05)
-    {
-        float shiftDist = clamp(distance + i, 0.0, 1.0);
-        pl.position = vec4(light.startPosition.xyz + AB * shiftDist, 1);
-        vec3 candidate = CalcPointLight(pl, normal, fragPos, viewDir, material);
-        result = max(result, candidate);
-    }
-
-    return result;
+    return CalcPointLight(pl, normal, fragPos, viewDir, material);
 }
 
 // calculates the color when using a spot light.

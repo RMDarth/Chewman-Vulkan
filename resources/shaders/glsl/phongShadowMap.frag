@@ -13,6 +13,7 @@ layout(set = 1, binding = 3) uniform UBO
 	DirLight dirLight;
 	SpotLight spotLight;
 	PointLight pointLight[4];
+    LineLight lineLight[15];
 	LightInfo lightInfo;
 	MaterialInfo materialInfo;
 } ubo;
@@ -119,7 +120,7 @@ void main()
 {
     vec3 diffuse = vec3(texture(diffuseTex, fragTexCoord).rgb);
 
-    vec3 norm = normalize(fragNormal);
+    vec3 normal = normalize(fragNormal);
     vec3 viewDir = normalize(ubo.cameraPos.xyz - fragPos);
 
     vec3 lightEffect = vec3(0);
@@ -127,23 +128,37 @@ void main()
     uint count = 0;
     if ((ubo.lightInfo.lightFlags & LI_DirectionalLight) != 0)
     {
-        lightEffect += CalcDirLight(ubo.dirLight, norm, viewDir, ubo.materialInfo);
-        shadow += PCFShadowSunLight();
+        vec3 curLight = CalcDirLight(ubo.dirLight, normal, viewDir, ubo.materialInfo);
+        shadow = PCFShadowSunLight();
+        lightEffect += curLight * (shadow);
         count++;
     }
-    for (uint i = 0; i < 4; i++)
+    uint shadowCount = 0;
+    for (uint i = 0; i < 3; i++)
     {
+        shadow = 1;
         if ((ubo.lightInfo.lightFlags & LI_PointLight[i]) != 0)
         {
-            lightEffect += CalcPointLight(ubo.pointLight[i], norm, fragPos, viewDir, ubo.materialInfo);
-            shadow += PCFShadowPointLight(fragPointLightSpacePos[i], i);
-            count ++;
+            vec3 curLight = CalcPointLight(ubo.pointLight[i], normal, fragPos, viewDir, ubo.materialInfo);
+            if ((ubo.lightInfo.lightShadowFlags & LI_PointLight[i]) != 0)
+            {
+                shadow = PCFShadowPointLight(ubo.pointLight[i].position, shadowCount);
+                count ++;
+                shadowCount ++;
+            }
+            lightEffect += curLight * (shadow);
         }
     }
-    if ((ubo.lightInfo.lightFlags & LI_SpotLight) != 0)
-        lightEffect += CalcSpotLight(ubo.spotLight, norm, fragPos, viewDir, ubo.materialInfo);
 
-    vec3 result = diffuse * lightEffect * fragColor * (shadow / count);
+    for (uint i = 0; i < ubo.lightInfo.lightLineNum; i++)
+    {
+        lightEffect += CalcLineLight(ubo.lineLight[i], normal, fragPos, viewDir, ubo.materialInfo);
+    }
+
+    if ((ubo.lightInfo.lightFlags & LI_SpotLight) != 0)
+    lightEffect += CalcSpotLight(ubo.spotLight, normal, fragPos, viewDir, ubo.materialInfo);
+
+    vec3 result = diffuse * lightEffect * fragColor;
     //vec3 result = vec3(shadow);
     outColor = vec4(result, 1.0);
 }

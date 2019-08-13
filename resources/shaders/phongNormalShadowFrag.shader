@@ -14,6 +14,7 @@
         { "uniformType": "LightDirectional" },
         { "uniformType": "LightSpot" },
         { "uniformType": "LightPoint" },
+        { "uniformType": "LightLine" },
         { "uniformType": "LightInfo" },
         { "uniformType": "MaterialInfo" }
     ]
