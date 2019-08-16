@@ -16,6 +16,7 @@ namespace SVE
 ParticleSystemEntity::ParticleSystemEntity(ParticleSystemSettings settings)
     : _settings(std::move(settings))
     , _material(Engine::getInstance()->getMaterialManager()->getMaterial(_settings.materialName))
+    , _materialInfo { glm::vec4(0), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), 16 }
 {
     _renderLast = true;
     _materialIndex = _material->getVulkanMaterial()->getInstanceForEntity(this);
@@ -41,6 +42,7 @@ void ParticleSystemEntity::applyComputeCommands(uint32_t bufferIndex, uint32_t i
 void ParticleSystemEntity::updateUniforms(UniformDataList uniformDataList) const
 {
     auto& data = *uniformDataList[toInt(CommandsType::MainPass)];
+    data.materialInfo = _materialInfo;
     data.particleEmitter = _settings.particleEmitter;
     data.particleAffector = _settings.particleAffector;
     data.particleCount = _settings.quota;
@@ -76,6 +78,16 @@ void ParticleSystemEntity::generateParticles()
     computeSettings.name = _settings.name;
     _vulkanComputeEntity = std::make_unique<VulkanComputeEntity>(std::move(computeSettings));
     _vulkanParticleSystem = std::make_unique<VulkanParticleSystem>(_settings, *_vulkanComputeEntity);
+}
+
+void ParticleSystemEntity::setMaterialInfo(const MaterialInfo& materialInfo)
+{
+    _materialInfo = materialInfo;
+}
+
+MaterialInfo* ParticleSystemEntity::getMaterialInfo()
+{
+    return &_materialInfo;
 }
 
 } // namespace SVE

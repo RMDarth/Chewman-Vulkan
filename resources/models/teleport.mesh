@@ -1,0 +1,6 @@
+{
+    "name": "teleport",
+    "filename": "assets/teleport.DAE",
+    "switchYZ": true,
+    "scale": [ 0.05, 0.05, 0.05 ]
+}

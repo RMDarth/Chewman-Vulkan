@@ -1,0 +1,6 @@
+{
+    "name": "cylinder",
+    "filename": "assets/cylinder.dae",
+    "switchYZ": true,
+    "scale": [ 0.035, 0.035, 0.035 ]
+}

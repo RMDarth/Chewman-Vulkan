@@ -1,9 +1,11 @@
 #version 450
 #extension GL_ARB_separate_shader_objects : enable
+#include "lighting.glsl"
 
 layout(set = 2, binding = 0) uniform sampler2D spritesheet;
 layout(set = 2, binding = 1) uniform UBO
 {
+    MaterialInfo materialInfo;
     ivec2 spritesheetSize;
 } ubo;
 
@@ -31,5 +33,5 @@ vec4 sampleSpritesheet()
 
 void main()
 {
-    outColor = vec4(sampleSpritesheet() + fragColor);
+    outColor = vec4(sampleSpritesheet() * ubo.materialInfo.diffuse + fragColor);
 }

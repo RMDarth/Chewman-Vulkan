@@ -21,7 +21,7 @@ layout(location = 3) in vec3 fragPos;
 layout(location = 0) out vec4 outColor;
 
 void main() {
-    vec3 diffuse = vec3(texture(texSampler, fragTexCoord).rgb);
+    vec4 diffuse = texture(texSampler, fragTexCoord).rgba;
 
     vec3 norm = normalize(fragNormal);
     vec3 viewDir = normalize(ubo.cameraPos.xyz - fragPos);
@@ -37,6 +37,6 @@ void main() {
     if ((ubo.lightInfo.lightFlags & LI_SpotLight) != 0)
         lightEffect += CalcSpotLight(ubo.spotLight, norm, fragPos, viewDir, ubo.materialInfo);
 
-    vec3 result = diffuse * lightEffect * fragColor;
-    outColor = vec4(result, 1.0);
+    vec3 result = diffuse.rgb * lightEffect * fragColor;
+    outColor = vec4(result, diffuse.a);
 }

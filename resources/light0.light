@@ -1,8 +1,8 @@
 {
     "lightType": "SunLight",
-    "diffuseStrength": 1.0,
-    "specularStrength": 0.5,
-    "ambientStrength": 0.2,
+    "diffuseStrength": [ 1.0, 1.0, 1.0, 1.0 ],
+    "specularStrength": [ 0.5, 0.5, 0.5, 1.0 ],
+    "ambientStrength": [ 0.2, 0.2, 0.2, 1.0],
     "shininess": 16,
     "lightColor": [ 1.0, 1.0, 1.0 ],
     "castShadows": true

@@ -1,0 +1,14 @@
+{
+    "name": "TeleportBaseMaterial",
+    "vertexShaderName": "phongVertexShader",
+    "fragmentShaderName": "phongFragmentShader",
+    "cullFace": "None",
+    "useAlphaBlending": true,
+    "useDepthWrite": false,
+    "textures": [
+        {
+            "samplerName": "texSampler",
+            "filename": "textures/teleport/Portal_Circle_MMM_a.png"
+        }
+    ]
+}

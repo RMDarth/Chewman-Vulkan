@@ -57,4 +57,14 @@ bool Entity::isComputeEntity() const
     return false;
 }
 
+void Entity::setMaterialInfo(const MaterialInfo& materialInfo)
+{
+    // do nothing by default
+}
+
+MaterialInfo* Entity::getMaterialInfo()
+{
+    return nullptr;
+}
+
 } // namespace SVE

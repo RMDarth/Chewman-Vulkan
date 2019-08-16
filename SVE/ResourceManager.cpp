@@ -391,9 +391,9 @@ LightSettings loadLight(const std::string& data)
     lightSettings.lightType =  lightTypeMap.at(document["lightType"].GetString());
     lightSettings.lightColor = loadVector(document, "lightColor");
     lightSettings.shininess = document["shininess"].GetFloat();
-    lightSettings.ambientStrength = document["ambientStrength"].GetFloat();
-    lightSettings.specularStrength = document["specularStrength"].GetFloat();
-    lightSettings.diffuseStrength = document["diffuseStrength"].GetFloat();
+    lightSettings.ambientStrength = loadVector<4>(document, "ambientStrength");
+    lightSettings.specularStrength = loadVector<4>(document, "specularStrength");
+    lightSettings.diffuseStrength = loadVector<4>(document, "diffuseStrength");
     setOptional(lightSettings.castShadows = document["castShadows"].GetBool());
     setOptional(lightSettings.secondPoint = loadVector<3>(document, "secondPoint"));
     setOptional(lightSettings.constAtten = document["constAttenuation"].GetFloat());

@@ -3,6 +3,7 @@
 // Licensed under CC BY 4.0
 #pragma once
 #include "Entity.h"
+#include "ShaderSettings.h"
 #include <memory>
 
 namespace SVE
@@ -18,6 +19,8 @@ public:
     ~MeshEntity();
 
     void setMaterial(const std::string& materialName) override;
+    void setMaterialInfo(const MaterialInfo& materialInfo) override;
+    MaterialInfo* getMaterialInfo() override;
     void setCastShadows(bool castShadows);
 
     // TODO: add IsRefracted method
@@ -32,6 +35,7 @@ private:
 private:
     Mesh* _mesh;
     Material* _material;
+    MaterialInfo _materialInfo;
     bool _isReflected = true;
     bool _castShadows = true;
 

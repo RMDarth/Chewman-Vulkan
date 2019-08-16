@@ -1,0 +1,38 @@
+{
+    "name": "TeleportStars",
+    "materialName": "TeleportStarParticleMaterial",
+    "computeShaderName": "particlesComputeShader",
+
+    "quota": 500,
+    "sort": true,
+
+    "particleEmitter":
+    {
+        "direction": [ 0.0, 1.0, 0.0 ],
+        "angle": 0.0,
+        "originRadius": 0.6,
+
+        "emissionRate": 150,
+        "minLife": 0.5,
+        "maxLife": 0.6,
+        "minSpeed": 8.1,
+        "maxSpeed": 8.3,
+        "minSize": 0.5,
+        "maxSize": 0.5,
+        "minRotate": 0,
+        "maxRotate": 0,
+        "colorRangeStart": [ 0.0, 0.0, 0.0, 0.0 ],
+        "colorRangeEnd": [ 0.0, 0.0, 0.0, 0.0 ]
+    },
+    "particleAffector":
+    {
+        "minAcceleration": 0.0,
+        "maxAcceleration": 0.2,
+        "minRotateSpeed": 0,
+        "maxRotateSpeed": 0,
+        "minScaleSpeed": -0.5,
+        "maxScaleSpeed": -0.5,
+
+        "colorChanger": [ 0.0, 0.0, 0.0, 0.0 ]
+    }
+}

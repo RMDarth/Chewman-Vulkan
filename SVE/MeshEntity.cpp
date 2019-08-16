@@ -23,6 +23,7 @@ MeshEntity::MeshEntity(std::string name)
 MeshEntity::MeshEntity(Mesh* mesh)
     : _mesh(mesh)
     , _material(Engine::getInstance()->getMaterialManager()->getMaterial(mesh->getDefaultMaterialName(), true))
+    , _materialInfo { glm::vec4(0), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), 16 }
 {
     if (_material)
     {
@@ -53,8 +54,7 @@ void MeshEntity::updateUniforms(UniformDataList uniformDataList) const
     for (auto& uniformData : uniformDataList)
     {
         // TODO: Load material info data from resources
-        MaterialInfo materialInfo { glm::vec4(0), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), 16 };
-        uniformData->materialInfo = std::move(materialInfo);
+        uniformData->materialInfo = _materialInfo;
     }
 
     UniformData newData = *uniformDataList[toInt(CommandsType::MainPass)];
@@ -153,6 +153,16 @@ void MeshEntity::setupMaterial()
             _pointLightShadowMaterial = Engine::getInstance()->getMaterialManager()->getMaterial("FullDepth");
         }
     }
+}
+
+void MeshEntity::setMaterialInfo(const MaterialInfo& materialInfo)
+{
+    _materialInfo = materialInfo;
+}
+
+MaterialInfo* MeshEntity::getMaterialInfo()
+{
+    return &_materialInfo;
 }
 
 } // namespace SVE

@@ -1,0 +1,17 @@
+{
+    "name": "TeleportStarParticleMaterial",
+    "vertexShaderName": "particlesVertexShader",
+    "geometryShaderName": "particlesGeomShader",
+    "fragmentShaderName": "particlesFragmentShader",
+    "cullFace": "None",
+    "useAlphaBlending": true,
+    "useDepthWrite": false,
+    "textures": [
+        {
+            "samplerName": "spritesheet",
+            "textureType": "ImageFile",
+            "filename": "textures/teleport/Sparkle_sprite_good.png",
+            "spritesheetSize": [ 1, 1 ]
+        }
+    ]
+}

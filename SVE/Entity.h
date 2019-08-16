@@ -10,6 +10,7 @@ namespace SVE
 {
 struct UniformData;
 class SceneNode;
+struct MaterialInfo;
 enum class CommandsType : uint8_t;
 
 using UniformDataList = std::vector<std::shared_ptr<UniformData>>;
@@ -32,6 +33,8 @@ public:
     virtual bool isComputeEntity() const;
 
     virtual void setMaterial(const std::string& materialName);
+    virtual void setMaterialInfo(const MaterialInfo& materialInfo);
+    virtual MaterialInfo* getMaterialInfo();
 
     virtual void updateUniforms(UniformDataList uniformDataList) const = 0;
     virtual void applyDrawingCommands(uint32_t bufferIndex, uint32_t imageIndex) const = 0;

@@ -195,6 +195,11 @@ void GameMap::CreateGargoyle(int row, int column, char mapType)
     rootGargoyleNode->attachSceneNode(particlesNode);
     _mapNode->attachSceneNode(rootGargoyleNode);
     std::shared_ptr<SVE::ParticleSystemEntity> particleSystem = std::make_shared<SVE::ParticleSystemEntity>("FireParticle");
+    {
+        auto &emitter = particleSystem->getSettings().particleEmitter;
+        emitter.minLife = 0;
+        emitter.maxLife = 0;
+    }
     particlesNode->attachEntity(particleSystem);
     gargoyle.particleSystem = particleSystem;
 
@@ -202,9 +207,9 @@ void GameMap::CreateGargoyle(int row, int column, char mapType)
     SVE::LightSettings lightSettings {};
     lightSettings.lightType = SVE::LightType::LineLight;
     lightSettings.castShadows = false;
-    lightSettings.diffuseStrength = 1.0f;
-    lightSettings.specularStrength = 0.5f;
-    lightSettings.ambientStrength = 0.2f;
+    lightSettings.diffuseStrength = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+    lightSettings.specularStrength = glm::vec4(0.5f, 0.5f, 0.5f, 1.0f);
+    lightSettings.ambientStrength = glm::vec4(0.2f, 0.2f, 0.2f, 1.0f);
     lightSettings.shininess = 16;
     lightSettings.constAtten = 1.0f * 0.8f;
     lightSettings.linearAtten = 0.35f * 0.05f;

@@ -1,0 +1,14 @@
+{
+    "name": "TeleportCircleMaterial",
+    "vertexShaderName": "phongVertexShader",
+    "fragmentShaderName": "phongFragmentShader",
+    "cullFace": "None",
+    "useAlphaBlending": true,
+    "useDepthWrite": false,
+    "textures": [
+        {
+            "samplerName": "texSampler",
+            "filename": "textures/teleport/Gradient_2_a.png"
+        }
+    ]
+}
