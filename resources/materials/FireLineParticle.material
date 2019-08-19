@@ -1,10 +1,12 @@
 {
-    "name": "ParticleMaterial",
+    "name": "FireParticleMaterial",
     "vertexShaderName": "particlesVertexShader",
     "geometryShaderName": "particlesGeomShader",
     "fragmentShaderName": "particlesFragmentShader",
     "cullFace": "None",
     "useAlphaBlending": true,
+    "srcBlendFactor": "SrcAlpha",
+    "dstBlendFactor": "One",
     "useDepthWrite": false,
     "textures": [
         {

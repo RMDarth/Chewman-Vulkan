@@ -1,6 +1,6 @@
 {
-    "name": "FireLineParticle",
-    "materialName": "FireParticleMaterial",
+    "name": "FrostLineParticle",
+    "materialName": "FrostLineParticleMaterial",
     "computeShaderName": "particlesComputeShader",
 
     "quota": 4000,
@@ -12,13 +12,13 @@
         "angle": 0.0,
         "originRadius": 0.1,
 
-        "emissionRate": 200,
+        "emissionRate": 250,
         "minLife": 6,
         "maxLife": 6,
         "minSpeed": 6.0,
         "maxSpeed": 6.0,
-        "minSize": 0.7,
-        "maxSize": 0.8,
+        "minSize": 1.0,
+        "maxSize": 1.3,
         "minRotate": -3.14,
         "maxRotate": 3.14,
         "colorRangeStart": [ 0.0, 0.0, 0.0, 0.0 ],

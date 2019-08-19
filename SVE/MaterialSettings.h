@@ -42,6 +42,16 @@ enum class MaterialCullFace : uint8_t
     None
 };
 
+enum class BlendFactor : uint8_t
+{
+    SrcAlpha,
+    DstAlpha,
+    OneMinusSrcAlpha,
+    OneMinusDstAlpha,
+    One,
+    Zero
+};
+
 struct TextureInfo
 {
     TextureType textureType = TextureType::ImageFile;
@@ -69,6 +79,8 @@ struct MaterialSettings
     bool useDepthBias = false;
     bool useMultisampling = true;
     bool useAlphaBlending = false;
+    BlendFactor srcBlendFactor = BlendFactor::SrcAlpha;
+    BlendFactor dstBlendFactor = BlendFactor::OneMinusSrcAlpha;
     MaterialCullFace cullFace = MaterialCullFace::FrontFace;
     CommandsType passType = CommandsType::MainPass; // used to select correct renderpass
 };

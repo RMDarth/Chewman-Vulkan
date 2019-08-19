@@ -1,6 +1,6 @@
 {
     "name": "FireParticle2",
-    "materialName": "ParticleMaterial",
+    "materialName": "FireParticleMaterial",
     "computeShaderName": "particlesComputeShader",
 
     "quota": 1984,

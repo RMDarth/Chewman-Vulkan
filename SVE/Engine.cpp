@@ -361,7 +361,7 @@ void Engine::renderFrame()
 
     _sceneManager->getLightManager()->getDirectionLight()->updateViewMatrix(_sceneManager->getMainCamera()->getPosition());
     _sceneManager->getLightManager()->fillUniformData(*uniformDataList[toInt(CommandsType::ShadowPassDirectLight)], LightType::SunLight);
-    _sceneManager->getLightManager()->fillUniformData(*uniformDataList[toInt(CommandsType::ShadowPassPointLights)], LightType::PointLight);
+    _sceneManager->getLightManager()->fillUniformData(*uniformDataList[toInt(CommandsType::ShadowPassPointLights)], LightType::ShadowPointLight);
     for (auto i = 0u; i < PassCount; i++)
     {
         if (i == toInt(CommandsType::ShadowPassDirectLight) || i == toInt(CommandsType::ShadowPassPointLights))

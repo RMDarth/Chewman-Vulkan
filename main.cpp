@@ -174,7 +174,6 @@ glm::quat rotationBetweenVectors(glm::vec3 start, glm::vec3 dest){
             rotationAxis.y * invs,
             rotationAxis.z * invs
     );
-
 }
 
 SVE::MeshSettings constructPlane(std::string name, glm::vec3 center, float width, float height, glm::vec3 normal)
@@ -237,9 +236,14 @@ auto CreateTeleport(SVE::Engine* engine, glm::vec3 position, glm::vec3 color)
         engine->getMeshManager()->registerMesh(teleportBaseMesh);
     });
 
-    auto adjustColor = [](float comp)
+    auto adjustColor = [](float comp, float step = 0.4f)
     {
-        return comp < 0.01f ? 0.4f : comp;
+        return comp < 0.01f ? step : comp;
+    };
+
+    auto adjustColor3 = [&adjustColor](glm::vec3 color, float num)
+    {
+        return glm::vec3(adjustColor(color.r, num), adjustColor(color.g, num), adjustColor(color.b, num));
     };
 
     auto teleportNode = engine->getSceneManager()->createSceneNode();
@@ -249,54 +253,53 @@ auto CreateTeleport(SVE::Engine* engine, glm::vec3 position, glm::vec3 color)
     teleportPS->getMaterialInfo()->diffuse = glm::vec4(color, 1.0f);
     teleportNode->attachEntity(teleportPS);
 
-    auto teleportBaseNode = engine->getSceneManager()->createSceneNode();
     auto teleportCircleNode = engine->getSceneManager()->createSceneNode();
+    auto teleportGlowNode = engine->getSceneManager()->createSceneNode();
     auto teleportLightNode = engine->getSceneManager()->createSceneNode();
     auto teleportPlatformNode = engine->getSceneManager()->createSceneNode();
-    teleportNode->attachSceneNode(teleportBaseNode);
     teleportNode->attachSceneNode(teleportCircleNode);
+    teleportNode->attachSceneNode(teleportGlowNode);
     teleportNode->attachSceneNode(teleportLightNode);
     teleportNode->attachSceneNode(teleportPlatformNode);
     {
         teleportPlatformNode->setNodeTransformation(glm::translate(glm::mat4(1), glm::vec3(-1.0, -0.2, 1.0)));
         std::shared_ptr<SVE::MeshEntity> teleportPlatformEntity = std::make_shared<SVE::MeshEntity>("teleport");
         teleportPlatformEntity->setMaterial("TeleportPlatformMaterial");
-        teleportPlatformEntity->getMaterialInfo()->diffuse = { adjustColor(color.r), adjustColor(color.r), adjustColor(color.b), 1.0f };
+        teleportPlatformEntity->getMaterialInfo()->diffuse = { adjustColor3(color, 0.4f), 1.0f };
         teleportPlatformNode->attachEntity(teleportPlatformEntity);
 
         std::shared_ptr<SVE::MeshEntity> teleportBaseEntity = std::make_shared<SVE::MeshEntity>("TeleportBase");
         teleportBaseEntity->setRenderLast();
         teleportBaseEntity->setCastShadows(false);
-        //teleportBaseEntity->getMaterialInfo()->diffuse = { 1.0f, 0.0f, 0.0f, 1.0f };
-        teleportBaseNode->attachEntity(teleportBaseEntity);
+        teleportBaseEntity->getMaterialInfo()->diffuse = { adjustColor3(color, 0.6f), 2.0f };
+        teleportCircleNode->attachEntity(teleportBaseEntity);
 
         std::shared_ptr<SVE::MeshEntity> teleportCircleEntity = std::make_shared<SVE::MeshEntity>("cylinder");
         teleportCircleEntity->setMaterial("TeleportCircleMaterial");
         teleportCircleEntity->setRenderLast();
         teleportCircleEntity->setCastShadows(false);
-        //teleportCircleEntity->getMaterialInfo()->diffuse = { 1.0f, 0.0f, 0.0f, 1.0f };
-        teleportCircleNode->attachEntity(teleportCircleEntity);
+        teleportCircleEntity->getMaterialInfo()->diffuse = { adjustColor3(color, 0.6f), 2.0f };
+        teleportGlowNode->attachEntity(teleportCircleEntity);
 
         // Add light effect
-        teleportLightNode->setNodeTransformation(glm::translate(glm::mat4(1), glm::vec3(0, 1.0, 0)));
+        teleportLightNode->setNodeTransformation(glm::translate(glm::mat4(1), glm::vec3(0, 1.5, 0)));
         SVE::LightSettings lightSettings {};
-        lightSettings.lightType = SVE::LightType::LineLight;
-        lightSettings.secondPoint = position + glm::vec3(0, -0.7, 0.0);
+        lightSettings.lightType = SVE::LightType::PointLight;
         lightSettings.castShadows = false;
         lightSettings.diffuseStrength = glm::vec4(color, 1.0f);
         lightSettings.specularStrength = glm::vec4(color * 0.5f, 1.0f);
         lightSettings.ambientStrength = { color * 0.2f, 1.0f };
         lightSettings.shininess = 16;
         lightSettings.constAtten = 1.0f * 1.8f;
-        lightSettings.linearAtten = 0.35f * 0.05f;
-        lightSettings.quadAtten = 0.44f * 0.05f;
+        lightSettings.linearAtten = 0.35f * 0.25f;
+        lightSettings.quadAtten = 0.44f * 0.25f;
         auto lightManager = engine->getSceneManager()->getLightManager();
         auto lightNode = std::make_shared<SVE::LightNode>(lightSettings, lightManager->getLightCount());
         lightManager->setLight(lightNode, lightManager->getLightCount());
         teleportLightNode->attachSceneNode(lightNode);
     }
 
-    return std::make_tuple(teleportBaseNode, teleportCircleNode);
+    return std::make_tuple(teleportCircleNode, teleportGlowNode);
 }
 
 int runGame()
@@ -340,7 +343,7 @@ int runGame()
         auto particleNode = engine->getSceneManager()->createSceneNode();
         particleNode->setNodeTransformation(glm::translate(glm::mat4(1), glm::vec3(3, 5, 0)));
         engine->getSceneManager()->getRootNode()->attachSceneNode(particleNode);
-        std::shared_ptr<SVE::ParticleSystemEntity> particleSystem = std::make_shared<SVE::ParticleSystemEntity>("FireParticle");
+        std::shared_ptr<SVE::ParticleSystemEntity> particleSystem = std::make_shared<SVE::ParticleSystemEntity>("FireLineParticle");
         //particleNode->attachEntity(particleSystem);
 
         engine->getSceneManager()->getLightManager()->removeLight(0);
@@ -374,15 +377,15 @@ int runGame()
 
         // Create level floor
         Chewman::GameMap gameMap;
-        gameMap.LoadMap("resources/game/levels/level1.map");
+        gameMap.LoadMap("resources/game/levels/level5.map");
 
         // create teleport test
-        std::array<std::shared_ptr<SVE::SceneNode>, 4> baseNodes;
-        std::array<std::shared_ptr<SVE::SceneNode>, 4> circleNodes;
-        std::tie(baseNodes[0], circleNodes[0]) = CreateTeleport(engine, glm::vec3(9, 0.2, -3), glm::vec3(1.0, 0.0, 0.0));
-        std::tie(baseNodes[1], circleNodes[1]) = CreateTeleport(engine, glm::vec3(18, 0.2, -3), glm::vec3(0.0, 1.0, 0.0));
-        std::tie(baseNodes[2], circleNodes[2]) = CreateTeleport(engine, glm::vec3(18, 0.2, -18), glm::vec3(1.0, 0.0, 1.0));
-        std::tie(baseNodes[3], circleNodes[3]) = CreateTeleport(engine, glm::vec3(3, 0.2, -9), glm::vec3(0.0, 1.0, 1.0));
+        std::array<std::shared_ptr<SVE::SceneNode>, 0> baseNodes;
+        std::array<std::shared_ptr<SVE::SceneNode>, 0> circleNodes;
+        //std::tie(baseNodes[0], circleNodes[0]) = CreateTeleport(engine, glm::vec3(9, 0.2, -3), glm::vec3(1.0, 0.0, 0.0));
+        //std::tie(baseNodes[1], circleNodes[1]) = CreateTeleport(engine, glm::vec3(18, 0.2, -3), glm::vec3(0.0, 1.0, 0.0));
+        //std::tie(baseNodes[2], circleNodes[2]) = CreateTeleport(engine, glm::vec3(18, 0.2, -18), glm::vec3(1.0, 0.0, 1.0));
+        //std::tie(baseNodes[3], circleNodes[3]) = CreateTeleport(engine, glm::vec3(3, 0.2, -9), glm::vec3(0.0, 1.0, 1.0));
 
         // create nodes
         auto newNodeMid = engine->getSceneManager()->createSceneNode();
@@ -402,7 +405,7 @@ int runGame()
 
         // create entities
         std::shared_ptr<SVE::Entity> meshEntity = std::make_shared<SVE::MeshEntity>("trashman");
-        std::shared_ptr<SVE::Entity> meshEntity2 = std::make_shared<SVE::MeshEntity>("trashman");
+        std::shared_ptr<SVE::Entity> meshEntity2 = std::make_shared<SVE::MeshEntity>("nun");
         std::shared_ptr<SVE::Entity> terrainEntity = std::make_shared<SVE::MeshEntity>("terrain");
         std::shared_ptr<SVE::Entity> floorEntity = std::make_shared<SVE::MeshEntity>("Floor");
         std::shared_ptr<SVE::MeshEntity> waterEntity = std::make_shared<SVE::MeshEntity>("WaterMesh");
@@ -410,7 +413,7 @@ int runGame()
         waterEntity->setIsReflected(false);
         waterEntity->setCastShadows(true);
         meshEntity->setMaterial("Yellow");
-        meshEntity2->setMaterial("Blue");
+        meshEntity2->setMaterial("NunMaterial");
         terrainEntity->setMaterial("Terrain");
         //bigFloorEntity->setMaterial("TestMaterial");
 
@@ -467,6 +470,22 @@ int runGame()
                 if (event.type == SDL_KEYUP)
                 {
                     if (event.key.keysym.sym == SDLK_SPACE)
+                    {
+                        static bool isNight = false;
+                        if (isNight)
+                        {
+                            sunLight->getLightSettings().ambientStrength = {0.2f, 0.2f, 0.2f, 1.0f};
+                            sunLight->getLightSettings().diffuseStrength = {1.0f, 1.0f, 1.0f, 1.0f};
+                            sunLight->getLightSettings().specularStrength = {0.5f, 0.5f, 0.5f, 1.0f};
+                            isNight = false;
+                        } else {
+                            isNight = true;
+                            sunLight->getLightSettings().ambientStrength = {0.05f, 0.05f, 0.05f, 1.0f};
+                            sunLight->getLightSettings().diffuseStrength = {0.1f, 0.1f, 0.1f, 1.0f};
+                            sunLight->getLightSettings().specularStrength = {0.05f, 0.05f, 0.05f, 1.0f};
+                        }
+                    }
+                    if (event.key.keysym.sym == SDLK_j)
                     {
                         if (newNode2->getAttachedEntities().empty())
                         {

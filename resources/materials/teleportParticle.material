@@ -5,6 +5,8 @@
     "fragmentShaderName": "particlesFragmentShader",
     "cullFace": "None",
     "useAlphaBlending": true,
+    "srcBlendFactor": "SrcAlpha",
+    "dstBlendFactor": "One",
     "useDepthWrite": false,
     "textures": [
         {

@@ -103,6 +103,7 @@ Mesh::Mesh(MeshLoadSettings meshLoadSettings)
                 meshSettings.vertexTangentData.emplace_back(mesh->mTangents[v].x, mesh->mTangents[v].z, mesh->mTangents[v].y);
             } else {
                 meshSettings.vertexPosData.emplace_back(mesh->mVertices[v].x, mesh->mVertices[v].y, mesh->mVertices[v].z);
+                meshSettings.vertexPosData.back() *= meshLoadSettings.scale;
                 meshSettings.vertexColorData.emplace_back(1.0f, 1.0f, 1.0f);
                 meshSettings.vertexTexData.emplace_back(mesh->mTextureCoords[0][v].x, 1.0f - mesh->mTextureCoords[0][v].y);
                 meshSettings.vertexNormalData.emplace_back(mesh->mNormals[v].x, mesh->mNormals[v].y, mesh->mNormals[v].z);

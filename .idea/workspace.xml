@@ -13,32 +13,52 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f70505ef-ae5c-44c4-ba16-f4e316506723" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/resources/materials/teleportBase.material" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/resources/materials/teleportCircle.material" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/resources/materials/teleportParticle.material" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/resources/materials/teleportPlatform.material" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/resources/models/cylinder.mesh" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/resources/models/teleport.mesh" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/resources/shaders/particlesFragSimple.shader" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/resources/teleportStars.particle" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Game/Teleport.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/resources/frostline.particle" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/resources/materials/frostGargoyle.material" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/resources/materials/nun.material" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/resources/models/nun.mesh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/resources/shaders/SimpleColorFrag.shader" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/resources/shaders/glsl/coldParticles.frag" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/resources/shaders/glsl/lightCalculation.glsl" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/resources/shaders/glsl/simpleColor.frag" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dictionaries/darth.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dictionaries/darth.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Game/GameMap.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Game/GameMap.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SVE/Entity.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/SVE/Entity.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SVE/Entity.h" beforeDir="false" afterPath="$PROJECT_DIR$/SVE/Entity.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Game/GameMap.h" beforeDir="false" afterPath="$PROJECT_DIR$/Game/GameMap.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SVE/Engine.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/SVE/Engine.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SVE/LightManager.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/SVE/LightManager.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SVE/LightNode.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/SVE/LightNode.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/SVE/LightSettings.h" beforeDir="false" afterPath="$PROJECT_DIR$/SVE/LightSettings.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SVE/MeshEntity.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/SVE/MeshEntity.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SVE/MeshEntity.h" beforeDir="false" afterPath="$PROJECT_DIR$/SVE/MeshEntity.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SVE/ParticleSystemEntity.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/SVE/ParticleSystemEntity.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SVE/ParticleSystemEntity.h" beforeDir="false" afterPath="$PROJECT_DIR$/SVE/ParticleSystemEntity.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SVE/MaterialSettings.h" beforeDir="false" afterPath="$PROJECT_DIR$/SVE/MaterialSettings.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SVE/Mesh.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/SVE/Mesh.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/SVE/ResourceManager.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/SVE/ResourceManager.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SVE/ShaderSettings.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/SVE/ShaderSettings.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SVE/ShaderSettings.h" beforeDir="false" afterPath="$PROJECT_DIR$/SVE/ShaderSettings.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SVE/ShadowMap.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/SVE/ShadowMap.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SVE/VulkanMaterial.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/SVE/VulkanMaterial.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SVE/VulkanShaderInfo.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/SVE/VulkanShaderInfo.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/main.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/light0.light" beforeDir="false" afterPath="$PROJECT_DIR$/resources/light0.light" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/fire.particle" beforeDir="false" afterPath="$PROJECT_DIR$/resources/fire.particle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/fireline.particle" beforeDir="false" afterPath="$PROJECT_DIR$/resources/fireline.particle" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/resources/light1.light" beforeDir="false" afterPath="$PROJECT_DIR$/resources/light1.light" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/resources/light2.light" beforeDir="false" afterPath="$PROJECT_DIR$/resources/light2.light" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/materials/particles.material" beforeDir="false" afterPath="$PROJECT_DIR$/resources/materials/FireLineParticle.material" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/materials/teleportBase.material" beforeDir="false" afterPath="$PROJECT_DIR$/resources/materials/teleportBase.material" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/materials/teleportCircle.material" beforeDir="false" afterPath="$PROJECT_DIR$/resources/materials/teleportCircle.material" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/materials/teleportParticle.material" beforeDir="false" afterPath="$PROJECT_DIR$/resources/materials/teleportParticle.material" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/shaders/glsl/lighting.glsl" beforeDir="false" afterPath="$PROJECT_DIR$/resources/shaders/glsl/lighting.glsl" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/shaders/glsl/parallaxAndShadowMap.frag" beforeDir="false" afterPath="$PROJECT_DIR$/resources/shaders/glsl/parallaxAndShadowMap.frag" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/resources/shaders/glsl/particles.frag" beforeDir="false" afterPath="$PROJECT_DIR$/resources/shaders/glsl/particles.frag" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/shaders/glsl/phong.frag" beforeDir="false" afterPath="$PROJECT_DIR$/resources/shaders/glsl/phong.frag" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/shaders/particlesFrag.shader" beforeDir="false" afterPath="$PROJECT_DIR$/resources/shaders/particlesFrag.shader" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/shaders/glsl/phongNormalAndShadowMap.frag" beforeDir="false" afterPath="$PROJECT_DIR$/resources/shaders/glsl/phongNormalAndShadowMap.frag" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/shaders/glsl/phongShadowMap.frag" beforeDir="false" afterPath="$PROJECT_DIR$/resources/shaders/glsl/phongShadowMap.frag" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/shaders/glsl/phongWater.frag" beforeDir="false" afterPath="$PROJECT_DIR$/resources/shaders/glsl/phongWater.frag" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/shaders/parallaxShadowFrag.shader" beforeDir="false" afterPath="$PROJECT_DIR$/resources/shaders/parallaxShadowFrag.shader" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/shaders/particlesFragSimple.shader" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/shaders/phongNormalShadowFrag.shader" beforeDir="false" afterPath="$PROJECT_DIR$/resources/shaders/phongNormalShadowFrag.shader" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/shaders/phongShadowFrag.shader" beforeDir="false" afterPath="$PROJECT_DIR$/resources/shaders/phongShadowFrag.shader" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/shaders/phongWaterFrag.shader" beforeDir="false" afterPath="$PROJECT_DIR$/resources/shaders/phongWaterFrag.shader" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -108,19 +128,19 @@
     <property name="settings.editor.selected.configurable" value="preferences.keymap" />
   </component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/resources/materials" />
+      <recent name="$PROJECT_DIR$/resources/models" />
+      <recent name="$PROJECT_DIR$/resources" />
+      <recent name="$PROJECT_DIR$/resources/shaders" />
+      <recent name="$PROJECT_DIR$/resources/shaders/glsl" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="E:\Projects\Chewman\resources\shaders" />
       <recent name="E:\Projects\Chewman\resources\models" />
       <recent name="E:\Projects\Chewman\resources\models\assets" />
       <recent name="E:\Projects\Chewman\resources\materials" />
       <recent name="E:\Projects\Chewman\resources\shaders\glsl" />
-    </key>
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/resources/materials" />
-      <recent name="$PROJECT_DIR$/resources/models" />
-      <recent name="$PROJECT_DIR$/resources/shaders" />
-      <recent name="$PROJECT_DIR$/resources" />
-      <recent name="E:\Projects\Chewman\resources\materials" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -258,7 +278,8 @@
       <workItem from="1565032951932" duration="2851000" />
       <workItem from="1565511636404" duration="1586000" />
       <workItem from="1565519216904" duration="75259000" />
-      <workItem from="1565892824294" duration="26902000" />
+      <workItem from="1565892824294" duration="48685000" />
+      <workItem from="1566125405112" duration="16090000" />
     </task>
     <task id="LOCAL-00001" summary="Adding core SVE classes">
       <created>1536429263360</created>
@@ -491,7 +512,14 @@
       <option name="project" value="LOCAL" />
       <updated>1565737254222</updated>
     </task>
-    <option name="localTasksCounter" value="34" />
+    <task id="LOCAL-00034" summary="Adding basic Chewman teleport support, with different colors">
+      <created>1565991909833</created>
+      <option name="number" value="00034" />
+      <option name="presentableId" value="LOCAL-00034" />
+      <option name="project" value="LOCAL" />
+      <updated>1565991909833</updated>
+    </task>
+    <option name="localTasksCounter" value="35" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -526,7 +554,6 @@
   <component name="VcsManagerConfiguration">
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_NEW_TODO" value="false" />
-    <MESSAGE value="Fixing window resize" />
     <MESSAGE value="Adding first version of shadowmapping" />
     <MESSAGE value="Fixing shadowmap, refactoring interfaces" />
     <MESSAGE value="Adding vulkan shadowmap class" />
@@ -551,7 +578,8 @@
     <MESSAGE value="Updating particle system manager (adding particlesettings map to create PS by name)" />
     <MESSAGE value="Adding gargoyle support for Chewman, with correct models, effects and lighting" />
     <MESSAGE value="Fixing fireline shaders, updating resources" />
-    <option name="LAST_COMMIT_MESSAGE" value="Fixing fireline shaders, updating resources" />
+    <MESSAGE value="Adding basic Chewman teleport support, with different colors" />
+    <option name="LAST_COMMIT_MESSAGE" value="Adding basic Chewman teleport support, with different colors" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -560,11 +588,6 @@
           <url>file://$PROJECT_DIR$/SVE/VulkanUtils.cpp</url>
           <line>216</line>
           <option name="timeStamp" value="61" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/SVE/ParticleSystemEntity.cpp</url>
-          <line>43</line>
-          <option name="timeStamp" value="62" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

@@ -9,6 +9,7 @@
 #include "SVE/Mesh.h"
 #include "BlockMeshGenerator.h"
 #include "Gargoyle.h"
+#include "Teleport.h"
 
 namespace Chewman
 {
@@ -35,7 +36,11 @@ public:
 private:
     void InitMeshes();
     void CreateGargoyle(int row, int column, char mapType);
-    void UpdateGargoyle(Gargoyle& gargoyle);
+    void FinalizeGargoyle(Gargoyle& gargoyle);
+
+    void InitTeleportMesh();
+    void CreateTeleport(int row, int column, char mapType);
+    void UpdateTeleport(float time, Teleport& teleport);
 
 private:
     BlockMeshGenerator _meshGenerator;
@@ -45,6 +50,7 @@ private:
     std::shared_ptr<SVE::MeshEntity> _mapEntity[3];
 
     std::vector<Gargoyle> _gargoyles;
+    std::vector<Teleport> _teleports;
 
     Map _mapData;
     size_t _width;

@@ -33,5 +33,6 @@ vec4 sampleSpritesheet()
 
 void main()
 {
-    outColor = vec4(sampleSpritesheet() * ubo.materialInfo.diffuse + fragColor);
+    vec4 result = sampleSpritesheet() * ubo.materialInfo.diffuse;
+    outColor = vec4(vec4(result.rgb, result.a) + fragColor);
 }

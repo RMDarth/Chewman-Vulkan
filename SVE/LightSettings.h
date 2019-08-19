@@ -9,6 +9,7 @@ namespace SVE
 
 enum class LightType : uint8_t
 {
+    ShadowPointLight,
     PointLight,
     SunLight,
     SpotLight,
@@ -104,7 +105,7 @@ struct LightInfo
     uint32_t lightFlags = 0;
     uint32_t lightShadowFlags = 0;
     uint32_t lightLineNum = 0;
-    float _padding[1];
+    uint32_t pointLightNum = 0;
 };
 
 } // namespace SVE

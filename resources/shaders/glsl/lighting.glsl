@@ -1,4 +1,5 @@
-// Lighting functions based on code from learnopengl.com
+// Copyright (c) 2018-2019, Igor Barinov
+// Some lighting functions based on code from learnopengl.com
 
 struct DirLight
 {
@@ -83,7 +84,7 @@ struct LightInfo
     uint lightFlags;
     uint lightShadowFlags;
     uint lightLineNum;
-    // float[1] padding
+    uint lightPointsNum;
 };
 
 struct MaterialInfo

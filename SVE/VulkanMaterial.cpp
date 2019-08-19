@@ -316,15 +316,37 @@ void VulkanMaterial::createPipeline()
     depthStencilCreateInfo.stencilTestEnable = VK_FALSE;
 
     // Blending
+    auto blendFactorToVulkan = [](BlendFactor blendFactor)
+    {
+        switch (blendFactor)
+        {
+            case BlendFactor::SrcAlpha:
+                return VK_BLEND_FACTOR_SRC_ALPHA;
+            case BlendFactor::DstAlpha:
+                return VK_BLEND_FACTOR_DST_ALPHA;
+            case BlendFactor::OneMinusSrcAlpha:
+                return VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
+            case BlendFactor::OneMinusDstAlpha:
+                return VK_BLEND_FACTOR_ONE_MINUS_DST_ALPHA;
+            case BlendFactor::One:
+                return VK_BLEND_FACTOR_ONE;
+            case BlendFactor::Zero:
+                return VK_BLEND_FACTOR_ZERO;
+        }
+
+        assert(!"Bad blending value");
+        return VK_BLEND_FACTOR_SRC_ALPHA;
+    };
+
     VkPipelineColorBlendAttachmentState colorBlendAttachment{};
     colorBlendAttachment.colorWriteMask =
             VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
     colorBlendAttachment.blendEnable = _materialSettings.useAlphaBlending ? VK_TRUE : VK_FALSE;
-    colorBlendAttachment.srcColorBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
-    colorBlendAttachment.dstColorBlendFactor = VK_BLEND_FACTOR_ONE;
+    colorBlendAttachment.srcColorBlendFactor = blendFactorToVulkan(_materialSettings.srcBlendFactor);
+    colorBlendAttachment.dstColorBlendFactor = blendFactorToVulkan(_materialSettings.dstBlendFactor);
     colorBlendAttachment.colorBlendOp = VK_BLEND_OP_ADD;
-    colorBlendAttachment.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
-    colorBlendAttachment.dstAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
+    colorBlendAttachment.srcAlphaBlendFactor = blendFactorToVulkan(_materialSettings.srcBlendFactor);
+    colorBlendAttachment.dstAlphaBlendFactor = blendFactorToVulkan(_materialSettings.dstBlendFactor);;
     colorBlendAttachment.alphaBlendOp = VK_BLEND_OP_ADD;
 
     VkPipelineColorBlendStateCreateInfo blendingCreateInfo{};

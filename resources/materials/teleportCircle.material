@@ -1,9 +1,11 @@
 {
     "name": "TeleportCircleMaterial",
     "vertexShaderName": "phongVertexShader",
-    "fragmentShaderName": "phongFragmentShader",
+    "fragmentShaderName": "simpleColorFragmentShader",
     "cullFace": "None",
     "useAlphaBlending": true,
+    "srcBlendFactor": "SrcAlpha",
+    "dstBlendFactor": "OneMinusSrcAlpha",
     "useDepthWrite": false,
     "textures": [
         {

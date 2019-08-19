@@ -1,0 +1,12 @@
+{
+    "name": "NunMaterial",
+    "vertexShaderName": "bonesPhongVertexShader",
+    "fragmentShaderName": "phongFragmentShader",
+    "cullFace": "BackFace",
+    "textures": [
+        {
+            "samplerName": "texSampler",
+            "filename": "textures/trashnun_dressed_tex.png"
+        }
+    ]
+}

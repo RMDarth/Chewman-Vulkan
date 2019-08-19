@@ -9,6 +9,11 @@ layout(set = 1, binding = 3) uniform UBO
 {
     vec4 cameraPos;
     DirLight dirLight;
+    SpotLight spotLight;
+    PointLight shadowPointLight[4];
+    LineLight lineLight[15];
+    PointLight pointLight[10];
+    LightInfo lightInfo;
     MaterialInfo materialInfo;
     float time;
 } ubo;
@@ -21,13 +26,21 @@ layout(location = 4) in vec4 fragClipPosition;
 
 layout(location = 0) out vec4 outColor;
 
-const float waveStrength = 0.02;
+const float waveStrength = 0.005; // 0.02
 
 void main() {
     vec3 norm = normalize(fragNormal);
     vec3 viewDir = normalize(ubo.cameraPos.xyz - fragPos);
 
     vec3 lightEffect = CalcDirLight(ubo.dirLight, fragNormal, viewDir, ubo.materialInfo);
+    for (uint i = 0; i < ubo.lightInfo.lightLineNum; i++)
+    {
+        lightEffect += CalcLineLight(ubo.lineLight[i], fragNormal, fragPos, viewDir, ubo.materialInfo);
+    }
+    for (uint i = 0; i < ubo.lightInfo.lightPointsNum; i++)
+    {
+        lightEffect += CalcPointLight(ubo.pointLight[i], fragNormal, fragPos, viewDir, ubo.materialInfo);
+    }
 
     vec3 ndc = (fragClipPosition.xyz / fragClipPosition.w) * 0.5 + 0.5;
     vec2 reflectionCoord = vec2(ndc.x, 1 - ndc.y);

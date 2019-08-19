@@ -27,6 +27,7 @@ enum class UniformType : uint8_t
     LightInfo,
     LightDirectional,
     LightPoint,
+    LightPointSimple,
     LightSpot,
     LightLine,
     LightPointViewProjectionList,
@@ -78,6 +79,7 @@ struct UniformData
     float deltaTime = 0;
     MaterialInfo materialInfo {};
     DirLight dirLight {};
+    std::vector<PointLight> shadowPointLightList;
     std::vector<PointLight> pointLightList;
     std::vector<LineLight> lineLightList;
     SpotLight spotLight {};
@@ -127,11 +129,12 @@ struct ShaderSettings
     std::vector<std::string> samplerNamesList;
     std::vector<BufferType> bufferList; // currently only supported in compute shaders
     uint32_t maxBonesSize = 0;
-    uint32_t maxPointLightSize = 4;
+    uint32_t maxShadowPointLightSize = 4;
+    uint32_t maxPointLightSize = 10;
     uint32_t maxLineLightSize = 15;
     uint32_t maxLightSize = 6;
     uint32_t maxCascadeLightSize = 5;
-    uint32_t maxViewProjectionMatrices = 6 * maxPointLightSize;
+    uint32_t maxViewProjectionMatrices = 6 * maxShadowPointLightSize;
 
     std::string entryPoint = "main";
 };

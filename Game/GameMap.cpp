@@ -9,16 +9,96 @@
 #include "SVE/LightNode.h"
 
 #include <fstream>
+#define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtx/quaternion.hpp>
 
 namespace Chewman
 {
+namespace
+{
 constexpr float CellSize = 3.0f;
+
+glm::quat rotationBetweenVectors(glm::vec3 start, glm::vec3 dest)
+{
+    start = normalize(start);
+    dest = normalize(dest);
+
+    float cosTheta = dot(start, dest);
+    glm::vec3 rotationAxis;
+
+    rotationAxis = cross(start, dest);
+
+    float s = sqrt( (1+cosTheta)*2 );
+    float invs = 1 / s;
+
+    return glm::quat(
+            s * 0.5f,
+            rotationAxis.x * invs,
+            rotationAxis.y * invs,
+            rotationAxis.z * invs
+    );
+}
+
+SVE::MeshSettings constructPlane(std::string name, glm::vec3 center, float width, float height, glm::vec3 normal)
+{
+    std::vector<glm::vec3> points =
+            {
+                    {-1.0f,  0.0f,  1.0f},
+                    {-1.0f,  0.0f, -1.0f},
+                    {1.0f,   0.0f, -1.0f},
+                    {1.0f,   0.0f, -1.0f},
+                    {1.0f,   0.0f, 1.0f},
+                    {-1.0f,  0.0f, 1.0f},
+            };
+    std::vector<glm::vec2> texCoords =
+            {
+                    {0, 0},
+                    {0, 1},
+                    {1, 1},
+                    {1, 1},
+                    {1, 0},
+                    {0, 0}
+            };
+    std::vector<uint32_t> indexes;
+    std::vector<glm::vec3> normals(6, normal);
+    std::vector<glm::vec3> colors(6, glm::vec3(1.0f, 1.0f, 1.0f));
+
+    uint32_t currentIndex = 0;
+    for (auto& point : points)
+    {
+        auto mat = glm::toMat4(rotationBetweenVectors(glm::vec3(0.0, 1.0, 0.0), normal));
+        mat = mat * glm::scale(glm::mat4(1), glm::vec3(width, 0, height));
+        point = glm::vec3(mat * glm::vec4(point, 1.0f));
+        point += center;
+
+        indexes.push_back(currentIndex++);
+    }
+
+    SVE::MeshSettings settings {};
+
+    settings.name = std::move(name);
+    settings.vertexPosData = std::move(points);
+    settings.vertexTexData = std::move(texCoords);
+    settings.vertexNormalData = std::move(normals);
+    settings.vertexColorData = std::move(colors);
+    settings.indexData = std::move(indexes);
+    settings.boneNum = 0;
+
+    return settings;
+}
+
+glm::vec3 getWorldPos(int row, int column, float y = 0.0f)
+{
+    return glm::vec3(CellSize * column, y, -CellSize * row);
+}
+
+} // anon namespace
 
 GameMap::GameMap()
     : _meshGenerator(CellSize)
 {
-
+    InitTeleportMesh();
 }
 
 void GameMap::LoadMap(const std::string& filename)
@@ -37,6 +117,7 @@ void GameMap::LoadMap(const std::string& filename)
     _mapData.resize(_height);
     char ch;
     char line[100];
+    int nextIsRotation = 0;
     for (auto row = 0; row < _height; ++row)
     {
         fin.getline(line, 100);
@@ -45,6 +126,12 @@ void GameMap::LoadMap(const std::string& filename)
         for (auto column = 0; column < _width; ++column)
         {
             fin >> ch;
+            if (nextIsRotation)
+            {
+                nextIsRotation--;
+                _mapData[curRow][column] = CellType::InvisibleWallWithFloor;
+                continue;
+            }
             switch (ch)
             {
                 case 'W':
@@ -68,8 +155,21 @@ void GameMap::LoadMap(const std::string& filename)
                     _mapData[curRow][column] = CellType::InvisibleWallWithFloor;
                     CreateGargoyle(curRow, column, ch);
                     break;
-                default:
+                case 'r':
+                case 'g':
+                case 'v':
+                case 'y':
+                    _mapData[curRow][column] = CellType::Floor;
+                    CreateTeleport(curRow, column, ch);
+                    break;
+                case 'J':
+                case 'D':
+                case 'V':
+                    nextIsRotation = ch == 'D' ? 2 : 1;
                     _mapData[curRow][column] = CellType::InvisibleWallWithFloor;
+                    break;
+                default:
+                    _mapData[curRow][column] = CellType::Floor;
                     break;
             }
         }
@@ -86,7 +186,7 @@ void GameMap::LoadMap(const std::string& filename)
         finishTime *= 1.5f;
         gargoyle.restTime = (float)startTime / 1000;
         gargoyle.fireTime = (float)(finishTime - startTime) / 1000;
-        UpdateGargoyle(gargoyle);
+        FinalizeGargoyle(gargoyle);
     }
 
     fin.close();
@@ -168,7 +268,7 @@ void GameMap::CreateGargoyle(int row, int column, char mapType)
     gargoyle.column = column;
 
     // Setup root node
-    auto rootPos = glm::vec3(CellSize * column, CellSize / 4, -CellSize * row);
+    auto rootPos = getWorldPos(row, column, CellSize / 4);
     auto rootGargoyleNode = engine->getSceneManager()->createSceneNode();
     {
         auto mat = glm::translate(glm::mat4(1), rootPos);
@@ -178,7 +278,7 @@ void GameMap::CreateGargoyle(int row, int column, char mapType)
 
     // Add model
     std::shared_ptr<SVE::Entity> meshEntity = std::make_shared<SVE::MeshEntity>("gargoyle");
-    meshEntity->setMaterial("FireGargoyle");
+    meshEntity->setMaterial(gargoyle.type == GargoyleType::Fire ? "FireGargoyle" : "FrostGargoyle");
     auto gargoyleMeshNode = engine->getSceneManager()->createSceneNode();
     gargoyleMeshNode->setNodeTransformation(glm::translate(glm::mat4(1), glm::vec3(0.0f, 0.15f, 0.0f)));
     gargoyleMeshNode->attachEntity(meshEntity);
@@ -194,7 +294,9 @@ void GameMap::CreateGargoyle(int row, int column, char mapType)
     }
     rootGargoyleNode->attachSceneNode(particlesNode);
     _mapNode->attachSceneNode(rootGargoyleNode);
-    std::shared_ptr<SVE::ParticleSystemEntity> particleSystem = std::make_shared<SVE::ParticleSystemEntity>("FireParticle");
+
+    const std::string particleSystemName = gargoyle.type == GargoyleType::Fire ? "FireLineParticle" : "FrostLineParticle";
+    std::shared_ptr<SVE::ParticleSystemEntity> particleSystem = std::make_shared<SVE::ParticleSystemEntity>(particleSystemName);
     {
         auto &emitter = particleSystem->getSettings().particleEmitter;
         emitter.minLife = 0;
@@ -207,13 +309,23 @@ void GameMap::CreateGargoyle(int row, int column, char mapType)
     SVE::LightSettings lightSettings {};
     lightSettings.lightType = SVE::LightType::LineLight;
     lightSettings.castShadows = false;
-    lightSettings.diffuseStrength = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-    lightSettings.specularStrength = glm::vec4(0.5f, 0.5f, 0.5f, 1.0f);
-    lightSettings.ambientStrength = glm::vec4(0.2f, 0.2f, 0.2f, 1.0f);
+    if (gargoyle.type == GargoyleType::Fire)
+    {
+        lightSettings.diffuseStrength = glm::vec4(1.0f, 0.5f, 0.5f, 1.0f);
+        lightSettings.specularStrength = glm::vec4(0.5f, 0.5f, 0.5f, 1.0f);
+        lightSettings.ambientStrength = glm::vec4(0.2f, 0.15f, 0.15f, 1.0f);
+    }
+    else
+    {
+        lightSettings.diffuseStrength = glm::vec4(0.2f, 0.2f, 1.0f, 1.0f);
+        lightSettings.specularStrength = glm::vec4(0.5f, 0.5f, 0.5f, 1.0f);
+        lightSettings.ambientStrength = glm::vec4(0.1f, 0.1f, 0.2f, 1.0f);
+    }
+
     lightSettings.shininess = 16;
     lightSettings.constAtten = 1.0f * 0.8f;
-    lightSettings.linearAtten = 0.35f * 0.05f;
-    lightSettings.quadAtten = 0.44f * 0.05f;
+    lightSettings.linearAtten = 0.35f * 0.15f;
+    lightSettings.quadAtten = 0.44f * 0.15f;
     auto lightManager = engine->getSceneManager()->getLightManager();
     auto lightNode = std::make_shared<SVE::LightNode>(lightSettings, lightManager->getLightCount());
     lightManager->setLight(lightNode, lightManager->getLightCount());
@@ -224,7 +336,7 @@ void GameMap::CreateGargoyle(int row, int column, char mapType)
     _gargoyles.push_back(std::move(gargoyle));
 }
 
-void GameMap::UpdateGargoyle(Gargoyle &gargoyle)
+void GameMap::FinalizeGargoyle(Gargoyle &gargoyle)
 {
     int speedX = 0;
     int speedY = 0;
@@ -253,16 +365,19 @@ void GameMap::UpdateGargoyle(Gargoyle &gargoyle)
         y += speedY;
         ++length;
 
-        switch (_mapData[x][y])
-        {
-            case CellType::Wall:
-            case CellType::InvisibleWallWithFloor:
-            case CellType::InvisibleWallEmpty:
-                stop = true;
-                break;
-        }
         if (x >= _width || x < 0 || y >= _height || y < 0)
             stop = true;
+        else
+        {
+            switch (_mapData[x][y])
+            {
+                case CellType::Wall:
+                case CellType::InvisibleWallWithFloor:
+                case CellType::InvisibleWallEmpty:
+                    stop = true;
+                    break;
+            }
+        }
     }
     length-= 1.5f;
     gargoyle.lengthInCells = length;
@@ -282,6 +397,11 @@ void GameMap::Update(float time)
 {
     if (time <= 0.0)
         return;
+
+    for (auto& teleport : _teleports)
+    {
+        UpdateTeleport(time, teleport);
+    }
 
     auto updateGargoyleParticles = [](Gargoyle& gargoyle, float life, float alphaChanger, float lifeDrain)
     {
@@ -335,5 +455,140 @@ void GameMap::Update(float time)
     }
 
 }
+
+void GameMap::InitTeleportMesh()
+{
+    auto meshSettings = constructPlane("TeleportBase",
+                                       glm::vec3(0, 0, 0), 0.9f, 0.9f, glm::vec3(0.0f, 1.0f, 0.0f));
+    meshSettings.materialName = "TeleportBaseMaterial";
+    auto teleportBaseMesh = std::make_shared<SVE::Mesh>(meshSettings);
+    SVE::Engine::getInstance()->getMeshManager()->registerMesh(teleportBaseMesh);
+}
+
+void GameMap::CreateTeleport(int row, int column, char mapType)
+{
+    auto* engine = SVE::Engine::getInstance();
+
+    Teleport teleport {};
+    glm::vec3 color = {};
+    switch (mapType)
+    {
+        case 'r':
+            teleport.type = TeleportType::Red;
+            color = {1.0f, 0.0, 0.0};
+            break;
+        case 'g':
+            teleport.type = TeleportType::Green;
+            color = {0.0f, 1.0, 0.0};
+            break;
+        case 'v':
+            teleport.type = TeleportType::Purple;
+            color = {1.0f, 0.0, 1.0};
+            break;
+        case 'y':
+            teleport.type = TeleportType::Blue;
+            color = {0.0f, 1.0, 1.0};
+            break;
+        default:
+            assert(!"Unknown teleport type");
+            return;
+    }
+
+    auto adjustColor = [](float comp, float step = 0.4f)
+    {
+        return comp < 0.01f ? step : comp;
+    };
+
+    auto adjustColor3 = [&adjustColor](glm::vec3 color, float num)
+    {
+        return glm::vec3(adjustColor(color.r, num), adjustColor(color.g, num), adjustColor(color.b, num));
+    };
+
+    auto position = getWorldPos(row, column, 0.2f);
+
+    auto teleportNode = engine->getSceneManager()->createSceneNode();
+    teleportNode->setNodeTransformation(glm::translate(glm::mat4(1), position));
+    engine->getSceneManager()->getRootNode()->attachSceneNode(teleportNode);
+    std::shared_ptr<SVE::ParticleSystemEntity> teleportPS = std::make_shared<SVE::ParticleSystemEntity>("TeleportStars");
+    teleportPS->getMaterialInfo()->diffuse = glm::vec4(color, 1.0f);
+    teleportNode->attachEntity(teleportPS);
+
+    auto teleportCircleNode = engine->getSceneManager()->createSceneNode();
+    auto teleportGlowNode = engine->getSceneManager()->createSceneNode();
+    auto teleportLightNode = engine->getSceneManager()->createSceneNode();
+    auto teleportPlatformNode = engine->getSceneManager()->createSceneNode();
+    teleportNode->attachSceneNode(teleportCircleNode);
+    teleportNode->attachSceneNode(teleportGlowNode);
+    teleportNode->attachSceneNode(teleportLightNode);
+    teleportNode->attachSceneNode(teleportPlatformNode);
+    {
+        teleportPlatformNode->setNodeTransformation(glm::translate(glm::mat4(1), glm::vec3(-1.0, -0.2, 1.0)));
+        std::shared_ptr<SVE::MeshEntity> teleportPlatformEntity = std::make_shared<SVE::MeshEntity>("teleport");
+        teleportPlatformEntity->setMaterial("TeleportPlatformMaterial");
+        teleportPlatformEntity->getMaterialInfo()->diffuse = { adjustColor3(color, 0.4f), 1.0f };
+        teleportPlatformNode->attachEntity(teleportPlatformEntity);
+
+        std::shared_ptr<SVE::MeshEntity> teleportBaseEntity = std::make_shared<SVE::MeshEntity>("TeleportBase");
+        teleportBaseEntity->setRenderLast();
+        teleportBaseEntity->setCastShadows(false);
+        teleportBaseEntity->getMaterialInfo()->diffuse = { adjustColor3(color, 0.6f), 2.0f };
+        teleportCircleNode->attachEntity(teleportBaseEntity);
+
+        std::shared_ptr<SVE::MeshEntity> teleportCircleEntity = std::make_shared<SVE::MeshEntity>("cylinder");
+        teleportCircleEntity->setMaterial("TeleportCircleMaterial");
+        teleportCircleEntity->setRenderLast();
+        teleportCircleEntity->setCastShadows(false);
+        teleportCircleEntity->getMaterialInfo()->diffuse = { adjustColor3(color, 0.6f), 2.0f };
+        teleportGlowNode->attachEntity(teleportCircleEntity);
+
+        // Add light effect
+        teleportLightNode->setNodeTransformation(glm::translate(glm::mat4(1), glm::vec3(0, 1.5, 0)));
+        SVE::LightSettings lightSettings {};
+        lightSettings.lightType = SVE::LightType::PointLight;
+        lightSettings.castShadows = false;
+        lightSettings.diffuseStrength = glm::vec4(color, 1.0f);
+        lightSettings.specularStrength = glm::vec4(color * 0.5f, 1.0f);
+        lightSettings.ambientStrength = { color * 0.2f, 1.0f };
+        lightSettings.shininess = 16;
+        lightSettings.constAtten = 1.0f * 1.8f;
+        lightSettings.linearAtten = 0.35f * 0.25f;
+        lightSettings.quadAtten = 0.44f * 0.25f;
+        auto lightManager = engine->getSceneManager()->getLightManager();
+        auto lightNode = std::make_shared<SVE::LightNode>(lightSettings, lightManager->getLightCount());
+        lightManager->setLight(lightNode, lightManager->getLightCount());
+        teleportLightNode->attachSceneNode(lightNode);
+    }
+
+    teleport.circleNode = std::move(teleportCircleNode);
+    teleport.glowNode = std::move(teleportGlowNode);
+
+    teleport.rootNode = std::move(teleportNode);
+
+    _teleports.push_back(teleport);
+    auto& currentTeleport = _teleports.back();
+    for (auto& otherTeleport : _teleports)
+    {
+        if (&currentTeleport != &otherTeleport &&
+            currentTeleport.type == otherTeleport.type)
+        {
+            teleport.secondEnd = &otherTeleport;
+            otherTeleport.secondEnd = &teleport;
+        }
+    }
+}
+
+void GameMap::UpdateTeleport(float time, Teleport &teleport)
+{
+    auto updateNode = [](std::shared_ptr<SVE::SceneNode>& node, float time)
+    {
+        auto nodeTransform = glm::rotate(glm::mat4(1.0f), time * glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        node->setNodeTransformation(nodeTransform);
+    };
+
+    updateNode(teleport.circleNode, time * 2);
+    updateNode(teleport.glowNode, time * 5);
+}
+
+
 
 } // namespace Chewman

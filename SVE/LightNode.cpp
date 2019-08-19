@@ -40,7 +40,7 @@ void LightNode::fillUniformData(UniformData& data, uint32_t lightNum, bool asVie
         auto model = getTotalTransformation();
         switch (_lightSettings.lightType)
         {
-            case LightType::PointLight:
+            case LightType::ShadowPointLight:
             {
                 data.lightPointViewProjectionList[lightNum] = _projectionMatrix * _viewMatrix;
 
@@ -50,17 +50,31 @@ void LightNode::fillUniformData(UniformData& data, uint32_t lightNum, bool asVie
                 pointLight.ambient = glm::vec4(_lightSettings.ambientStrength);
                 pointLight.position = model[3];
 
-                // TODO: Move light attenuation to light settings
-                pointLight.constant = 1.0f * 0.05f;
-                pointLight.linear = 1.35f * 0.05f;
-                pointLight.quadratic = 0.44f * 0.05f;
+                pointLight.constant = _lightSettings.constAtten;
+                pointLight.linear = _lightSettings.linearAtten;
+                pointLight.quadratic = _lightSettings.quadAtten;
 
-                data.pointLightList.push_back(pointLight);
-                data.lightInfo.lightFlags |= (LightInfo::PointLight1 << (data.pointLightList.size() - 1));
+                data.shadowPointLightList.push_back(pointLight);
+                data.lightInfo.lightFlags |= (LightInfo::PointLight1 << (data.shadowPointLightList.size() - 1));
                 if (_lightSettings.castShadows)
-                    data.lightInfo.lightShadowFlags |= (LightInfo::PointLight1 << (data.pointLightList.size() - 1));
+                    data.lightInfo.lightShadowFlags |= (LightInfo::PointLight1 << (data.shadowPointLightList.size() - 1));
 
                 break;
+            }
+            case LightType::PointLight:
+            {
+                PointLight pointLight{};
+                pointLight.diffuse = glm::vec4(_lightSettings.diffuseStrength);
+                pointLight.specular = glm::vec4(_lightSettings.specularStrength);
+                pointLight.ambient = glm::vec4(_lightSettings.ambientStrength);
+                pointLight.position = model[3];
+
+                pointLight.constant = _lightSettings.constAtten;
+                pointLight.linear = _lightSettings.linearAtten;
+                pointLight.quadratic = _lightSettings.quadAtten;
+
+                data.pointLightList.push_back(pointLight);
+                data.lightInfo.pointLightNum = data.pointLightList.size();
             }
             case LightType::SunLight:
             {
@@ -169,7 +183,7 @@ void LightNode::createProjectionMatrix()
 {
     switch (_lightSettings.lightType)
     {
-        case LightType::PointLight:
+        case LightType::ShadowPointLight:
         {
             _projectionMatrix = glm::perspective(glm::radians(90.0f),
                                                  1.0f,
@@ -207,6 +221,7 @@ void LightNode::createProjectionMatrix()
             break;
         case LightType::LineLight:
         case LightType::RectLight:
+        case LightType::PointLight:
             break;
     }
 

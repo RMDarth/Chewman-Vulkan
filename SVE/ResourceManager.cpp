@@ -102,6 +102,7 @@ std::vector<UniformInfo> getUniformInfoList(rj::Document& document)
             {"LightInfo",                       UniformType::LightInfo},
             {"LightDirectional",                UniformType::LightDirectional},
             {"LightPoint",                      UniformType::LightPoint},
+            {"LightPointSimple",                UniformType::LightPointSimple},
             {"LightLine",                       UniformType::LightLine},
             {"LightSpot",                       UniformType::LightSpot},
             {"LightPointViewProjectionList",    UniformType::LightPointViewProjectionList},
@@ -208,7 +209,7 @@ ShaderSettings loadShader(const cppfs::FilePath& directory, const std::string& d
     setOptional(shaderSettings.maxBonesSize = document["maxBonesSize"].GetUint());
     setOptional(shaderSettings.maxLightSize = document["maxLightSize"].GetUint());
     setOptional(shaderSettings.maxCascadeLightSize = document["maxCascadeLightSize"].GetUint());
-    setOptional(shaderSettings.maxPointLightSize = document["maxPointLightSize"].GetUint());
+    setOptional(shaderSettings.maxShadowPointLightSize = document["maxShadowPointLightSize"].GetUint());
     setOptional(shaderSettings.maxLineLightSize = document["maxLineLightSize"].GetUint());
     setOptional(shaderSettings.maxViewProjectionMatrices = document["maxViewProjectionMatrices"].GetUint());
     setOptional(shaderSettings.uniformList = getUniformInfoList(document));
@@ -337,6 +338,15 @@ MaterialSettings loadMaterial(const cppfs::FilePath& directory, const std::strin
             { "ShadowPassPointLights",  CommandsType::ShadowPassPointLights },
     };
 
+    static const std::map<std::string, BlendFactor> blendFactor {
+            {"SrcAlpha",            BlendFactor::SrcAlpha },
+            {"DstAlpha",            BlendFactor::DstAlpha },
+            {"OneMinusSrcAlpha",    BlendFactor::OneMinusSrcAlpha },
+            {"OneMinusDstAlpha",    BlendFactor::OneMinusDstAlpha },
+            {"One",                 BlendFactor::One },
+            {"Zero",                BlendFactor::Zero }
+    };
+
     rj::Document document;
     document.Parse(data.c_str());
 
@@ -348,6 +358,8 @@ MaterialSettings loadMaterial(const cppfs::FilePath& directory, const std::strin
     setOptional(materialSettings.useDepthBias = document["useDepthBias"].GetBool());
     setOptional(materialSettings.useMultisampling = document["useMultisampling"].GetBool());
     setOptional(materialSettings.useAlphaBlending = document["useAlphaBlending"].GetBool());
+    setOptional(materialSettings.srcBlendFactor = blendFactor.at(document["srcBlendFactor"].GetString()));
+    setOptional(materialSettings.dstBlendFactor = blendFactor.at(document["dstBlendFactor"].GetString()));
     setOptional(materialSettings.isCubemap = document["isCubemap"].GetBool());
     setOptional(materialSettings.passType = passTypeMap.at(document["passType"].GetString()));
     setOptional(materialSettings.fragmentShaderName = document["fragmentShaderName"].GetString());
@@ -376,11 +388,12 @@ MeshLoadSettings loadMesh(const cppfs::FilePath& directory, const std::string& d
 LightSettings loadLight(const std::string& data)
 {
     static const std::map<std::string, LightType> lightTypeMap{
-            {"PointLight",  LightType::PointLight},
-            {"RectLight",   LightType::RectLight},
-            {"SpotLight",   LightType::SpotLight},
-            {"SunLight",    LightType::SunLight},
-            {"LineLight",   LightType::LineLight},
+            {"ShadowPointLight",    LightType::ShadowPointLight},
+            {"PointLight",          LightType::PointLight},
+            {"RectLight",           LightType::RectLight},
+            {"SpotLight",           LightType::SpotLight},
+            {"SunLight",            LightType::SunLight},
+            {"LineLight",           LightType::LineLight},
     };
 
     rj::Document document;

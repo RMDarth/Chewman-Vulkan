@@ -13,6 +13,7 @@
         { "uniformType": "LightSpot" },
         { "uniformType": "LightPoint" },
         { "uniformType": "LightLine" },
+        { "uniformType": "LightPointSimple" },
         { "uniformType": "LightInfo" },
         { "uniformType": "MaterialInfo" }
     ]
