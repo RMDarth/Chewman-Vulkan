@@ -1,7 +1,7 @@
 {
-    "name": "ScreenQuad",
+    "name": "OnlyBrightEffect",
     "vertexShaderName": "quadRenderVertexShader",
-    "fragmentShaderName": "quadRenderFragmentShader",
+    "fragmentShaderName": "onlyBrightFragmentShader",
     "cullFace": "FrontFace",
     "textures": [
             {

@@ -121,6 +121,7 @@ void MeshEntity::applyDrawingCommands(uint32_t bufferIndex, uint32_t imageIndex)
                     imageIndex,
                     _pointLightShadowMaterial->getVulkanMaterial()->getInstanceForEntity(this));
     }
+
     else
     {
         _material->getVulkanMaterial()->applyDrawingCommands(bufferIndex, imageIndex, _materialIndex);

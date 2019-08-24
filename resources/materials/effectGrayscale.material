@@ -1,7 +1,7 @@
 {
-    "name": "ScreenQuad",
+    "name": "GrayscaleEffect",
     "vertexShaderName": "quadRenderVertexShader",
-    "fragmentShaderName": "quadRenderFragmentShader",
+    "fragmentShaderName": "grayscaleFragmentShader",
     "cullFace": "FrontFace",
     "textures": [
             {

@@ -16,7 +16,8 @@ enum class TextureType : uint8_t
     ShadowMapPoint,
     Reflection,
     Refraction,
-    ScreenQuad
+    ScreenQuad,
+    LastEffect
 };
 
 enum class TextureAddressMode : uint8_t
@@ -55,6 +56,7 @@ enum class BlendFactor : uint8_t
 struct TextureInfo
 {
     TextureType textureType = TextureType::ImageFile;
+    std::string textureSubtype;
     TextureAddressMode textureAddressMode = TextureAddressMode::Repeat;
     TextureBorderColor textureBorderColor = TextureBorderColor::TransparentBlack;
     std::string samplerName;

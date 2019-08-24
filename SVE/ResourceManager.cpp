@@ -113,6 +113,7 @@ std::vector<UniformInfo> getUniformInfoList(rj::Document& document)
             {"ParticleAffector",                UniformType::ParticleAffector},
             {"ParticleCount",                   UniformType::ParticleCount},
             {"SpritesheetSize",                 UniformType::SpritesheetSize},
+            {"ImageSize",                       UniformType::ImageSize},
             {"Time",                            UniformType::Time},
             {"DeltaTime",                       UniformType::DeltaTime},
     };
@@ -232,6 +233,7 @@ std::vector<TextureInfo> getTextureInfos(const cppfs::FilePath& directory, rj::D
             {"Reflection",      TextureType::Reflection},
             {"Refraction",      TextureType::Refraction},
             {"ScreenQuad",      TextureType::ScreenQuad},
+            {"LastEffect",      TextureType::LastEffect},
     };
 
     static const std::map<std::string, TextureAddressMode> addressModeMap {
@@ -256,6 +258,7 @@ std::vector<TextureInfo> getTextureInfos(const cppfs::FilePath& directory, rj::D
         TextureInfo textureInfo {};
 
         setOptional(textureInfo.textureType = textureTypeMap.at(item["textureType"].GetString()));
+        setOptional(textureInfo.textureSubtype = item["textureSubtype"].GetString());
         setOptional(textureInfo.textureAddressMode = addressModeMap.at(item["textureAddressMode"].GetString()));
         setOptional(textureInfo.textureBorderColor = borderColorMap.at(item["textureBorderColor"].GetString()));
         setOptional(textureInfo.layers = item["layers"].GetUint());

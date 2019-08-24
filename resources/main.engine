@@ -5,5 +5,5 @@
     "presentMode": "BestAvailable",
     "initShadows": true,
     "initWater": true,
-    "useScreenQuad": false
+    "useScreenQuad": true
 }

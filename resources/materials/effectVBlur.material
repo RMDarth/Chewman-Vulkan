@@ -1,7 +1,7 @@
 {
-    "name": "ScreenQuad",
-    "vertexShaderName": "quadRenderVertexShader",
-    "fragmentShaderName": "quadRenderFragmentShader",
+    "name": "VBlurEffect",
+    "vertexShaderName": "VBlurVertexShader",
+    "fragmentShaderName": "BlurFragmentShader",
     "cullFace": "FrontFace",
     "textures": [
             {

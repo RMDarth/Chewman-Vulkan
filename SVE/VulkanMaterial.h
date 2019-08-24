@@ -30,6 +30,7 @@ public:
     void applyDrawingCommands(uint32_t bufferIndex, uint32_t imageIndex, uint32_t materialIndex);
 
     void resetDescriptorSets();
+    void updateDescriptorSets();
     void resetPipeline();
 
     std::vector<VkDescriptorSet> getDescriptorSets(uint32_t materialIndex, size_t index) const;
@@ -37,6 +38,8 @@ public:
     uint32_t getInstanceForEntity(const Entity* entity, uint32_t index = 0);
     bool isSkeletal() const;
     glm::ivec2 getSpritesheetSize() const;
+
+    const MaterialSettings& getSettings() const;
 
     void setUniformData(uint32_t materialIndex, const UniformData& data) const;
 
@@ -63,7 +66,6 @@ private:
     void createDescriptorSets();
     void deleteDescriptorSets();
 
-    void updateDescriptorSets();
     void updateDescriptorSet(uint32_t imageIndex,
                              const VkBuffer* shaderBuffer,
                              const size_t uniformSize,
@@ -93,8 +95,13 @@ private:
     std::vector<std::string> _textureNames;
 
     bool _hasExternals;
-    std::vector<bool> _textureExternal;
-    std::vector<TextureType> _textureExternalType;
+    struct TextureData
+    {
+        bool external;
+        TextureType type;
+        uint32_t subtype;
+    };
+    std::vector<TextureData> _texturesData;
 
     struct PerInstanceData
     {

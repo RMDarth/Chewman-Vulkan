@@ -54,7 +54,7 @@ void ParticleSystemEntity::updateUniforms(UniformDataList uniformDataList) const
 
 void ParticleSystemEntity::applyDrawingCommands(uint32_t bufferIndex, uint32_t imageIndex) const
 {
-    if (Engine::getInstance()->getPassType() == CommandsType::MainPass)
+    if (Engine::getInstance()->getPassType() == CommandsType::MainPass || Engine::getInstance()->getPassType() == CommandsType::ScreenQuadPass)
     {
         _material->getVulkanMaterial()->applyDrawingCommands(bufferIndex, imageIndex, _materialIndex);
         _vulkanParticleSystem->applyDrawingCommands(bufferIndex);

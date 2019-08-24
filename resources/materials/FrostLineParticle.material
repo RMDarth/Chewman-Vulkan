@@ -1,0 +1,17 @@
+{
+    "name": "FrostLineParticleMaterial",
+    "vertexShaderName": "particlesVertexShader",
+    "geometryShaderName": "particlesGeomShader",
+    "fragmentShaderName": "frostFireLineFragmentShader",
+    "cullFace": "None",
+    "useAlphaBlending": true,
+    "srcBlendFactor": "SrcAlpha",
+    "dstBlendFactor": "One",
+    "useDepthWrite": false,
+    "textures": [
+        {
+            "samplerName": "texSampler",
+            "filename": "textures/frostParticle.png"
+        }
+    ]
+}

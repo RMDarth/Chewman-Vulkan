@@ -98,10 +98,10 @@ glm::vec3 getWorldPos(int row, int column, float y = 0.0f)
 GameMap::GameMap()
     : _meshGenerator(CellSize)
 {
-    InitTeleportMesh();
+    initTeleportMesh();
 }
 
-void GameMap::LoadMap(const std::string& filename)
+void GameMap::loadMap(const std::string& filename)
 {
     std::ifstream fin(filename);
 
@@ -126,23 +126,27 @@ void GameMap::LoadMap(const std::string& filename)
         for (auto column = 0; column < _width; ++column)
         {
             fin >> ch;
+            _mapData[curRow][column] = {};
             if (nextIsRotation)
             {
                 nextIsRotation--;
-                _mapData[curRow][column] = CellType::InvisibleWallWithFloor;
+                _mapData[curRow][column].cellType = CellType::InvisibleWallWithFloor;
                 continue;
             }
             switch (ch)
             {
                 case 'W':
-                    _mapData[curRow][column] = CellType::Wall;
+                    _mapData[curRow][column].cellType = CellType::Wall;
                     break;
                 case 'L':
-                    _mapData[curRow][column] = CellType::Liquid;
+                    _mapData[curRow][column].cellType = CellType::Liquid;
                     break;
                 case '0':
+                    _mapData[curRow][column].cellType = CellType::Floor;
+                    break;
                 case 'C':
-                    _mapData[curRow][column] = CellType::Floor;
+                    _mapData[curRow][column].coin = createCoin(curRow, column);
+                    _mapData[curRow][column].cellType = CellType::Floor;
                     break;
                 case '1':
                 case '2':
@@ -152,31 +156,31 @@ void GameMap::LoadMap(const std::string& filename)
                 case '6':
                 case '7':
                 case '8':
-                    _mapData[curRow][column] = CellType::InvisibleWallWithFloor;
-                    CreateGargoyle(curRow, column, ch);
+                    _mapData[curRow][column].cellType = CellType::InvisibleWallWithFloor;
+                    createGargoyle(curRow, column, ch);
                     break;
                 case 'r':
                 case 'g':
                 case 'v':
                 case 'y':
-                    _mapData[curRow][column] = CellType::Floor;
-                    CreateTeleport(curRow, column, ch);
+                    _mapData[curRow][column].cellType = CellType::Floor;
+                    createTeleport(curRow, column, ch);
                     break;
                 case 'J':
                 case 'D':
                 case 'V':
                     nextIsRotation = ch == 'D' ? 2 : 1;
-                    _mapData[curRow][column] = CellType::InvisibleWallWithFloor;
+                    _mapData[curRow][column].cellType = CellType::InvisibleWallWithFloor;
                     break;
                 default:
-                    _mapData[curRow][column] = CellType::Floor;
+                    _mapData[curRow][column].cellType = CellType::Floor;
                     break;
             }
         }
     }
 
     fin.getline(line, 100);
-    InitMeshes();
+    initMeshes();
     for (auto& gargoyle : _gargoyles)
     {
         uint32_t startTime, finishTime;
@@ -186,13 +190,13 @@ void GameMap::LoadMap(const std::string& filename)
         finishTime *= 1.5f;
         gargoyle.restTime = (float)startTime / 1000;
         gargoyle.fireTime = (float)(finishTime - startTime) / 1000;
-        FinalizeGargoyle(gargoyle);
+        finalizeGargoyle(gargoyle);
     }
 
     fin.close();
 }
 
-void GameMap::InitMeshes()
+void GameMap::initMeshes()
 {
     std::vector<Submesh> top;
     std::vector<Submesh> bottom;
@@ -205,7 +209,7 @@ void GameMap::InitMeshes()
             std::vector<Submesh> cellB;
             std::vector<Submesh> cellV;
             glm::vec3 position(y * CellSize, 0, -x * CellSize);
-            switch (_mapData[x][y])
+            switch (_mapData[x][y].cellType)
             {
                 case CellType::Wall:
                     cellT = _meshGenerator.GenerateWall(position, ModelType::Top);
@@ -256,7 +260,7 @@ void GameMap::InitMeshes()
     _mapNode->attachEntity(_mapEntity[2]);
 }
 
-void GameMap::CreateGargoyle(int row, int column, char mapType)
+void GameMap::createGargoyle(int row, int column, char mapType)
 {
     auto* engine = SVE::Engine::getInstance();
 
@@ -336,7 +340,7 @@ void GameMap::CreateGargoyle(int row, int column, char mapType)
     _gargoyles.push_back(std::move(gargoyle));
 }
 
-void GameMap::FinalizeGargoyle(Gargoyle &gargoyle)
+void GameMap::finalizeGargoyle(Gargoyle &gargoyle)
 {
     int speedX = 0;
     int speedY = 0;
@@ -369,7 +373,7 @@ void GameMap::FinalizeGargoyle(Gargoyle &gargoyle)
             stop = true;
         else
         {
-            switch (_mapData[x][y])
+            switch (_mapData[x][y].cellType)
             {
                 case CellType::Wall:
                 case CellType::InvisibleWallWithFloor:
@@ -393,14 +397,19 @@ void GameMap::FinalizeGargoyle(Gargoyle &gargoyle)
     gargoyle.totalLength = glm::length(distance);
 }
 
-void GameMap::Update(float time)
+void GameMap::update(float time)
 {
     if (time <= 0.0)
         return;
 
     for (auto& teleport : _teleports)
     {
-        UpdateTeleport(time, teleport);
+        updateTeleport(time, teleport);
+    }
+
+    for (auto& coin : _coins)
+    {
+        updateCoin(time, coin);
     }
 
     auto updateGargoyleParticles = [](Gargoyle& gargoyle, float life, float alphaChanger, float lifeDrain)
@@ -456,7 +465,7 @@ void GameMap::Update(float time)
 
 }
 
-void GameMap::InitTeleportMesh()
+void GameMap::initTeleportMesh()
 {
     auto meshSettings = constructPlane("TeleportBase",
                                        glm::vec3(0, 0, 0), 0.9f, 0.9f, glm::vec3(0.0f, 1.0f, 0.0f));
@@ -465,7 +474,7 @@ void GameMap::InitTeleportMesh()
     SVE::Engine::getInstance()->getMeshManager()->registerMesh(teleportBaseMesh);
 }
 
-void GameMap::CreateTeleport(int row, int column, char mapType)
+void GameMap::createTeleport(int row, int column, char mapType)
 {
     auto* engine = SVE::Engine::getInstance();
 
@@ -577,18 +586,50 @@ void GameMap::CreateTeleport(int row, int column, char mapType)
     }
 }
 
-void GameMap::UpdateTeleport(float time, Teleport &teleport)
+void GameMap::updateTeleport(float time, Teleport &teleport)
 {
+    float currentTime = SVE::Engine::getInstance()->getTime();
     auto updateNode = [](std::shared_ptr<SVE::SceneNode>& node, float time)
     {
         auto nodeTransform = glm::rotate(glm::mat4(1.0f), time * glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
         node->setNodeTransformation(nodeTransform);
     };
 
-    updateNode(teleport.circleNode, time * 2);
-    updateNode(teleport.glowNode, time * 5);
+    updateNode(teleport.circleNode, currentTime * 2);
+    updateNode(teleport.glowNode, currentTime * 5);
 }
 
+Coin* GameMap::createCoin(int row, int column)
+{
+    auto* engine = SVE::Engine::getInstance();
 
+    Coin coin {};
+
+    auto position = getWorldPos(row, column, 1.0f);
+
+    auto coinNode = engine->getSceneManager()->createSceneNode();
+    auto transform = glm::translate(glm::mat4(1), position);
+    transform = glm::rotate(transform, glm::radians((float)(rand() % 360)), glm::vec3(0.0f, 1.0f, 0.0f));
+    transform = glm::rotate(transform, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+
+    coinNode->setNodeTransformation(transform);
+    engine->getSceneManager()->getRootNode()->attachSceneNode(coinNode);
+    auto coinMesh = std::make_shared<SVE::MeshEntity>("coin");
+    coinMesh->setMaterial("CoinMaterial");
+    coinNode->attachEntity(coinMesh);
+
+    coin.rootNode = std::move(coinNode);
+
+    _coins.push_back(std::move(coin));
+
+    return &_coins.back();
+}
+
+void GameMap::updateCoin(float time, Coin &coin)
+{
+    auto transform = coin.rootNode->getNodeTransformation();
+    transform = glm::rotate(transform, time, glm::vec3(0.0f, 0.0f, 1.0f));
+    coin.rootNode->setNodeTransformation(transform);
+}
 
 } // namespace Chewman

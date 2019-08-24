@@ -19,6 +19,7 @@ class ShaderManager;
 class MeshManager;
 class ResourceManager;
 class ParticleSystemManager;
+class PostEffectManager;
 
 enum class CommandsType : uint8_t
 {
@@ -29,7 +30,8 @@ enum class CommandsType : uint8_t
     ReflectionPass,
     RefractionPass,
     ScreenQuadPass,
-    ComputeParticlesPass
+    ComputeParticlesPass,
+    PostEffectPasses,
 };
 
 static const uint8_t PassCount = 6;
@@ -50,8 +52,10 @@ public:
     SceneManager* getSceneManager();
     ResourceManager* getResourceManager();
     ParticleSystemManager* getParticleSystemManager();
+    PostEffectManager* getPostEffectManager();
 
     void resizeWindow();
+    glm::ivec2 getRenderWindowSize();
     void finishRendering();
 
     bool isShadowMappingEnabled() const;
@@ -78,6 +82,7 @@ private:
     std::unique_ptr<ShaderManager> _shaderManager;
     std::unique_ptr<ResourceManager> _resourceManager;
     std::unique_ptr<ParticleSystemManager> _particleSystemManager;
+    std::unique_ptr<PostEffectManager> _postEffectManager;
 
     std::chrono::high_resolution_clock::time_point _startTime = std::chrono::high_resolution_clock::now();
     std::chrono::high_resolution_clock::time_point _currentTime = std::chrono::high_resolution_clock::now();

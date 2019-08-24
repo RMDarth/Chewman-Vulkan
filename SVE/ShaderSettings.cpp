@@ -36,6 +36,7 @@ const std::map<UniformType, size_t>& getUniformSizeMap()
             { UniformType::ParticleAffector, sizeof(ParticleAffector) },
             { UniformType::ParticleCount, sizeof(uint32_t) },
             { UniformType::SpritesheetSize, sizeof(glm::ivec2) },
+            { UniformType::ImageSize, sizeof(glm::ivec4) },
             { UniformType::Time, sizeof(float) },
             { UniformType::DeltaTime, sizeof(float) },
     };
@@ -180,6 +181,11 @@ std::vector<char> getUniformDataByType(const UniformData& data, UniformType type
         {
             const char* byteData = reinterpret_cast<const char*>(&data.spritesheetSize);
             return std::vector<char>(byteData, byteData + sizeof(data.spritesheetSize));
+        }
+        case UniformType::ImageSize:
+        {
+            const char* byteData = reinterpret_cast<const char*>(&data.imageSize);
+            return std::vector<char>(byteData, byteData + sizeof(data.imageSize));
         }
         case UniformType::Time:
         {

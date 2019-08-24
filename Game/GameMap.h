@@ -10,11 +10,13 @@
 #include "BlockMeshGenerator.h"
 #include "Gargoyle.h"
 #include "Teleport.h"
+#include "Coin.h"
+
 
 namespace Chewman
 {
 
-enum class CellType
+enum class CellType : uint8_t
 {
     Wall,
     Floor,
@@ -23,24 +25,33 @@ enum class CellType
     InvisibleWallEmpty
 };
 
-using Map = std::vector<std::vector<CellType>>;
+struct CellInfo
+{
+    CellType cellType;
+    Coin* coin = nullptr;
+};
+
+using Map = std::vector<std::vector<CellInfo>>;
 
 class GameMap
 {
 public:
     GameMap();
 
-    void LoadMap(const std::string& filename);
-    void Update(float time);
+    void loadMap(const std::string& filename);
+    void update(float time);
 
 private:
-    void InitMeshes();
-    void CreateGargoyle(int row, int column, char mapType);
-    void FinalizeGargoyle(Gargoyle& gargoyle);
+    void initMeshes();
+    void createGargoyle(int row, int column, char mapType);
+    void finalizeGargoyle(Gargoyle& gargoyle);
 
-    void InitTeleportMesh();
-    void CreateTeleport(int row, int column, char mapType);
-    void UpdateTeleport(float time, Teleport& teleport);
+    void initTeleportMesh();
+    void createTeleport(int row, int column, char mapType);
+    void updateTeleport(float time, Teleport& teleport);
+
+    Coin* createCoin(int row, int column);
+    void updateCoin(float time, Coin& coin);
 
 private:
     BlockMeshGenerator _meshGenerator;
@@ -51,6 +62,7 @@ private:
 
     std::vector<Gargoyle> _gargoyles;
     std::vector<Teleport> _teleports;
+    std::vector<Coin> _coins;
 
     Map _mapData;
     size_t _width;

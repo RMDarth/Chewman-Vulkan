@@ -15,6 +15,7 @@
 #include "MeshManager.h"
 #include "LightManager.h"
 #include "ParticleSystemManager.h"
+#include "PostEffectManager.h"
 #include "ResourceManager.h"
 #include "Entity.h"
 #include "Skybox.h"
@@ -88,6 +89,7 @@ Engine::Engine(SDL_Window* window, EngineSettings settings)
     , _meshManager(std::make_unique<MeshManager>())
     , _resourceManager(std::make_unique<ResourceManager>())
     , _particleSystemManager(std::make_unique<ParticleSystemManager>())
+    , _postEffectManager(std::make_unique<PostEffectManager>())
 {
     getTime();
 }
@@ -101,6 +103,7 @@ Engine::~Engine()
     _shaderManager.reset();
     _materialManager.reset();
     _vulkanInstance.reset();
+    _postEffectManager.reset();
 }
 
 MaterialManager* Engine::getMaterialManager()
@@ -133,6 +136,10 @@ ParticleSystemManager* Engine::getParticleSystemManager()
     return _particleSystemManager.get();
 }
 
+PostEffectManager* Engine::getPostEffectManager()
+{
+    return _postEffectManager.get();
+}
 
 void Engine::resizeWindow()
 {
@@ -141,6 +148,11 @@ void Engine::resizeWindow()
 
     _sceneManager->getMainCamera()->setAspectRatio(
             (float)_vulkanInstance->getExtent().width / _vulkanInstance->getExtent().height);
+}
+
+glm::ivec2 Engine::getRenderWindowSize()
+{
+    return glm::ivec2(_vulkanInstance->getExtent().width, _vulkanInstance->getExtent().height);
 }
 
 void Engine::finishRendering()
@@ -315,14 +327,17 @@ void Engine::renderFrame()
             skybox->applyDrawingCommands(BUFFER_INDEX_SCREEN_QUAD, currentImage);
         createNodeDrawCommands(_sceneManager->getRootNode(), BUFFER_INDEX_SCREEN_QUAD, currentImage);
         screenQuad->endRenderCommandBufferCreation();
+
+        _commandsType = CommandsType::PostEffectPasses;
+        _engineInstance->getPostEffectManager()->createCommands(currentFrame, currentImage);
     }
 
     _commandsType = CommandsType::MainPass;
     _vulkanInstance->startRenderCommandBufferCreation();
     if (auto* screenQuad = _vulkanInstance->getScreenQuad())
     {
-        _engineInstance->getMaterialManager()->getMaterial("ScreenQuad")->getVulkanMaterial()->getInstanceForEntity(nullptr);
-        _materialManager->getMaterial("ScreenQuad")->getVulkanMaterial()->applyDrawingCommands(currentFrame, currentImage, 1);
+        auto index = _engineInstance->getMaterialManager()->getMaterial("ScreenQuad")->getVulkanMaterial()->getInstanceForEntity(nullptr);
+        _materialManager->getMaterial("ScreenQuad")->getVulkanMaterial()->applyDrawingCommands(currentFrame, currentImage, index);
         auto commandBuffer = _vulkanInstance->getCommandBuffer(currentFrame);
         vkCmdDraw(commandBuffer, 6, 1, 0, 0);
     } else
@@ -352,6 +367,7 @@ void Engine::renderFrame()
     mainUniform->clipPlane = glm::vec4(0.0, 1.0, 0.0, 100);
     mainUniform->time = getTime();
     mainUniform->deltaTime = getDeltaTime();
+    mainUniform->imageSize = glm::ivec4(_vulkanInstance->getExtent().width, _vulkanInstance->getExtent().height, 0, 0);
     _sceneManager->getMainCamera()->fillUniformData(*mainUniform);
 
     for (auto i = 1; i < PassCount; i++)
@@ -413,7 +429,10 @@ void Engine::renderFrame()
     }
     // TODO: Check if screen quad rendering enabled
     if (_vulkanInstance->getScreenQuad())
+    {
         _vulkanInstance->submitCommands(CommandsType::ScreenQuadPass, BUFFER_INDEX_SCREEN_QUAD);
+        _postEffectManager->submitCommands(uniformDataList);
+    }
     _vulkanInstance->submitCommands(CommandsType::MainPass, _vulkanInstance->getCurrentFrameIndex());
 
     _vulkanInstance->renderCommands();

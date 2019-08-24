@@ -45,6 +45,7 @@ private:
 
     Material* _shadowMaterial;
     Material* _pointLightShadowMaterial;
+    std::unique_ptr<Material> _bloomMaterial;
     //std::vector<uint32_t> _shadowMaterialIndexes;
 };
 

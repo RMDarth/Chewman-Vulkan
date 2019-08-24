@@ -9,6 +9,12 @@ namespace SVE
 
 std::vector<VulkanSamplerHolder::SamplerInfo> VulkanSamplerHolder::getSamplerInfo(TextureType type) const
 {
+    if (type == TextureType::LastEffect)
+    {
+        if (_lastEffect < 0)
+            return getSamplerInfo(TextureType::ScreenQuad);
+        return getPostEffectSamplerInfo(_lastEffect);
+    }
     auto samplerIter = _samplerMap.find(type);
     if (samplerIter == _samplerMap.end())
     {
@@ -17,11 +23,30 @@ std::vector<VulkanSamplerHolder::SamplerInfo> VulkanSamplerHolder::getSamplerInf
     return samplerIter->second;
 }
 
+std::vector<VulkanSamplerHolder::SamplerInfo> VulkanSamplerHolder::getPostEffectSamplerInfo(uint32_t effectId) const
+{
+    auto samplerIter = _postEffectMap.find(effectId);
+    if (samplerIter == _postEffectMap.end())
+    {
+        return std::vector<VulkanSamplerHolder::SamplerInfo>();
+    }
+    return samplerIter->second;
+}
+
 void VulkanSamplerHolder::setSamplerInfo(
         TextureType type,
-        std::vector<VulkanSamplerHolder::SamplerInfo> samplerInfo)
+        std::vector<VulkanSamplerHolder::SamplerInfo> samplerInfo,
+        int subtype)
 {
-    _samplerMap.insert({type, samplerInfo});
+    if (type == TextureType::ScreenQuad && subtype != 0)
+    {
+        _postEffectMap.emplace(subtype, samplerInfo);
+        _lastEffect = subtype;
+    }
+    else
+    {
+        _samplerMap[type] = std::move(samplerInfo);
+    }
 }
 
 

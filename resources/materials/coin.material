@@ -1,0 +1,25 @@
+{
+    "name": "CoinMaterial",
+    "vertexShaderName": "phongShadowVertexShader",
+    "fragmentShaderName": "phongShadowEmitFragmentShader",
+    "textures": [
+        {
+            "samplerName": "diffuseTex",
+            "textureType": "ImageFile",
+            "filename": "textures/coin/coin2.png"
+        },
+        {
+            "samplerName": "emitTex",
+            "textureType": "ImageFile",
+            "filename": "textures/coin/coinEmit3.png"
+        },
+        {
+            "samplerName": "directShadowTex",
+            "textureType": "ShadowMapDirect"
+        },
+        {
+            "samplerName": "pointShadowTex",
+            "textureType": "ShadowMapPoint"
+        }
+    ]
+}

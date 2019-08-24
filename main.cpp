@@ -7,6 +7,7 @@
 #include "SVE/MeshManager.h"
 #include "SVE/ParticleSystemManager.h"
 #include "SVE/ParticleSystemEntity.h"
+#include "SVE/PostEffectManager.h"
 
 #include "Game/GameMap.h"
 
@@ -328,6 +329,15 @@ int runGame()
         engine->getResourceManager()->loadFolder("resources/models");
         engine->getResourceManager()->loadFolder("resources");
 
+        //engine->getPostEffectManager()->addPostEffect("GrayscaleEffect", "GrayscaleEffect");
+
+
+        auto windowSize = engine->getRenderWindowSize();
+        engine->getPostEffectManager()->addPostEffect("OnlyBrightEffect", "OnlyBrightEffect",windowSize.x / 4, windowSize.y / 4);
+        engine->getPostEffectManager()->addPostEffect("VBlurEffect", "VBlurEffect",windowSize.x / 8, windowSize.y / 8);
+        engine->getPostEffectManager()->addPostEffect("HBlurEffect", "HBlurEffect",windowSize.x / 8, windowSize.y / 8);
+        engine->getPostEffectManager()->addPostEffect("BloomEffect", "BloomEffect");
+
         // configure light
         auto sunLight = engine->getSceneManager()->getLightManager()->getDirectionLight();
         sunLight->setNodeTransformation(
@@ -377,7 +387,7 @@ int runGame()
 
         // Create level floor
         Chewman::GameMap gameMap;
-        gameMap.LoadMap("resources/game/levels/level5.map");
+        gameMap.loadMap("resources/game/levels/level5.map");
 
         // create teleport test
         std::array<std::shared_ptr<SVE::SceneNode>, 0> baseNodes;
@@ -539,7 +549,7 @@ int runGame()
                 {
                     updateNode(circleNode, curTime * 5);
                 }
-                gameMap.Update(curTime - prevTime);
+                gameMap.update(curTime - prevTime);
             }
 
 

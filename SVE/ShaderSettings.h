@@ -38,6 +38,7 @@ enum class UniformType : uint8_t
     ParticleAffector,
     ParticleCount,
     SpritesheetSize,
+    ImageSize,
     Time,
     DeltaTime
     // TODO: Add material properties, other matrices types etc.
@@ -90,6 +91,7 @@ struct UniformData
     ParticleAffector particleAffector {};
     uint32_t particleCount = 0;
     glm::ivec2 spritesheetSize;
+    glm::ivec4 imageSize;
 };
 
 struct UniformInfo

@@ -9,6 +9,7 @@
 #include "VulkanSamplerHolder.h"
 #include "VulkanPassInfo.h"
 #include "ShaderManager.h"
+#include "PostEffectManager.h"
 #include "ShaderInfo.h"
 #include "SceneManager.h"
 #include "LightManager.h"
@@ -441,8 +442,7 @@ void VulkanMaterial::createTextureImages()
 {
     size_t imageCount = _materialSettings.textures.size();
     _mipLevels.resize(imageCount);
-    _textureExternal.resize(imageCount);
-    _textureExternalType.resize(imageCount);
+    _texturesData.resize(imageCount);
     _textureImages.resize(imageCount);
     _textureImageMemoryList.resize(imageCount);
     _textureNames.resize(imageCount);
@@ -455,13 +455,15 @@ void VulkanMaterial::createTextureImages()
         if (_materialSettings.textures[i].textureType != TextureType::ImageFile)
         {
             _hasExternals = true;
-            _textureExternal[i] = true;
+            _texturesData[i].external = true;
 
             // TODO: For more generic cases, texture type should be string (or custom with additional string attr)
-            _textureExternalType[i] = _materialSettings.textures[i].textureType;
+            _texturesData[i].type = _materialSettings.textures[i].textureType;
+            if (!_materialSettings.textures[i].textureSubtype.empty())
+                _texturesData[i].subtype = Engine::getInstance()->getPostEffectManager()->getEffectIndex(_materialSettings.textures[i].textureSubtype);
             continue;
         } else {
-            _textureExternal[i] = false;
+            _texturesData[i].external = false;
         }
 
         // Load image pixel data
@@ -538,8 +540,7 @@ void VulkanMaterial::createCubemapTextureImages()
     _textureImages.resize(1);
     _textureImageMemoryList.resize(1);
     _textureNames.resize(1);
-    _textureExternal.resize(1);
-    _textureExternalType.resize(1);
+    _texturesData.resize(1);
     _textureImageViews.resize(1);
     _textureSamplers.resize(1);
     std::vector<stbi_uc*> pixelsData;
@@ -662,7 +663,7 @@ void VulkanMaterial::createCubemapTextureImages()
     vkFreeMemory(_device, stagingBufferMemory, nullptr);
 
     _textureNames[0] = _materialSettings.textures[0].samplerName;
-    _textureExternal[0] = false;
+    _texturesData[0].external = false;
 
 }
 
@@ -670,7 +671,7 @@ void VulkanMaterial::deleteTextureImages()
 {
     for (auto i = 0u; i < _textureImages.size(); i++)
     {
-        if (_textureExternal[i])
+        if (_texturesData[i].external)
             continue;
 
         vkDestroyImage(_device, _textureImages[i], nullptr);
@@ -682,7 +683,7 @@ void VulkanMaterial::createTextureImageView()
 {
     for (auto i = 0; i < _textureImages.size(); i++)
     {
-        if (_textureExternal[i])
+        if (_texturesData[i].external)
             continue;
 
         _textureImageViews[i] = _vulkanUtils.createImageView(
@@ -699,7 +700,7 @@ void VulkanMaterial::deleteTextureImageView()
 {
     for (auto i = 0; i < _textureImageViews.size(); i++)
     {
-        if (_textureExternal[i])
+        if (_texturesData[i].external)
             continue;
         vkDestroyImageView(_device, _textureImageViews[i], nullptr);
     }
@@ -709,7 +710,7 @@ void VulkanMaterial::createTextureSampler()
 {
     for (auto i = 0; i < _textureImages.size(); i++)
     {
-        if (_textureExternal[i])
+        if (_texturesData[i].external)
             continue;
 
         VkSamplerCreateInfo samplerCreateInfo{};
@@ -744,7 +745,7 @@ void VulkanMaterial::deleteTextureSampler()
 {
     for (auto i = 0; i < _textureSamplers.size(); i++)
     {
-        if (_textureExternal[i])
+        if (_texturesData[i].external)
             continue;
 
         vkDestroySampler(_device, _textureSamplers[i], nullptr);
@@ -827,7 +828,7 @@ void VulkanMaterial::createDescriptorPool()
     poolSizes[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
     poolSizes[0].descriptorCount = instance.vertexUniformBuffers.size() + instance.fragmentUniformBuffer.size() + instance.geometryUniformBuffer.size();
     poolSizes[1].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-    poolSizes[1].descriptorCount = swapchainSize * _materialSettings.textures.size();
+    poolSizes[1].descriptorCount = swapchainSize * _materialSettings.textures.size() * 2;
     for (auto& poolSize : poolSizes)
         if (poolSize.descriptorCount == 0)
             poolSize.descriptorCount = 1;
@@ -903,7 +904,7 @@ void VulkanMaterial::createDescriptorSets()
                 }
                 auto index = std::distance(_textureNames.cbegin(), iter);
 
-                if (!_textureExternal[index])
+                if (!_texturesData[index].external)
                 {
                     VkDescriptorImageInfo imageInfo{};
                     imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
@@ -912,7 +913,11 @@ void VulkanMaterial::createDescriptorSets()
 
                     imageInfoList.push_back(imageInfo);
                 } else {
-                    const auto& samplerInfoList = _vulkanInstance->getSamplerHolder()->getSamplerInfo(_textureExternalType[index]);
+
+                    const auto& samplerInfoList =
+                            _texturesData[index].type == TextureType::ScreenQuad && _texturesData[index].subtype > 0
+                            ? _vulkanInstance->getSamplerHolder()->getPostEffectSamplerInfo(_texturesData[index].subtype)
+                            : _vulkanInstance->getSamplerHolder()->getSamplerInfo(_texturesData[index].type);
                     if (!samplerInfoList.empty())
                     {
                         VkDescriptorImageInfo imageInfo{};
@@ -1022,7 +1027,7 @@ void VulkanMaterial::updateDescriptorSet(
         }
         auto index = std::distance(_textureNames.cbegin(), iter);
 
-        if (!_textureExternal[index])
+        if (!_texturesData[index].external)
         {
             VkDescriptorImageInfo imageInfo{};
             imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
@@ -1031,7 +1036,10 @@ void VulkanMaterial::updateDescriptorSet(
 
             imageInfoList.push_back(imageInfo);
         } else {
-            const auto& samplerInfoList = _vulkanInstance->getSamplerHolder()->getSamplerInfo(_textureExternalType[index]);
+            const auto& samplerInfoList =
+                    _texturesData[index].type == TextureType::ScreenQuad && _texturesData[index].subtype > 0
+                    ? _vulkanInstance->getSamplerHolder()->getPostEffectSamplerInfo(_texturesData[index].subtype)
+                    : _vulkanInstance->getSamplerHolder()->getSamplerInfo(_texturesData[index].type);
             if (!samplerInfoList.empty() && samplerInfoList[imageIndex].imageView != VK_NULL_HANDLE)
             {
                 VkDescriptorImageInfo imageInfo{};
@@ -1086,6 +1094,11 @@ glm::ivec2 VulkanMaterial::getSpritesheetSize() const
             return texture.spritesheetSize;
     }
     return glm::ivec2();
+}
+
+const MaterialSettings &VulkanMaterial::getSettings() const
+{
+    return _materialSettings;
 }
 
 } // namespace SVE

@@ -105,7 +105,13 @@ add_executable(Chewman
         SVE/ParticleSystemManager.h
         SVE/ComputeEntity.cpp
         SVE/ComputeEntity.h
-        Game/Gargoyle.h Game/Teleport.h)
+        Game/Gargoyle.h
+        Game/Teleport.h
+        Game/Coin.h
+        SVE/PostEffectManager.cpp
+        SVE/PostEffectManager.h
+        SVE/VulkanPostEffect.cpp
+        SVE/VulkanPostEffect.h)
 
 if (WIN32)
     target_link_libraries(Chewman mingw32 SDL2main SDL2 vulkan-1.lib VkLayer_core_validation.lib libassimp libcppfsd)
