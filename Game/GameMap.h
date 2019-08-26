@@ -6,33 +6,19 @@
 #include <memory>
 #include <SVE/SceneNode.h>
 #include <SVE/MeshEntity.h>
-#include "SVE/Mesh.h"
+#include <SVE/Mesh.h>
+#include "GameDefs.h"
 #include "BlockMeshGenerator.h"
 #include "Gargoyle.h"
 #include "Teleport.h"
 #include "Coin.h"
+#include "Enemies/Nun.h"
 
 
 namespace Chewman
 {
 
-enum class CellType : uint8_t
-{
-    Wall,
-    Floor,
-    Liquid,
-    InvisibleWallWithFloor,
-    InvisibleWallEmpty
-};
-
-struct CellInfo
-{
-    CellType cellType;
-    Coin* coin = nullptr;
-};
-
-using Map = std::vector<std::vector<CellInfo>>;
-
+// TODO: Split to GameMapLoader and GameMap
 class GameMap
 {
 public:
@@ -56,15 +42,15 @@ private:
 private:
     BlockMeshGenerator _meshGenerator;
 
-    std::shared_ptr<SVE::Mesh> _mapMesh[3];
     std::shared_ptr<SVE::SceneNode> _mapNode;
     std::shared_ptr<SVE::MeshEntity> _mapEntity[3];
 
     std::vector<Gargoyle> _gargoyles;
     std::vector<Teleport> _teleports;
     std::vector<Coin> _coins;
+    std::vector<Nun> _nuns;
 
-    Map _mapData;
+    CellInfoMap _mapData;
     size_t _width;
     size_t _height;
 };

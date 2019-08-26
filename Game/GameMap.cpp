@@ -17,7 +17,6 @@ namespace Chewman
 {
 namespace
 {
-constexpr float CellSize = 3.0f;
 
 glm::quat rotationBetweenVectors(glm::vec3 start, glm::vec3 dest)
 {
@@ -166,6 +165,10 @@ void GameMap::loadMap(const std::string& filename)
                     _mapData[curRow][column].cellType = CellType::Floor;
                     createTeleport(curRow, column, ch);
                     break;
+                case 'E':
+                    _mapData[curRow][column].cellType = CellType::Floor;
+                    _nuns.emplace_back(_mapData, glm::ivec2(curRow, column));
+                    break;
                 case 'J':
                 case 'D':
                 case 'V':
@@ -243,12 +246,13 @@ void GameMap::initMeshes()
 
     auto* engine = SVE::Engine::getInstance();
 
-    _mapMesh[0] = std::make_shared<SVE::Mesh>(meshSettingsT);
-    engine->getMeshManager()->registerMesh(_mapMesh[0]);
-    _mapMesh[1] = std::make_shared<SVE::Mesh>(meshSettingsB);
-    engine->getMeshManager()->registerMesh(_mapMesh[1]);
-    _mapMesh[2] = std::make_shared<SVE::Mesh>(meshSettingsV);
-    engine->getMeshManager()->registerMesh(_mapMesh[2]);
+    std::shared_ptr<SVE::Mesh> mapMesh[3];
+    mapMesh[0] = std::make_unique<SVE::Mesh>(meshSettingsT);
+    engine->getMeshManager()->registerMesh(mapMesh[0]);
+    mapMesh[1] = std::make_shared<SVE::Mesh>(meshSettingsB);
+    engine->getMeshManager()->registerMesh(mapMesh[1]);
+    mapMesh[2] = std::make_shared<SVE::Mesh>(meshSettingsV);
+    engine->getMeshManager()->registerMesh(mapMesh[2]);
 
     _mapEntity[0] = std::make_shared<SVE::MeshEntity>("MapT");
     _mapEntity[1] = std::make_shared<SVE::MeshEntity>("MapB");
@@ -461,6 +465,11 @@ void GameMap::update(float time)
                 break;
             }
         }
+    }
+
+    for (auto& nun : _nuns)
+    {
+        nun.update();
     }
 
 }

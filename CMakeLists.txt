@@ -111,7 +111,9 @@ add_executable(Chewman
         SVE/PostEffectManager.cpp
         SVE/PostEffectManager.h
         SVE/VulkanPostEffect.cpp
-        SVE/VulkanPostEffect.h)
+        SVE/VulkanPostEffect.h
+        Game/MapTraveller.cpp
+        Game/MapTraveller.h Game/GameDefs.h Game/Enemies/Enemy.cpp Game/Enemies/Enemy.h Game/Enemies/EnemyAI.h Game/Enemies/Nun.cpp Game/Enemies/Nun.h Game/Enemies/RandomWalkerAI.cpp Game/Enemies/RandomWalkerAI.h)
 
 if (WIN32)
     target_link_libraries(Chewman mingw32 SDL2main SDL2 vulkan-1.lib VkLayer_core_validation.lib libassimp libcppfsd)

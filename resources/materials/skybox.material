@@ -21,11 +21,11 @@
         },
         {
             "samplerName": "samplerCubeMap",
-            "filename": "textures/skybox/blood_bk.png"
+            "filename": "textures/skybox/blood_ft.png"
         },
         {
             "samplerName": "samplerCubeMap",
-            "filename": "textures/skybox/blood_ft.png"
+            "filename": "textures/skybox/blood_bk.png"
         }
     ],
     "isCubemap": true,

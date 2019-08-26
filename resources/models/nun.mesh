@@ -1,4 +1,6 @@
 {
     "name": "nun",
-    "filename": "assets/nunDance.dae"
+    "filename": "assets/nun.DAE",
+    "switchYZ": true,
+    "scale": [ 0.05, 0.05, 0.05 ]
 }

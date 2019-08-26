@@ -308,6 +308,9 @@ int runGame()
     SDL_Window *window;
     SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS);
 
+    // TODO: Replace with C++11 random numbers
+    srand((unsigned)time(0));
+
     window = SDL_CreateWindow(
             "Chewman Vulkan",
             SDL_WINDOWPOS_CENTERED,
@@ -365,7 +368,7 @@ int runGame()
         camera->setPosition(glm::vec3(5.0f, 5.0f, 5.0f));
 
         // create skybox
-        engine->getSceneManager()->setSkybox("Skybox2");
+        engine->getSceneManager()->setSkybox("Skybox");
 
         // create floor
         auto meshSettings = constructPlane("Floor", glm::vec3(0, 0, 0), 10.0f, 10.0f, glm::vec3(0.0f, 1.0f, 0.0f));

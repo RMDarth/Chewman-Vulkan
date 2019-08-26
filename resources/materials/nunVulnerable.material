@@ -1,7 +1,8 @@
 {
-    "name": "NunMaterial",
-    "vertexShaderName": "phongVertexShader",
+    "name": "NunVulnerableMaterial",
+    "vertexShaderName": "bonesPhongVertexShader",
     "fragmentShaderName": "phongFragmentShader",
+    "cullFace": "BackFace",
     "textures": [
         {
             "samplerName": "texSampler",
