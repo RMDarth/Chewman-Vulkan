@@ -1,6 +1,6 @@
 // Chewman Vulkan game
 // Copyright (c) 2018-2019, Igor Barinov
-// Licensed under CC BY 4.0
+// Licensed under the MIT License
 #include "BlockMeshGenerator.h"
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtc/matrix_transform.hpp>

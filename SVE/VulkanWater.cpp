@@ -1,6 +1,6 @@
 // VSE (Vulkan Simple Engine) Library
 // Copyright (c) 2018-2019, Igor Barinov
-// Licensed under CC BY 4.0
+// Licensed under the MIT License
 #include "VulkanWater.h"
 #include "Engine.h"
 #include "VulkanInstance.h"

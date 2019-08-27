@@ -12,31 +12,11 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f70505ef-ae5c-44c4-ba16-f4e316506723" name="Default Changelist" comment="Adding enemy classes and basic AI">
-      <change afterPath="$PROJECT_DIR$/Game/GameMapLoader.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Game/GameMapLoader.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Game/GameUtils.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Game/GameUtils.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dictionaries/darth.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dictionaries/darth.xml" afterDir="false" />
+    <list default="true" id="f70505ef-ae5c-44c4-ba16-f4e316506723" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Game/Enemies/Enemy.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Game/Enemies/Enemy.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Game/Enemies/Enemy.h" beforeDir="false" afterPath="$PROJECT_DIR$/Game/Enemies/Enemy.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Game/Enemies/Nun.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Game/Enemies/Nun.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Game/Enemies/Nun.h" beforeDir="false" afterPath="$PROJECT_DIR$/Game/Enemies/Nun.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Game/Enemies/RandomWalkerAI.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Game/Enemies/RandomWalkerAI.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Game/Enemies/RandomWalkerAI.h" beforeDir="false" afterPath="$PROJECT_DIR$/Game/Enemies/RandomWalkerAI.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Game/GameDefs.h" beforeDir="false" afterPath="$PROJECT_DIR$/Game/GameDefs.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Game/GameMap.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Game/GameMap.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Game/GameMap.h" beforeDir="false" afterPath="$PROJECT_DIR$/Game/GameMap.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Game/MapTraveller.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Game/MapTraveller.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Game/MapTraveller.h" beforeDir="false" afterPath="$PROJECT_DIR$/Game/MapTraveller.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SVE/MeshManager.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/SVE/MeshManager.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/license.txt" beforeDir="false" afterPath="$PROJECT_DIR$/LICENSE.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/main.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/materials/FireLineParticle.material" beforeDir="false" afterPath="$PROJECT_DIR$/resources/materials/fireLineParticle.material" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/materials/FrostLineParticle.material" beforeDir="false" afterPath="$PROJECT_DIR$/resources/materials/frostLineParticle.material" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/materials/nun.material" beforeDir="false" afterPath="$PROJECT_DIR$/resources/materials/nun.material" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -266,7 +246,7 @@
       <workItem from="1566734521552" duration="2819000" />
       <workItem from="1566741291315" duration="25124000" />
       <workItem from="1566824664232" duration="18910000" />
-      <workItem from="1566863026639" duration="1668000" />
+      <workItem from="1566863026639" duration="3678000" />
     </task>
     <task id="LOCAL-00001" summary="Adding core SVE classes">
       <created>1536429263360</created>
@@ -527,7 +507,14 @@
       <option name="project" value="LOCAL" />
       <updated>1566849320042</updated>
     </task>
-    <option name="localTasksCounter" value="38" />
+    <task id="LOCAL-00038" summary="Some refactoring, fix enemy AI">
+      <created>1566864731932</created>
+      <option name="number" value="00038" />
+      <option name="presentableId" value="LOCAL-00038" />
+      <option name="project" value="LOCAL" />
+      <updated>1566864731932</updated>
+    </task>
+    <option name="localTasksCounter" value="39" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -562,7 +549,6 @@
   <component name="VcsManagerConfiguration">
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_NEW_TODO" value="false" />
-    <MESSAGE value="Adding basic water implementation" />
     <MESSAGE value="Adding refraction to water" />
     <MESSAGE value="Refactoring entities, materials and other classes, updating material data" />
     <MESSAGE value="Updating keyboard movement, fixing refraction material" />
@@ -587,7 +573,8 @@
     <MESSAGE value="Load and place teleport from map file, add frost gargoyle support" />
     <MESSAGE value="Adding post-effect manager, adding bloom effect, adding coins to map" />
     <MESSAGE value="Adding enemy classes and basic AI" />
-    <option name="LAST_COMMIT_MESSAGE" value="Adding enemy classes and basic AI" />
+    <MESSAGE value="Some refactoring, fix enemy AI" />
+    <option name="LAST_COMMIT_MESSAGE" value="Some refactoring, fix enemy AI" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

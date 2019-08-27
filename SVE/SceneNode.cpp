@@ -1,6 +1,6 @@
 // VSE (Vulkan Simple Engine) Library
 // Copyright (c) 2018-2019, Igor Barinov
-// Licensed under CC BY 4.0
+// Licensed under the MIT License
 #include "SceneNode.h"
 #include "SceneManager.h"
 #include "Engine.h"
