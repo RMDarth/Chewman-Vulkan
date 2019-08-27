@@ -11,13 +11,12 @@ namespace Chewman
 class RandomWalkerAI : public EnemyAI
 {
 public:
-    explicit RandomWalkerAI(MapTraveller& mapWalker, uint8_t sameWayChance = 25);
+    explicit RandomWalkerAI(MapTraveller& mapWalker, uint8_t sameWayChance = 75);
 
     void update() override;
 
 private:
-    std::mt19937 _randomDevice;
-    uint8_t _sameWayChange = 25;
+    uint8_t _sameWayChange = 75;
 };
 
 } // namespace Chewman

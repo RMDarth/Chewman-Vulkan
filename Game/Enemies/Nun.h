@@ -1,8 +1,9 @@
-// VSE (Vulkan Simple Engine) Library
+// Chewman Vulkan game
 // Copyright (c) 2018-2019, Igor Barinov
 // Licensed under CC BY 4.0
 #pragma once
 #include <SVE/SceneNode.h>
+#include <SVE/Engine.h>
 #include "Enemy.h"
 
 namespace Chewman
@@ -11,7 +12,7 @@ namespace Chewman
 class Nun final : public Enemy
 {
 public:
-    Nun(CellInfoMap& map, glm::ivec2 startPos);
+    Nun(GameMap* map, glm::ivec2 startPos);
 
     void update() override;
 private:

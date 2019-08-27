@@ -10,7 +10,7 @@ namespace Chewman
 class Coin;
 
 constexpr float CellSize = 3.0f;
-constexpr float MoveSpeed = 7.5f;
+constexpr float MoveSpeed = 6.5f;
 
 enum class CellType : uint8_t
 {

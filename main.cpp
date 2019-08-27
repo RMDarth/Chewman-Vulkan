@@ -10,6 +10,7 @@
 #include "SVE/PostEffectManager.h"
 
 #include "Game/GameMap.h"
+#include "Game/GameMapLoader.h"
 
 #include <SDL2/SDL.h>
 #include <vulkan/vulkan.h>
@@ -21,7 +22,6 @@
 #include <memory>
 #include <mutex>
 
-
 // Thanks to:
 // Karl "ThinMatrix" for his video blogs on OpenGL techniques
 // Niko Kauppi for his Vulkan video tutorials
@@ -30,6 +30,9 @@
 // Joey de Vries for his OpenGL tutorials (learnopengl.com)
 // Eray Meiri for his OGL dev tutorials (ogldev.org)
 // Pawel Lapinski for his Vulkan Cookbook and compute shaders receipts
+
+// main.cpp currenly holds some test data for engine features tests.
+// TODO: clean this code
 
 void updateNode(std::shared_ptr<SVE::SceneNode>& node, float time)
 {
@@ -389,8 +392,8 @@ int runGame()
         engine->getMeshManager()->registerMesh(bigFloorMesh);
 
         // Create level floor
-        Chewman::GameMap gameMap;
-        gameMap.loadMap("resources/game/levels/level5.map");
+        Chewman::GameMapLoader mapLoader;
+        Chewman::GameMapProcessor gameMap(mapLoader.loadMap("resources/game/levels/level5.map"));
 
         // create teleport test
         std::array<std::shared_ptr<SVE::SceneNode>, 0> baseNodes;

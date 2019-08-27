@@ -2,6 +2,7 @@
 // Copyright (c) 2018-2019, Igor Barinov
 // Licensed under CC BY 4.0
 #include "MapTraveller.h"
+#include "GameMap.h"
 #include "SVE/Engine.h"
 
 namespace Chewman
@@ -36,13 +37,13 @@ void moveTo(MoveDirection dir, glm::ivec2& mapPosition)
 
 } // anon namespace
 
-MapTraveller::MapTraveller(CellInfoMap& map, glm::ivec2 startPosMap, float moveSpeed)
+MapTraveller::MapTraveller(GameMap* map, glm::ivec2 startPosMap, float moveSpeed)
     : MapTraveller(map, getRealPos(startPosMap.x, startPosMap.y), moveSpeed)
 {
 }
 
-MapTraveller::MapTraveller(CellInfoMap& map, glm::vec2 startPosReal, float moveSpeed)
-    : _map(&map)
+MapTraveller::MapTraveller(GameMap* map, glm::vec2 startPosReal, float moveSpeed)
+    : _map(map)
     , _position(startPosReal)
     , _moveSpeed(moveSpeed)
     , _direction(static_cast<MoveDirection>(rand() % 4))
@@ -100,7 +101,6 @@ void MapTraveller::update()
     if (glm::dot(distance, _speed) <= 0)
     {
         _position = _target;
-        std::cout << "target reached " << (long)(this) % 13 << std::endl;
         _speed = { 0, 0 };
         _targetReached = true;
     }
@@ -118,12 +118,11 @@ glm::vec2 MapTraveller::getRealPosition() const
 
 bool MapTraveller::isFreePosition(glm::ivec2 position)
 {
-    auto& map = *_map;
-    if (position.x < 0 || position.x >= map.size() ||
-        position.y < 0 || position.y >= map.front().size())
+    if (position.x < 0 || position.x >= _map->mapData.size() ||
+        position.y < 0 || position.y >= _map->mapData.front().size())
         return false;
 
-    switch (map[position.x][position.y].cellType)
+    switch (_map->mapData[position.x][position.y].cellType)
     {
         case CellType::Floor:
             return true;

@@ -2,6 +2,7 @@
   <dictionary name="darth">
     <words>
       <w>teleport</w>
+      <w>teleports</w>
     </words>
   </dictionary>
 </component>

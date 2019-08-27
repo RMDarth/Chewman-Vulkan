@@ -5,24 +5,27 @@
 #include <cstdint>
 #include <functional>
 #include <glm/glm.hpp>
+#include <memory>
 #include "GameDefs.h"
 
 namespace Chewman
 {
 
+struct GameMap;
+
 enum class MoveDirection : uint8_t
 {
     Left,
-    Right,
     Forward,
+    Right,
     Backward
 };
 
 class MapTraveller
 {
 public:
-    MapTraveller(CellInfoMap& map, glm::ivec2 startPosMap, float moveSpeed = MoveSpeed);
-    MapTraveller(CellInfoMap& map, glm::vec2 startPosReal, float moveSpeed = MoveSpeed);
+    MapTraveller(GameMap* map, glm::ivec2 startPosMap, float moveSpeed = MoveSpeed);
+    MapTraveller(GameMap* map, glm::vec2 startPosReal, float moveSpeed = MoveSpeed);
 
     bool tryMove(MoveDirection dir);
     void move(MoveDirection dir);
@@ -40,7 +43,7 @@ private:
     bool isFreePosition(glm::ivec2 position);
 
 private:
-    CellInfoMap* _map;
+    GameMap* _map;
 
     float _moveSpeed = 0.0f;
 
@@ -53,4 +56,4 @@ private:
     glm::vec2 _speed = {};
 };
 
-} // namespace SVE
+} // namespace Chewman

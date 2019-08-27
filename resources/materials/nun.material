@@ -1,11 +1,19 @@
 {
     "name": "NunMaterial",
-    "vertexShaderName": "phongVertexShader",
-    "fragmentShaderName": "phongFragmentShader",
+    "vertexShaderName": "phongShadowVertexShader",
+    "fragmentShaderName": "phongShadowFragmentShader",
     "textures": [
         {
-            "samplerName": "texSampler",
+            "samplerName": "diffuseTex",
             "filename": "textures/trashnun_dressed_tex.png"
+        },
+        {
+            "samplerName": "directShadowTex",
+            "textureType": "ShadowMapDirect"
+        },
+        {
+            "samplerName": "pointShadowTex",
+            "textureType": "ShadowMapPoint"
         }
     ]
 }

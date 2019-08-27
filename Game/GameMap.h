@@ -14,45 +14,38 @@
 #include "Coin.h"
 #include "Enemies/Nun.h"
 
-
 namespace Chewman
 {
 
-// TODO: Split to GameMapLoader and GameMap
-class GameMap
+struct GameMap
+{
+    std::shared_ptr<SVE::SceneNode> mapNode;
+    std::shared_ptr<SVE::MeshEntity> mapEntity[3];
+
+    std::vector<Gargoyle> gargoyles;
+    std::vector<Teleport> teleports;
+    std::vector<Coin> coins;
+    std::vector<Nun> nuns;
+
+    CellInfoMap mapData;
+    size_t width;
+    size_t height;
+};
+
+class GameMapProcessor
 {
 public:
-    GameMap();
+    explicit GameMapProcessor(std::shared_ptr<GameMap> gameMap);
 
-    void loadMap(const std::string& filename);
     void update(float time);
 
 private:
-    void initMeshes();
-    void createGargoyle(int row, int column, char mapType);
-    void finalizeGargoyle(Gargoyle& gargoyle);
-
-    void initTeleportMesh();
-    void createTeleport(int row, int column, char mapType);
+    void updateGargoyle(float time, Gargoyle& gargoyle);
     void updateTeleport(float time, Teleport& teleport);
-
-    Coin* createCoin(int row, int column);
     void updateCoin(float time, Coin& coin);
 
 private:
-    BlockMeshGenerator _meshGenerator;
-
-    std::shared_ptr<SVE::SceneNode> _mapNode;
-    std::shared_ptr<SVE::MeshEntity> _mapEntity[3];
-
-    std::vector<Gargoyle> _gargoyles;
-    std::vector<Teleport> _teleports;
-    std::vector<Coin> _coins;
-    std::vector<Nun> _nuns;
-
-    CellInfoMap _mapData;
-    size_t _width;
-    size_t _height;
+    std::shared_ptr<GameMap> _gameMap;
 };
 
 } // namespace Chewman
