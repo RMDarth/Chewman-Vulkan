@@ -27,6 +27,7 @@ struct EngineSettings
     bool useScreenQuad = true;
     bool initShadows = false;
     bool initWater = false;
+    bool useCascadeShadowMap = false;
 
     static const int BEST_GPU_AVAILABLE;
     static const int BEST_MSAA_AVAILABLE;

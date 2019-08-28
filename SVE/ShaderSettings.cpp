@@ -30,6 +30,7 @@ const std::map<UniformType, size_t>& getUniformSizeMap()
             { UniformType::LightDirectional, sizeof(DirLight) },
             { UniformType::LightPointViewProjectionList, sizeof(glm::mat4) },
             { UniformType::LightDirectViewProjectionList, sizeof(glm::mat4) },
+            { UniformType::LightDirectViewProjection, sizeof(glm::mat4) },
             { UniformType::BoneMatrices, sizeof(glm::mat4) },
             { UniformType::ClipPlane, sizeof(glm::vec4) },
             { UniformType::ParticleEmitter, sizeof(ParticleEmitter) },
@@ -151,6 +152,11 @@ std::vector<char> getUniformDataByType(const UniformData& data, UniformType type
         {
             const char* byteData = reinterpret_cast<const char*>(data.lightDirectViewProjectionList.data());
             return std::vector<char>(byteData, byteData + sizeMap.at(type) * data.lightDirectViewProjectionList.size());
+        }
+        case UniformType::LightDirectViewProjection:
+        {
+            const char* byteData = reinterpret_cast<const char*>(&data.lightDirectViewProjectionList.front());
+            return std::vector<char>(byteData, byteData + sizeMap.at(type));
         }
         case UniformType::BoneMatrices:
         {

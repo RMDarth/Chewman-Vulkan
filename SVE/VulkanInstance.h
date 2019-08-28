@@ -38,6 +38,7 @@ public:
     ~VulkanInstance();
 
     const VulkanUtils& getVulkanUtils() const;
+    const EngineSettings& getEngineSettings() const;
 
     void resizeWindow();
     void finishRendering() const;

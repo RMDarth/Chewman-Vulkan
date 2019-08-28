@@ -236,7 +236,7 @@ void VulkanDirectShadowMap::createImageResources()
                 depthFormat,
                 1,
                 aspectFlags,
-                VK_IMAGE_VIEW_TYPE_2D_ARRAY,
+                _layersCount == 1 ? VK_IMAGE_VIEW_TYPE_2D : VK_IMAGE_VIEW_TYPE_2D_ARRAY,
                 _layersCount,
                 0);
 

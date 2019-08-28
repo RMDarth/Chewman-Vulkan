@@ -82,6 +82,7 @@ EngineSettings loadEngine(const std::string& data)
     setOptional(engineSettings.initShadows = document["initShadows"].GetBool());
     setOptional(engineSettings.initWater = document["initWater"].GetBool());
     setOptional(engineSettings.useScreenQuad = document["useScreenQuad"].GetBool());
+    setOptional(engineSettings.useCascadeShadowMap = document["useCascadeShadowMap"].GetBool());
 
     return engineSettings;
 }
@@ -107,6 +108,7 @@ std::vector<UniformInfo> getUniformInfoList(rj::Document& document)
             {"LightSpot",                       UniformType::LightSpot},
             {"LightPointViewProjectionList",    UniformType::LightPointViewProjectionList},
             {"LightDirectViewProjectionList",   UniformType::LightDirectViewProjectionList},
+            {"LightDirectViewProjection",       UniformType::LightDirectViewProjection},
             {"BoneMatrices",                    UniformType::BoneMatrices},
             {"ClipPlane",                       UniformType::ClipPlane},
             {"ParticleEmitter",                 UniformType::ParticleEmitter},
@@ -406,6 +408,7 @@ LightSettings loadLight(const std::string& data)
 
     lightSettings.lightType =  lightTypeMap.at(document["lightType"].GetString());
     lightSettings.lightColor = loadVector(document, "lightColor");
+    setOptional(lightSettings.lookAt = loadVector(document, "lookAt"));
     lightSettings.shininess = document["shininess"].GetFloat();
     lightSettings.ambientStrength = loadVector<4>(document, "ambientStrength");
     lightSettings.specularStrength = loadVector<4>(document, "specularStrength");

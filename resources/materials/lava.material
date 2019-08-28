@@ -1,0 +1,11 @@
+{
+    "name": "LavaMaterial",
+    "vertexShaderName": "lavaVertexShader",
+    "fragmentShaderName": "lavaFragmentShader",
+    "textures": [
+        {
+            "samplerName": "noiseSampler",
+            "filename": "textures/noise.png"
+        }
+    ]
+}

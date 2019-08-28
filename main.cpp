@@ -202,6 +202,10 @@ SVE::MeshSettings constructPlane(std::string name, glm::vec3 center, float width
             };
     std::vector<uint32_t> indexes;
     std::vector<glm::vec3> normals(6, normal);
+
+    std::vector<glm::vec3> tangent(6, glm::vec3(0.0f, 0.0f, 1.0f));
+    std::vector<glm::vec3> bitangent(6, glm::vec3(1.0f, 0.0f, 0.0f));
+
     std::vector<glm::vec3> colors(6, glm::vec3(1.0f, 1.0f, 1.0f));
 
     uint32_t currentIndex = 0;
@@ -221,6 +225,8 @@ SVE::MeshSettings constructPlane(std::string name, glm::vec3 center, float width
     settings.vertexPosData = std::move(points);
     settings.vertexTexData = std::move(texCoords);
     settings.vertexNormalData = std::move(normals);
+    settings.vertexTangentData = std::move(tangent);
+    settings.vertexBinormalData = std::move(bitangent);
     settings.vertexColorData = std::move(colors);
     settings.indexData = std::move(indexes);
     settings.boneNum = 0;
@@ -347,13 +353,7 @@ int runGame()
         // configure light
         auto sunLight = engine->getSceneManager()->getLightManager()->getDirectionLight();
         sunLight->setNodeTransformation(
-                glm::translate(glm::mat4(1), glm::vec3(50, 50, -50)));
-        if (engine->getSceneManager()->getLightManager()->getLightCount() >= 1)
-            engine->getSceneManager()->getLightManager()->getLight(0)->setNodeTransformation(
-                    glm::translate(glm::mat4(1), glm::vec3(25, 5, -5)));
-        if (engine->getSceneManager()->getLightManager()->getLightCount() >= 2)
-            engine->getSceneManager()->getLightManager()->getLight(1)->setNodeTransformation(
-                    glm::translate(glm::mat4(1), glm::vec3(-5, 10, 5)));
+                glm::translate(glm::mat4(1), glm::vec3(80, 80, -80)));
 
 
         auto particleNode = engine->getSceneManager()->createSceneNode();
@@ -361,9 +361,6 @@ int runGame()
         engine->getSceneManager()->getRootNode()->attachSceneNode(particleNode);
         std::shared_ptr<SVE::ParticleSystemEntity> particleSystem = std::make_shared<SVE::ParticleSystemEntity>("FireLineParticle");
         //particleNode->attachEntity(particleSystem);
-
-        engine->getSceneManager()->getLightManager()->removeLight(0);
-        engine->getSceneManager()->getLightManager()->removeLight(1);
 
         // create camera
         auto camera = engine->getSceneManager()->createMainCamera();
@@ -379,11 +376,11 @@ int runGame()
         auto floorMesh = std::make_shared<SVE::Mesh>(meshSettings);
         engine->getMeshManager()->registerMesh(floorMesh);
 
-        // create water mesh
-        auto waterMeshSettings = constructPlane("WaterMesh", glm::vec3(0, -0.5f, 0), 100.0f, 100.0f, glm::vec3(0.0f, 1.0f, 0.0f));
-        waterMeshSettings.materialName = "WaterReflection";
-        auto waterMesh = std::make_shared<SVE::Mesh>(waterMeshSettings);
-        engine->getMeshManager()->registerMesh(waterMesh);
+        // create liquid mesh
+        auto liquidMeshSettings = constructPlane("LiquidMesh", glm::vec3(15.0, -0.5f, -15.0) + glm::vec3(13.5f, 0, -13.5), 30.0f, 30.0f, glm::vec3(0.0f, 1.0f, 0.0f));
+        liquidMeshSettings.materialName = "LavaMaterial";
+        auto liquidMesh = std::make_shared<SVE::Mesh>(liquidMeshSettings);
+        engine->getMeshManager()->registerMesh(liquidMesh);
 
         auto bigFloorMeshSettings = constructPlane("BigFloor", glm::vec3(0, 0, 0), 30.0f, 30.0f,
                                                    glm::vec3(0.0f, 1.0f, 0.0f));
@@ -393,7 +390,7 @@ int runGame()
 
         // Create level floor
         Chewman::GameMapLoader mapLoader;
-        Chewman::GameMapProcessor gameMap(mapLoader.loadMap("resources/game/levels/level1.map"));
+        Chewman::GameMapProcessor gameMap(mapLoader.loadMap("resources/game/levels/level2.map"));
 
         // create teleport test
         std::array<std::shared_ptr<SVE::SceneNode>, 0> baseNodes;
@@ -410,13 +407,13 @@ int runGame()
         auto terrainNode = engine->getSceneManager()->createSceneNode();
         auto floorNode = engine->getSceneManager()->createSceneNode();
         auto bigFloorNode = engine->getSceneManager()->createSceneNode();
-        auto waterNode = engine->getSceneManager()->createSceneNode();
+        auto liquidNode = engine->getSceneManager()->createSceneNode();
         engine->getSceneManager()->getRootNode()->attachSceneNode(newNodeMid);
         newNodeMid->attachSceneNode(newNode);
         engine->getSceneManager()->getRootNode()->attachSceneNode(newNode2);
         engine->getSceneManager()->getRootNode()->attachSceneNode(terrainNode);
         engine->getSceneManager()->getRootNode()->attachSceneNode(floorNode);
-        engine->getSceneManager()->getRootNode()->attachSceneNode(waterNode);
+        engine->getSceneManager()->getRootNode()->attachSceneNode(liquidNode);
         //engine->getSceneManager()->getRootNode()->attachSceneNode(bigFloorNode);
 
         // create entities
@@ -424,10 +421,9 @@ int runGame()
         std::shared_ptr<SVE::Entity> meshEntity2 = std::make_shared<SVE::MeshEntity>("nun");
         std::shared_ptr<SVE::Entity> terrainEntity = std::make_shared<SVE::MeshEntity>("terrain");
         std::shared_ptr<SVE::Entity> floorEntity = std::make_shared<SVE::MeshEntity>("Floor");
-        std::shared_ptr<SVE::MeshEntity> waterEntity = std::make_shared<SVE::MeshEntity>("WaterMesh");
-        waterEntity->setMaterial("WaterReflection");
-        waterEntity->setIsReflected(false);
-        waterEntity->setCastShadows(true);
+        std::shared_ptr<SVE::MeshEntity> liquidEntity = std::make_shared<SVE::MeshEntity>("LiquidMesh");
+        liquidEntity->setMaterial("LavaMaterial");
+
         meshEntity->setMaterial("Yellow");
         meshEntity2->setMaterial("NunMaterial");
         terrainEntity->setMaterial("Terrain");
@@ -446,8 +442,9 @@ int runGame()
 
         floorNode->attachEntity(floorEntity);
         floorNode->setNodeTransformation(glm::translate(glm::mat4(1), glm::vec3(-20, 5, 0)));
-        waterNode->setNodeTransformation(glm::translate(glm::mat4(1), glm::vec3(0, 0, 0)));
-        waterNode->attachEntity(waterEntity);
+
+        liquidNode->setNodeTransformation(glm::translate(glm::mat4(1), glm::vec3(0, 0, 0)));
+        liquidNode->attachEntity(liquidEntity);
         //bigFloorNode->attachEntity(bigFloorEntity);
         //bigFloorNode->setNodeTransformation(glm::translate(glm::mat4(1), glm::vec3(0, -5, 0)));
         //levelNode->setNodeTransformation(glm::translate(glm::mat4(1), glm::vec3(10, 5, 0)));
@@ -557,33 +554,6 @@ int runGame()
                 }
                 gameMap.update(curTime - prevTime);
             }
-
-
-            // Temp : update fireline
-            /*auto& emitter = particleSystem->getSettings().particleEmitter;
-            auto& affector = particleSystem->getSettings().particleAffector;
-            static float currentLife = 0.0f;
-            if (currentLife > 0)
-            {
-                emitter.minLife = std::max(currentLife, 10.0f);
-                emitter.maxLife = std::max(currentLife, 10.0f);
-
-                affector.colorChanger = glm::vec4(0.0, 0.0, 0.0, 0.0f);
-                affector.lifeDrain = 0.0f;
-            } else {
-                emitter.minLife = 0;
-                emitter.maxLife = 0;
-
-                affector.colorChanger = glm::vec4(0.0, 0.0, 0.0, -3.5f);
-                affector.lifeDrain = 5.0f;
-            }
-            emitter.minSpeed = 5;
-            emitter.maxSpeed = 5;
-            emitter.emissionRate = 40;
-
-            currentLife += (curTime - prevTime);
-            if (currentLife > 10.0f)
-                currentLife = -10.0f;*/
 
             prevTime = curTime;
         }

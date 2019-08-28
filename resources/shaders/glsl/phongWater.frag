@@ -10,7 +10,6 @@ layout(set = 1, binding = 3) uniform UBO
     vec4 cameraPos;
     DirLight dirLight;
     SpotLight spotLight;
-    PointLight shadowPointLight[4];
     LineLight lineLight[15];
     PointLight pointLight[10];
     LightInfo lightInfo;

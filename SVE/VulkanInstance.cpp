@@ -198,6 +198,10 @@ const VulkanUtils& VulkanInstance::getVulkanUtils() const
     return _vulkanUtils;
 }
 
+const EngineSettings& VulkanInstance::getEngineSettings() const
+{
+    return _engineSettings;
+}
 
 VkInstance VulkanInstance::getInstance() const
 {

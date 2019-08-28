@@ -25,10 +25,19 @@ LightSettings& LightNode::getLightSettings()
     return _lightSettings;
 }
 
-void LightNode::updateViewMatrix(glm::vec3 cameraPos)
+void LightNode::updateViewMatrix(glm::vec3 cameraPos, glm::vec3 cameraDir)
 {
     if (_lightSettings.lightType == LightType::SunLight)
-        _viewMatrix = glm::lookAt(_originalPos + cameraPos, glm::vec3(0, 0, 0) + cameraPos, glm::vec3(0.0f, 1.0f, 0.0f));
+    {
+        auto cosA = glm::dot(glm::normalize(cameraDir), glm::vec3(0, -1, 0));
+        _distanceFromCamera = std::min(250.0f, fabsf(cameraPos.y / cosA));
+        createProjectionMatrix();
+
+        _viewMatrix = glm::lookAt(_originalPos + cameraPos, _lightSettings.lookAt + cameraPos,
+                                  glm::vec3(0.0f, 1.0f, 0.0f));
+
+
+    }
 }
 
 void LightNode::fillUniformData(UniformData& data, uint32_t lightNum, bool asViewSource)
@@ -166,7 +175,9 @@ void LightNode::createViewMatrix()
     _originalPos = glm::vec3(model[3]);
 
     if (_lightSettings.lightType == LightType::SunLight)
-        _viewMatrix = glm::lookAt(glm::vec3(model[3]), glm::vec3(0, 0, 0), glm::vec3(0.0f, 1.0f, 0.0f));
+    {
+        _viewMatrix = glm::lookAt(glm::vec3(model[3]), _lightSettings.lookAt, glm::vec3(0.0f, 1.0f, 0.0f));
+    }
     else
     {
         _viewList.clear();
@@ -202,10 +213,23 @@ void LightNode::createProjectionMatrix()
             float far = 500;
             float near = 1;
             _projectionList.clear();
-            for (auto i = 0u; i < MAX_CASCADES; i++)
+
+            if (Engine::getInstance()->getEngineSettings().useCascadeShadowMap)
             {
-                float distance = near * powf(far / near, (float)(i + 1) / MAX_CASCADES);
-                auto projectionMatrix = glm::ortho(-distance, distance, -distance, distance, 0.01f, distance*2 + 30);
+                for (auto i = 0u; i < MAX_CASCADES; i++)
+                {
+                    float distance = near * powf(far / near, (float) (i + 1) / MAX_CASCADES);
+                    auto projectionMatrix = glm::ortho(-distance, distance, -distance, distance, 0.01f,
+                                                       distance * 2 + 30);
+                    projectionMatrix[1][1] *= -1;
+                    _projectionList.push_back(projectionMatrix);
+                }
+            } else {
+                far = _distanceFromCamera + 100;
+
+                float distance = near * powf(far / near, 1.0f);
+                auto projectionMatrix = glm::ortho(-distance, distance, -distance, distance, 0.01f,
+                                                   distance * 2 + 30);
                 projectionMatrix[1][1] *= -1;
                 _projectionList.push_back(projectionMatrix);
             }

@@ -28,6 +28,7 @@ public:
     void setPosition(glm::vec3 pos);
     void movePosition(glm::vec3 deltaPos);
     glm::vec3 getPosition();
+    glm::vec3 getDirection();
     void setYawPitchRoll(glm::vec3 yawPitchRoll);
     glm::vec3 getYawPitchRoll();
 

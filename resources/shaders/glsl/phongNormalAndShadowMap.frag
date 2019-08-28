@@ -1,20 +1,16 @@
 #version 450
 #extension GL_ARB_separate_shader_objects : enable
-const uint MAX_LIGHTS = 3;
-const uint CASCADE_NUM = 5;
 #include "lighting.glsl"
 
 layout(set = 1, binding = 0) uniform sampler2D diffuseTex;
 layout(set = 1, binding = 1) uniform sampler2D normalTex;
-layout(set = 1, binding = 2) uniform sampler2DArray directShadowTex;
-layout(set = 1, binding = 3) uniform samplerCubeArray pointShadowTex;
-layout(set = 1, binding = 4) uniform UBO
+layout(set = 1, binding = 2) uniform sampler2D directShadowTex;
+layout(set = 1, binding = 3) uniform UBO
 {
 	vec4 cameraPos;
     mat4 invModel;
 	DirLight dirLight;
 	SpotLight spotLight;
-	PointLight shadowPointLight[4];
     LineLight lineLight[15];
     PointLight pointLight[10];
 	LightInfo lightInfo;
@@ -29,8 +25,7 @@ layout(location = 0) in InData
     vec3 fragBinormal;
     vec3 fragTangent;
     vec3 fragPos;
-    vec4 fragPointLightSpacePos[MAX_LIGHTS];
-    vec4 fragDirectLightSpacePos[CASCADE_NUM];
+    vec4 fragDirectLightSpacePos;
 };
 
 layout(location = 0) out vec4 outColor;

@@ -17,7 +17,7 @@ static const uint32_t MAX_CASCADES = 5;
 class LightManager
 {
 public:
-    LightManager();
+    explicit LightManager(bool useCascadeShadowMap = false);
     ~LightManager();
 
     void setLight(std::shared_ptr<LightNode> light, uint32_t index);
@@ -38,6 +38,8 @@ private:
 
     std::shared_ptr<ShadowMap> _pointLightShadowMap;
     std::shared_ptr<ShadowMap> _directLightShadowMap;
+    bool _useCascadeShadowMap = false;
+    bool _usePointLightShadow = false;
 };
 
 } // namespace SVE

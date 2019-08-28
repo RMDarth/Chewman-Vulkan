@@ -18,7 +18,7 @@ public:
     const glm::mat4& getProjectionMatrix();
 
     LightSettings& getLightSettings();
-    void updateViewMatrix(glm::vec3 cameraPos);
+    void updateViewMatrix(glm::vec3 cameraPos, glm::vec3 cameraDir);
     void fillUniformData(UniformData& data, uint32_t lightNum, bool asViewSource);
     bool castShadows() const;
 
@@ -37,6 +37,7 @@ private:
     glm::mat4 _viewMatrix;
     glm::mat4 _projectionMatrix;
 
+    float _distanceFromCamera;
     std::vector<glm::mat4> _projectionList; // list of projections for different layers of CSM
     std::vector<glm::mat4> _viewList; // list of view matrix for different views (cubemap) of point light
 };

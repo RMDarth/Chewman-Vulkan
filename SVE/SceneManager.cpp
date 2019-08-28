@@ -3,6 +3,7 @@
 // Licensed under the MIT License
 #include <glm/gtc/matrix_transform.hpp>
 #include "SceneManager.h"
+#include "Engine.h"
 #include "LightManager.h"
 #include "LightNode.h"
 #include "ShadowMap.h"
@@ -54,7 +55,7 @@ std::shared_ptr<LightNode> SceneManager::createLight(LightSettings lightSettings
 LightManager* SceneManager::getLightManager()
 {
     if (!_lightManager)
-        _lightManager = std::make_unique<LightManager>();
+        _lightManager = std::make_unique<LightManager>(Engine::getInstance()->getEngineSettings().useCascadeShadowMap);
     return _lightManager.get();
 }
 

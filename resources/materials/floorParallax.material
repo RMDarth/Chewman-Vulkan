@@ -21,10 +21,6 @@
         {
             "samplerName": "directShadowTex",
             "textureType": "ShadowMapDirect"
-        },
-        {
-            "samplerName": "pointShadowTex",
-            "textureType": "ShadowMapPoint"
         }
     ]
 }

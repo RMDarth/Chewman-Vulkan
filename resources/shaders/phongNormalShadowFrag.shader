@@ -5,15 +5,13 @@
     "samplerNamesList": [
         "diffuseTex",
         "normalTex",
-        "directShadowTex",
-        "pointShadowTex"
+        "directShadowTex"
     ],
     "uniformList": [
         { "uniformType": "CameraPosition" },
         { "uniformType": "InverseModelMatrix" },
         { "uniformType": "LightDirectional" },
         { "uniformType": "LightSpot" },
-        { "uniformType": "LightPoint" },
         { "uniformType": "LightLine" },
         { "uniformType": "LightPointSimple" },
         { "uniformType": "LightInfo" },

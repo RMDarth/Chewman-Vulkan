@@ -16,8 +16,7 @@
         { "uniformType": "ModelMatrix" },
         { "uniformType": "ViewMatrix" },
         { "uniformType": "ProjectionMatrix" },
-        { "uniformType": "LightPointViewProjectionList" },
-        { "uniformType": "LightDirectViewProjectionList" },
+        { "uniformType": "LightDirectViewProjection" },
         { "uniformType": "ClipPlane" }
     ]
 }

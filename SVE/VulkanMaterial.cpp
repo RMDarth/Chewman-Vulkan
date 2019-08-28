@@ -729,7 +729,7 @@ void VulkanMaterial::createTextureSampler()
         samplerCreateInfo.unnormalizedCoordinates = VK_FALSE;
         samplerCreateInfo.compareEnable = VK_FALSE;
         samplerCreateInfo.compareOp = VK_COMPARE_OP_ALWAYS;
-        samplerCreateInfo.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR;
+        samplerCreateInfo.mipmapMode = VK_SAMPLER_MIPMAP_MODE_NEAREST;
         samplerCreateInfo.minLod = 0;
         samplerCreateInfo.maxLod = _mipLevels[i];
         samplerCreateInfo.mipLodBias = 0;

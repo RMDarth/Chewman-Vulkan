@@ -1,14 +1,11 @@
 #version 450
 #extension GL_ARB_separate_shader_objects : enable
-const uint  MAX_LIGHTS = 3;
-const uint  CASCADE_NUM = 5;
 layout (set = 0, binding = 0) uniform UBO
 {
     mat4 model;
     mat4 view;
     mat4 projection;
-    mat4 lightPointViewProjection[MAX_LIGHTS];
-    mat4 lightDirectViewProjection[CASCADE_NUM];
+    mat4 lightDirectViewProjection;
     vec4 clipPlane;
 } uniforms;
 
@@ -24,17 +21,13 @@ layout(location = 0) out OutData
     vec2 fragTexCoord;
     vec3 fragNormal;
     vec3 fragPos;
-    vec4 fragPointLightSpacePos[MAX_LIGHTS];
-    vec4 fragDirectLightSpacePos[CASCADE_NUM];
+    vec4 fragDirectLightSpacePos;
 };
 
 out gl_PerVertex {
     vec4 gl_Position;
     float gl_ClipDistance[];
 };
-
-const float shadowDistance = 20.0;
-const float transitionDistance = 2.0;
 
 void main() {
     vec4 worldPos = uniforms.model * vec4(inPosition, 1.0);
@@ -46,25 +39,8 @@ void main() {
     fragTexCoord = inTexCoord;
 
     fragPos = vec3(worldPos);
-    fragNormal = vec3(transpose(inverse(uniforms.model)) * vec4(inNormal.xyz, 1.0));// transpose(inverse(uniforms.model)) not working for assimp
+    fragNormal = vec3(transpose(inverse(uniforms.model)) * vec4(inNormal.xyz, 1.0));
 
-    float distance = length(camPos.xyz);
-    distance = distance - (shadowDistance - transitionDistance);
-    distance = distance / transitionDistance;
-
-    for (uint i = 0; i < MAX_LIGHTS; i++)
-    {
-        fragPointLightSpacePos[i] =  uniforms.lightPointViewProjection[i] * worldPos;
-        fragPointLightSpacePos[i].xyz = fragPointLightSpacePos[i].xyz / fragPointLightSpacePos[i].w;
-
-        fragPointLightSpacePos[i].w = clamp(1.0 - distance, 0.0, 1.0);
-    }
-
-    for (uint i = 0; i < CASCADE_NUM; i++)
-    {
-        fragDirectLightSpacePos[i] =  uniforms.lightDirectViewProjection[i] * worldPos;
-        fragDirectLightSpacePos[i].xyzw = fragDirectLightSpacePos[i].xyzw / fragDirectLightSpacePos[i].w;
-
-        //fragDirectLightSpacePos[i].w = clamp(1.0 - distance, 0.0, 1.0);
-    }
+    fragDirectLightSpacePos =  uniforms.lightDirectViewProjection * worldPos;
+    fragDirectLightSpacePos.xyzw = fragDirectLightSpacePos.xyzw / fragDirectLightSpacePos.w;
 }

@@ -32,6 +32,7 @@ enum class UniformType : uint8_t
     LightLine,
     LightPointViewProjectionList,
     LightDirectViewProjectionList,
+    LightDirectViewProjection,
     BoneMatrices,
     ClipPlane,
     ParticleEmitter,

@@ -245,26 +245,6 @@ void Engine::renderFrame()
 
     _vulkanInstance->reallocateCommandBuffers();
 
-    /*_commandsType = CommandsType::ShadowPass;
-    for (auto i = 0u; i < _sceneManager->getLightManager()->getLightCount(); i++)
-    {
-        _passSubIndex = i;
-        auto shadowMap = _sceneManager->getLightManager()->getLight(i)->getShadowMap();
-
-        if (shadowMap && shadowMap->isEnabled())
-        {
-            shadowMap->getVulkanShadowMap()->reallocateCommandBuffers();
-
-            auto bufferIndex =
-                    shadowMap->getVulkanShadowMap()->startRenderCommandBufferCreation(
-                            _vulkanInstance->getCurrentFrameIndex(),
-                            _vulkanInstance->getCurrentImageIndex());
-            createNodeDrawCommands(_sceneManager->getRootNode(), bufferIndex, currentImage);
-            shadowMap->getVulkanShadowMap()->endRenderCommandBufferCreation(
-                    _vulkanInstance->getCurrentFrameIndex());
-        }
-    }*/
-
     ComputeEntity::startComputeStep();
     createNodeComputeCommands(_sceneManager->getRootNode(), BUFFER_INDEX_COMPUTE_PARTICLES, currentImage);
     ComputeEntity::finishComputeStep();
@@ -375,7 +355,8 @@ void Engine::renderFrame()
         *uniformDataList[i] = *mainUniform;
     }
 
-    _sceneManager->getLightManager()->getDirectionLight()->updateViewMatrix(_sceneManager->getMainCamera()->getPosition());
+    _sceneManager->getLightManager()->getDirectionLight()->updateViewMatrix(_sceneManager->getMainCamera()->getPosition(),
+                                                                            _sceneManager->getMainCamera()->getDirection());
     _sceneManager->getLightManager()->fillUniformData(*uniformDataList[toInt(CommandsType::ShadowPassDirectLight)], LightType::SunLight);
     _sceneManager->getLightManager()->fillUniformData(*uniformDataList[toInt(CommandsType::ShadowPassPointLights)], LightType::ShadowPointLight);
     for (auto i = 0u; i < PassCount; i++)
@@ -393,13 +374,6 @@ void Engine::renderFrame()
                                                  VulkanWater::PassType::Refraction);
     }
 
-    // fill particles data
-    /*if (particleSystemManager)
-    {
-        particleSystemManager->fillUniformData(*mainUniform);
-    }*/
-
-
     /////// Update uniforms
 
     if (skybox)
@@ -414,13 +388,19 @@ void Engine::renderFrame()
     }
     if (isShadowMappingEnabled())
     {
-        _vulkanInstance->submitCommands(
-                CommandsType::ShadowPassDirectLight,
-                BUFFER_INDEX_SHADOWMAP_SUN + _vulkanInstance->getCurrentFrameIndex());
+        if (_sceneManager->getLightManager()->getDirectLightShadowMap())
+        {
+            _vulkanInstance->submitCommands(
+                    CommandsType::ShadowPassDirectLight,
+                    BUFFER_INDEX_SHADOWMAP_SUN + _vulkanInstance->getCurrentFrameIndex());
+        }
 
-        _vulkanInstance->submitCommands(
-                CommandsType::ShadowPassPointLights,
-                BUFFER_INDEX_SHADOWMAP_POINT + _vulkanInstance->getCurrentFrameIndex());
+        if (_sceneManager->getLightManager()->getPointLightShadowMap())
+        {
+            _vulkanInstance->submitCommands(
+                    CommandsType::ShadowPassPointLights,
+                    BUFFER_INDEX_SHADOWMAP_POINT + _vulkanInstance->getCurrentFrameIndex());
+        }
     }
     if (auto water = _sceneManager->getWater())
     {
@@ -465,6 +445,11 @@ bool Engine::isShadowMappingEnabled() const
 {
     // TODO: Refactor this or remove
     return true;//_sceneManager->getShadowMap()->isEnabled();
+}
+
+const EngineSettings& Engine::getEngineSettings() const
+{
+    return _vulkanInstance->getEngineSettings();
 }
 
 bool Engine::isWaterEnabled() const

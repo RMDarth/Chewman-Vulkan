@@ -11,7 +11,6 @@
         { "uniformType": "CameraPosition" },
         { "uniformType": "LightDirectional" },
         { "uniformType": "LightSpot" },
-        { "uniformType": "LightPoint" },
         { "uniformType": "LightLine" },
         { "uniformType": "LightPointSimple" },
         { "uniformType": "LightInfo" },

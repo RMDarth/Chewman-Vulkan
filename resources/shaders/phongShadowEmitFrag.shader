@@ -5,8 +5,7 @@
     "samplerNamesList": [
         "diffuseTex",
         "emitTex",
-        "directShadowTex",
-        "pointShadowTex"
+        "directShadowTex"
     ],
     "uniformList": [
         { "uniformType": "CameraPosition" },

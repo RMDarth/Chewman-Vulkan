@@ -117,6 +117,12 @@ glm::vec3 CameraNode::getPosition()
     return _position;
 }
 
+glm::vec3 CameraNode::getDirection()
+{
+    auto cameraPos = glm::yawPitchRoll(_yawPitchRoll.x, _yawPitchRoll.y, _yawPitchRoll.z);
+    return glm::vec3(cameraPos[2]);
+}
+
 void CameraNode::setYawPitchRoll(glm::vec3 yawPitchRoll)
 {
     _yawPitchRoll = yawPitchRoll;
@@ -133,6 +139,5 @@ void CameraNode::movePosition(glm::vec3 deltaPos)
     _position += glm::vec3(cameraPos * glm::vec4(deltaPos, 0));
 
 }
-
 
 } // namespace SVE

@@ -15,8 +15,9 @@ static const uint32_t MAX_LIGHTS = 3;
 static const uint32_t DirectShadowSize = 4096;
 static const uint32_t PointShadowSize = 512;
 
-LightManager::LightManager()
-    : _directLightShadowMap(std::make_shared<ShadowMap>(LightType::SunLight, MAX_CASCADES, DirectShadowSize))
+LightManager::LightManager(bool useCascadeShadowMap)
+    : _useCascadeShadowMap(useCascadeShadowMap)
+    , _directLightShadowMap(std::make_shared<ShadowMap>(LightType::SunLight, useCascadeShadowMap ? MAX_CASCADES : 1, DirectShadowSize))
     , _pointLightShadowMap(std::make_shared<ShadowMap>(LightType::ShadowPointLight, MAX_LIGHTS * 6, PointShadowSize))
 {
 }
@@ -33,6 +34,11 @@ void LightManager::setLight(std::shared_ptr<LightNode> light, uint32_t index)
     {
         if (_lightList.size() <= index)
             _lightList.resize(index + 1);
+
+        if (light->getLightSettings().lightType == LightType::ShadowPointLight)
+        {
+            _usePointLightShadow = true;
+        }
 
         _lightList[index] = std::move(light);
     }
@@ -56,11 +62,15 @@ size_t LightManager::getLightCount() const
 
 std::shared_ptr<ShadowMap> LightManager::getPointLightShadowMap()
 {
+    if (!_usePointLightShadow)
+        return std::shared_ptr<ShadowMap>();
     return _pointLightShadowMap;
 }
 
 std::shared_ptr<ShadowMap> LightManager::getDirectLightShadowMap()
 {
+    if (!_directLight)
+        return std::shared_ptr<ShadowMap>();
     return _directLightShadowMap;
 }
 
@@ -76,11 +86,12 @@ void LightManager::fillUniformData(UniformData& data, LightType viewSourceLightT
             _lightList[i]->fillUniformData(data, i + 1, false);
         }
     }
-    _directLight->fillUniformData(data, 0, false);
-
+    if (_directLight)
+        _directLight->fillUniformData(data, 0, false);
 
     if (viewSourceLightType == LightType::SunLight)
     {
+        assert(_directLight);
         _directLight->fillUniformData(data, 0, true);
     } else if (viewSourceLightType == LightType::ShadowPointLight)
     {

@@ -22,6 +22,7 @@ struct LightSettings
 {
     LightType lightType;
     glm::vec3 lightColor = {1.0f, 1.0f, 1.0f};
+    glm::vec3 lookAt = {0.0f, 0.0f, 0.0f};
     glm::vec4 ambientStrength;
     glm::vec4 specularStrength;
     glm::vec4 diffuseStrength;
