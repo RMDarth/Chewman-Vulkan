@@ -13,8 +13,7 @@ struct ComputeSettings
     std::string name;
 
     std::string computeShaderName;
-    void* data;
-    size_t dataSize;
+    std::vector<uint8_t> data;
     size_t elementsCount;
 };
 

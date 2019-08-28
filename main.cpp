@@ -390,7 +390,7 @@ int runGame()
 
         // Create level floor
         Chewman::GameMapLoader mapLoader;
-        Chewman::GameMapProcessor gameMap(mapLoader.loadMap("resources/game/levels/level2.map"));
+        Chewman::GameMapProcessor gameMap(mapLoader.loadMap("resources/game/levels/level5.map"));
 
         // create teleport test
         std::array<std::shared_ptr<SVE::SceneNode>, 0> baseNodes;

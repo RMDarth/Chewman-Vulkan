@@ -144,7 +144,7 @@ void VulkanComputeEntity::createBufferResources()
 {
     VkBufferUsageFlags flags = VK_BUFFER_USAGE_STORAGE_TEXEL_BUFFER_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
 
-    _vulkanUtils.createOptimizedBuffer(_computeSettings.data, _computeSettings.dataSize, _buffer, _bufferMemory, flags);
+    _vulkanUtils.createOptimizedBuffer(_computeSettings.data.data(), _computeSettings.data.size(), _buffer, _bufferMemory, flags);
 
     VkBufferViewCreateInfo bufferViewCreateInfo{};
     bufferViewCreateInfo.sType = VK_STRUCTURE_TYPE_BUFFER_VIEW_CREATE_INFO;

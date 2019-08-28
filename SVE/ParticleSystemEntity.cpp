@@ -69,10 +69,19 @@ ParticleSystemSettings& ParticleSystemEntity::getSettings()
 void ParticleSystemEntity::generateParticles()
 {
     std::vector<float> particles(_settings.quota * 5 * 4, -0.00001f); // 5*vec4
+    std::vector<uint8_t> data;
+    data.reserve(particles.size() * sizeof(float));
+    for (auto particle : particles)
+    {
+        auto* floatData = reinterpret_cast<uint8_t*>(&particle);
+        for (auto i = 0u; i < sizeof(float); ++i)
+        {
+            data.push_back(floatData[i]);
+        }
+    }
 
     ComputeSettings computeSettings;
-    computeSettings.data = particles.data();
-    computeSettings.dataSize = particles.size() * sizeof(float);
+    computeSettings.data = std::move(data);
     computeSettings.elementsCount = _settings.quota;
     computeSettings.computeShaderName = _settings.computeShaderName;
     computeSettings.name = _settings.name;
