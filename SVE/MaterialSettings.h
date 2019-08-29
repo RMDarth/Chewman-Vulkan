@@ -17,7 +17,8 @@ enum class TextureType : uint8_t
     Reflection,
     Refraction,
     ScreenQuad,
-    LastEffect
+    ScreenQuadSecond,
+    LastEffect,
 };
 
 enum class TextureAddressMode : uint8_t
@@ -81,6 +82,7 @@ struct MaterialSettings
     bool useDepthBias = false;
     bool useMultisampling = true;
     bool useAlphaBlending = false;
+    bool useMRT = false;
     BlendFactor srcBlendFactor = BlendFactor::SrcAlpha;
     BlendFactor dstBlendFactor = BlendFactor::OneMinusSrcAlpha;
     MaterialCullFace cullFace = MaterialCullFace::FrontFace;

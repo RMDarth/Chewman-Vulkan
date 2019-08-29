@@ -107,6 +107,10 @@ void MeshEntity::applyDrawingCommands(uint32_t bufferIndex, uint32_t imageIndex)
     }
     else if (Engine::getInstance()->getPassType() == CommandsType::ShadowPassDirectLight)
     {
+        // temp
+        if (_material->isMRT())
+            return;
+
         if (_shadowMaterial && _castShadows)
             _shadowMaterial->getVulkanMaterial()->applyDrawingCommands(
                     bufferIndex,
@@ -121,9 +125,16 @@ void MeshEntity::applyDrawingCommands(uint32_t bufferIndex, uint32_t imageIndex)
                     imageIndex,
                     _pointLightShadowMaterial->getVulkanMaterial()->getInstanceForEntity(this));
     }
-
+    else if (Engine::getInstance()->getPassType() == CommandsType::ScreenQuadMRTPass)
+    {
+        if (!_material->isMRT())
+            return;
+        _material->getVulkanMaterial()->applyDrawingCommands(bufferIndex, imageIndex, _materialIndex);
+    }
     else
     {
+        if (_material->isMRT())
+            return;
         _material->getVulkanMaterial()->applyDrawingCommands(bufferIndex, imageIndex, _materialIndex);
     }
 

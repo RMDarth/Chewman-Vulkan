@@ -30,11 +30,12 @@ enum class CommandsType : uint8_t
     ReflectionPass,
     RefractionPass,
     ScreenQuadPass,
+    ScreenQuadMRTPass,
     ComputeParticlesPass,
     PostEffectPasses,
 };
 
-static const uint8_t PassCount = 6;
+static const uint8_t PassCount = 8;
 
 class Engine
 {

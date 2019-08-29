@@ -25,6 +25,7 @@ layout(location = 0) in InData
 };
 
 layout(location = 0) out vec4 outColor;
+layout(location = 1) out vec4 outColorBloom;
 
 /// Lava effect
 #define time ubo.time*0.03
@@ -82,7 +83,7 @@ float flow(in vec2 p)
 vec3 calculateColor(vec2 texCoord)
 {
     vec2 p = texCoord - 0.5;
-    p *= 15.;
+    p *= 45.;
     float rz = flow(p);
 
     vec3 col = vec3(.6, 0.17, 0.01)/rz;
@@ -94,4 +95,5 @@ vec3 calculateColor(vec2 texCoord)
 void main() {
     vec3 color = calculateColor(fragTexCoord);
     outColor = vec4(color,1.0);
+    outColorBloom = vec4(color, 0.5);
 }

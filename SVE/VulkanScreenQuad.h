@@ -20,9 +20,9 @@ public:
     VkSampler getSampler();
     VkImageView getImageView();
 
-    void reallocateCommandBuffers();
-    void startRenderCommandBufferCreation();
-    void endRenderCommandBufferCreation();
+    void reallocateCommandBuffers(bool MRT);
+    void startRenderCommandBufferCreation(bool MRT);
+    void endRenderCommandBufferCreation(bool MRT);
 private:
     void createRenderPass();
     void deleteRenderPass();
@@ -38,21 +38,21 @@ private:
 
     const VulkanUtils& _vulkanUtils;
 
-    VkRenderPass _renderPass;
+    VkRenderPass _renderPass[2];
 
-    VkImage _colorImage;
-    VkImage _resolveImage;
+    VkImage _colorImage[2];
+    VkImage _resolveImage[2];
     VkImage _depthImage;
-    VkDeviceMemory _colorImageMemory;
-    VkDeviceMemory _resolveImageMemory;
+    VkDeviceMemory _colorImageMemory[2];
+    VkDeviceMemory _resolveImageMemory[2];
     VkDeviceMemory _depthImageMemory;
-    VkImageView _colorImageView;
-    VkImageView _resolveImageView;
+    VkImageView _colorImageView[2];
+    VkImageView _resolveImageView[2];
     VkImageView _depthImageView;
-    VkSampler _colorSampler;
+    VkSampler _colorSampler[2];
 
-    VkFramebuffer _framebuffer;
-    VkCommandBuffer _commandBuffer;
+    VkFramebuffer _framebuffer[2];
+    VkCommandBuffer _commandBuffer[2];
 };
 
 } // namespace SVE

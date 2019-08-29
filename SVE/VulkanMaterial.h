@@ -84,6 +84,8 @@ private:
     VulkanShaderInfo* _geometryShader = nullptr;
     std::vector<VulkanShaderInfo*> _shaderList;
 
+    VkRenderPass _bloomRenderPass = VK_NULL_HANDLE;
+
     VkPipelineLayout _pipelineLayout = VK_NULL_HANDLE;
     VkPipeline _pipeline;
 

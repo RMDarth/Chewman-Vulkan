@@ -25,6 +25,7 @@ enum
     BUFFER_INDEX_WATER_REFLECTION = 300,
     BUFFER_INDEX_WATER_REFRACTION = 301,
     BUFFER_INDEX_SCREEN_QUAD = 400,
+    BUFFER_INDEX_SCREEN_QUAD_MRT = 450,
     BUFFER_INDEX_COMPUTE_PARTICLES = 500
 };
 
@@ -170,6 +171,7 @@ private:
     std::vector<VkSemaphore> _waterReflectionReadySemaphores;
     std::vector<VkSemaphore> _waterRefractionReadySemaphores;
     std::vector<VkSemaphore> _screenQuadReadySemaphores;
+    std::vector<VkSemaphore> _screenQuadMrtReadySemaphores;
     std::vector<VkSemaphore> _imageAvailableSemaphores;
     std::vector<VkSemaphore> _renderFinishedSemaphores;
 

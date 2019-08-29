@@ -13,72 +13,34 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f70505ef-ae5c-44c4-ba16-f4e316506723" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/resources/materials/lava.material" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/resources/shaders/effectLavaFrag.shader" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/resources/shaders/effectLavaVert.shader" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/resources/shaders/glsl/effectLava.frag" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/resources/shaders/glsl/effectLava.vert" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/resources/shaders/glsl/effectLava2.frag" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/resources/shaders/glsl/effectLava3.frag" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/fileTemplates/includes/C File Header.h" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/fileTemplates/includes/C File Header.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/resources/materials/effectPencil.material" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/resources/shaders/effectPencil.shader" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/resources/shaders/glsl/effectPencil.frag" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SVE/CameraNode.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/SVE/CameraNode.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SVE/CameraNode.h" beforeDir="false" afterPath="$PROJECT_DIR$/SVE/CameraNode.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Game/BlockMeshGenerator.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Game/BlockMeshGenerator.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/SVE/Engine.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/SVE/Engine.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/SVE/Engine.h" beforeDir="false" afterPath="$PROJECT_DIR$/SVE/Engine.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SVE/EngineSettings.h" beforeDir="false" afterPath="$PROJECT_DIR$/SVE/EngineSettings.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SVE/LightManager.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/SVE/LightManager.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SVE/LightManager.h" beforeDir="false" afterPath="$PROJECT_DIR$/SVE/LightManager.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SVE/LightNode.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/SVE/LightNode.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SVE/LightNode.h" beforeDir="false" afterPath="$PROJECT_DIR$/SVE/LightNode.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SVE/LightSettings.h" beforeDir="false" afterPath="$PROJECT_DIR$/SVE/LightSettings.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SVE/Material.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/SVE/Material.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SVE/Material.h" beforeDir="false" afterPath="$PROJECT_DIR$/SVE/Material.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SVE/MaterialSettings.h" beforeDir="false" afterPath="$PROJECT_DIR$/SVE/MaterialSettings.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SVE/MeshEntity.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/SVE/MeshEntity.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/SVE/ResourceManager.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/SVE/ResourceManager.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SVE/SceneManager.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/SVE/SceneManager.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SVE/ShaderSettings.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/SVE/ShaderSettings.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SVE/ShaderSettings.h" beforeDir="false" afterPath="$PROJECT_DIR$/SVE/ShaderSettings.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SVE/VulkanDirectShadowMap.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/SVE/VulkanDirectShadowMap.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/SVE/VulkanInstance.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/SVE/VulkanInstance.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/SVE/VulkanInstance.h" beforeDir="false" afterPath="$PROJECT_DIR$/SVE/VulkanInstance.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/SVE/VulkanMaterial.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/SVE/VulkanMaterial.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SVE/VulkanMaterial.h" beforeDir="false" afterPath="$PROJECT_DIR$/SVE/VulkanMaterial.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SVE/VulkanScreenQuad.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/SVE/VulkanScreenQuad.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SVE/VulkanScreenQuad.h" beforeDir="false" afterPath="$PROJECT_DIR$/SVE/VulkanScreenQuad.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/main.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/light0.light" beforeDir="false" afterPath="$PROJECT_DIR$/resources/light0.light" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/light1.light" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/light2.light" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/main.engine" beforeDir="false" afterPath="$PROJECT_DIR$/resources/main.engine" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/materials/ceiling.material" beforeDir="false" afterPath="$PROJECT_DIR$/resources/materials/ceiling.material" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/materials/ceilingNormals.material" beforeDir="false" afterPath="$PROJECT_DIR$/resources/materials/ceilingNormals.material" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/resources/materials/coin.material" beforeDir="false" afterPath="$PROJECT_DIR$/resources/materials/coin.material" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/materials/fireGargoyle.material" beforeDir="false" afterPath="$PROJECT_DIR$/resources/materials/fireGargoyle.material" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/materials/floor.material" beforeDir="false" afterPath="$PROJECT_DIR$/resources/materials/floor.material" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/materials/floorNormals.material" beforeDir="false" afterPath="$PROJECT_DIR$/resources/materials/floorNormals.material" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/materials/floorParallax.material" beforeDir="false" afterPath="$PROJECT_DIR$/resources/materials/floorParallax.material" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/materials/frostGargoyle.material" beforeDir="false" afterPath="$PROJECT_DIR$/resources/materials/frostGargoyle.material" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/materials/nun.material" beforeDir="false" afterPath="$PROJECT_DIR$/resources/materials/nun.material" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/materials/skybox.material" beforeDir="false" afterPath="$PROJECT_DIR$/resources/materials/skybox.material" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/materials/teleportPlatform.material" beforeDir="false" afterPath="$PROJECT_DIR$/resources/materials/teleportPlatform.material" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/materials/terrain.material" beforeDir="false" afterPath="$PROJECT_DIR$/resources/materials/terrain.material" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/materials/wall.material" beforeDir="false" afterPath="$PROJECT_DIR$/resources/materials/wall.material" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/materials/wallNormals.material" beforeDir="false" afterPath="$PROJECT_DIR$/resources/materials/wallNormals.material" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/materials/wallParallax.material" beforeDir="false" afterPath="$PROJECT_DIR$/resources/materials/wallParallax.material" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/materials/waterReflection.material" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/shaders/glsl/lightCalculation.glsl" beforeDir="false" afterPath="$PROJECT_DIR$/resources/shaders/glsl/lightCalculation.glsl" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/shaders/glsl/parallaxAndShadowMap.frag" beforeDir="false" afterPath="$PROJECT_DIR$/resources/shaders/glsl/parallaxAndShadowMap.frag" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/shaders/glsl/parallaxAndShadowMap.vert" beforeDir="false" afterPath="$PROJECT_DIR$/resources/shaders/glsl/parallaxAndShadowMap.vert" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/shaders/glsl/phongNormalAndShadowMap.frag" beforeDir="false" afterPath="$PROJECT_DIR$/resources/shaders/glsl/phongNormalAndShadowMap.frag" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/shaders/glsl/phongNormalAndShadowMap.vert" beforeDir="false" afterPath="$PROJECT_DIR$/resources/shaders/glsl/phongNormalAndShadowMap.vert" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/shaders/glsl/phongShadowMap.frag" beforeDir="false" afterPath="$PROJECT_DIR$/resources/shaders/glsl/phongShadowMap.frag" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/shaders/glsl/phongShadowMap.vert" beforeDir="false" afterPath="$PROJECT_DIR$/resources/shaders/glsl/phongShadowMap.vert" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/materials/effectOnlyBright.material" beforeDir="false" afterPath="$PROJECT_DIR$/resources/materials/effectOnlyBright.material" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/materials/lava.material" beforeDir="false" afterPath="$PROJECT_DIR$/resources/materials/lava.material" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/shaders/glsl/effectBloom.frag" beforeDir="false" afterPath="$PROJECT_DIR$/resources/shaders/glsl/effectBloom.frag" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/shaders/glsl/effectBlur.frag" beforeDir="false" afterPath="$PROJECT_DIR$/resources/shaders/glsl/effectBlur.frag" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/shaders/glsl/effectLava.frag" beforeDir="false" afterPath="$PROJECT_DIR$/resources/shaders/glsl/effectLava.frag" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/shaders/glsl/effectLava3.frag" beforeDir="false" afterPath="$PROJECT_DIR$/resources/shaders/glsl/effectLava3.frag" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/shaders/glsl/effectOnlyBright.frag" beforeDir="false" afterPath="$PROJECT_DIR$/resources/shaders/glsl/effectOnlyBright.frag" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/resources/shaders/glsl/phongShadowMapEmit.frag" beforeDir="false" afterPath="$PROJECT_DIR$/resources/shaders/glsl/phongShadowMapEmit.frag" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/shaders/glsl/phongWater.frag" beforeDir="false" afterPath="$PROJECT_DIR$/resources/shaders/glsl/phongWater.frag" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/shaders/parallaxShadowFrag.shader" beforeDir="false" afterPath="$PROJECT_DIR$/resources/shaders/parallaxShadowFrag.shader" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/shaders/parallaxShadowVert.shader" beforeDir="false" afterPath="$PROJECT_DIR$/resources/shaders/parallaxShadowVert.shader" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/shaders/phongNormalShadowFrag.shader" beforeDir="false" afterPath="$PROJECT_DIR$/resources/shaders/phongNormalShadowFrag.shader" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/shaders/phongNormalShadowVert.shader" beforeDir="false" afterPath="$PROJECT_DIR$/resources/shaders/phongNormalShadowVert.shader" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/shaders/phongShadowEmitFrag.shader" beforeDir="false" afterPath="$PROJECT_DIR$/resources/shaders/phongShadowEmitFrag.shader" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/shaders/phongShadowFrag.shader" beforeDir="false" afterPath="$PROJECT_DIR$/resources/shaders/phongShadowFrag.shader" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/shaders/phongShadowVert.shader" beforeDir="false" afterPath="$PROJECT_DIR$/resources/shaders/phongShadowVert.shader" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/shaders/phongWaterFrag.shader" beforeDir="false" afterPath="$PROJECT_DIR$/resources/shaders/phongWaterFrag.shader" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -133,7 +95,7 @@
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="SearchEverywhereHistoryKey" value="&#9;FILE&#9;file://E:/Projects/Chewman/SVE/VulkanMaterial.h" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/resources/shaders/glsl/advanced" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/SVE" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.tslint" value="true" />
     <property name="node.js.path.for.package.eslint" value="project" />
@@ -148,19 +110,19 @@
     <property name="settings.editor.selected.configurable" value="fileTemplates" />
   </component>
   <component name="RecentsManager">
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/resources/shaders/glsl/advanced" />
-      <recent name="$PROJECT_DIR$/resources/shaders/glsl" />
-      <recent name="$PROJECT_DIR$/resources/shaders" />
-      <recent name="$PROJECT_DIR$/resources/materials" />
-      <recent name="$PROJECT_DIR$/SVE" />
-    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/Game/Enemies" />
       <recent name="E:\Projects\Chewman\resources\shaders" />
       <recent name="E:\Projects\Chewman\resources\models" />
       <recent name="E:\Projects\Chewman\resources\models\assets" />
       <recent name="E:\Projects\Chewman\resources\materials" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/SVE" />
+      <recent name="$PROJECT_DIR$/resources/materials" />
+      <recent name="$PROJECT_DIR$/resources/shaders" />
+      <recent name="$PROJECT_DIR$/resources/shaders/glsl" />
+      <recent name="$PROJECT_DIR$/resources/shaders/glsl/advanced" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -311,6 +273,7 @@
       <workItem from="1566863026639" duration="18422000" />
       <workItem from="1566946645848" duration="11926000" />
       <workItem from="1566959089941" duration="482000" />
+      <workItem from="1566995317048" duration="30442000" />
     </task>
     <task id="LOCAL-00001" summary="Adding core SVE classes">
       <created>1536429263360</created>

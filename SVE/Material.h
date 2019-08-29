@@ -22,6 +22,8 @@ public:
     void resetPipeline();
     void resetDescriptorSets();
 
+    bool isMRT() const;
+
 private:
     std::string _name;
     std::unique_ptr<VulkanMaterial> _vulkanMaterial;

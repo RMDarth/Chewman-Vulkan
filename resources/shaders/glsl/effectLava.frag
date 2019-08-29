@@ -21,6 +21,7 @@ layout(location = 0) in InData
 };
 
 layout(location = 0) out vec4 outColor;
+layout(location = 1) out vec4 outColorBloom;
 
 /// Lava effect
 
@@ -192,4 +193,5 @@ void main() {
 
     // Output to screen
     outColor = vec4(color,1.0);
+    outColorBloom = outColor;
 }

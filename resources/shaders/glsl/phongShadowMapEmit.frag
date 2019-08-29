@@ -26,6 +26,7 @@ layout(location = 0) in InData
 };
 
 layout(location = 0) out vec4 outColor;
+layout(location = 1) out vec4 outColorBloom;
 
 #include "lightCalculation.glsl"
 
@@ -42,4 +43,5 @@ void main()
     result = max(result, emitEffect);
     //vec3 result = vec3(shadow);
     outColor = vec4(result, 1.0);
+    outColorBloom = vec4(emitEffect, 0.1);
 }

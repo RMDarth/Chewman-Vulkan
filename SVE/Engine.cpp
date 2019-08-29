@@ -301,12 +301,18 @@ void Engine::renderFrame()
     if (auto* screenQuad = _vulkanInstance->getScreenQuad())
     {
         _commandsType = CommandsType::ScreenQuadPass;
-        screenQuad->reallocateCommandBuffers();
-        screenQuad->startRenderCommandBufferCreation();
+        screenQuad->reallocateCommandBuffers(false);
+        screenQuad->startRenderCommandBufferCreation(false);
         if (skybox)
             skybox->applyDrawingCommands(BUFFER_INDEX_SCREEN_QUAD, currentImage);
         createNodeDrawCommands(_sceneManager->getRootNode(), BUFFER_INDEX_SCREEN_QUAD, currentImage);
-        screenQuad->endRenderCommandBufferCreation();
+        screenQuad->endRenderCommandBufferCreation(false);
+
+        _commandsType = CommandsType::ScreenQuadMRTPass;
+        screenQuad->reallocateCommandBuffers(true);
+        screenQuad->startRenderCommandBufferCreation(true);
+        createNodeDrawCommands(_sceneManager->getRootNode(), BUFFER_INDEX_SCREEN_QUAD_MRT, currentImage);
+        screenQuad->endRenderCommandBufferCreation(true);
 
         _commandsType = CommandsType::PostEffectPasses;
         _engineInstance->getPostEffectManager()->createCommands(currentFrame, currentImage);
@@ -411,6 +417,7 @@ void Engine::renderFrame()
     if (_vulkanInstance->getScreenQuad())
     {
         _vulkanInstance->submitCommands(CommandsType::ScreenQuadPass, BUFFER_INDEX_SCREEN_QUAD);
+        _vulkanInstance->submitCommands(CommandsType::ScreenQuadMRTPass, BUFFER_INDEX_SCREEN_QUAD_MRT);
         _postEffectManager->submitCommands(uniformDataList);
     }
     _vulkanInstance->submitCommands(CommandsType::MainPass, _vulkanInstance->getCurrentFrameIndex());

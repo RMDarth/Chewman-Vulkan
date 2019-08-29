@@ -6,7 +6,7 @@
     "textures": [
             {
                 "samplerName": "texSampler",
-                "textureType": "LastEffect"
+                "textureType": "ScreenQuadSecond"
             }
         ]
 }

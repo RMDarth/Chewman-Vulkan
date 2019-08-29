@@ -1,0 +1,16 @@
+{
+    "name": "PencilEffect",
+    "vertexShaderName": "quadRenderVertexShader",
+    "fragmentShaderName": "pencilFragmentShader",
+    "cullFace": "FrontFace",
+    "textures": [
+            {
+                "samplerName": "texSampler",
+                "textureType": "LastEffect"
+            },
+            {
+                "samplerName": "noiseSampler",
+                "filename": "textures/noise.png"
+            }
+        ]
+}

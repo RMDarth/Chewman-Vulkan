@@ -8,17 +8,26 @@ layout(location = 1) in vec2 blurTextureCoords[11];
 
 layout(location = 0) out vec4 outColor;
 
+const float gausBlur[11] = float[] (0.055037, 0.072806, 0.090506, 0.105726, 0.116061, 0.119726, 0.116061, 0.105726, 0.090506, 0.072806, 0.055037);
+
+void updateColor(inout vec4 color, int position)
+{
+	vec4 sampled = texture(texSampler, blurTextureCoords[position]);
+	color.rgb +=  sampled.rgb * gausBlur[position];
+	color.a = max(color.a, sampled.a);
+}
+
 void main() {
 	outColor = vec4(0.0);
-	outColor += texture(texSampler, blurTextureCoords[0])  * 0.055037;
-	outColor += texture(texSampler, blurTextureCoords[1])  * 0.072806;
-	outColor += texture(texSampler, blurTextureCoords[2])  * 0.090506;
-	outColor += texture(texSampler, blurTextureCoords[3])  * 0.105726;
-	outColor += texture(texSampler, blurTextureCoords[4])  * 0.116061;
-	outColor += texture(texSampler, blurTextureCoords[5])  * 0.119726;
-	outColor += texture(texSampler, blurTextureCoords[6])  * 0.116061;
-	outColor += texture(texSampler, blurTextureCoords[7])  * 0.105726;
-	outColor += texture(texSampler, blurTextureCoords[8])  * 0.090506;
-	outColor += texture(texSampler, blurTextureCoords[9])  * 0.072806;
-	outColor += texture(texSampler, blurTextureCoords[10]) * 0.055037;
+	updateColor(outColor, 0);
+	updateColor(outColor, 1);
+	updateColor(outColor, 2);
+	updateColor(outColor, 3);
+	updateColor(outColor, 4);
+	updateColor(outColor, 5);
+	updateColor(outColor, 6);
+	updateColor(outColor, 7);
+	updateColor(outColor, 8);
+	updateColor(outColor, 9);
+	updateColor(outColor, 10);
 }

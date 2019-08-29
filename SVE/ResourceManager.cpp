@@ -235,6 +235,7 @@ std::vector<TextureInfo> getTextureInfos(const cppfs::FilePath& directory, rj::D
             {"Reflection",      TextureType::Reflection},
             {"Refraction",      TextureType::Refraction},
             {"ScreenQuad",      TextureType::ScreenQuad},
+            {"ScreenQuadSecond",TextureType::ScreenQuadSecond},
             {"LastEffect",      TextureType::LastEffect},
     };
 
@@ -337,6 +338,7 @@ MaterialSettings loadMaterial(const cppfs::FilePath& directory, const std::strin
     static const std::map<std::string, CommandsType> passTypeMap {
             { "MainPass",               CommandsType::MainPass },
             { "ScreenQuadPass",         CommandsType::ScreenQuadPass },
+            { "ScreenQuadMRTPass",      CommandsType::ScreenQuadMRTPass },
             { "RefractionPass",         CommandsType::RefractionPass },
             { "ReflectionPass",         CommandsType::ReflectionPass },
             { "ShadowPassDirectLight",  CommandsType::ShadowPassDirectLight },
@@ -363,6 +365,7 @@ MaterialSettings loadMaterial(const cppfs::FilePath& directory, const std::strin
     setOptional(materialSettings.useDepthBias = document["useDepthBias"].GetBool());
     setOptional(materialSettings.useMultisampling = document["useMultisampling"].GetBool());
     setOptional(materialSettings.useAlphaBlending = document["useAlphaBlending"].GetBool());
+    setOptional(materialSettings.useMRT = document["useMRT"].GetBool());
     setOptional(materialSettings.srcBlendFactor = blendFactor.at(document["srcBlendFactor"].GetString()));
     setOptional(materialSettings.dstBlendFactor = blendFactor.at(document["dstBlendFactor"].GetString()));
     setOptional(materialSettings.isCubemap = document["isCubemap"].GetBool());

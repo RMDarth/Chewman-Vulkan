@@ -339,23 +339,27 @@ void VulkanMaterial::createPipeline()
         return VK_BLEND_FACTOR_SRC_ALPHA;
     };
 
-    VkPipelineColorBlendAttachmentState colorBlendAttachment{};
-    colorBlendAttachment.colorWriteMask =
-            VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
-    colorBlendAttachment.blendEnable = _materialSettings.useAlphaBlending ? VK_TRUE : VK_FALSE;
-    colorBlendAttachment.srcColorBlendFactor = blendFactorToVulkan(_materialSettings.srcBlendFactor);
-    colorBlendAttachment.dstColorBlendFactor = blendFactorToVulkan(_materialSettings.dstBlendFactor);
-    colorBlendAttachment.colorBlendOp = VK_BLEND_OP_ADD;
-    colorBlendAttachment.srcAlphaBlendFactor = blendFactorToVulkan(_materialSettings.srcBlendFactor);
-    colorBlendAttachment.dstAlphaBlendFactor = blendFactorToVulkan(_materialSettings.dstBlendFactor);;
-    colorBlendAttachment.alphaBlendOp = VK_BLEND_OP_ADD;
+    VkPipelineColorBlendAttachmentState colorBlendAttachment[2] = {};
+    for (auto i = 0; i < 2; ++i)
+    {
+        colorBlendAttachment[i].colorWriteMask =
+                VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT |
+                VK_COLOR_COMPONENT_A_BIT;
+        colorBlendAttachment[i].blendEnable = _materialSettings.useAlphaBlending ? VK_TRUE : VK_FALSE;
+        colorBlendAttachment[i].srcColorBlendFactor = blendFactorToVulkan(_materialSettings.srcBlendFactor);
+        colorBlendAttachment[i].dstColorBlendFactor = blendFactorToVulkan(_materialSettings.dstBlendFactor);
+        colorBlendAttachment[i].colorBlendOp = VK_BLEND_OP_ADD;
+        colorBlendAttachment[i].srcAlphaBlendFactor = blendFactorToVulkan(_materialSettings.srcBlendFactor);
+        colorBlendAttachment[i].dstAlphaBlendFactor = blendFactorToVulkan(_materialSettings.dstBlendFactor);;
+        colorBlendAttachment[i].alphaBlendOp = VK_BLEND_OP_ADD;
+    }
 
     VkPipelineColorBlendStateCreateInfo blendingCreateInfo{};
     blendingCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
     blendingCreateInfo.logicOpEnable = VK_FALSE;
     blendingCreateInfo.logicOp = VK_LOGIC_OP_COPY;
-    blendingCreateInfo.attachmentCount = 1;
-    blendingCreateInfo.pAttachments = &colorBlendAttachment;
+    blendingCreateInfo.attachmentCount = _materialSettings.useMRT ? 2 : 1;
+    blendingCreateInfo.pAttachments = colorBlendAttachment;
     blendingCreateInfo.blendConstants[0] = 1.0f;
     blendingCreateInfo.blendConstants[1] = 1.0f;
     blendingCreateInfo.blendConstants[2] = 1.0f;

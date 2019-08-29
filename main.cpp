@@ -349,6 +349,7 @@ int runGame()
         engine->getPostEffectManager()->addPostEffect("VBlurEffect", "VBlurEffect",windowSize.x / 8, windowSize.y / 8);
         engine->getPostEffectManager()->addPostEffect("HBlurEffect", "HBlurEffect",windowSize.x / 8, windowSize.y / 8);
         engine->getPostEffectManager()->addPostEffect("BloomEffect", "BloomEffect");
+      //  engine->getPostEffectManager()->addPostEffect("PencilEffect", "PencilEffect");
 
         // configure light
         auto sunLight = engine->getSceneManager()->getLightManager()->getDirectionLight();
@@ -390,7 +391,7 @@ int runGame()
 
         // Create level floor
         Chewman::GameMapLoader mapLoader;
-        Chewman::GameMapProcessor gameMap(mapLoader.loadMap("resources/game/levels/level5.map"));
+        Chewman::GameMapProcessor gameMap(mapLoader.loadMap("resources/game/levels/level4.map"));
 
         // create teleport test
         std::array<std::shared_ptr<SVE::SceneNode>, 0> baseNodes;

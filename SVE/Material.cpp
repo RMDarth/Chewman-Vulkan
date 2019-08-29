@@ -37,5 +37,10 @@ void Material::resetDescriptorSets()
     _vulkanMaterial->resetDescriptorSets();
 }
 
+bool Material::isMRT() const
+{
+    return _vulkanMaterial->getSettings().useMRT;
+}
+
 
 } // namespace SVE

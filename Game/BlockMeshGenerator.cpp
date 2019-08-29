@@ -263,7 +263,7 @@ std::vector<Submesh> BlockMeshGenerator::GenerateLiquid(glm::vec3 position, Mode
     float height = _size/5;
     if (type == ModelType::Bottom)
     {
-        floorMeshes.push_back(constructPlane(position + glm::vec3(0, -height, 0), _size, _size, glm::vec3(0, 1, 0)));
+        //floorMeshes.push_back(constructPlane(position + glm::vec3(0, -height, 0), _size, _size, glm::vec3(0, 1, 0)));
     }
 
     return floorMeshes;
