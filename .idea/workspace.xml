@@ -13,34 +13,20 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f70505ef-ae5c-44c4-ba16-f4e316506723" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/resources/materials/effectPencil.material" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/resources/shaders/effectPencil.shader" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/resources/shaders/glsl/effectPencil.frag" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Game/BlockMeshGenerator.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Game/BlockMeshGenerator.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/SVE/Engine.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/SVE/Engine.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/SVE/Engine.h" beforeDir="false" afterPath="$PROJECT_DIR$/SVE/Engine.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SVE/Material.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/SVE/Material.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SVE/Material.h" beforeDir="false" afterPath="$PROJECT_DIR$/SVE/Material.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/SVE/MaterialSettings.h" beforeDir="false" afterPath="$PROJECT_DIR$/SVE/MaterialSettings.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SVE/MeshEntity.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/SVE/MeshEntity.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SVE/ParticleSystemEntity.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/SVE/ParticleSystemEntity.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/SVE/ResourceManager.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/SVE/ResourceManager.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/SVE/VulkanInstance.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/SVE/VulkanInstance.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/SVE/VulkanInstance.h" beforeDir="false" afterPath="$PROJECT_DIR$/SVE/VulkanInstance.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/SVE/VulkanMaterial.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/SVE/VulkanMaterial.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SVE/VulkanMaterial.h" beforeDir="false" afterPath="$PROJECT_DIR$/SVE/VulkanMaterial.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/SVE/VulkanScreenQuad.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/SVE/VulkanScreenQuad.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/SVE/VulkanScreenQuad.h" beforeDir="false" afterPath="$PROJECT_DIR$/SVE/VulkanScreenQuad.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/main.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/resources/materials/coin.material" beforeDir="false" afterPath="$PROJECT_DIR$/resources/materials/coin.material" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/materials/effectOnlyBright.material" beforeDir="false" afterPath="$PROJECT_DIR$/resources/materials/effectOnlyBright.material" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/resources/materials/lava.material" beforeDir="false" afterPath="$PROJECT_DIR$/resources/materials/lava.material" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/shaders/glsl/effectBloom.frag" beforeDir="false" afterPath="$PROJECT_DIR$/resources/shaders/glsl/effectBloom.frag" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/shaders/glsl/effectBlur.frag" beforeDir="false" afterPath="$PROJECT_DIR$/resources/shaders/glsl/effectBlur.frag" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/shaders/glsl/effectLava.frag" beforeDir="false" afterPath="$PROJECT_DIR$/resources/shaders/glsl/effectLava.frag" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/resources/shaders/glsl/effectLava3.frag" beforeDir="false" afterPath="$PROJECT_DIR$/resources/shaders/glsl/effectLava3.frag" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/shaders/glsl/effectOnlyBright.frag" beforeDir="false" afterPath="$PROJECT_DIR$/resources/shaders/glsl/effectOnlyBright.frag" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/shaders/glsl/phongShadowMapEmit.frag" beforeDir="false" afterPath="$PROJECT_DIR$/resources/shaders/glsl/phongShadowMapEmit.frag" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -273,7 +259,7 @@
       <workItem from="1566863026639" duration="18422000" />
       <workItem from="1566946645848" duration="11926000" />
       <workItem from="1566959089941" duration="482000" />
-      <workItem from="1566995317048" duration="30442000" />
+      <workItem from="1566995317048" duration="38201000" />
     </task>
     <task id="LOCAL-00001" summary="Adding core SVE classes">
       <created>1536429263360</created>
@@ -548,7 +534,14 @@
       <option name="project" value="LOCAL" />
       <updated>1566866861861</updated>
     </task>
-    <option name="localTasksCounter" value="40" />
+    <task id="LOCAL-00040" summary="Adding MRT for QuadRender, to create dedicated bloom texture with bloom intensity">
+      <created>1567110782807</created>
+      <option name="number" value="00040" />
+      <option name="presentableId" value="LOCAL-00040" />
+      <option name="project" value="LOCAL" />
+      <updated>1567110782807</updated>
+    </task>
+    <option name="localTasksCounter" value="41" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -583,7 +576,6 @@
   <component name="VcsManagerConfiguration">
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_NEW_TODO" value="false" />
-    <MESSAGE value="Refactoring entities, materials and other classes, updating material data" />
     <MESSAGE value="Updating keyboard movement, fixing refraction material" />
     <MESSAGE value="Updating material settings, refactoring shadows" />
     <MESSAGE value="Adding screen quad rendering (for post-effects), fixing shadows" />
@@ -608,7 +600,8 @@
     <MESSAGE value="Adding enemy classes and basic AI" />
     <MESSAGE value="Some refactoring, fix enemy AI" />
     <MESSAGE value="License change" />
-    <option name="LAST_COMMIT_MESSAGE" value="License change" />
+    <MESSAGE value="Adding MRT for QuadRender, to create dedicated bloom texture with bloom intensity" />
+    <option name="LAST_COMMIT_MESSAGE" value="Adding MRT for QuadRender, to create dedicated bloom texture with bloom intensity" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

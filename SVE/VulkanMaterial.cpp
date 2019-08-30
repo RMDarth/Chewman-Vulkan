@@ -70,6 +70,11 @@ SVE::VulkanMaterial::VulkanMaterial(MaterialSettings materialSettings)
 {
     const auto& shaderManager = Engine::getInstance()->getShaderManager();
 
+    if (_materialSettings.passType == CommandsType::ScreenQuadMRTPass)
+    {
+        _materialSettings.useMRT = true;
+    }
+
     if (!_materialSettings.vertexShaderName.empty())
     {
         _vertexShader = shaderManager->getShader(_materialSettings.vertexShaderName)->getVulkanShaderInfo();

@@ -366,6 +366,7 @@ MaterialSettings loadMaterial(const cppfs::FilePath& directory, const std::strin
     setOptional(materialSettings.useMultisampling = document["useMultisampling"].GetBool());
     setOptional(materialSettings.useAlphaBlending = document["useAlphaBlending"].GetBool());
     setOptional(materialSettings.useMRT = document["useMRT"].GetBool());
+    setOptional(materialSettings.useInstancing = document["useInstancing"].GetBool());
     setOptional(materialSettings.srcBlendFactor = blendFactor.at(document["srcBlendFactor"].GetString()));
     setOptional(materialSettings.dstBlendFactor = blendFactor.at(document["dstBlendFactor"].GetString()));
     setOptional(materialSettings.isCubemap = document["isCubemap"].GetBool());

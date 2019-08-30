@@ -2,7 +2,6 @@
     "name": "CoinMaterial",
     "vertexShaderName": "phongShadowVertexShader",
     "fragmentShaderName": "phongShadowEmitFragmentShader",
-    "useMRT": true,
     "passType": "ScreenQuadMRTPass",
     "textures": [
         {

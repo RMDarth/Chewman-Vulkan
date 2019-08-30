@@ -94,6 +94,14 @@ vec3 calculateColor(vec2 texCoord)
 
 void main() {
     vec3 color = calculateColor(fragTexCoord);
+    float stepY =  1.0 - abs(fragTexCoord.y - 0.5) * 2;
+    float stepX =  1.0 - abs(fragTexCoord.x - 0.5) * 2;
+    float step = min(stepX, stepY);
+    step = step * 15;
+    color.r = min(color.r, step);
+    color.g = min(color.g, step);
+    color.b = min(color.b, step);
+    //color.g = smoothstep(0.0, color.g, step);
     outColor = vec4(color,1.0);
     outColorBloom = vec4(color, 0.5);
 }

@@ -301,18 +301,24 @@ void Engine::renderFrame()
     if (auto* screenQuad = _vulkanInstance->getScreenQuad())
     {
         _commandsType = CommandsType::ScreenQuadPass;
-        screenQuad->reallocateCommandBuffers(false);
-        screenQuad->startRenderCommandBufferCreation(false);
+        screenQuad->reallocateCommandBuffers(VulkanScreenQuad::Normal);
+        screenQuad->startRenderCommandBufferCreation(VulkanScreenQuad::Normal);
         if (skybox)
             skybox->applyDrawingCommands(BUFFER_INDEX_SCREEN_QUAD, currentImage);
-        createNodeDrawCommands(_sceneManager->getRootNode(), BUFFER_INDEX_SCREEN_QUAD, currentImage);
-        screenQuad->endRenderCommandBufferCreation(false);
+        createStartNodeDrawCommands(_sceneManager->getRootNode(), BUFFER_INDEX_SCREEN_QUAD, currentImage);
+        screenQuad->endRenderCommandBufferCreation(VulkanScreenQuad::Normal);
 
         _commandsType = CommandsType::ScreenQuadMRTPass;
-        screenQuad->reallocateCommandBuffers(true);
-        screenQuad->startRenderCommandBufferCreation(true);
+        screenQuad->reallocateCommandBuffers(VulkanScreenQuad::MRT);
+        screenQuad->startRenderCommandBufferCreation(VulkanScreenQuad::MRT);
         createNodeDrawCommands(_sceneManager->getRootNode(), BUFFER_INDEX_SCREEN_QUAD_MRT, currentImage);
-        screenQuad->endRenderCommandBufferCreation(true);
+        screenQuad->endRenderCommandBufferCreation(VulkanScreenQuad::MRT);
+
+        _commandsType = CommandsType::ScreenQuadLatePass;
+        screenQuad->reallocateCommandBuffers(VulkanScreenQuad::Late);
+        screenQuad->startRenderCommandBufferCreation(VulkanScreenQuad::Late);
+        createLaterNodeDrawCommands(_sceneManager->getRootNode(), BUFFER_INDEX_SCREEN_QUAD_LATE, currentImage);
+        screenQuad->endRenderCommandBufferCreation(VulkanScreenQuad::Late);
 
         _commandsType = CommandsType::PostEffectPasses;
         _engineInstance->getPostEffectManager()->createCommands(currentFrame, currentImage);
@@ -418,6 +424,7 @@ void Engine::renderFrame()
     {
         _vulkanInstance->submitCommands(CommandsType::ScreenQuadPass, BUFFER_INDEX_SCREEN_QUAD);
         _vulkanInstance->submitCommands(CommandsType::ScreenQuadMRTPass, BUFFER_INDEX_SCREEN_QUAD_MRT);
+        _vulkanInstance->submitCommands(CommandsType::ScreenQuadLatePass, BUFFER_INDEX_SCREEN_QUAD_LATE);
         _postEffectManager->submitCommands(uniformDataList);
     }
     _vulkanInstance->submitCommands(CommandsType::MainPass, _vulkanInstance->getCurrentFrameIndex());

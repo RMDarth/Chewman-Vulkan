@@ -41,27 +41,38 @@ VulkanScreenQuad::~VulkanScreenQuad()
 
 VkSampler VulkanScreenQuad::getSampler()
 {
-    return _colorSampler[0];
+    return _colorSampler[ScreenQuadPass::Late];
 }
 
 VkImageView VulkanScreenQuad::getImageView()
 {
-    return _resolveImageView[0];
+    return _resolveImageView[ScreenQuadPass::Late];
 }
 
-void VulkanScreenQuad::reallocateCommandBuffers(bool MRT)
+void VulkanScreenQuad::reallocateCommandBuffers(ScreenQuadPass screenQuadPass)
 {
-    _commandBuffer[MRT] = _vulkanInstance->createCommandBuffer(MRT ? BUFFER_INDEX_SCREEN_QUAD_MRT : BUFFER_INDEX_SCREEN_QUAD);
+    switch (screenQuadPass)
+    {
+        case Normal:
+            _commandBuffer[screenQuadPass] = _vulkanInstance->createCommandBuffer(BUFFER_INDEX_SCREEN_QUAD);
+            break;
+        case MRT:
+            _commandBuffer[screenQuadPass] = _vulkanInstance->createCommandBuffer(BUFFER_INDEX_SCREEN_QUAD_MRT);
+            break;
+        case Late:
+            _commandBuffer[screenQuadPass] = _vulkanInstance->createCommandBuffer(BUFFER_INDEX_SCREEN_QUAD_LATE);
+            break;
+    }
 }
 
-void VulkanScreenQuad::startRenderCommandBufferCreation(bool MRT)
+void VulkanScreenQuad::startRenderCommandBufferCreation(ScreenQuadPass screenQuadPass)
 {
     VkCommandBufferBeginInfo beginInfo{};
     beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
     beginInfo.flags = VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT;
     beginInfo.pInheritanceInfo = nullptr;
 
-    if (vkBeginCommandBuffer(_commandBuffer[MRT], &beginInfo) != VK_SUCCESS)
+    if (vkBeginCommandBuffer(_commandBuffer[screenQuadPass], &beginInfo) != VK_SUCCESS)
     {
         throw VulkanException("Failed to begin recording Vulkan command buffer");
     }
@@ -70,7 +81,7 @@ void VulkanScreenQuad::startRenderCommandBufferCreation(bool MRT)
     clearValues[0].color = {0.0f, 0.0f, 0.0f, 1.0f};
     clearValues[1].depthStencil = {1.0f, 0};
     clearValues[2].color = {0.0f, 0.0f, 0.0f, 0.0f};
-    if (MRT)
+    if (screenQuadPass == ScreenQuadPass::MRT)
     {
         clearValues.resize(5);
         clearValues[3].color = {0.0f, 0.0f, 0.0f, 0.0f};
@@ -79,19 +90,19 @@ void VulkanScreenQuad::startRenderCommandBufferCreation(bool MRT)
 
     VkRenderPassBeginInfo renderPassBeginInfo{};
     renderPassBeginInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-    renderPassBeginInfo.renderPass = _renderPass[MRT];
-    renderPassBeginInfo.framebuffer = _framebuffer[MRT];
+    renderPassBeginInfo.renderPass = _renderPass[screenQuadPass];
+    renderPassBeginInfo.framebuffer = _framebuffer[screenQuadPass];
     renderPassBeginInfo.renderArea.offset = {0, 0};
     renderPassBeginInfo.renderArea.extent.width = _width;
     renderPassBeginInfo.renderArea.extent.height = _height;
     renderPassBeginInfo.clearValueCount = clearValues.size();
     renderPassBeginInfo.pClearValues = clearValues.data();
 
-    vkCmdBeginRenderPass(_commandBuffer[MRT], &renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
+    vkCmdBeginRenderPass(_commandBuffer[screenQuadPass], &renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
 
     // TODO: Add depth bias constants to configuration
     vkCmdSetDepthBias(
-            _commandBuffer[MRT],
+            _commandBuffer[screenQuadPass],
             1.25f,
             0.0f,
             1.75f);
@@ -104,22 +115,22 @@ void VulkanScreenQuad::startRenderCommandBufferCreation(bool MRT)
     viewport.minDepth = 0.0f;
     viewport.maxDepth = 1.0f;
 
-    vkCmdSetViewport(_commandBuffer[MRT], 0, 1, &viewport);
+    vkCmdSetViewport(_commandBuffer[screenQuadPass], 0, 1, &viewport);
 
     VkRect2D scissor{};
     scissor.offset = {0, 0};
     scissor.extent.width = _width;
     scissor.extent.height = _height;
 
-    vkCmdSetScissor(_commandBuffer[MRT], 0, 1, &scissor);
+    vkCmdSetScissor(_commandBuffer[screenQuadPass], 0, 1, &scissor);
 }
 
-void VulkanScreenQuad::endRenderCommandBufferCreation(bool MRT)
+void VulkanScreenQuad::endRenderCommandBufferCreation(ScreenQuadPass screenQuadPass)
 {
-    vkCmdEndRenderPass(_commandBuffer[MRT]);
+    vkCmdEndRenderPass(_commandBuffer[screenQuadPass]);
 
     // finish recording
-    if (vkEndCommandBuffer(_commandBuffer[MRT]) != VK_SUCCESS)
+    if (vkEndCommandBuffer(_commandBuffer[screenQuadPass]) != VK_SUCCESS)
     {
         throw VulkanException("Failed to record Vulkan command buffer");
     }
@@ -138,11 +149,11 @@ void VulkanScreenQuad::createRenderPass()
     {
         colorAttachment[i].format = _vulkanInstance->getSurfaceColorFormat();
         colorAttachment[i].samples = sampleCount;
-        colorAttachment[i].loadOp = VK_ATTACHMENT_LOAD_OP_LOAD; // clear every frame
+        colorAttachment[i].loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR; // clear every frame
         colorAttachment[i].storeOp = VK_ATTACHMENT_STORE_OP_STORE; // should be STORE for rendering
         colorAttachment[i].stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
         colorAttachment[i].stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-        colorAttachment[i].initialLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+        colorAttachment[i].initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
         colorAttachment[i].finalLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 
         colorAttachmentResolve[i].format = _vulkanInstance->getSurfaceColorFormat();
@@ -154,13 +165,11 @@ void VulkanScreenQuad::createRenderPass()
         colorAttachmentResolve[i].initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
         colorAttachmentResolve[i].finalLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
     }
-    colorAttachment[0].loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR; // clear every frame
-    colorAttachment[0].initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-    colorAttachment[2].loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR; // clear every frame
-    colorAttachment[2].initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+    colorAttachment[1].loadOp = VK_ATTACHMENT_LOAD_OP_LOAD; // reuse data from previous pass
+    colorAttachment[1].initialLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 
-    VkAttachmentDescription depthAttachment[2] = {};
-    for (auto i = 0; i < 2; ++i)
+    VkAttachmentDescription depthAttachment[3] = {};
+    for (auto i = 0; i < 3; ++i)
     {
         depthAttachment[i].format = depthFormat;
         depthAttachment[i].samples = sampleCount;
@@ -169,7 +178,7 @@ void VulkanScreenQuad::createRenderPass()
         depthAttachment[i].stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
         depthAttachment[i].stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
         depthAttachment[i].initialLayout = i == 0 ? VK_IMAGE_LAYOUT_UNDEFINED : VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
-        depthAttachment[i].finalLayout = i == 0 ? VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL : VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+        depthAttachment[i].finalLayout = i != 2 ? VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL : VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
     }
 
 
@@ -215,6 +224,7 @@ void VulkanScreenQuad::createRenderPass()
     dependencies[1].dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
     dependencies[1].dependencyFlags = VK_DEPENDENCY_BY_REGION_BIT;
 
+    // TODO: Create 3 subpasses instead of 3 passes
     {
         std::vector<VkAttachmentDescription> attachments{colorAttachment[0], depthAttachment[0],
                                                          colorAttachmentResolve[0]};
@@ -263,12 +273,38 @@ void VulkanScreenQuad::createRenderPass()
         };
         _vulkanInstance->getPassInfo()->setPassData(CommandsType::ScreenQuadMRTPass, data);
     }
+
+    {
+        std::vector<VkAttachmentDescription> attachments{colorAttachment[1], depthAttachment[2],
+                                                         colorAttachmentResolve[1]};
+
+        VkRenderPassCreateInfo renderPassCreateInfo{};
+        renderPassCreateInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
+        renderPassCreateInfo.attachmentCount = attachments.size();
+        renderPassCreateInfo.pAttachments = attachments.data();
+        renderPassCreateInfo.subpassCount = 1;
+        renderPassCreateInfo.pSubpasses = &subpass[0];
+        //renderPassCreateInfo.dependencyCount = dependencies.size();
+        //renderPassCreateInfo.pDependencies = dependencies.data();
+
+        if (vkCreateRenderPass(_vulkanInstance->getLogicalDevice(), &renderPassCreateInfo, nullptr, &_renderPass[2]) !=
+            VK_SUCCESS)
+        {
+            throw VulkanException("Can't create Vulkan render pass");
+        }
+
+        VulkanPassInfo::PassData data{
+                _renderPass[2]
+        };
+        _vulkanInstance->getPassInfo()->setPassData(CommandsType::ScreenQuadLatePass, data);
+    }
 }
 
 void VulkanScreenQuad::deleteRenderPass()
 {
     vkDestroyRenderPass(_vulkanInstance->getLogicalDevice(), _renderPass[0], nullptr);
     vkDestroyRenderPass(_vulkanInstance->getLogicalDevice(), _renderPass[1], nullptr);
+    vkDestroyRenderPass(_vulkanInstance->getLogicalDevice(), _renderPass[2], nullptr);
 }
 
 void VulkanScreenQuad::createImages()
@@ -421,6 +457,12 @@ void VulkanScreenQuad::createFramebuffers()
         throw VulkanException("Can't create Vulkan Framebuffer");
     }
 
+    framebufferCreateInfo.renderPass = _renderPass[2];
+    if (vkCreateFramebuffer(_vulkanInstance->getLogicalDevice(), &framebufferCreateInfo, nullptr, &_framebuffer[2]) != VK_SUCCESS)
+    {
+        throw VulkanException("Can't create Vulkan Framebuffer");
+    }
+
     attachments.push_back(_colorImageView[1]);
     attachments.push_back(_resolveImageView[1]);
     framebufferCreateInfo.renderPass = _renderPass[1];
@@ -437,6 +479,7 @@ void VulkanScreenQuad::deleteFramebuffers()
 {
     vkDestroyFramebuffer(_vulkanInstance->getLogicalDevice(), _framebuffer[0], nullptr);
     vkDestroyFramebuffer(_vulkanInstance->getLogicalDevice(), _framebuffer[1], nullptr);
+    vkDestroyFramebuffer(_vulkanInstance->getLogicalDevice(), _framebuffer[2], nullptr);
 }
 
 

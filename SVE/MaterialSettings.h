@@ -83,6 +83,7 @@ struct MaterialSettings
     bool useMultisampling = true;
     bool useAlphaBlending = false;
     bool useMRT = false;
+    bool useInstancing = false;
     BlendFactor srcBlendFactor = BlendFactor::SrcAlpha;
     BlendFactor dstBlendFactor = BlendFactor::OneMinusSrcAlpha;
     MaterialCullFace cullFace = MaterialCullFace::FrontFace;

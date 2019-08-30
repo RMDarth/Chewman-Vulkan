@@ -31,6 +31,7 @@ enum class CommandsType : uint8_t
     RefractionPass,
     ScreenQuadPass,
     ScreenQuadMRTPass,
+    ScreenQuadLatePass,
     ComputeParticlesPass,
     PostEffectPasses,
 };

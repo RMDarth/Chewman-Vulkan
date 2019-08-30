@@ -363,6 +363,7 @@ void VulkanInstance::submitCommands(CommandsType commandsType, BufferIndex buffe
             { CommandsType::RefractionPass, _waterRefractionReadySemaphores },
             { CommandsType::ScreenQuadPass, _screenQuadReadySemaphores },
             { CommandsType::ScreenQuadMRTPass, _screenQuadMrtReadySemaphores },
+            { CommandsType::ScreenQuadLatePass, _screenQuadLateReadySemaphores },
             { CommandsType::MainPass, _renderFinishedSemaphores }
     };
 
@@ -1090,6 +1091,7 @@ void VulkanInstance::createSyncPrimitives()
     _waterRefractionReadySemaphores.resize(MAX_FRAMES_IN_FLIGHT);
     _screenQuadReadySemaphores.resize(MAX_FRAMES_IN_FLIGHT);
     _screenQuadMrtReadySemaphores.resize(MAX_FRAMES_IN_FLIGHT);
+    _screenQuadLateReadySemaphores.resize(MAX_FRAMES_IN_FLIGHT);
     _computeParticlesReadySemaphore.resize(MAX_FRAMES_IN_FLIGHT);
 
     VkSemaphoreCreateInfo semaphoreCreateInfo{};
@@ -1129,6 +1131,10 @@ void VulkanInstance::createSyncPrimitives()
         {
             throw std::runtime_error("Failed to create Vulkan semaphore");
         }
+        if (vkCreateSemaphore(_device, &semaphoreCreateInfo, nullptr, &_screenQuadLateReadySemaphores[i]) != VK_SUCCESS)
+        {
+            throw std::runtime_error("Failed to create Vulkan semaphore");
+        }
         if (vkCreateSemaphore(_device, &semaphoreCreateInfo, nullptr, &_computeParticlesReadySemaphore[i]) != VK_SUCCESS)
         {
             throw std::runtime_error("Failed to create Vulkan semaphore");
@@ -1160,6 +1166,8 @@ void VulkanInstance::deleteSyncPrimitives()
         vkDestroySemaphore(_device, _waterReflectionReadySemaphores[i], nullptr);
         vkDestroySemaphore(_device, _screenQuadReadySemaphores[i], nullptr);
         vkDestroySemaphore(_device, _screenQuadMrtReadySemaphores[i], nullptr);
+        vkDestroySemaphore(_device, _screenQuadLateReadySemaphores[i], nullptr);
+        vkDestroySemaphore(_device, _computeParticlesReadySemaphore[i], nullptr);
     }
 
 
