@@ -37,11 +37,14 @@ public:
 
     uint32_t getInstanceForEntity(const Entity* entity, uint32_t index = 0);
     bool isSkeletal() const;
+    bool isMainInstance(uint32_t materialIndex) const;
+    uint32_t getInstanceCount() const;
     glm::ivec2 getSpritesheetSize() const;
 
     const MaterialSettings& getSettings() const;
 
-    void setUniformData(uint32_t materialIndex, const UniformData& data) const;
+    void setUniformData(uint32_t materialIndex, const UniformData& data);
+    void updateInstancedData();
 
 private:
     void createPipelineLayout();
@@ -61,6 +64,9 @@ private:
     void createUniformBuffers();
     void deleteUniformBuffers();
 
+    void createStorageBuffers();
+    void deleteStorageBuffers();
+
     void createDescriptorPool();
     void deleteDescriptorPool();
     void createDescriptorSets();
@@ -68,7 +74,9 @@ private:
 
     void updateDescriptorSet(uint32_t imageIndex,
                              const VkBuffer* shaderBuffer,
+                             const VkBuffer* storageBuffer,
                              const size_t uniformSize,
+                             const size_t storageSize,
                              const VulkanShaderInfo* shaderInfo,
                              VkDescriptorSet descriptorSet);
 
@@ -83,8 +91,6 @@ private:
     VulkanShaderInfo* _fragmentShader = nullptr;
     VulkanShaderInfo* _geometryShader = nullptr;
     std::vector<VulkanShaderInfo*> _shaderList;
-
-    VkRenderPass _bloomRenderPass = VK_NULL_HANDLE;
 
     VkPipelineLayout _pipelineLayout = VK_NULL_HANDLE;
     VkPipeline _pipeline;
@@ -118,6 +124,14 @@ private:
         std::vector<VkDescriptorSet> fragmentDescriptorSets;
         std::vector<VkDescriptorSet> geometryDescriptorSets;
     };
+
+    // for all instances
+    StorageData _storageData;
+    bool _storageUpdated = true;
+    VkDeviceSize _storageBufferSize = 0;
+    std::vector<VkBuffer> _vertexStorageBuffers;
+    std::vector<VkDeviceMemory> _storageBuffersMemory;
+    uint32_t _mainInstance = 0;
 
     std::map<const Entity*, std::vector<uint32_t>> _entityInstanceMap;
     std::vector<PerInstanceData> _instanceData;

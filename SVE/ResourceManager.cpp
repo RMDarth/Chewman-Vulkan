@@ -137,6 +137,7 @@ std::vector<BufferType> getBufferTypeList(rj::Document& document)
 {
     static const std::map<std::string, BufferType> bufferMap{
             {"AtomicCounter",     BufferType::AtomicCounter },
+            {"ModelMatrixList",   BufferType::ModelMatrixList },
     };
 
     std::vector<BufferType> bufferList;
@@ -367,6 +368,7 @@ MaterialSettings loadMaterial(const cppfs::FilePath& directory, const std::strin
     setOptional(materialSettings.useAlphaBlending = document["useAlphaBlending"].GetBool());
     setOptional(materialSettings.useMRT = document["useMRT"].GetBool());
     setOptional(materialSettings.useInstancing = document["useInstancing"].GetBool());
+    setOptional(materialSettings.instanceMaxCount = document["instanceMaxCount"].GetUint());
     setOptional(materialSettings.srcBlendFactor = blendFactor.at(document["srcBlendFactor"].GetString()));
     setOptional(materialSettings.dstBlendFactor = blendFactor.at(document["dstBlendFactor"].GetString()));
     setOptional(materialSettings.isCubemap = document["isCubemap"].GetBool());

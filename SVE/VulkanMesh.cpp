@@ -33,7 +33,7 @@ void VulkanMesh::updateMesh(MeshSettings meshSettings)
     createGeometryBuffers();
 }
 
-void VulkanMesh::applyDrawingCommands(uint32_t bufferIndex)
+void VulkanMesh::applyDrawingCommands(uint32_t bufferIndex, uint32_t instanceCount)
 {
     auto commandBuffer = _vulkanInstance->getCommandBuffer(bufferIndex);
 
@@ -41,7 +41,7 @@ void VulkanMesh::applyDrawingCommands(uint32_t bufferIndex)
     vkCmdBindVertexBuffers(commandBuffer, 0, _vertexBufferList.size(), _vertexBufferList.data(), offsets.data());
     vkCmdBindIndexBuffer(commandBuffer, _indexBuffer, 0, VK_INDEX_TYPE_UINT32);
 
-    vkCmdDrawIndexed(commandBuffer, _meshSettings.indexData.size(), 1, 0, 0, 0);
+    vkCmdDrawIndexed(commandBuffer, _meshSettings.indexData.size(), instanceCount, 0, 0, 0);
 }
 
 const MeshSettings& VulkanMesh::getMeshSettings() const
@@ -122,6 +122,16 @@ void VulkanMesh::createGeometryBuffers()
         _vertexBufferList.push_back(VK_NULL_HANDLE);
         _vertexBufferMemoryList.push_back(VK_NULL_HANDLE);
         createOptimizedBuffer(_meshSettings.vertexBoneIndexData,
+                              _vertexBufferList.back(),
+                              _vertexBufferMemoryList.back(),
+                              VK_BUFFER_USAGE_VERTEX_BUFFER_BIT);
+    }
+
+    if (!_meshSettings.vertexTangentData.empty())
+    {
+        _vertexBufferList.push_back(VK_NULL_HANDLE);
+        _vertexBufferMemoryList.push_back(VK_NULL_HANDLE);
+        createOptimizedBuffer(_meshSettings.vertexTangentData,
                               _vertexBufferList.back(),
                               _vertexBufferMemoryList.back(),
                               VK_BUFFER_USAGE_VERTEX_BUFFER_BIT);

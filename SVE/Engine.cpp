@@ -29,6 +29,18 @@
 namespace SVE
 {
 
+namespace
+{
+
+enum class PassStage : uint8_t
+{
+    Start,
+    Instanced,
+    Deferred
+};
+
+} // anon namespace
+
 Engine* Engine::_engineInstance = nullptr;
 
 Engine* Engine::getInstance()
@@ -160,38 +172,44 @@ void Engine::finishRendering()
     _vulkanInstance->finishRendering();
 }
 
-void createStartNodeDrawCommands(const std::shared_ptr<SceneNode>& node, uint32_t bufferIndex, uint32_t imageIndex)
+void createNodeStageDrawCommands(const std::shared_ptr<SceneNode>& node, uint32_t bufferIndex, uint32_t imageIndex, PassStage stage)
 {
     for (auto& entity : node->getAttachedEntities())
     {
-        if (!entity->isRenderLast())
-            entity->applyDrawingCommands(bufferIndex, imageIndex);
+        bool isRenderLast = entity->isRenderLast();
+        bool isInstanced = entity->isInstanceRendering();
+
+        switch (stage)
+        {
+            case PassStage::Start:
+                if (!isRenderLast && !isInstanced)
+                    entity->applyDrawingCommands(bufferIndex, imageIndex);
+                break;
+            case PassStage::Instanced:
+                if (!isRenderLast && isInstanced)
+                {
+                    entity->updateInstanceBuffers();
+                    entity->applyDrawingCommands(bufferIndex, imageIndex);
+                }
+                break;
+            case PassStage::Deferred:
+                if (isRenderLast)
+                    entity->applyDrawingCommands(bufferIndex, imageIndex);
+                break;
+        }
     }
 
     for (auto& child : node->getChildren())
     {
-        createStartNodeDrawCommands(child, bufferIndex, imageIndex);
-    }
-}
-
-void createLaterNodeDrawCommands(const std::shared_ptr<SceneNode>& node, uint32_t bufferIndex, uint32_t imageIndex)
-{
-    for (auto& entity : node->getAttachedEntities())
-    {
-        if (entity->isRenderLast())
-            entity->applyDrawingCommands(bufferIndex, imageIndex);
-    }
-
-    for (auto& child : node->getChildren())
-    {
-        createLaterNodeDrawCommands(child, bufferIndex, imageIndex);
+        createNodeStageDrawCommands(child, bufferIndex, imageIndex, stage);
     }
 }
 
 void createNodeDrawCommands(const std::shared_ptr<SceneNode>& node, uint32_t bufferIndex, uint32_t imageIndex)
 {
-    createStartNodeDrawCommands(node, bufferIndex, imageIndex);
-    createLaterNodeDrawCommands(node, bufferIndex, imageIndex);
+    createNodeStageDrawCommands(node, bufferIndex, imageIndex, PassStage::Start);
+    createNodeStageDrawCommands(node, bufferIndex, imageIndex, PassStage::Instanced);
+    createNodeStageDrawCommands(node, bufferIndex, imageIndex, PassStage::Deferred);
 }
 
 void createNodeComputeCommands(const std::shared_ptr<SceneNode>& node, uint32_t bufferIndex, uint32_t imageIndex)
@@ -305,19 +323,21 @@ void Engine::renderFrame()
         screenQuad->startRenderCommandBufferCreation(VulkanScreenQuad::Normal);
         if (skybox)
             skybox->applyDrawingCommands(BUFFER_INDEX_SCREEN_QUAD, currentImage);
-        createStartNodeDrawCommands(_sceneManager->getRootNode(), BUFFER_INDEX_SCREEN_QUAD, currentImage);
+        createNodeStageDrawCommands(_sceneManager->getRootNode(), BUFFER_INDEX_SCREEN_QUAD, currentImage, PassStage::Start);
+        createNodeStageDrawCommands(_sceneManager->getRootNode(), BUFFER_INDEX_SCREEN_QUAD, currentImage, PassStage::Instanced);
         screenQuad->endRenderCommandBufferCreation(VulkanScreenQuad::Normal);
 
         _commandsType = CommandsType::ScreenQuadMRTPass;
         screenQuad->reallocateCommandBuffers(VulkanScreenQuad::MRT);
         screenQuad->startRenderCommandBufferCreation(VulkanScreenQuad::MRT);
-        createNodeDrawCommands(_sceneManager->getRootNode(), BUFFER_INDEX_SCREEN_QUAD_MRT, currentImage);
+        createNodeStageDrawCommands(_sceneManager->getRootNode(), BUFFER_INDEX_SCREEN_QUAD_MRT, currentImage, PassStage::Start);
+        createNodeStageDrawCommands(_sceneManager->getRootNode(), BUFFER_INDEX_SCREEN_QUAD_MRT, currentImage, PassStage::Instanced);
         screenQuad->endRenderCommandBufferCreation(VulkanScreenQuad::MRT);
 
         _commandsType = CommandsType::ScreenQuadLatePass;
         screenQuad->reallocateCommandBuffers(VulkanScreenQuad::Late);
         screenQuad->startRenderCommandBufferCreation(VulkanScreenQuad::Late);
-        createLaterNodeDrawCommands(_sceneManager->getRootNode(), BUFFER_INDEX_SCREEN_QUAD_LATE, currentImage);
+        createNodeStageDrawCommands(_sceneManager->getRootNode(), BUFFER_INDEX_SCREEN_QUAD_LATE, currentImage, PassStage::Deferred);
         screenQuad->endRenderCommandBufferCreation(VulkanScreenQuad::Late);
 
         _commandsType = CommandsType::PostEffectPasses;

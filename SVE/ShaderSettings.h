@@ -47,7 +47,8 @@ enum class UniformType : uint8_t
 
 enum class BufferType : uint8_t
 {
-    AtomicCounter
+    AtomicCounter,
+    ModelMatrixList
 };
 
 enum class ShaderType : uint8_t
@@ -65,6 +66,11 @@ struct MaterialInfo
     glm::vec4 specular;
     float shininess;
     float _padding[3];
+};
+
+struct StorageData
+{
+    std::vector<glm::mat4> modelList;
 };
 
 struct UniformData
@@ -145,5 +151,7 @@ struct ShaderSettings
 const std::map<UniformType, size_t>& getUniformSizeMap();
 const std::map<BufferType, size_t>& getStorageBufferSizeMap();
 std::vector<char> getUniformDataByType(const UniformData& data, UniformType type);
+std::vector<char> getStorageDataByType(const StorageData& data, BufferType type);
+void updateStorageDataByUniforms(const UniformData& data, StorageData& storageData, BufferType type);
 
 } // namespace SVE

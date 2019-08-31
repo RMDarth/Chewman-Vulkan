@@ -20,7 +20,7 @@ public:
 
     void updateMesh(MeshSettings meshSettings);
 
-    void applyDrawingCommands(uint32_t bufferIndex);
+    void applyDrawingCommands(uint32_t bufferIndex, uint32_t instanceCount = 1);
 
     const MeshSettings& getMeshSettings() const;
 

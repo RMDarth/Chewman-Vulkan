@@ -31,12 +31,14 @@ public:
     void setRenderLast();
     bool isRenderLast();
     virtual bool isComputeEntity() const;
+    virtual bool isInstanceRendering() const;
 
     virtual void setMaterial(const std::string& materialName);
     virtual void setMaterialInfo(const MaterialInfo& materialInfo);
     virtual MaterialInfo* getMaterialInfo();
 
     virtual void updateUniforms(UniformDataList uniformDataList) const = 0;
+    virtual void updateInstanceBuffers();
     virtual void applyDrawingCommands(uint32_t bufferIndex, uint32_t imageIndex) const = 0;
 
 protected:

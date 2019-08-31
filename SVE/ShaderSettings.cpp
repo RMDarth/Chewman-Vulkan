@@ -47,10 +47,30 @@ const std::map<UniformType, size_t>& getUniformSizeMap()
 const std::map<BufferType, size_t>& getStorageBufferSizeMap()
 {
     static const std::map<BufferType, size_t> bufferSizeMap {
-            { BufferType::AtomicCounter, sizeof(uint32_t) }
+            { BufferType::AtomicCounter, sizeof(uint32_t) },
+            { BufferType::ModelMatrixList, 0 }
     };
 
     return bufferSizeMap;
+}
+
+std::vector<char> getStorageDataByType(const StorageData& data, BufferType type)
+{
+    const auto& sizeMap = getUniformSizeMap();
+    switch (type)
+    {
+        case BufferType::AtomicCounter:
+        {
+            return std::vector<char>();
+        }
+        case BufferType::ModelMatrixList:
+        {
+            const char* byteData = reinterpret_cast<const char*>(data.modelList.data());
+            return std::vector<char>(byteData, byteData + sizeof(glm::mat4) * data.modelList.size());
+        }
+    }
+
+    throw VulkanException("Unsupported uniform type");
 }
 
 std::vector<char> getUniformDataByType(const UniformData& data, UniformType type)
@@ -202,6 +222,25 @@ std::vector<char> getUniformDataByType(const UniformData& data, UniformType type
         {
             const char* byteData = reinterpret_cast<const char*>(&data.deltaTime);
             return std::vector<char>(byteData, byteData + sizeof(data.deltaTime));
+        }
+    }
+
+    throw VulkanException("Unsupported uniform type");
+}
+
+void updateStorageDataByUniforms(const UniformData& data, StorageData& storageData, BufferType type)
+{
+    const auto& sizeMap = getUniformSizeMap();
+    switch (type)
+    {
+        case BufferType::AtomicCounter:
+        {
+            return;
+        }
+        case BufferType::ModelMatrixList:
+        {
+            storageData.modelList.push_back(data.model);
+            return;
         }
     }
 

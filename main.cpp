@@ -532,6 +532,7 @@ int runGame()
                 }
                 if (event.type == SDL_MOUSEMOTION)
                 {
+                    //std::cout << "FPS: " << 1.0f / (curTime - prevTime) << std::endl;
                     if (event.motion.state && SDL_BUTTON(1))
                         rotateCamera(event.motion, camera);
                 }

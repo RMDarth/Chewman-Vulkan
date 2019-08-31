@@ -52,6 +52,11 @@ bool Entity::isRenderLast()
     return _renderLast;
 }
 
+bool Entity::isInstanceRendering() const
+{
+    return false;
+}
+
 bool Entity::isComputeEntity() const
 {
     return false;
@@ -65,6 +70,11 @@ void Entity::setMaterialInfo(const MaterialInfo& materialInfo)
 MaterialInfo* Entity::getMaterialInfo()
 {
     return nullptr;
+}
+
+void Entity::updateInstanceBuffers()
+{
+    // do nothing
 }
 
 } // namespace SVE

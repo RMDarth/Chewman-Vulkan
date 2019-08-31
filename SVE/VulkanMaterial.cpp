@@ -102,6 +102,7 @@ SVE::VulkanMaterial::VulkanMaterial(MaterialSettings materialSettings)
     createTextureSampler();
 
     createUniformBuffers();
+    createStorageBuffers();
     createDescriptorPool();
     createDescriptorSets();
 }
@@ -111,6 +112,7 @@ VulkanMaterial::~VulkanMaterial()
     deleteDescriptorSets();
     deleteDescriptorPool();
     deleteUniformBuffers();
+    deleteStorageBuffers();
 
     deleteTextureSampler();
     deleteTextureImageView();
@@ -132,6 +134,9 @@ VkPipelineLayout VulkanMaterial::getPipelineLayout() const
 
 void VulkanMaterial::applyDrawingCommands(uint32_t bufferIndex, uint32_t imageIndex, uint32_t materialIndex)
 {
+    if (_materialSettings.useInstancing && !isMainInstance(materialIndex))
+        return;
+
     auto commandBuffer = _vulkanInstance->getCommandBuffer(bufferIndex);
     vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, _pipeline);
 
@@ -189,6 +194,7 @@ uint32_t VulkanMaterial::getInstanceForEntity(const Entity* entity, uint32_t ind
     }
 
     createUniformBuffers();
+    createStorageBuffers();
     createDescriptorPool();
     createDescriptorSets();
     _entityInstanceMap[entity][index] = _instanceData.size() - 1;
@@ -203,7 +209,7 @@ bool VulkanMaterial::isSkeletal() const
     return _vertexShader->getShaderSettings().maxBonesSize > 0;
 }
 
-void VulkanMaterial::setUniformData(uint32_t materialIndex, const UniformData& uniformData) const
+void VulkanMaterial::setUniformData(uint32_t materialIndex, const UniformData& uniformData)
 {
     auto swapchainSize = _vulkanInstance->getSwapchainSize();
     auto imageIndex = _vulkanInstance->getCurrentImageIndex();
@@ -215,15 +221,50 @@ void VulkanMaterial::setUniformData(uint32_t materialIndex, const UniformData& u
         const auto& shaderSettings = _shaderList[i]->getShaderSettings();
         void* data = nullptr;
         vkMapMemory(_device,  _instanceData[materialIndex].uniformBuffersMemory[swapchainSize * i + imageIndex], 0, uniformSize, 0, &data);
-        char* mappedData = reinterpret_cast<char*>(data);
+        char* mappedUniformData = reinterpret_cast<char*>(data);
         for (const auto& r : shaderSettings.uniformList)
         {
             auto uniformBytes = getUniformDataByType(uniformData, r.uniformType);
-            memcpy(mappedData, uniformBytes.data(), uniformBytes.size());
-            mappedData += uniformBytes.size();
+            memcpy(mappedUniformData, uniformBytes.data(), uniformBytes.size());
+            mappedUniformData += uniformBytes.size();
         }
         vkUnmapMemory(_device, _instanceData[materialIndex].uniformBuffersMemory[swapchainSize * i + imageIndex]);
     }
+
+    for (const auto& b : _vertexShader->getShaderSettings().bufferList)
+    {
+        updateStorageDataByUniforms(uniformData, _storageData, b);
+    }
+
+    _storageUpdated = false;
+    _mainInstance = materialIndex;
+}
+
+void VulkanMaterial::updateInstancedData()
+{
+    auto imageIndex = _vulkanInstance->getCurrentImageIndex();
+
+    if (_storageBufferSize == 0 || _mainInstance == 0 || _storageUpdated)
+        return;
+
+    if (!_materialSettings.useInstancing)
+        return;
+
+    void* data = nullptr;
+    vkMapMemory(_device, _storageBuffersMemory[imageIndex], 0, _storageBufferSize, 0, &data);
+    char* mappedBufferData = reinterpret_cast<char*>(data);
+    for (const auto& b : _vertexShader->getShaderSettings().bufferList)
+    {
+        auto storageBytes = getStorageDataByType(_storageData, b);
+        if (!storageBytes.empty())
+        {
+            memcpy(mappedBufferData, storageBytes.data(), storageBytes.size());
+            mappedBufferData += storageBytes.size();
+        }
+    }
+    vkUnmapMemory(_device, _storageBuffersMemory[imageIndex]);
+    _storageData = {};
+    _storageUpdated = true;
 }
 
 void VulkanMaterial::createPipeline()
@@ -826,6 +867,46 @@ void VulkanMaterial::deleteUniformBuffers()
     }
 }
 
+void VulkanMaterial::createStorageBuffers()
+{
+    if (!_storageBuffersMemory.empty())
+        return;
+
+    auto swapchainSize = _vulkanInstance->getSwapchainSize();
+
+    _storageBufferSize = _vertexShader->getShaderStorageBuffersSize();
+    if (_storageBufferSize == 0)
+        _storageBufferSize = _materialSettings.instanceMaxCount;
+
+    if (_storageBufferSize == 0)
+        return;
+    _storageBuffersMemory.resize(swapchainSize);
+    _vertexStorageBuffers.resize(swapchainSize);
+
+    for (auto i = 0u; i < swapchainSize; i++)
+    {
+        _vulkanUtils.createBuffer(
+                _storageBufferSize,
+                VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
+                VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+                _vertexStorageBuffers[i],
+                _storageBuffersMemory[i]);
+    }
+}
+
+void VulkanMaterial::deleteStorageBuffers()
+{
+    for (auto buffer : _vertexStorageBuffers)
+    {
+        vkDestroyBuffer(_device, buffer, nullptr);
+    }
+
+    for (auto memory : _storageBuffersMemory)
+    {
+        vkFreeMemory(_device, memory, nullptr);
+    }
+}
+
 
 void VulkanMaterial::createDescriptorPool()
 {
@@ -833,11 +914,13 @@ void VulkanMaterial::createDescriptorPool()
 
     auto& instance = _instanceData.back();
 
-    std::vector<VkDescriptorPoolSize> poolSizes(2);
+    std::vector<VkDescriptorPoolSize> poolSizes(3);
     poolSizes[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
     poolSizes[0].descriptorCount = instance.vertexUniformBuffers.size() + instance.fragmentUniformBuffer.size() + instance.geometryUniformBuffer.size();
     poolSizes[1].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
     poolSizes[1].descriptorCount = swapchainSize * _materialSettings.textures.size() * 2;
+    poolSizes[2].type = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
+    poolSizes[2].descriptorCount = _vertexStorageBuffers.size();
     for (auto& poolSize : poolSizes)
         if (poolSize.descriptorCount == 0)
             poolSize.descriptorCount = 1;
@@ -866,6 +949,7 @@ void VulkanMaterial::createDescriptorSets()
 {
     auto swapchainSize = _vulkanInstance->getSwapchainSize();
     auto makeDescriptorSet = [this, swapchainSize](const std::vector<VkBuffer>& shaderBuffers,
+                                                   const std::vector<VkBuffer>* storageBuffers,
                                                    const VulkanShaderInfo* shaderInfo,
                                                    std::vector<VkDescriptorSet>& descriptorSets)
     {
@@ -894,6 +978,7 @@ void VulkanMaterial::createDescriptorSets()
         for (auto i = 0u; i < swapchainSize; i++)
         {
             VkDescriptorBufferInfo bufferInfo {};
+            VkDescriptorBufferInfo storageBufferInfo {};
             if (!shaderBuffers.empty())
             {
                 bufferInfo.buffer = shaderBuffers[i];
@@ -968,15 +1053,33 @@ void VulkanMaterial::createDescriptorSets()
                 uniformsBuffer.descriptorCount = 1;
                 uniformsBuffer.pBufferInfo = &bufferInfo;
                 descriptorWrites.push_back(uniformsBuffer);
+                bindingIndex++;
+            }
+
+            if (storageBuffers && !storageBuffers->empty() && _storageBufferSize > 0)
+            {
+                storageBufferInfo.buffer = storageBuffers->at(i);
+                storageBufferInfo.offset = 0;
+                storageBufferInfo.range = _storageBufferSize;
+
+                VkWriteDescriptorSet storageBuffer {};
+                storageBuffer.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+                storageBuffer.dstSet = descriptorSets[i];
+                storageBuffer.dstBinding = bindingIndex;
+                storageBuffer.dstArrayElement = 0;
+                storageBuffer.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
+                storageBuffer.descriptorCount = 1;
+                storageBuffer.pBufferInfo = &storageBufferInfo;
+                descriptorWrites.push_back(storageBuffer);
             }
 
             vkUpdateDescriptorSets(_device, descriptorWrites.size(), descriptorWrites.data(), 0, nullptr);
         }
     };
 
-    makeDescriptorSet(_instanceData.back().vertexUniformBuffers, _vertexShader, _instanceData.back().vertexDescriptorSets);
-    makeDescriptorSet(_instanceData.back().geometryUniformBuffer, _geometryShader, _instanceData.back().geometryDescriptorSets);
-    makeDescriptorSet(_instanceData.back().fragmentUniformBuffer, _fragmentShader, _instanceData.back().fragmentDescriptorSets);
+    makeDescriptorSet(_instanceData.back().vertexUniformBuffers, &_vertexStorageBuffers,  _vertexShader, _instanceData.back().vertexDescriptorSets);
+    makeDescriptorSet(_instanceData.back().geometryUniformBuffer, nullptr, _geometryShader, _instanceData.back().geometryDescriptorSets);
+    makeDescriptorSet(_instanceData.back().fragmentUniformBuffer, nullptr, _fragmentShader, _instanceData.back().fragmentDescriptorSets);
 }
 
 void VulkanMaterial::deleteDescriptorSets()
@@ -988,6 +1091,7 @@ void VulkanMaterial::updateDescriptorSets()
 {
     auto swapchainSize = _vulkanInstance->getSwapchainSize();
     auto makeDescriptorSet = [this, swapchainSize](const std::vector<VkBuffer>& shaderBuffers,
+                                                   const std::vector<VkBuffer>* storageBuffers,
                                                    const VulkanShaderInfo* shaderInfo,
                                                    std::vector<VkDescriptorSet>& descriptorSets)
     {
@@ -1000,28 +1104,44 @@ void VulkanMaterial::updateDescriptorSets()
 
         for (auto i = 0u; i < swapchainSize; i++)
         {
-            updateDescriptorSet(i, shaderBuffers.empty() ? nullptr : &shaderBuffers[i], uniformSize, shaderInfo, descriptorSets[i]);
+            updateDescriptorSet(
+                    i,
+                    shaderBuffers.empty() ? nullptr : &shaderBuffers[i],
+                    storageBuffers && !storageBuffers->empty() ? &storageBuffers->at(i) : nullptr,
+                    uniformSize,
+                    storageBuffers ? _storageBufferSize : 0,
+                    shaderInfo,
+                    descriptorSets[i]);
         }
     };
 
-    makeDescriptorSet(_instanceData.back().vertexUniformBuffers, _vertexShader, _instanceData.back().vertexDescriptorSets);
-    makeDescriptorSet(_instanceData.back().geometryUniformBuffer, _geometryShader, _instanceData.back().geometryDescriptorSets);
-    makeDescriptorSet(_instanceData.back().fragmentUniformBuffer, _fragmentShader, _instanceData.back().fragmentDescriptorSets);
+    makeDescriptorSet(_instanceData.back().vertexUniformBuffers, &_vertexStorageBuffers, _vertexShader, _instanceData.back().vertexDescriptorSets);
+    makeDescriptorSet(_instanceData.back().geometryUniformBuffer, nullptr, _geometryShader, _instanceData.back().geometryDescriptorSets);
+    makeDescriptorSet(_instanceData.back().fragmentUniformBuffer, nullptr, _fragmentShader, _instanceData.back().fragmentDescriptorSets);
 }
 
 void VulkanMaterial::updateDescriptorSet(
         uint32_t imageIndex,
         const VkBuffer* shaderBuffer,
+        const VkBuffer* storageBuffer,
         const size_t uniformSize,
+        const size_t storageSize,
         const VulkanShaderInfo* shaderInfo,
         VkDescriptorSet descriptorSet)
 {
     VkDescriptorBufferInfo bufferInfo {};
+    VkDescriptorBufferInfo storageBufferInfo {};
     if (shaderBuffer)
     {
         bufferInfo.buffer = *shaderBuffer;
         bufferInfo.offset = 0;
         bufferInfo.range = uniformSize;
+    }
+    if (storageBuffer)
+    {
+        storageBufferInfo.buffer = *storageBuffer;
+        storageBufferInfo.offset = 0;
+        storageBufferInfo.range = storageSize;
     }
 
     std::vector<VkDescriptorImageInfo> imageInfoList;
@@ -1089,6 +1209,20 @@ void VulkanMaterial::updateDescriptorSet(
         uniformsBuffer.descriptorCount = 1;
         uniformsBuffer.pBufferInfo = &bufferInfo;
         descriptorWrites.push_back(uniformsBuffer);
+        ++bindingIndex;
+    }
+
+    if (storageBuffer)
+    {
+        VkWriteDescriptorSet storageBuffer {};
+        storageBuffer.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+        storageBuffer.dstSet = descriptorSet;
+        storageBuffer.dstBinding = bindingIndex;
+        storageBuffer.dstArrayElement = 0;
+        storageBuffer.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
+        storageBuffer.descriptorCount = 1;
+        storageBuffer.pBufferInfo = &storageBufferInfo;
+        descriptorWrites.push_back(storageBuffer);
     }
 
     vkUpdateDescriptorSets(_device, descriptorWrites.size(), descriptorWrites.data(), 0, nullptr);
@@ -1108,6 +1242,16 @@ glm::ivec2 VulkanMaterial::getSpritesheetSize() const
 const MaterialSettings &VulkanMaterial::getSettings() const
 {
     return _materialSettings;
+}
+
+bool VulkanMaterial::isMainInstance(uint32_t materialIndex) const
+{
+    return _materialSettings.useInstancing && materialIndex == _mainInstance;
+}
+
+uint32_t VulkanMaterial::getInstanceCount() const
+{
+    return _instanceData.size() - 1;
 }
 
 } // namespace SVE

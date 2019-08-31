@@ -88,7 +88,7 @@ void GameMapProcessor::updateGargoyle(float time, Gargoyle& gargoyle)
                 gargoyle.state = GargoyleState::Fire;
                 gargoyle.currentTime = 0;
                 gargoyle.currentLength = 0;
-                updateGargoyleParticles(gargoyle, 10.0f, 0.0f, 0.0f);
+                updateGargoyleParticles(gargoyle, gargoyle.fireTime + gargoyle.restTime, 0.0f, 0.0f);
             }
             break;
         }

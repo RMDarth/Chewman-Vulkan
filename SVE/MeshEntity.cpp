@@ -138,7 +138,8 @@ void MeshEntity::applyDrawingCommands(uint32_t bufferIndex, uint32_t imageIndex)
         _material->getVulkanMaterial()->applyDrawingCommands(bufferIndex, imageIndex, _materialIndex);
     }
 
-    _mesh->getVulkanMesh()->applyDrawingCommands(bufferIndex);
+    if (!isInstanceRendering() || _material->getVulkanMaterial()->isMainInstance(_materialIndex))
+        _mesh->getVulkanMesh()->applyDrawingCommands(bufferIndex, _material->getVulkanMaterial()->getInstanceCount());
 }
 
 void MeshEntity::setupMaterial()
@@ -175,6 +176,16 @@ void MeshEntity::setMaterialInfo(const MaterialInfo& materialInfo)
 MaterialInfo* MeshEntity::getMaterialInfo()
 {
     return &_materialInfo;
+}
+
+bool MeshEntity::isInstanceRendering() const
+{
+    return _material->getVulkanMaterial()->getSettings().useInstancing;
+}
+
+void MeshEntity::updateInstanceBuffers()
+{
+    _material->getVulkanMaterial()->updateInstancedData();
 }
 
 } // namespace SVE

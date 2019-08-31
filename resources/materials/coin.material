@@ -1,8 +1,10 @@
 {
     "name": "CoinMaterial",
-    "vertexShaderName": "phongShadowVertexShader",
+    "vertexShaderName": "phongShadowInstancedVertexShader",
     "fragmentShaderName": "phongShadowEmitFragmentShader",
     "passType": "ScreenQuadMRTPass",
+    "useInstancing": true,
+    "instanceMaxCount": 10000,
     "textures": [
         {
             "samplerName": "diffuseTex",
