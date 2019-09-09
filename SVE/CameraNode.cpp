@@ -85,6 +85,7 @@ void CameraNode::fillUniformData(UniformData& data)
 
     data.projection = _projection;
     data.view = _view;
+    data.viewProjectionList.push_back(_projection * _view);
     data.model = glm::mat4(1);
     data.cameraPos = glm::vec4(_position, 1.0f);//getTotalTransformation()[3];
 }

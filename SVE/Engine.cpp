@@ -174,10 +174,17 @@ void Engine::finishRendering()
 
 void createNodeStageDrawCommands(const std::shared_ptr<SceneNode>& node, uint32_t bufferIndex, uint32_t imageIndex, PassStage stage)
 {
+    auto passType = Engine::getInstance()->getPassType();
     for (auto& entity : node->getAttachedEntities())
     {
         bool isRenderLast = entity->isRenderLast();
+        bool isRenderDepth = entity->isRenderToDepth();
         bool isInstanced = entity->isInstanceRendering();
+
+        if (!isRenderDepth && passType == CommandsType::ScreenQuadDepthPass)
+        {
+            continue;
+        }
 
         switch (stage)
         {
@@ -318,6 +325,13 @@ void Engine::renderFrame()
 
     if (auto* screenQuad = _vulkanInstance->getScreenQuad())
     {
+        _commandsType = CommandsType::ScreenQuadDepthPass;
+        screenQuad->reallocateCommandBuffers(VulkanScreenQuad::Depth);
+        screenQuad->startRenderCommandBufferCreation(VulkanScreenQuad::Depth);
+        createNodeStageDrawCommands(_sceneManager->getRootNode(), BUFFER_INDEX_SCREEN_QUAD_DEPTH, currentImage, PassStage::Start);
+        createNodeStageDrawCommands(_sceneManager->getRootNode(), BUFFER_INDEX_SCREEN_QUAD_DEPTH, currentImage, PassStage::Instanced);
+        screenQuad->endRenderCommandBufferCreation(VulkanScreenQuad::Depth);
+
         _commandsType = CommandsType::ScreenQuadPass;
         screenQuad->reallocateCommandBuffers(VulkanScreenQuad::Normal);
         screenQuad->startRenderCommandBufferCreation(VulkanScreenQuad::Normal);
@@ -442,6 +456,7 @@ void Engine::renderFrame()
     // TODO: Check if screen quad rendering enabled
     if (_vulkanInstance->getScreenQuad())
     {
+        _vulkanInstance->submitCommands(CommandsType::ScreenQuadDepthPass, BUFFER_INDEX_SCREEN_QUAD_DEPTH);
         _vulkanInstance->submitCommands(CommandsType::ScreenQuadPass, BUFFER_INDEX_SCREEN_QUAD);
         _vulkanInstance->submitCommands(CommandsType::ScreenQuadMRTPass, BUFFER_INDEX_SCREEN_QUAD_MRT);
         _vulkanInstance->submitCommands(CommandsType::ScreenQuadLatePass, BUFFER_INDEX_SCREEN_QUAD_LATE);

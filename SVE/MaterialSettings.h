@@ -17,7 +17,8 @@ enum class TextureType : uint8_t
     Reflection,
     Refraction,
     ScreenQuad,
-    ScreenQuadSecond,
+    ScreenQuadSecond, // after late pass (with particles)
+    ScreenQuadDepth,
     LastEffect,
 };
 

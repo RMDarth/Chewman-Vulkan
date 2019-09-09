@@ -29,7 +29,12 @@ public:
 
     // TODO: Refactor, provide more agile ordering mechanism
     void setRenderLast();
-    bool isRenderLast();
+    bool isRenderLast() const;
+
+    // This is for special render to depth texture pass
+    bool isRenderToDepth() const;
+    void setRenderToDepth(bool renderToDepth);
+
     virtual bool isComputeEntity() const;
     virtual bool isInstanceRendering() const;
 
@@ -43,6 +48,7 @@ public:
 
 protected:
     bool _renderLast = false;
+    bool _renderToDepth = false;
     std::shared_ptr<SceneNode> _parent;
 };
 

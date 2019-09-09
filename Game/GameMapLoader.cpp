@@ -96,6 +96,15 @@ void initTeleportMesh()
     SVE::Engine::getInstance()->getMeshManager()->registerMesh(teleportBaseMesh);
 }
 
+void initSmokeMesh()
+{
+    auto meshSettings = constructPlane("SmokeFloor",
+                                       glm::vec3(0, 0, 0), 1000.0f, 1000.0f, glm::vec3(0.0f, 1.0f, 0.0f));
+    meshSettings.materialName = "SmokeMaterial";
+    auto teleportBaseMesh = std::make_shared<SVE::Mesh>(meshSettings);
+    SVE::Engine::getInstance()->getMeshManager()->registerMesh(teleportBaseMesh);
+}
+
 glm::vec3 getWorldPos(int row, int column, float y = 0.0f)
 {
     return glm::vec3(CellSize * column, y, -CellSize * row);
@@ -107,6 +116,7 @@ GameMapLoader::GameMapLoader()
     : _meshGenerator(CellSize)
 {
     initTeleportMesh();
+    initSmokeMesh();
 }
 
 std::shared_ptr<GameMap> GameMapLoader::loadMap(const std::string& filename)
@@ -205,6 +215,7 @@ std::shared_ptr<GameMap> GameMapLoader::loadMap(const std::string& filename)
         gargoyle.fireTime = (float)(finishTime - startTime) / 1000;
         finalizeGargoyle(*gameMap, gargoyle);
     }
+    createSmoke(*gameMap);
 
     fin.close();
 
@@ -238,9 +249,10 @@ void GameMapLoader::initMeshes(GameMap& level)
                     cellV = _meshGenerator.GenerateFloor(position, ModelType::Vertical);
                     break;
                 case CellType::Liquid:
-                    cellT = _meshGenerator.GenerateLiquid(position, ModelType::Top);
-                    cellB = _meshGenerator.GenerateLiquid(position, ModelType::Bottom);
-                    cellV = _meshGenerator.GenerateLiquid(position, ModelType::Vertical);
+                    //cellT = _meshGenerator.GenerateLiquid(position, ModelType::Top);
+                    //cellB = _meshGenerator.GenerateLiquid(position, ModelType::Bottom);
+                    //cellV = _meshGenerator.GenerateLiquid(position, ModelType::Vertical);
+                    cellV = _meshGenerator.GenerateLiquid(position, ModelType::Vertical, x, y, level.height - 1, level.width - 1);
                     break;
             }
             top.insert(top.end(), cellT.begin(), cellT.end());
@@ -269,6 +281,8 @@ void GameMapLoader::initMeshes(GameMap& level)
     level.mapEntity[0] = std::make_shared<SVE::MeshEntity>("MapT");
     level.mapEntity[1] = std::make_shared<SVE::MeshEntity>("MapB");
     level.mapEntity[2] = std::make_shared<SVE::MeshEntity>("MapV");
+    for (auto i = 0; i < 3; ++i)
+        level.mapEntity[i]->setRenderToDepth(true);
 
     //level.mapNode->setNodeTransformation(glm::translate(glm::mat4(1), glm::vec3(10, 5, 0)));
     level.mapNode->attachEntity(level.mapEntity[0]);
@@ -553,6 +567,20 @@ Coin* GameMapLoader::createCoin(GameMap& level, int row, int column)
     level.coins.push_back(std::move(coin));
 
     return &level.coins.back();
+}
+
+void GameMapLoader::createSmoke(GameMap& level) const
+{
+    auto smokeNode = SVE::Engine::getInstance()->getSceneManager()->createSceneNode();
+    smokeNode->setNodeTransformation(glm::translate(glm::mat4(1), glm::vec3(0, -0.5, 0)));
+    level.mapNode->attachSceneNode(smokeNode);
+    std::shared_ptr<SVE::MeshEntity> smokeEntity = std::make_shared<SVE::MeshEntity>("SmokeFloor");
+    smokeEntity->setMaterial("SmokeMaterial");
+    //smokeEntity->setRenderLast();
+    //smokeEntity->setCastShadows(false);
+    smokeNode->attachEntity(smokeEntity);
+
+    level.smokeEntity = std::move(smokeEntity);
 }
 
 } // namespace Chewman

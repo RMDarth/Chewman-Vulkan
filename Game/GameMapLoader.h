@@ -21,6 +21,8 @@ private:
     void createTeleport(GameMap& level, int row, int column, char mapType);
     Coin* createCoin(GameMap& level, int row, int column);
 
+    void createSmoke(GameMap& level) const;
+
 private:
     BlockMeshGenerator _meshGenerator;
 };

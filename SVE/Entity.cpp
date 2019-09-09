@@ -47,7 +47,7 @@ void Entity::setRenderLast()
     _renderLast = true;
 }
 
-bool Entity::isRenderLast()
+bool Entity::isRenderLast() const
 {
     return _renderLast;
 }
@@ -75,6 +75,16 @@ MaterialInfo* Entity::getMaterialInfo()
 void Entity::updateInstanceBuffers()
 {
     // do nothing
+}
+
+bool Entity::isRenderToDepth() const
+{
+    return _renderToDepth;
+}
+
+void Entity::setRenderToDepth(bool renderToDepth)
+{
+    _renderToDepth = renderToDepth;
 }
 
 } // namespace SVE

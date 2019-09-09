@@ -27,9 +27,13 @@ VulkanScreenQuad::VulkanScreenQuad()
     VulkanSamplerInfoList list(3, samplerInfo);
     _vulkanInstance->getSamplerHolder()->setSamplerInfo(TextureType::ScreenQuad, list);
 
-    VulkanSamplerHolder::SamplerInfo samplerInfo2 { _resolveImageView[1], _colorSampler[1] };
-    VulkanSamplerInfoList list2(3, samplerInfo2);
-    _vulkanInstance->getSamplerHolder()->setSamplerInfo(TextureType::ScreenQuadSecond, list2);
+    VulkanSamplerHolder::SamplerInfo samplerInfoLate {_resolveImageView[1], _colorSampler[1] };
+    VulkanSamplerInfoList listLate(3, samplerInfoLate);
+    _vulkanInstance->getSamplerHolder()->setSamplerInfo(TextureType::ScreenQuadSecond, listLate);
+
+    VulkanSamplerHolder::SamplerInfo samplerInfoDepth {_depthImageView[1], _depthSampler };
+    VulkanSamplerInfoList listDepth(3, samplerInfoDepth);
+    _vulkanInstance->getSamplerHolder()->setSamplerInfo(TextureType::ScreenQuadDepth, listDepth);
 }
 
 VulkanScreenQuad::~VulkanScreenQuad()
@@ -62,6 +66,9 @@ void VulkanScreenQuad::reallocateCommandBuffers(ScreenQuadPass screenQuadPass)
         case Late:
             _commandBuffer[screenQuadPass] = _vulkanInstance->createCommandBuffer(BUFFER_INDEX_SCREEN_QUAD_LATE);
             break;
+        case Depth:
+            _commandBuffer[screenQuadPass] = _vulkanInstance->createCommandBuffer(BUFFER_INDEX_SCREEN_QUAD_DEPTH);
+            break;
     }
 }
 
@@ -79,6 +86,7 @@ void VulkanScreenQuad::startRenderCommandBufferCreation(ScreenQuadPass screenQua
 
     std::vector<VkClearValue> clearValues(3);
     clearValues[0].color = {0.0f, 0.0f, 0.0f, 1.0f};
+    clearValues[0].depthStencil = {1.0f, 0};
     clearValues[1].depthStencil = {1.0f, 0};
     clearValues[2].color = {0.0f, 0.0f, 0.0f, 0.0f};
     if (screenQuadPass == ScreenQuadPass::MRT)
@@ -87,6 +95,8 @@ void VulkanScreenQuad::startRenderCommandBufferCreation(ScreenQuadPass screenQua
         clearValues[3].color = {0.0f, 0.0f, 0.0f, 0.0f};
         clearValues[4].color = {0.0f, 0.0f, 0.0f, 0.0f};
     }
+    if (screenQuadPass == ScreenQuadPass::Depth)
+        clearValues.resize(1);
 
     VkRenderPassBeginInfo renderPassBeginInfo{};
     renderPassBeginInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
@@ -141,6 +151,8 @@ void VulkanScreenQuad::createRenderPass()
     auto depthFormat = _vulkanInstance->getDepthFormat();
     auto sampleCount = _vulkanInstance->getMSAASamples();
 
+    // TODO: Refactor this code, move to separate functions
+
     VkAttachmentDescription colorAttachment[3] = {}; // color buffer attachment to render pass
     // resolve color attachment (after MSAA applied)
     VkAttachmentDescription colorAttachmentResolve[3] = {};
@@ -168,17 +180,17 @@ void VulkanScreenQuad::createRenderPass()
     colorAttachment[1].loadOp = VK_ATTACHMENT_LOAD_OP_LOAD; // reuse data from previous pass
     colorAttachment[1].initialLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 
-    VkAttachmentDescription depthAttachment[3] = {};
-    for (auto i = 0; i < 3; ++i)
+    VkAttachmentDescription depthAttachment[4] = {};
+    for (auto i = 0; i < 4; ++i)
     {
         depthAttachment[i].format = depthFormat;
-        depthAttachment[i].samples = sampleCount;
-        depthAttachment[i].loadOp = i == 0 ? VK_ATTACHMENT_LOAD_OP_CLEAR : VK_ATTACHMENT_LOAD_OP_LOAD;
+        depthAttachment[i].samples = i < 3 ? sampleCount : VK_SAMPLE_COUNT_1_BIT;
+        depthAttachment[i].loadOp = (i == 0 || i == 3) ? VK_ATTACHMENT_LOAD_OP_CLEAR : VK_ATTACHMENT_LOAD_OP_LOAD;
         depthAttachment[i].storeOp = VK_ATTACHMENT_STORE_OP_STORE;
         depthAttachment[i].stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
         depthAttachment[i].stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-        depthAttachment[i].initialLayout = i == 0 ? VK_IMAGE_LAYOUT_UNDEFINED : VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
-        depthAttachment[i].finalLayout = i != 2 ? VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL : VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+        depthAttachment[i].initialLayout = (i == 0 || i == 3) ? VK_IMAGE_LAYOUT_UNDEFINED : VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+        depthAttachment[i].finalLayout = (i != 2 && i != 3) ? VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL : VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
     }
 
 
@@ -193,19 +205,24 @@ void VulkanScreenQuad::createRenderPass()
     colorAttachmentResolveRef[1].attachment = 4;
     colorAttachmentResolveRef[1].layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 
-    VkAttachmentReference depthAttachmentRef {};
-    depthAttachmentRef.attachment = 1;
-    depthAttachmentRef.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+    VkAttachmentReference depthAttachmentRef[2] {};
+    depthAttachmentRef[0].attachment = 1;
+    depthAttachmentRef[0].layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+    depthAttachmentRef[1].attachment = 0;
+    depthAttachmentRef[1].layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
 
-    VkSubpassDescription subpass[2] = {};
+    VkSubpassDescription subpass[3] = {};
     for (auto i = 0; i < 2; ++i)
     {
         subpass[i].pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
         subpass[i].colorAttachmentCount = i + 1;
         subpass[i].pColorAttachments = colorAttachmentRef; // this array correspond to fragment shader output layout
-        subpass[i].pDepthStencilAttachment = &depthAttachmentRef; // only one depth attachment possible
+        subpass[i].pDepthStencilAttachment = &depthAttachmentRef[0]; // only one depth attachment possible
         subpass[i].pResolveAttachments = colorAttachmentResolveRef; // MSAA attachment
     }
+    subpass[2].pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
+    subpass[2].colorAttachmentCount = 0;
+    subpass[2].pDepthStencilAttachment = &depthAttachmentRef[1];
 
     std::vector<VkSubpassDependency> dependencies(2);
     dependencies[0].srcSubpass = VK_SUBPASS_EXTERNAL;
@@ -224,7 +241,7 @@ void VulkanScreenQuad::createRenderPass()
     dependencies[1].dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
     dependencies[1].dependencyFlags = VK_DEPENDENCY_BY_REGION_BIT;
 
-    // TODO: Create 3 subpasses instead of 3 passes
+    // TODO: Create 4 subpasses instead of 3 passes
     {
         std::vector<VkAttachmentDescription> attachments{colorAttachment[0], depthAttachment[0],
                                                          colorAttachmentResolve[0]};
@@ -238,14 +255,14 @@ void VulkanScreenQuad::createRenderPass()
         //renderPassCreateInfo.dependencyCount = dependencies.size();
         //renderPassCreateInfo.pDependencies = dependencies.data();
 
-        if (vkCreateRenderPass(_vulkanInstance->getLogicalDevice(), &renderPassCreateInfo, nullptr, &_renderPass[0]) !=
+        if (vkCreateRenderPass(_vulkanInstance->getLogicalDevice(), &renderPassCreateInfo, nullptr, &_renderPass[Normal]) !=
             VK_SUCCESS)
         {
             throw VulkanException("Can't create Vulkan render pass");
         }
 
         VulkanPassInfo::PassData data{
-                _renderPass[0]
+                _renderPass[Normal]
         };
         _vulkanInstance->getPassInfo()->setPassData(CommandsType::ScreenQuadPass, data);
     }
@@ -262,14 +279,14 @@ void VulkanScreenQuad::createRenderPass()
         //renderPassCreateInfo.dependencyCount = dependencies.size();
         //renderPassCreateInfo.pDependencies = dependencies.data();
 
-        if (vkCreateRenderPass(_vulkanInstance->getLogicalDevice(), &renderPassCreateInfo, nullptr, &_renderPass[1]) !=
+        if (vkCreateRenderPass(_vulkanInstance->getLogicalDevice(), &renderPassCreateInfo, nullptr, &_renderPass[MRT]) !=
             VK_SUCCESS)
         {
             throw VulkanException("Can't create Vulkan render pass");
         }
 
         VulkanPassInfo::PassData data{
-                _renderPass[1]
+                _renderPass[MRT]
         };
         _vulkanInstance->getPassInfo()->setPassData(CommandsType::ScreenQuadMRTPass, data);
     }
@@ -287,24 +304,49 @@ void VulkanScreenQuad::createRenderPass()
         //renderPassCreateInfo.dependencyCount = dependencies.size();
         //renderPassCreateInfo.pDependencies = dependencies.data();
 
-        if (vkCreateRenderPass(_vulkanInstance->getLogicalDevice(), &renderPassCreateInfo, nullptr, &_renderPass[2]) !=
+        if (vkCreateRenderPass(_vulkanInstance->getLogicalDevice(), &renderPassCreateInfo, nullptr, &_renderPass[Late]) !=
             VK_SUCCESS)
         {
             throw VulkanException("Can't create Vulkan render pass");
         }
 
         VulkanPassInfo::PassData data{
-                _renderPass[2]
+                _renderPass[Late]
         };
         _vulkanInstance->getPassInfo()->setPassData(CommandsType::ScreenQuadLatePass, data);
+    }
+
+    {
+        std::vector<VkAttachmentDescription> attachments{ depthAttachment[3] };
+
+        VkRenderPassCreateInfo renderPassCreateInfo{};
+        renderPassCreateInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
+        renderPassCreateInfo.attachmentCount = attachments.size();
+        renderPassCreateInfo.pAttachments = attachments.data();
+        renderPassCreateInfo.subpassCount = 1;
+        renderPassCreateInfo.pSubpasses = &subpass[2];
+        //renderPassCreateInfo.dependencyCount = dependencies.size();
+        //renderPassCreateInfo.pDependencies = dependencies.data();
+
+        if (vkCreateRenderPass(_vulkanInstance->getLogicalDevice(), &renderPassCreateInfo, nullptr, &_renderPass[Depth]) !=
+            VK_SUCCESS)
+        {
+            throw VulkanException("Can't create Vulkan render pass");
+        }
+
+        VulkanPassInfo::PassData data{
+                _renderPass[Depth]
+        };
+        _vulkanInstance->getPassInfo()->setPassData(CommandsType::ScreenQuadDepthPass, data);
     }
 }
 
 void VulkanScreenQuad::deleteRenderPass()
 {
-    vkDestroyRenderPass(_vulkanInstance->getLogicalDevice(), _renderPass[0], nullptr);
-    vkDestroyRenderPass(_vulkanInstance->getLogicalDevice(), _renderPass[1], nullptr);
-    vkDestroyRenderPass(_vulkanInstance->getLogicalDevice(), _renderPass[2], nullptr);
+    for (auto i = 0; i < 4; ++i)
+    {
+        vkDestroyRenderPass(_vulkanInstance->getLogicalDevice(), _renderPass[i], nullptr);
+    }
 }
 
 void VulkanScreenQuad::createImages()
@@ -367,28 +409,31 @@ void VulkanScreenQuad::createImages()
                 1);
     }
     // create depth attachment image
-    _vulkanUtils.createImage(
-            _width,
-            _height,
-            1,
-            sampleCount,
-            depthFormat,
-            VK_IMAGE_TILING_OPTIMAL,
-            VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
-            VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-            _depthImage,
-            _depthImageMemory);
-    _depthImageView = _vulkanUtils.createImageView(_depthImage, depthFormat, 1, aspectFlags);
+    for (auto i = 0; i < 2; ++i)
+    {
+        _vulkanUtils.createImage(
+                _width,
+                _height,
+                1,
+                i == 0 ? sampleCount : VK_SAMPLE_COUNT_1_BIT,
+                depthFormat,
+                VK_IMAGE_TILING_OPTIMAL,
+                VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
+                VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+                _depthImage[i],
+                _depthImageMemory[i]);
+        _depthImageView[i] = _vulkanUtils.createImageView(_depthImage[i], depthFormat, 1, aspectFlags);
 
-    _vulkanUtils.transitionImageLayout(
-            _depthImage,
-            depthFormat,
-            {VK_IMAGE_LAYOUT_UNDEFINED, 0, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT},
-            {VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
-             VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT,
-             VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT},
-            1,
-            aspectFlags);
+        _vulkanUtils.transitionImageLayout(
+                _depthImage[i],
+                depthFormat,
+                {VK_IMAGE_LAYOUT_UNDEFINED, 0, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT},
+                {VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
+                 VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT,
+                 VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT},
+                1,
+                aspectFlags);
+    }
 
     // Create sampler
     VkSamplerCreateInfo samplerCreateInfo{};
@@ -419,6 +464,14 @@ void VulkanScreenQuad::createImages()
             throw VulkanException("Can't create Vulkan texture sampler");
         }
     }
+    if (vkCreateSampler(
+            _vulkanInstance->getLogicalDevice(),
+            &samplerCreateInfo,
+            nullptr,
+            &_depthSampler) != VK_SUCCESS)
+    {
+        throw VulkanException("Can't create Vulkan texture sampler");
+    }
 }
 
 void VulkanScreenQuad::deleteImages()
@@ -434,42 +487,56 @@ void VulkanScreenQuad::deleteImages()
         vkFreeMemory(_vulkanInstance->getLogicalDevice(), _resolveImageMemory[i], nullptr);
     }
 
-    vkDestroyImageView(_vulkanInstance->getLogicalDevice(), _depthImageView, nullptr);
-    vkDestroyImage(_vulkanInstance->getLogicalDevice(), _depthImage, nullptr);
-    vkFreeMemory(_vulkanInstance->getLogicalDevice(), _depthImageMemory, nullptr);
+    vkDestroySampler(_vulkanInstance->getLogicalDevice(), _depthSampler, nullptr);
+    for (auto i = 0; i < 2; ++i)
+    {
+        vkDestroyImageView(_vulkanInstance->getLogicalDevice(), _depthImageView[i], nullptr);
+        vkDestroyImage(_vulkanInstance->getLogicalDevice(), _depthImage[i], nullptr);
+        vkFreeMemory(_vulkanInstance->getLogicalDevice(), _depthImageMemory[i], nullptr);
+    }
 }
 
 void VulkanScreenQuad::createFramebuffers()
 {
-    std::vector<VkImageView> attachments = { _colorImageView[0], _depthImageView, _resolveImageView[0] };
+    std::vector<VkImageView> attachments = { _colorImageView[0], _depthImageView[0], _resolveImageView[0] };
 
     VkFramebufferCreateInfo framebufferCreateInfo{};
     framebufferCreateInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
-    framebufferCreateInfo.renderPass = _renderPass[0];
+    framebufferCreateInfo.renderPass = _renderPass[Normal];
     framebufferCreateInfo.attachmentCount = attachments.size();
     framebufferCreateInfo.pAttachments = attachments.data();
     framebufferCreateInfo.width = _width;
     framebufferCreateInfo.height = _height;
     framebufferCreateInfo.layers = 1;
 
-    if (vkCreateFramebuffer(_vulkanInstance->getLogicalDevice(), &framebufferCreateInfo, nullptr, &_framebuffer[0]) != VK_SUCCESS)
+    if (vkCreateFramebuffer(_vulkanInstance->getLogicalDevice(), &framebufferCreateInfo, nullptr, &_framebuffer[Normal]) != VK_SUCCESS)
     {
         throw VulkanException("Can't create Vulkan Framebuffer");
     }
 
-    framebufferCreateInfo.renderPass = _renderPass[2];
-    if (vkCreateFramebuffer(_vulkanInstance->getLogicalDevice(), &framebufferCreateInfo, nullptr, &_framebuffer[2]) != VK_SUCCESS)
+    framebufferCreateInfo.renderPass = _renderPass[Late];
+    if (vkCreateFramebuffer(_vulkanInstance->getLogicalDevice(), &framebufferCreateInfo, nullptr, &_framebuffer[Late]) != VK_SUCCESS)
     {
         throw VulkanException("Can't create Vulkan Framebuffer");
     }
 
     attachments.push_back(_colorImageView[1]);
     attachments.push_back(_resolveImageView[1]);
-    framebufferCreateInfo.renderPass = _renderPass[1];
+    framebufferCreateInfo.renderPass = _renderPass[MRT];
     framebufferCreateInfo.attachmentCount = attachments.size();
     framebufferCreateInfo.pAttachments = attachments.data();
 
-    if (vkCreateFramebuffer(_vulkanInstance->getLogicalDevice(), &framebufferCreateInfo, nullptr, &_framebuffer[1]) != VK_SUCCESS)
+    if (vkCreateFramebuffer(_vulkanInstance->getLogicalDevice(), &framebufferCreateInfo, nullptr, &_framebuffer[MRT]) != VK_SUCCESS)
+    {
+        throw VulkanException("Can't create Vulkan Framebuffer");
+    }
+
+    attachments.clear();
+    attachments.push_back(_depthImageView[1]);
+    framebufferCreateInfo.renderPass = _renderPass[Depth];
+    framebufferCreateInfo.attachmentCount = attachments.size();
+    framebufferCreateInfo.pAttachments = attachments.data();
+    if (vkCreateFramebuffer(_vulkanInstance->getLogicalDevice(), &framebufferCreateInfo, nullptr, &_framebuffer[Depth]) != VK_SUCCESS)
     {
         throw VulkanException("Can't create Vulkan Framebuffer");
     }
@@ -477,9 +544,10 @@ void VulkanScreenQuad::createFramebuffers()
 
 void VulkanScreenQuad::deleteFramebuffers()
 {
-    vkDestroyFramebuffer(_vulkanInstance->getLogicalDevice(), _framebuffer[0], nullptr);
-    vkDestroyFramebuffer(_vulkanInstance->getLogicalDevice(), _framebuffer[1], nullptr);
-    vkDestroyFramebuffer(_vulkanInstance->getLogicalDevice(), _framebuffer[2], nullptr);
+    for (auto i = 0; i < 4; ++i)
+    {
+        vkDestroyFramebuffer(_vulkanInstance->getLogicalDevice(), _framebuffer[i], nullptr);
+    }
 }
 
 

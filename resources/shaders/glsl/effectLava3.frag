@@ -1,5 +1,4 @@
-// Noise animation - Lava
-// by nimitz (twitter: @stormoid)
+// Based on "Noise animation - Lava" by nimitz (twitter: @stormoid)
 // https://www.shadertoy.com/view/lslXRS
 // License Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License
 #version 450

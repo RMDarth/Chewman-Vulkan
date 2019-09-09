@@ -214,7 +214,7 @@ BlockMeshGenerator::BlockMeshGenerator(float size)
 std::vector<Submesh> BlockMeshGenerator::GenerateFloor(glm::vec3 position, ModelType type)
 {
     std::vector<Submesh> floorMeshes;
-    float height = _size / 5;
+    float height = _size;
     if (type == ModelType::Bottom)
     {
         floorMeshes.push_back(constructPlane(position, _size, _size, glm::vec3(0, 1, 0), 1.0, 1.0, 0.0, 0.0));
@@ -222,13 +222,13 @@ std::vector<Submesh> BlockMeshGenerator::GenerateFloor(glm::vec3 position, Model
     else if (type == ModelType::Vertical)
     {
         floorMeshes.push_back(constructVerticalPlane(position + glm::vec3(_size / 2, -height / 2, 0),
-                                                     height, _size, VerticalPlaneType::Right, 1.0f, 0.4,  0.0f,  0.0f));
+                                                     height, _size, VerticalPlaneType::Right, 1.0f, 2.0,  0.0f,  0.0f));
         floorMeshes.push_back(constructVerticalPlane(position + glm::vec3(-_size / 2, -height / 2, 0),
-                                                     height, _size, VerticalPlaneType::Left, 1.0f, 0.4,  0.0f,  0.0f));
+                                                     height, _size, VerticalPlaneType::Left, 1.0f, 2.0,  0.0f,  0.0f));
         floorMeshes.push_back(constructVerticalPlane(position + glm::vec3(0, -height / 2, _size / 2),
-                                                     height, _size, VerticalPlaneType::Top, 1.0f, 0.4,  0.0f,  0.0f));
+                                                     height, _size, VerticalPlaneType::Top, 1.0f, 2.0,  0.0f,  0.0f));
         floorMeshes.push_back(constructVerticalPlane(position + glm::vec3(0, -height / 2, -_size / 2),
-                                                     height, _size, VerticalPlaneType::Bottom, 1.0f, 0.4,  0.0f,  0.0f));
+                                                     height, _size, VerticalPlaneType::Bottom, 1.0f, 2.0,  0.0f,  0.0f));
     }
     return floorMeshes;
 }
@@ -236,7 +236,7 @@ std::vector<Submesh> BlockMeshGenerator::GenerateFloor(glm::vec3 position, Model
 std::vector<Submesh> BlockMeshGenerator::GenerateWall(glm::vec3 position, ModelType type)
 {
     std::vector<Submesh> floorMeshes;
-    float subheight = _size / 5;
+    float subheight = _size; // / 5
     float mainheight = _size / 2;
     float height = mainheight + subheight;
     if (type == ModelType::Top)
@@ -244,26 +244,42 @@ std::vector<Submesh> BlockMeshGenerator::GenerateWall(glm::vec3 position, ModelT
         floorMeshes.push_back(constructPlane(position + glm::vec3(0, mainheight, 0), _size, _size, glm::vec3(0, 1, 0)));
     } else if (type == ModelType::Vertical) {
         floorMeshes.push_back(constructVerticalPlane(position + glm::vec3(_size / 2, mainheight/2 - subheight / 2, 0),
-                              height, _size, VerticalPlaneType::Right, 1.0f, 1.4,  0.0f,  0.0f));
+                              height, _size, VerticalPlaneType::Right, 1.0f, 3.0,  0.0f,  0.0f));
         floorMeshes.push_back(constructVerticalPlane(position + glm::vec3(-_size / 2, mainheight/2 - subheight / 2, 0),
-                              height, _size, VerticalPlaneType::Left, 1.0f, 1.4,  0.0f,  0.0f));
+                              height, _size, VerticalPlaneType::Left, 1.0f, 3.0,  0.0f,  0.0f));
         floorMeshes.push_back(constructVerticalPlane(position + glm::vec3(0,          mainheight/2 - subheight / 2,  _size / 2),
-                              height, _size, VerticalPlaneType::Top, 1.0f, 1.4,  0.0f,  0.0f));
+                              height, _size, VerticalPlaneType::Top, 1.0f, 3.0,  0.0f,  0.0f));
         floorMeshes.push_back(constructVerticalPlane(position + glm::vec3(0,          mainheight/2 - subheight / 2,  -_size / 2),
-                              height, _size, VerticalPlaneType::Bottom, 1.0f, 1.4,  0.0f,  0.0f));
+                              height, _size, VerticalPlaneType::Bottom, 1.0f, 3.0,  0.0f,  0.0f));
     }
 
     return floorMeshes;
 
 }
 
-std::vector<Submesh> BlockMeshGenerator::GenerateLiquid(glm::vec3 position, ModelType type)
+std::vector<Submesh> BlockMeshGenerator::GenerateLiquid(glm::vec3 position, ModelType type, int x, int y, int xMax, int yMax)
 {
     std::vector<Submesh> floorMeshes;
-    float height = _size/5;
-    if (type == ModelType::Bottom)
+    float height = _size;
+    float wallY = -height/2 - height/6;
+    if (type == ModelType::Vertical)
     {
-        //floorMeshes.push_back(constructPlane(position + glm::vec3(0, -height, 0), _size, _size, glm::vec3(0, 1, 0)));
+        float texY = 1.33333f;
+        float deltaY = 2.0f - texY;
+        if (y == 0)
+            floorMeshes.push_back(constructVerticalPlane(position + glm::vec3(_size / 2, wallY, 0),
+                                                     height, _size, VerticalPlaneType::Right, 1.0f, texY,  0.0f,  -deltaY));
+
+        if (y == yMax)
+            floorMeshes.push_back(constructVerticalPlane(position + glm::vec3(-_size / 2, wallY, 0),
+                                                     height, _size, VerticalPlaneType::Left, 1.0f, texY,  0.0f,  -deltaY));
+
+        if (x == 0)
+            floorMeshes.push_back(constructVerticalPlane(position + glm::vec3(0, wallY, _size / 2),
+                                                     height, _size, VerticalPlaneType::Top, 1.0f, texY,  0.0f,  -deltaY));
+        if (x == xMax)
+            floorMeshes.push_back(constructVerticalPlane(position + glm::vec3(0, wallY, -_size / 2),
+                                                     height, _size, VerticalPlaneType::Bottom, 1.0f, texY,  0.0f,  -deltaY));
     }
 
     return floorMeshes;

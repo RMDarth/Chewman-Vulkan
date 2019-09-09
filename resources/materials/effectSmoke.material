@@ -1,0 +1,17 @@
+{
+    "name": "SmokeMaterial",
+    "vertexShaderName": "phongVertexShader",
+    "fragmentShaderName": "smokeFragmentShader",
+    "passType": "ScreenQuadMRTPass",
+    "cullFace": "None",
+    "useAlphaBlending": true,
+    "srcBlendFactor": "SrcAlpha",
+    "dstBlendFactor": "OneMinusSrcAlpha",
+    "useDepthWrite": false,
+    "textures": [
+        {
+            "samplerName": "depthSampler",
+            "textureType": "ScreenQuadDepth"
+        }
+    ]
+}

@@ -1,7 +1,7 @@
 # Chewman Vulkan
 A cross-platform 3D Pacman style game written in pure Vulkan and C++. 
 Uses SDL for windows initialization and Assimp for 3D assets loading. 
-Game development is currently in progress (current version is 0.5-a).
+Game development is currently in progress (early stage, current version is 0.5-a).
 
 ![Screenshot](https://github.com/RMDarth/Chewman-Vulkan/blob/master/Screenshot_20190826.png?raw=true)
 

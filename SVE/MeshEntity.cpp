@@ -67,8 +67,14 @@ void MeshEntity::updateUniforms(UniformDataList uniformDataList) const
         UniformData newShadowData = *uniformDataList[toInt(CommandsType::ShadowPassDirectLight)];
         newShadowData.bones = newData.bones;
         _shadowMaterial->getVulkanMaterial()->setUniformData(
-                _shadowMaterial->getVulkanMaterial()->getInstanceForEntity(this),
+                _shadowIndex,
                 newShadowData);
+
+        UniformData depthData = *uniformDataList[toInt(CommandsType::ScreenQuadDepthPass)];
+        depthData.bones = newData.bones;
+        _shadowMaterial->getVulkanMaterial()->setUniformData(
+                _depthIndex,
+                depthData);
     }
     if (_pointLightShadowMaterial)
     {
@@ -115,7 +121,7 @@ void MeshEntity::applyDrawingCommands(uint32_t bufferIndex, uint32_t imageIndex)
             _shadowMaterial->getVulkanMaterial()->applyDrawingCommands(
                     bufferIndex,
                     imageIndex,
-                    _shadowMaterial->getVulkanMaterial()->getInstanceForEntity(this));
+                    _shadowIndex);
     }
     else if (Engine::getInstance()->getPassType() == CommandsType::ShadowPassPointLights)
     {
@@ -124,6 +130,18 @@ void MeshEntity::applyDrawingCommands(uint32_t bufferIndex, uint32_t imageIndex)
                     bufferIndex,
                     imageIndex,
                     _pointLightShadowMaterial->getVulkanMaterial()->getInstanceForEntity(this));
+    }
+    else if (Engine::getInstance()->getPassType() == CommandsType::ScreenQuadDepthPass)
+    {
+        // temp
+        if (_material->isMRT())
+            return;
+
+        if (_shadowMaterial)
+            _shadowMaterial->getVulkanMaterial()->applyDrawingCommands(
+                    bufferIndex,
+                    imageIndex,
+                    _depthIndex);
     }
     else if (Engine::getInstance()->getPassType() == CommandsType::ScreenQuadMRTPass)
     {
@@ -165,6 +183,9 @@ void MeshEntity::setupMaterial()
             _shadowMaterial = Engine::getInstance()->getMaterialManager()->getMaterial("SimpleDepth");
             _pointLightShadowMaterial = Engine::getInstance()->getMaterialManager()->getMaterial("FullDepth");
         }
+
+        _shadowIndex = _shadowMaterial->getVulkanMaterial()->getInstanceForEntity(this, 0);
+        _depthIndex = _shadowMaterial->getVulkanMaterial()->getInstanceForEntity(this, 1);
     }
 }
 

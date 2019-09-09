@@ -47,6 +47,8 @@ private:
     uint32_t _refractionMaterialIndex;
 
     Material* _shadowMaterial;
+    uint32_t _shadowIndex;
+    uint32_t _depthIndex;
     Material* _pointLightShadowMaterial;
     std::unique_ptr<Material> _bloomMaterial;
     //std::vector<uint32_t> _shadowMaterialIndexes;

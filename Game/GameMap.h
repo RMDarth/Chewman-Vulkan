@@ -21,6 +21,7 @@ struct GameMap
 {
     std::shared_ptr<SVE::SceneNode> mapNode;
     std::shared_ptr<SVE::MeshEntity> mapEntity[3];
+    std::shared_ptr<SVE::MeshEntity> smokeEntity;
 
     std::vector<Gargoyle> gargoyles;
     std::vector<Teleport> teleports;

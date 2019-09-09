@@ -11,6 +11,7 @@ class VulkanUtils;
 class VulkanInstance;
 struct UniformData;
 
+constexpr size_t ScreenQuadBufferCount = 4;
 
 class VulkanScreenQuad
 {
@@ -19,7 +20,8 @@ public:
     {
         Normal = 0,
         MRT,
-        Late
+        Late,
+        Depth
     };
 
     VulkanScreenQuad();
@@ -46,21 +48,22 @@ private:
 
     const VulkanUtils& _vulkanUtils;
 
-    VkRenderPass _renderPass[3];
+    VkRenderPass _renderPass[ScreenQuadBufferCount];
 
     VkImage _colorImage[2];
     VkImage _resolveImage[2];
-    VkImage _depthImage;
+    VkImage _depthImage[2];
     VkDeviceMemory _colorImageMemory[2];
     VkDeviceMemory _resolveImageMemory[2];
-    VkDeviceMemory _depthImageMemory;
+    VkDeviceMemory _depthImageMemory[2];
     VkImageView _colorImageView[2];
     VkImageView _resolveImageView[2];
-    VkImageView _depthImageView;
+    VkImageView _depthImageView[2];
     VkSampler _colorSampler[2];
+    VkSampler _depthSampler;
 
-    VkFramebuffer _framebuffer[3];
-    VkCommandBuffer _commandBuffer[3];
+    VkFramebuffer _framebuffer[ScreenQuadBufferCount];
+    VkCommandBuffer _commandBuffer[ScreenQuadBufferCount];
 };
 
 } // namespace SVE

@@ -143,6 +143,7 @@ void LightNode::fillUniformData(UniformData& data, uint32_t lightNum, bool asVie
 
         //data.viewProjectionList.clear();
         assert(_projectionList.empty() || _viewList.empty());
+        data.viewProjectionList.clear();
         for (auto& projectionMatrix : _projectionList)
         {
             data.viewProjectionList.push_back(projectionMatrix * _viewMatrix);

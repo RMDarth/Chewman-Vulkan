@@ -237,6 +237,7 @@ std::vector<TextureInfo> getTextureInfos(const cppfs::FilePath& directory, rj::D
             {"Refraction",      TextureType::Refraction},
             {"ScreenQuad",      TextureType::ScreenQuad},
             {"ScreenQuadSecond",TextureType::ScreenQuadSecond},
+            {"ScreenQuadDepth", TextureType::ScreenQuadDepth},
             {"LastEffect",      TextureType::LastEffect},
     };
 
