@@ -1,0 +1,6 @@
+{
+    "name": "bomb",
+    "filename": "assets/bomb.DAE",
+    "switchYZ": true,
+    "scale": [ 0.02, 0.02, 0.02 ]
+}

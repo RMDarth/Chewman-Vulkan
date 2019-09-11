@@ -2,6 +2,7 @@
 // Copyright (c) 2018-2019, Igor Barinov
 // Licensed under the MIT License
 #include "GameMapLoader.h"
+#include "GameUtils.h"
 
 #include <SVE/Engine.h>
 #include <SVE/MeshManager.h>
@@ -105,11 +106,6 @@ void initSmokeMesh()
     SVE::Engine::getInstance()->getMeshManager()->registerMesh(teleportBaseMesh);
 }
 
-glm::vec3 getWorldPos(int row, int column, float y = 0.0f)
-{
-    return glm::vec3(CellSize * column, y, -CellSize * row);
-}
-
 } // anon namespace
 
 GameMapLoader::GameMapLoader()
@@ -137,6 +133,7 @@ std::shared_ptr<GameMap> GameMapLoader::loadMap(const std::string& filename)
     char ch;
     char line[100];
     int nextIsRotation = 0;
+    char staticObjectType;
     for (auto row = 0; row < gameMap->height; ++row)
     {
         fin.getline(line, 100);
@@ -150,6 +147,7 @@ std::shared_ptr<GameMap> GameMapLoader::loadMap(const std::string& filename)
             {
                 nextIsRotation--;
                 gameMap->mapData[curRow][column].cellType = CellType::InvisibleWallWithFloor;
+                gameMap->staticObjects.emplace_back(gameMap.get(), glm::ivec2(curRow, column), staticObjectType, ch);
                 continue;
             }
             switch (ch)
@@ -192,8 +190,21 @@ std::shared_ptr<GameMap> GameMapLoader::loadMap(const std::string& filename)
                 case 'J':
                 case 'D':
                 case 'V':
+                case 'Z':
+                case 'Y':
                     nextIsRotation = ch == 'D' ? 2 : 1;
+                    staticObjectType = ch;
                     gameMap->mapData[curRow][column].cellType = CellType::InvisibleWallWithFloor;
+                    break;
+                case 'P':
+                case 'F':
+                case 'A':
+                case 'X':
+                case 'B':
+                case 'H':
+                case 'T':
+                    gameMap->mapData[curRow][column].cellType = CellType::Floor;
+                    gameMap->powerUps.emplace_back(gameMap.get(), glm::ivec2(curRow, column), ch);
                     break;
                 default:
                     gameMap->mapData[curRow][column].cellType = CellType::Floor;

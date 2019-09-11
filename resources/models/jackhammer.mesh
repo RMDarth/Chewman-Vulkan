@@ -1,0 +1,6 @@
+{
+    "name": "jackhammer",
+    "filename": "assets/hammer.DAE",
+    "switchYZ": true,
+    "scale": [ 0.021, 0.021, 0.021 ]
+}

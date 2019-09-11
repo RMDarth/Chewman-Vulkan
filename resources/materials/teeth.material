@@ -1,20 +1,18 @@
 {
-    "name": "CoinMaterial",
-    "vertexShaderName": "phongShadowInstancedVertexShader",
+    "name": "TeethMaterial",
+    "vertexShaderName": "phongShadowVertexShader",
     "fragmentShaderName": "phongShadowEmitFragmentShader",
     "passType": "ScreenQuadMRTPass",
-    "useInstancing": true,
-    "instanceMaxCount": 20000,
     "textures": [
         {
             "samplerName": "diffuseTex",
             "textureType": "ImageFile",
-            "filename": "textures/coin/coin2.png"
+            "filename": "textures/powerups/trashteeth.png"
         },
         {
             "samplerName": "emitTex",
             "textureType": "ImageFile",
-            "filename": "textures/coin/coinEmit3.png"
+            "filename": "textures/powerups/trashteeth_emit.png"
         },
         {
             "samplerName": "directShadowTex",

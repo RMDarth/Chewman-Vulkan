@@ -1,0 +1,6 @@
+{
+    "name": "freeze",
+    "filename": "assets/freeze.DAE",
+    "switchYZ": true,
+    "scale": [ 0.01, 0.01, 0.01 ]
+}

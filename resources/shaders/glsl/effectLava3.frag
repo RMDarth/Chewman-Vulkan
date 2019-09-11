@@ -95,12 +95,16 @@ void main() {
     vec3 color = calculateColor(fragTexCoord);
     float stepY =  1.0 - abs(fragTexCoord.y - 0.5) * 2;
     float stepX =  1.0 - abs(fragTexCoord.x - 0.5) * 2;
-    float step = min(stepX, stepY);
-    step = step * 15;
-    color.r = min(color.r, step);
-    color.g = min(color.g, step);
-    color.b = min(color.b, step);
-    //color.g = smoothstep(0.0, color.g, step);
-    outColor = vec4(color,1.0);
-    outColorBloom = vec4(color, 0.5);
+    float stepMix = min(stepX, stepY);
+    stepMix = stepMix * 15;
+    color.r = min(color.r, stepMix);
+    color.g = min(color.g, stepMix);
+    color.b = min(color.b, stepMix);
+    //color.g = smoothstep(0.0, color.g, stepMix);
+
+    float brightness = 0.2126 * color.r + 0.7152 * color.g + 0.0722 * color.b;
+    brightness = brightness * step(0.7, brightness);
+
+    outColor = vec4(color, 1.0);
+    outColorBloom = vec4(color * brightness * brightness, 0.3);
 }

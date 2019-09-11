@@ -52,6 +52,16 @@ void GameMapProcessor::update(float time)
     {
         nun.update();
     }
+
+    for (auto& powerUp : _gameMap->powerUps)
+    {
+        powerUp.update();
+    }
+
+    for (auto& staticObject : _gameMap->staticObjects)
+    {
+        staticObject.update();
+    }
 }
 
 void GameMapProcessor::updateGargoyle(float time, Gargoyle& gargoyle)

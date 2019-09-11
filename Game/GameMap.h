@@ -12,6 +12,8 @@
 #include "Gargoyle.h"
 #include "Teleport.h"
 #include "Coin.h"
+#include "PowerUp.h"
+#include "StaticObject.h"
 #include "Enemies/Nun.h"
 
 namespace Chewman
@@ -26,6 +28,8 @@ struct GameMap
     std::vector<Gargoyle> gargoyles;
     std::vector<Teleport> teleports;
     std::vector<Coin> coins;
+    std::vector<PowerUp> powerUps;
+    std::vector<StaticObject> staticObjects;
     std::vector<Nun> nuns;
 
     CellInfoMap mapData;

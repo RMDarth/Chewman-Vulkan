@@ -1,0 +1,6 @@
+{
+    "name": "pentagram",
+    "filename": "assets/pentagramm.DAE",
+    "switchYZ": true,
+    "scale": [ 0.03, 0.03, 0.03 ]
+}

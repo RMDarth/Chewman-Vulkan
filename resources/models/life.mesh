@@ -1,0 +1,6 @@
+{
+    "name": "life",
+    "filename": "assets/life.DAE",
+    "switchYZ": true,
+    "scale": [ 0.018, 0.018, 0.018 ]
+}

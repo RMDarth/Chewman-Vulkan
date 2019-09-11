@@ -1,0 +1,16 @@
+{
+    "name": "TombMaterial",
+    "vertexShaderName": "phongShadowVertexShader",
+    "fragmentShaderName": "phongShadowFragmentShader",
+    "textures": [
+        {
+            "samplerName": "diffuseTex",
+            "textureType": "ImageFile",
+            "filename": "textures/staticObjects/trashsarc.png"
+        },
+        {
+            "samplerName": "directShadowTex",
+            "textureType": "ShadowMapDirect"
+        }
+    ]
+}

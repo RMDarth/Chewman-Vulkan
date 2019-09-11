@@ -1,0 +1,6 @@
+{
+    "name": "teeth",
+    "filename": "assets/teeth.DAE",
+    "switchYZ": true,
+    "scale": [ 0.015, 0.015, 0.015 ]
+}

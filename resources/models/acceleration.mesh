@@ -1,0 +1,6 @@
+{
+    "name": "acceleration",
+    "filename": "assets/speed.DAE",
+    "switchYZ": true,
+    "scale": [ 0.015, 0.015, 0.015 ]
+}
