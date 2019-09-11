@@ -35,4 +35,5 @@ of innocent humans in the Maze. His enemies are Holy Order (knights, priests,
 nuns and angels) and other treasure hunters - witches and demons. Each enemy 
 has some features and weaknesses. There are several power-ups on each map, 
 like speed, move-through-walls, freeze enemies etc. Also there are teleports 
-and traps like lava lakes, gargoyles breathing streams of fire etc.
+and traps like lava lakes, gargoyles breathing streams of fire etc. The objective 
+is to collect all coins on the map.

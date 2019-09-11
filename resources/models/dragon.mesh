@@ -1,0 +1,6 @@
+{
+    "name": "dragon",
+    "filename": "assets/dragon.dae",
+    "switchYZ": true,
+    "scale": [ 0.03, 0.03, 0.03 ]
+}

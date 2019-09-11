@@ -1,0 +1,34 @@
+{
+    "name": "Skybox4",
+    "vertexShaderName": "skyboxVertexShader",
+    "fragmentShaderName": "skyboxFragmentShader",
+    "textures": [
+        {
+            "samplerName": "samplerCubeMap",
+            "filename": "textures/skybox/sky4/MoonShine_right.png"
+        },
+        {
+            "samplerName": "samplerCubeMap",
+            "filename": "textures/skybox/sky4/MoonShine_left.png"
+        },
+        {
+            "samplerName": "samplerCubeMap",
+            "filename": "textures/skybox/sky4/MoonShine_up.png"
+        },
+        {
+            "samplerName": "samplerCubeMap",
+            "filename": "textures/skybox/sky4/MoonShine_down.png"
+        },
+        {
+            "samplerName": "samplerCubeMap",
+            "filename": "textures/skybox/sky4/MoonShine_back.png"
+        },
+        {
+            "samplerName": "samplerCubeMap",
+            "filename": "textures/skybox/sky4/MoonShine_front.png"
+        }
+    ],
+    "isCubemap": true,
+    "cullFace": "BackFace",
+    "useDepthTest": false
+}

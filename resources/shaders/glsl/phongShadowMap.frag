@@ -10,7 +10,7 @@ layout(set = 1, binding = 2) uniform UBO
 	DirLight dirLight;
 	SpotLight spotLight;
     LineLight lineLight[15];
-    PointLight pointLight[10];
+    PointLight pointLight[20];
 	LightInfo lightInfo;
 	MaterialInfo materialInfo;
 } ubo;

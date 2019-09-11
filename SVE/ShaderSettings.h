@@ -139,7 +139,7 @@ struct ShaderSettings
     std::vector<BufferType> bufferList; // currently only supported in compute shaders
     uint32_t maxBonesSize = 0;
     uint32_t maxShadowPointLightSize = 4;
-    uint32_t maxPointLightSize = 10;
+    uint32_t maxPointLightSize = 20;
     uint32_t maxLineLightSize = 15;
     uint32_t maxLightSize = 6;
     uint32_t maxCascadeLightSize = 5;

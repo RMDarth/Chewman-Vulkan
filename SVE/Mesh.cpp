@@ -39,7 +39,7 @@ std::string fixAssimpBoneName(std::string nodeName)
 Mesh::Mesh(MeshSettings meshSettings)
     : _name(meshSettings.name)
     , _materialName(meshSettings.materialName)
-    , _isAnimated(meshSettings.boneNum > 0)
+    , _isAnimated(meshSettings.boneNum > 0 && meshSettings.animation->animations != nullptr)
     , _vulkanMesh(std::make_unique<VulkanMesh>(std::move(meshSettings)))
 {
 
@@ -152,6 +152,7 @@ Mesh::Mesh(MeshLoadSettings meshLoadSettings)
     }
 
 
+    _isAnimated = false;
     if (scene->mNumAnimations > 0)
     {
         meshSettings.animation->animations = scene->mAnimations;
@@ -159,9 +160,10 @@ Mesh::Mesh(MeshLoadSettings meshLoadSettings)
         meshSettings.animation->globalInverse = scene->mRootNode->mTransformation;
         meshSettings.animation->globalInverse.Inverse();
         meshSettings.animation->boneMap = boneMap;
+        _isAnimated = true;
     }
 
-    _isAnimated = meshSettings.boneNum > 0;
+
     _vulkanMesh = std::make_unique<VulkanMesh>(std::move(meshSettings));
 }
 

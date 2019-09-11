@@ -369,7 +369,7 @@ int runGame()
         camera->setPosition(glm::vec3(5.0f, 5.0f, 5.0f));
 
         // create skybox
-        engine->getSceneManager()->setSkybox("Skybox");
+        engine->getSceneManager()->setSkybox("Skybox4");
 
         // create floor
         auto meshSettings = constructPlane("Floor", glm::vec3(0, 0, 0), 10.0f, 10.0f, glm::vec3(0.0f, 1.0f, 0.0f));

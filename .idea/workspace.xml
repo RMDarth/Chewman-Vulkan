@@ -13,37 +13,28 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f70505ef-ae5c-44c4-ba16-f4e316506723" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/Game/PowerUp.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Game/PowerUp.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Game/StaticObject.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Game/StaticObject.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/resources/materials/acceleration.material" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/resources/materials/bomb.material" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/resources/materials/freeze.material" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/resources/materials/jackhammer.material" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/resources/materials/life.material" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/resources/materials/pentagram.material" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/resources/materials/teeth.material" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/resources/materials/tomb.material" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/resources/models/acceleration.mesh" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/resources/models/bomb.mesh" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/resources/models/freeze.mesh" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/resources/models/jackhammer.mesh" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/resources/models/life.mesh" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/resources/models/pentagram.mesh" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/resources/models/teeth.mesh" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/resources/models/tomb.mesh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/resources/materials/dragon.material" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/resources/materials/skybox4.material" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/resources/materials/volcano.material" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/resources/models/dragon.mesh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/resources/models/volcano.mesh" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Game/GameMap.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Game/GameMap.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Game/GameMap.h" beforeDir="false" afterPath="$PROJECT_DIR$/Game/GameMap.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Game/GameMapLoader.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Game/GameMapLoader.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Game/GameUtils.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Game/GameUtils.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Game/GameUtils.h" beforeDir="false" afterPath="$PROJECT_DIR$/Game/GameUtils.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Game/StaticObject.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Game/StaticObject.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Game/StaticObject.h" beforeDir="false" afterPath="$PROJECT_DIR$/Game/StaticObject.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SVE/LightManager.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/SVE/LightManager.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SVE/Mesh.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/SVE/Mesh.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SVE/ShaderSettings.h" beforeDir="false" afterPath="$PROJECT_DIR$/SVE/ShaderSettings.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/main.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/materials/coin.material" beforeDir="false" afterPath="$PROJECT_DIR$/resources/materials/coin.material" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/shaders/glsl/effectLava3.frag" beforeDir="false" afterPath="$PROJECT_DIR$/resources/shaders/glsl/effectLava3.frag" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/shaders/glsl/effectOnlyBright.frag" beforeDir="false" afterPath="$PROJECT_DIR$/resources/shaders/glsl/effectOnlyBright.frag" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/materials/tomb.material" beforeDir="false" afterPath="$PROJECT_DIR$/resources/materials/tomb.material" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/models/tomb.mesh" beforeDir="false" afterPath="$PROJECT_DIR$/resources/models/tomb.mesh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/shaders/glsl/effectSmoke.frag" beforeDir="false" afterPath="$PROJECT_DIR$/resources/shaders/glsl/effectSmoke.frag" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/shaders/glsl/parallaxAndShadowMap.frag" beforeDir="false" afterPath="$PROJECT_DIR$/resources/shaders/glsl/parallaxAndShadowMap.frag" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/shaders/glsl/phongNormalAndShadowMap.frag" beforeDir="false" afterPath="$PROJECT_DIR$/resources/shaders/glsl/phongNormalAndShadowMap.frag" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/shaders/glsl/phongShadowMap.frag" beforeDir="false" afterPath="$PROJECT_DIR$/resources/shaders/glsl/phongShadowMap.frag" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/shaders/glsl/phongShadowMapEmit.frag" beforeDir="false" afterPath="$PROJECT_DIR$/resources/shaders/glsl/phongShadowMapEmit.frag" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/shaders/glsl/phongWater.frag" beforeDir="false" afterPath="$PROJECT_DIR$/resources/shaders/glsl/phongWater.frag" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -281,7 +272,7 @@
       <workItem from="1567948360673" duration="47758000" />
       <workItem from="1568034158204" duration="625000" />
       <workItem from="1568057374990" duration="133000" />
-      <workItem from="1568057522548" duration="33360000" />
+      <workItem from="1568057522548" duration="54518000" />
     </task>
     <task id="LOCAL-00001" summary="Adding core SVE classes">
       <created>1536429263360</created>
@@ -591,7 +582,14 @@
       <option name="project" value="LOCAL" />
       <updated>1568068585073</updated>
     </task>
-    <option name="localTasksCounter" value="45" />
+    <task id="LOCAL-00045" summary="Adding power-ups and initial static objects to Chewman map">
+      <created>1568160431891</created>
+      <option name="number" value="00045" />
+      <option name="presentableId" value="LOCAL-00045" />
+      <option name="project" value="LOCAL" />
+      <updated>1568160431891</updated>
+    </task>
+    <option name="localTasksCounter" value="46" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -626,7 +624,6 @@
   <component name="VcsManagerConfiguration">
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_NEW_TODO" value="false" />
-    <MESSAGE value="Adding PCF for shadowmap" />
     <MESSAGE value="Adding invert YZ option for mesh, adding lighting shader" />
     <MESSAGE value="Adding basic multiple light support, refactoring uniforms" />
     <MESSAGE value="Refactoring shadows (creating shadow array for all lights), refactoring syncronization" />
@@ -651,18 +648,8 @@
     <MESSAGE value="Implementing instanced rendering for coins, fixing gargoyle fire" />
     <MESSAGE value="Updating README" />
     <MESSAGE value="Adding ScreenQuad Depth pass, adding large smoke field" />
-    <option name="LAST_COMMIT_MESSAGE" value="Adding ScreenQuad Depth pass, adding large smoke field" />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/SVE/ShaderSettings.cpp</url>
-          <line>109</line>
-          <option name="timeStamp" value="63" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
+    <MESSAGE value="Adding power-ups and initial static objects to Chewman map" />
+    <option name="LAST_COMMIT_MESSAGE" value="Adding power-ups and initial static objects to Chewman map" />
   </component>
   <component name="hg4idea.settings">
     <option name="CHECK_INCOMING_OUTGOING" value="true" />

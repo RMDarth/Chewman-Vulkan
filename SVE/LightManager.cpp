@@ -111,7 +111,7 @@ void LightManager::fillUniformData(UniformData& data, LightType viewSourceLightT
     }
 
     data.lineLightList.resize(15);
-    data.pointLightList.resize(10);
+    data.pointLightList.resize(20);
 }
 
 void LightManager::removeLight(uint32_t index)

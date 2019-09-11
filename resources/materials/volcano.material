@@ -1,13 +1,12 @@
 {
-    "name": "TombMaterial",
+    "name": "VolcanoMaterial",
     "vertexShaderName": "phongShadowVertexShader",
     "fragmentShaderName": "phongShadowFragmentShader",
-    "cullFace": "BackFace",
     "textures": [
         {
             "samplerName": "diffuseTex",
             "textureType": "ImageFile",
-            "filename": "textures/staticObjects/trashsarc.png"
+            "filename": "textures/staticObjects/trashvolcano.png"
         },
         {
             "samplerName": "directShadowTex",

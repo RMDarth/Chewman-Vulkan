@@ -132,24 +132,50 @@ std::shared_ptr<GameMap> GameMapLoader::loadMap(const std::string& filename)
     gameMap->mapData.resize(gameMap->height);
     char ch;
     char line[100];
+
+    // Static object help
     int nextIsRotation = 0;
-    char staticObjectType;
-    for (auto row = 0; row < gameMap->height; ++row)
+    char staticObjectType = 0;
+
+    std::map<std::pair<size_t, size_t>, CellType> definedCellType;
+    auto addCellTypes = [&definedCellType](CellType cellType, size_t row, size_t column, std::pair<size_t, size_t> size)
+    {
+        for (auto x = row; x > row - size.first; --x)
+            for (auto y = column; y < column + size.second; ++y)
+                definedCellType[{x, y}] = cellType;
+    };
+
+    for (auto row = 0u; row < gameMap->height; ++row)
     {
         fin.getline(line, 100);
         auto curRow = gameMap->height - row - 1;
         gameMap->mapData[curRow].resize(gameMap->width);
-        for (auto column = 0; column < gameMap->width; ++column)
+        for (auto column = 0u; column < gameMap->width; ++column)
         {
             fin >> ch;
             gameMap->mapData[curRow][column] = {};
+
             if (nextIsRotation)
             {
                 nextIsRotation--;
-                gameMap->mapData[curRow][column].cellType = CellType::InvisibleWallWithFloor;
-                gameMap->staticObjects.emplace_back(gameMap.get(), glm::ivec2(curRow, column), staticObjectType, ch);
+                if (staticObjectType != 0)
+                {
+                    gameMap->staticObjects.emplace_back(gameMap.get(), glm::ivec2(curRow, column), staticObjectType, ch);
+                    auto size = StaticObject::getSize(staticObjectType, ch);
+                    addCellTypes(StaticObject::getCellType(staticObjectType), curRow, column-1, size);
+
+                    staticObjectType = 0;
+                }
+            }
+
+            auto definedCellIt = definedCellType.find({curRow, column});
+            if (definedCellIt != definedCellType.end())
+            {
+                gameMap->mapData[curRow][column].cellType = definedCellIt->second;
                 continue;
             }
+
+
             switch (ch)
             {
                 case 'W':
@@ -194,7 +220,7 @@ std::shared_ptr<GameMap> GameMapLoader::loadMap(const std::string& filename)
                 case 'Y':
                     nextIsRotation = ch == 'D' ? 2 : 1;
                     staticObjectType = ch;
-                    gameMap->mapData[curRow][column].cellType = CellType::InvisibleWallWithFloor;
+                    gameMap->mapData[curRow][column].cellType = StaticObject::getCellType(ch);
                     break;
                 case 'P':
                 case 'F':

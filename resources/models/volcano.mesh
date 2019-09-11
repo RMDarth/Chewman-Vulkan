@@ -1,0 +1,6 @@
+{
+    "name": "volcano",
+    "filename": "assets/vulcano.DAE",
+    "switchYZ": true,
+    "scale": [ 0.06, 0.06, 0.06 ]
+}

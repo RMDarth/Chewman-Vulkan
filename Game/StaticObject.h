@@ -3,6 +3,7 @@
 // Licensed under the MIT License
 #pragma once
 #include "SVE/SceneNode.h"
+#include "GameDefs.h"
 
 namespace Chewman
 {
@@ -26,6 +27,9 @@ public:
     StaticObjectType getType() const;
 
     void update();
+
+    static CellType getCellType(char type);
+    static std::pair<size_t, size_t> getSize(char type, char rotation);
 
 private:
     StaticObjectType _type;

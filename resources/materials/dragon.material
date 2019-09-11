@@ -1,13 +1,12 @@
 {
-    "name": "TombMaterial",
+    "name": "DragonMaterial",
     "vertexShaderName": "phongShadowVertexShader",
     "fragmentShaderName": "phongShadowFragmentShader",
-    "cullFace": "BackFace",
     "textures": [
         {
             "samplerName": "diffuseTex",
             "textureType": "ImageFile",
-            "filename": "textures/staticObjects/trashsarc.png"
+            "filename": "textures/staticObjects/trashdragon.png"
         },
         {
             "samplerName": "directShadowTex",
