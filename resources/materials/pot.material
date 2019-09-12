@@ -1,13 +1,14 @@
 {
-    "name": "VolcanoMaterial",
+    "name": "PotMaterial",
     "vertexShaderName": "phongShadowVertexShader",
     "fragmentShaderName": "phongLavaInfusedShadowFragmentShader",
     "passType": "ScreenQuadMRTPass",
+    "cullFace": "BackFace",
     "textures": [
         {
             "samplerName": "diffuseTex",
             "textureType": "ImageFile",
-            "filename": "textures/staticObjects/trashvolcano.png"
+            "filename": "textures/staticObjects/trashpot.png"
         },
         {
             "samplerName": "noiseSampler",

@@ -53,12 +53,12 @@ std::shared_ptr<SVE::MeshEntity> getStaticObjectEntity(StaticObjectType type)
             materialName = "DragonMaterial";
             break;
         case StaticObjectType::Pot:
-            meshName = "dragon";
-            materialName = "DragonMaterial";
+            meshName = "pot";
+            materialName = "PotMaterial";
             break;
         case StaticObjectType::Mouth:
-            meshName = "tomb";
-            materialName = "TombMaterial";
+            meshName = "throat";
+            materialName = "ThroatMaterial";
             break;
     }
 
@@ -99,6 +99,8 @@ StaticObject::StaticObject(GameMap* gameMap, glm::ivec2 startPos, StaticObjectTy
             position += glm::vec3(CellSize * 0.0f, 0.0, CellSize * 1.0f);
             break;
         case StaticObjectType::Mouth:
+            position -= isHorizontal ? glm::vec3(CellSize * 0.5f, 0.0, -CellSize * 1.5f)
+                                     : glm::vec3(CellSize * -0.5f, 0.0, -CellSize * 0.5f);
             break;
     }
 
@@ -111,13 +113,19 @@ StaticObject::StaticObject(GameMap* gameMap, glm::ivec2 startPos, StaticObjectTy
             transform = glm::rotate(transform, glm::radians(90.0f * (rotation - '1')), glm::vec3(0.0f, 0.0f, 1.0f));
             break;
         case StaticObjectType::Volcano:
-        case StaticObjectType::Mouth:
             transform = glm::rotate(transform, glm::radians(-90.0f * (rotation - '1')), glm::vec3(0.0f, 1.0f, 0.0f));
             break;
+        case StaticObjectType::Mouth:
+            transform = glm::rotate(transform, glm::radians(-90.0f * (rotation - '0')), glm::vec3(0.0f, 1.0f, 0.0f));
+            break;
         case StaticObjectType::Dragon:
-        case StaticObjectType::Pot:
             transform = glm::translate(transform, glm::vec3(0.0f, 1.5f, 0.0f));
             transform = glm::rotate(transform, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+            transform = glm::rotate(transform, glm::radians(-90.0f * (rotation - '1')), glm::vec3(0.0f, 0.0f, 1.0f));
+            break;
+        case StaticObjectType::Pot:
+            transform = glm::translate(transform, glm::vec3(0.0f, 1.3f, 0.0f));
+            transform = glm::rotate(transform, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
             transform = glm::rotate(transform, glm::radians(-90.0f * (rotation - '1')), glm::vec3(0.0f, 0.0f, 1.0f));
             break;
     }
@@ -175,8 +183,8 @@ std::pair<size_t, size_t> StaticObject::getSize(char type, char rotation)
             return { 3, 3 };
         case StaticObjectType::Mouth:
             if (rotation == '1' || rotation == '3')
-                return {3, 2};
-            return {2, 3};
+                return {2, 4};
+            return {4, 2};
     }
     assert(!"Incorrect type");
     return {0, 0};

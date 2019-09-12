@@ -162,7 +162,7 @@ std::shared_ptr<GameMap> GameMapLoader::loadMap(const std::string& filename)
                 {
                     gameMap->staticObjects.emplace_back(gameMap.get(), glm::ivec2(curRow, column), staticObjectType, ch);
                     auto size = StaticObject::getSize(staticObjectType, ch);
-                    addCellTypes(StaticObject::getCellType(staticObjectType), curRow, column-1, size);
+                    addCellTypes(StaticObject::getCellType(staticObjectType), curRow, column - 1, size);
 
                     staticObjectType = 0;
                 }

@@ -1,0 +1,6 @@
+{
+    "name": "throat",
+    "filename": "assets/throat.DAE",
+    "switchYZ": true,
+    "scale": [ 0.06, 0.06, 0.06 ]
+}
