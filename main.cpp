@@ -391,7 +391,7 @@ int runGame()
 
         // Create level floor
         Chewman::GameMapLoader mapLoader;
-        Chewman::GameMapProcessor gameMap(mapLoader.loadMap("resources/game/levels/level21.map"));
+        Chewman::GameMapProcessor gameMap(mapLoader.loadMap("resources/game/levels/level1.map"));
 
         // create teleport test
         std::array<std::shared_ptr<SVE::SceneNode>, 0> baseNodes;
@@ -431,7 +431,7 @@ int runGame()
         //bigFloorEntity->setMaterial("TestMaterial");
 
         // configure and attach objects to nodes
-        newNode->attachEntity(meshEntity);
+        //newNode->attachEntity(meshEntity);
         newNodeMid->setNodeTransformation(glm::translate(glm::mat4(1), glm::vec3(3, 0, -3)));
         newNode2->setNodeTransformation(glm::translate(glm::mat4(1), glm::vec3(5, 0, 2)));
 
@@ -453,6 +453,7 @@ int runGame()
 
         bool quit = false;
         bool skipRendering = false;
+        bool lockControl = false;
         auto prevTime = engine->getTime();
         while (!quit)
         {
@@ -460,6 +461,7 @@ int runGame()
             SDL_Event event;
             while (SDL_PollEvent(&event))
             {
+                gameMap.processInput(event);
                 if (event.type == SDL_QUIT)
                 {
                     quit = true;
@@ -483,6 +485,10 @@ int runGame()
                 }
                 if (event.type == SDL_KEYUP)
                 {
+                    if (event.key.keysym.sym == SDLK_f)
+                    {
+                        lockControl = !lockControl;
+                    }
                     if (event.key.keysym.sym == SDLK_SPACE)
                     {
                         static bool isNight = false;
@@ -530,16 +536,21 @@ int runGame()
                     configFloor(event.key.keysym.sym, terrainNode);
                     moveLight(event.key.keysym.sym, sunLight);
                 }
-                if (event.type == SDL_MOUSEMOTION)
+                if (event.type == SDL_MOUSEMOTION && !lockControl)
                 {
                     //std::cout << "FPS: " << 1.0f / (curTime - prevTime) << std::endl;
                     if (event.motion.state && SDL_BUTTON(1))
                         rotateCamera(event.motion, camera);
                 }
+                if (event.type == SDL_MOUSEWHEEL && !lockControl)
+                {
+                    camera->movePosition(glm::vec3(0,0,-event.wheel.y*100.0f*(curTime - prevTime)));
+                }
             }
 
             const Uint8* keystates = SDL_GetKeyboardState(nullptr);
-            moveCamera(keystates, curTime - prevTime, camera);
+            if (!lockControl)
+                moveCamera(keystates, curTime - prevTime, camera);
             SDL_Delay(1);
             if (!skipRendering)
             {
@@ -554,7 +565,7 @@ int runGame()
                 {
                     updateNode(circleNode, curTime * 5);
                 }
-                gameMap.update(curTime - prevTime);
+                gameMap.update(engine->getDeltaTime());
             }
 
             prevTime = curTime;

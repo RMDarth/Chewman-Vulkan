@@ -18,7 +18,8 @@ public:
     Enemy(GameMap* map, glm::ivec2 startPos);
     virtual ~Enemy() noexcept = default;
 
-    virtual void update() = 0;
+    virtual void update(float deltaTime) = 0;
+    virtual glm::vec2 getPosition();
 
 protected:
     std::shared_ptr<MapTraveller> _mapTraveller;

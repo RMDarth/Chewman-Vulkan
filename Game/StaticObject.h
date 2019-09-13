@@ -26,7 +26,7 @@ public:
 
     StaticObjectType getType() const;
 
-    void update();
+    void update(float deltaTime);
 
     static CellType getCellType(char type);
     static std::pair<size_t, size_t> getSize(char type, char rotation);

@@ -13,7 +13,7 @@ RandomWalkerAI::RandomWalkerAI(MapTraveller& mapWalker, uint8_t sameWayChance)
 {
 }
 
-void RandomWalkerAI::update()
+void RandomWalkerAI::update(float deltaTime)
 {
     if (_mapTraveller->isTargetReached())
     {
@@ -36,7 +36,7 @@ void RandomWalkerAI::update()
         }
     }
 
-    _mapTraveller->update();
+    _mapTraveller->update(deltaTime);
 }
 
 

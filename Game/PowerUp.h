@@ -28,7 +28,7 @@ public:
 
     PowerUpType getType() const;
 
-    void update();
+    void update(float deltaTime);
 private:
     void rotateItem(float time);
 

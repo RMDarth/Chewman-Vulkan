@@ -12,4 +12,9 @@ Enemy::Enemy(GameMap* map, glm::ivec2 startPos)
 {
 }
 
+glm::vec2 Enemy::getPosition()
+{
+    return _mapTraveller->getRealPosition();
+}
+
 } // namespace Chewman

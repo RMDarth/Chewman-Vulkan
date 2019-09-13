@@ -143,7 +143,7 @@ StaticObjectType StaticObject::getType() const
     return _type;
 }
 
-void StaticObject::update()
+void StaticObject::update(float deltaTime)
 {
     // update animated models?
 }

@@ -11,6 +11,7 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/euler_angles.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtx/matrix_decompose.hpp>
 
 namespace SVE
 {
@@ -81,7 +82,6 @@ void CameraNode::fillUniformData(UniformData& data)
     auto cameraPos = glm::yawPitchRoll(_yawPitchRoll.x, _yawPitchRoll.y, _yawPitchRoll.z);
     cameraPos = glm::translate(glm::mat4(1), _position) * cameraPos;
     _view = glm::inverse(cameraPos);
-    SceneNode::setNodeTransformation(cameraPos);
 
     data.projection = _projection;
     data.view = _view;
@@ -94,10 +94,13 @@ void CameraNode::setLookAt(glm::vec3 pos, glm::vec3 target,  glm::vec3 up)
 {
     auto view = glm::lookAt(pos, target, up);
     SceneNode::setNodeTransformation(glm::inverse(view));
+
     _position = pos;
     //glm::transpose(view);
     _yawPitchRoll.x = atan2f(view[1][0], view[0][0]);
     _yawPitchRoll.y= atan2f(view[2][0], sqrtf(view[2][1] * view[2][1] + view[2][2] * view[2][2])) + 3.14f;
+
+    //camera->setYawPitchRoll(glm::vec3(0.0f, -(float)atan2(16.0, 19.0), 0.0));
     //_yawPitchRoll.z= atan2(view[2][1],view[2][2]);
 
 }
@@ -106,6 +109,19 @@ void CameraNode::setNodeTransformation(glm::mat4 transform)
 {
     _view = glm::inverse(transform);
     SceneNode::setNodeTransformation(transform);
+    //auto totalTransform = getTotalTransformation();
+
+    glm::vec3 scale;
+    glm::quat rotation;
+    glm::vec3 translation;
+    glm::vec3 skew;
+    glm::vec4 perspective;
+    glm::decompose(transform, scale, rotation, translation, skew, perspective);
+
+    //_position = glm::vec3(0);
+    //_yawPitchRoll = glm::vec3(0);
+    _position = translation;
+    _yawPitchRoll = glm::eulerAngles(rotation) * 3.14159f / 180.f;
 }
 
 void CameraNode::setPosition(glm::vec3 pos)
@@ -138,7 +154,6 @@ void CameraNode::movePosition(glm::vec3 deltaPos)
 {
     auto cameraPos = glm::yawPitchRoll(_yawPitchRoll.x, _yawPitchRoll.y, _yawPitchRoll.z);
     _position += glm::vec3(cameraPos * glm::vec4(deltaPos, 0));
-
 }
 
 } // namespace SVE

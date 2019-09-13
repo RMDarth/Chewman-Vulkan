@@ -11,11 +11,6 @@ namespace Chewman
 namespace
 {
 
-glm::vec2 getRealPos(int x, int y)
-{
-    return glm::vec2(CellSize * x,  CellSize * y);
-}
-
 void moveTo(MoveDirection dir, glm::ivec2& mapPosition)
 {
     switch (dir)
@@ -38,15 +33,16 @@ void moveTo(MoveDirection dir, glm::ivec2& mapPosition)
 } // anon namespace
 
 MapTraveller::MapTraveller(GameMap* map, glm::ivec2 startPosMap, float moveSpeed)
-    : MapTraveller(map, getRealPos(startPosMap.x, startPosMap.y), moveSpeed)
+    : MapTraveller(map, toRealPos(startPosMap), moveSpeed)
 {
 }
 
 MapTraveller::MapTraveller(GameMap* map, glm::vec2 startPosReal, float moveSpeed)
     : _map(map)
     , _position(startPosReal)
+    , _target(startPosReal)
     , _moveSpeed(moveSpeed)
-    , _direction(static_cast<MoveDirection>(rand() % 4))
+    , _direction(MoveDirection::None)
 {
 }
 
@@ -82,7 +78,7 @@ void MapTraveller::move(MoveDirection dir)
 
     auto mapPosition = getMapPosition();
     moveTo(dir, mapPosition);
-    _target = getRealPos(mapPosition.x, mapPosition.y);
+    _target = toRealPos(mapPosition);
 }
 
 bool MapTraveller::isMovePossible(MoveDirection dir)
@@ -93,9 +89,8 @@ bool MapTraveller::isMovePossible(MoveDirection dir)
 }
 
 
-void MapTraveller::update()
+void MapTraveller::update(float deltaTime)
 {
-    auto deltaTime = SVE::Engine::getInstance()->getDeltaTime();
     _position += _speed * deltaTime;
     auto distance = _target - _position;
     if (glm::dot(distance, _speed) <= 0)
@@ -155,6 +150,24 @@ void MapTraveller::setWaterAccessible(bool accessible)
 MoveDirection MapTraveller::getCurrentDirection() const
 {
     return _direction;
+}
+
+void MapTraveller::setPosition(glm::ivec2 position)
+{
+    _position = toRealPos(position);
+    _target = _position;
+    _targetReached = true;
+    _direction = MoveDirection::None;
+}
+
+bool MapTraveller::isCloseToAffect(glm::vec2 pos)
+{
+    return glm::distance(_position, pos) < 1.3f;
+}
+
+glm::vec2 MapTraveller::toRealPos(glm::ivec2 pos)
+{
+    return glm::vec2(CellSize * pos.x,  CellSize * pos.y);
 }
 
 } // namespace Chewman

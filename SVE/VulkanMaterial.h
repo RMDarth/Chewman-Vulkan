@@ -132,6 +132,7 @@ private:
     std::vector<VkBuffer> _vertexStorageBuffers;
     std::vector<VkDeviceMemory> _storageBuffersMemory;
     uint32_t _mainInstance = 0;
+    uint32_t _currentInstanceCount = 0;
 
     std::map<const Entity*, std::vector<uint32_t>> _entityInstanceMap;
     std::vector<PerInstanceData> _instanceData;

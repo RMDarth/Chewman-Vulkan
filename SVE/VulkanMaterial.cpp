@@ -236,6 +236,10 @@ void VulkanMaterial::setUniformData(uint32_t materialIndex, const UniformData& u
         updateStorageDataByUniforms(uniformData, _storageData, b);
     }
 
+    if (_storageUpdated || !_materialSettings.useInstancing)
+        _currentInstanceCount = 0;
+
+    ++_currentInstanceCount;
     _storageUpdated = false;
     _mainInstance = materialIndex;
 }
@@ -1251,7 +1255,7 @@ bool VulkanMaterial::isMainInstance(uint32_t materialIndex) const
 
 uint32_t VulkanMaterial::getInstanceCount() const
 {
-    return _instanceData.size() - 1;
+    return _currentInstanceCount;//_instanceData.size() - 1;
 }
 
 } // namespace SVE

@@ -14,7 +14,8 @@ class Nun final : public Enemy
 public:
     Nun(GameMap* map, glm::ivec2 startPos);
 
-    void update() override;
+    void update(float deltaTime) override;
+
 private:
     std::shared_ptr<SVE::SceneNode> _rootNode;
     bool isVulnerable = false;

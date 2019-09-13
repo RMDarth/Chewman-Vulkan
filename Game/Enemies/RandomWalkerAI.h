@@ -13,7 +13,7 @@ class RandomWalkerAI : public EnemyAI
 public:
     explicit RandomWalkerAI(MapTraveller& mapWalker, uint8_t sameWayChance = 75);
 
-    void update() override;
+    void update(float deltaTime) override;
 
 private:
     uint8_t _sameWayChange = 75;

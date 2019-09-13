@@ -18,7 +18,8 @@ enum class MoveDirection : uint8_t
     Left,
     Forward,
     Right,
-    Backward
+    Backward,
+    None
 };
 
 class MapTraveller
@@ -30,14 +31,20 @@ public:
     bool tryMove(MoveDirection dir);
     void move(MoveDirection dir);
     bool isMovePossible(MoveDirection dir);
-    void update();
+    void update(float deltaTime);
     void setSpeed(float speed);
     void setWaterAccessible(bool accessible);
+
+    void setPosition(glm::ivec2 position);
 
     MoveDirection getCurrentDirection() const;
     glm::ivec2 getMapPosition() const;
     glm::vec2 getRealPosition() const;
     bool isTargetReached() const;
+
+    bool isCloseToAffect(glm::vec2 pos);
+
+    static glm::vec2 toRealPos(glm::ivec2 pos);
 
 private:
     bool isFreePosition(glm::ivec2 position);

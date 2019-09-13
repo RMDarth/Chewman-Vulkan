@@ -63,9 +63,9 @@ Nun::Nun(GameMap* map, glm::ivec2 startPos)
 }
 
 
-void Nun::update()
+void Nun::update(float deltaTime)
 {
-    _ai->update();
+    _ai->update(deltaTime);
     const auto realMapPos = _mapTraveller->getRealPosition();
     const auto position = glm::vec3(realMapPos.y, 0, -realMapPos.x);
     auto transform = glm::translate(glm::mat4(1), position);

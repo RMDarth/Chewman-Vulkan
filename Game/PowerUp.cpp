@@ -145,10 +145,8 @@ void PowerUp::rotateItem(float time)
     _rootNode->setNodeTransformation(transform);
 }
 
-void PowerUp::update()
+void PowerUp::update(float deltaTime)
 {
-    auto deltaTime = SVE::Engine::getInstance()->getDeltaTime();
-
     rotateItem(deltaTime);
 }
 

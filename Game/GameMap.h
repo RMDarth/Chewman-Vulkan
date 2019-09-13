@@ -13,6 +13,7 @@
 #include "Teleport.h"
 #include "Coin.h"
 #include "PowerUp.h"
+#include "Player.h"
 #include "StaticObject.h"
 #include "Enemies/Nun.h"
 
@@ -24,7 +25,9 @@ struct GameMap
     std::shared_ptr<SVE::SceneNode> mapNode;
     std::shared_ptr<SVE::MeshEntity> mapEntity[3];
     std::shared_ptr<SVE::MeshEntity> smokeEntity;
+    std::shared_ptr<SVE::MeshEntity> lavaEntity;
 
+    std::shared_ptr<Player> player;
     std::vector<Gargoyle> gargoyles;
     std::vector<Teleport> teleports;
     std::vector<Coin> coins;
@@ -37,12 +40,20 @@ struct GameMap
     size_t height;
 };
 
+enum class GameState
+{
+    Game,
+    Pause,
+    Animation
+};
+
 class GameMapProcessor
 {
 public:
     explicit GameMapProcessor(std::shared_ptr<GameMap> gameMap);
 
     void update(float time);
+    void processInput(const SDL_Event& event);
 
 private:
     void updateGargoyle(float time, Gargoyle& gargoyle);
@@ -51,6 +62,7 @@ private:
 
 private:
     std::shared_ptr<GameMap> _gameMap;
+    float _totalTime;
 };
 
 } // namespace Chewman

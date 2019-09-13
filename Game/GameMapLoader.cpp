@@ -145,6 +145,8 @@ std::shared_ptr<GameMap> GameMapLoader::loadMap(const std::string& filename)
                 definedCellType[{x, y}] = cellType;
     };
 
+    gameMap->coins.reserve(gameMap->width * gameMap->height);
+
     for (auto row = 0u; row < gameMap->height; ++row)
     {
         fin.getline(line, 100);
@@ -231,6 +233,10 @@ std::shared_ptr<GameMap> GameMapLoader::loadMap(const std::string& filename)
                 case 'T':
                     gameMap->mapData[curRow][column].cellType = CellType::Floor;
                     gameMap->powerUps.emplace_back(gameMap.get(), glm::ivec2(curRow, column), ch);
+                    break;
+                case 'S':
+                    gameMap->mapData[curRow][column].cellType = CellType::Floor;
+                    gameMap->player = std::make_shared<Player>(gameMap.get(), glm::ivec2(curRow, column));
                     break;
                 default:
                     gameMap->mapData[curRow][column].cellType = CellType::Floor;

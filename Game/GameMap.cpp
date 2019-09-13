@@ -28,40 +28,49 @@ GameMapProcessor::GameMapProcessor(std::shared_ptr<GameMap> gameMap)
 {
 }
 
-void GameMapProcessor::update(float time)
+void GameMapProcessor::update(float deltaTime)
 {
-    if (time <= 0.0)
+    if (deltaTime <= 0.0)
         return;
+
+    _totalTime += deltaTime;
 
     for (auto& teleport : _gameMap->teleports)
     {
-        updateTeleport(time, teleport);
+        updateTeleport(deltaTime, teleport);
     }
 
     for (auto& coin : _gameMap->coins)
     {
-        updateCoin(time, coin);
+        updateCoin(deltaTime, coin);
     }
 
     for (auto& gargoyle : _gameMap->gargoyles)
     {
-        updateGargoyle(time, gargoyle);
+        updateGargoyle(deltaTime, gargoyle);
     }
 
     for (auto& nun : _gameMap->nuns)
     {
-        nun.update();
+        nun.update(deltaTime);
     }
 
     for (auto& powerUp : _gameMap->powerUps)
     {
-        powerUp.update();
+        powerUp.update(deltaTime);
     }
 
     for (auto& staticObject : _gameMap->staticObjects)
     {
-        staticObject.update();
+        staticObject.update(deltaTime);
     }
+
+    _gameMap->player->update(deltaTime);
+}
+
+void GameMapProcessor::processInput(const SDL_Event& event)
+{
+    _gameMap->player->processInput(event);
 }
 
 void GameMapProcessor::updateGargoyle(float time, Gargoyle& gargoyle)
@@ -107,15 +116,14 @@ void GameMapProcessor::updateGargoyle(float time, Gargoyle& gargoyle)
 
 void GameMapProcessor::updateTeleport(float time, Teleport &teleport)
 {
-    float currentTime = SVE::Engine::getInstance()->getTime();
     auto updateNode = [](std::shared_ptr<SVE::SceneNode>& node, float time)
     {
         auto nodeTransform = glm::rotate(glm::mat4(1.0f), time * glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
         node->setNodeTransformation(nodeTransform);
     };
 
-    updateNode(teleport.circleNode, currentTime * 2);
-    updateNode(teleport.glowNode, currentTime * 5);
+    updateNode(teleport.circleNode, _totalTime * 2);
+    updateNode(teleport.glowNode, _totalTime * 5);
 }
 
 void GameMapProcessor::updateCoin(float time, Coin &coin)
