@@ -160,7 +160,7 @@ void MapTraveller::setPosition(glm::ivec2 position)
     _direction = MoveDirection::None;
 }
 
-bool MapTraveller::isCloseToAffect(glm::vec2 pos)
+bool MapTraveller::isCloseToAffect(glm::vec2 pos) const
 {
     return glm::distance(_position, pos) < 1.3f;
 }

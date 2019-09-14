@@ -24,48 +24,55 @@ void updateGargoyleParticles(Gargoyle& gargoyle, float life, float alphaChanger,
 } // anon namespace
 
 GameMapProcessor::GameMapProcessor(std::shared_ptr<GameMap> gameMap)
-    : _gameMap(std::move(gameMap))
+    : _gameRulesProcessor(*this)
+    , _gameMap(std::move(gameMap))
 {
 }
 
 void GameMapProcessor::update(float deltaTime)
 {
+    _deltaTime = deltaTime;
     if (deltaTime <= 0.0)
         return;
 
-    _totalTime += deltaTime;
+    _gameRulesProcessor.update(deltaTime);
+
+    if (_state == GameState::Game)
+        _totalTime += deltaTime;
+    else
+        _deltaTime = 0.0f;
 
     for (auto& teleport : _gameMap->teleports)
     {
-        updateTeleport(deltaTime, teleport);
+        updateTeleport(_deltaTime, teleport);
     }
 
     for (auto& coin : _gameMap->coins)
     {
-        updateCoin(deltaTime, coin);
+        updateCoin(_deltaTime, coin);
     }
 
     for (auto& gargoyle : _gameMap->gargoyles)
     {
-        updateGargoyle(deltaTime, gargoyle);
+        updateGargoyle(_deltaTime, gargoyle);
     }
 
     for (auto& nun : _gameMap->nuns)
     {
-        nun.update(deltaTime);
+        nun.update(_deltaTime);
     }
 
     for (auto& powerUp : _gameMap->powerUps)
     {
-        powerUp.update(deltaTime);
+        powerUp.update(_deltaTime);
     }
 
     for (auto& staticObject : _gameMap->staticObjects)
     {
-        staticObject.update(deltaTime);
+        staticObject.update(_deltaTime);
     }
 
-    _gameMap->player->update(deltaTime);
+    _gameMap->player->update(_deltaTime);
 }
 
 void GameMapProcessor::processInput(const SDL_Event& event)
@@ -131,6 +138,26 @@ void GameMapProcessor::updateCoin(float time, Coin &coin)
     auto transform = coin.rootNode->getNodeTransformation();
     transform = glm::rotate(transform, time, glm::vec3(0.0f, 0.0f, 1.0f));
     coin.rootNode->setNodeTransformation(transform);
+}
+
+std::shared_ptr<GameMap> GameMapProcessor::getGameMap()
+{
+    return _gameMap;
+}
+
+void GameMapProcessor::setState(GameState gameState)
+{
+    _state = gameState;
+}
+
+GameState GameMapProcessor::getState() const
+{
+    return _state;
+}
+
+float GameMapProcessor::getDeltaTime()
+{
+    return _deltaTime;
 }
 
 } // namespace Chewman

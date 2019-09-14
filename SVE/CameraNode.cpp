@@ -90,19 +90,28 @@ void CameraNode::fillUniformData(UniformData& data)
     data.cameraPos = glm::vec4(_position, 1.0f);//getTotalTransformation()[3];
 }
 
-void CameraNode::setLookAt(glm::vec3 pos, glm::vec3 target,  glm::vec3 up)
+void CameraNode::setLookAt(glm::vec3 pos, glm::vec3 target,  glm::vec3 up,  bool shiftPosition)
 {
     auto view = glm::lookAt(pos, target, up);
     SceneNode::setNodeTransformation(glm::inverse(view));
 
-    _position = pos;
-    //glm::transpose(view);
-    _yawPitchRoll.x = atan2f(view[1][0], view[0][0]);
-    _yawPitchRoll.y= atan2f(view[2][0], sqrtf(view[2][1] * view[2][1] + view[2][2] * view[2][2])) + 3.14f;
+    _position = pos + glm::vec3(getParent()->getTotalTransformation()[3]);
+    auto dir = pos - target;
+    auto dirLen = glm::length(dir);
+    _yawPitchRoll.x = atan2f(dir.x, dir.y);
+    auto z = sqrtf(dirLen*dirLen - dir.y*dir.y);
+    _yawPitchRoll.y = -atan2f(dir.y, z);
+}
 
-    //camera->setYawPitchRoll(glm::vec3(0.0f, -(float)atan2(16.0, 19.0), 0.0));
-    //_yawPitchRoll.z= atan2(view[2][1],view[2][2]);
-
+glm::vec3 CameraNode::getLookAtAngles(glm::vec3 pos, glm::vec3 target)
+{
+    glm::vec3 result;
+    auto dir = pos - target;
+    auto dirLen = glm::length(dir);
+    result.x = atan2f(dir.x, dir.y);
+    auto z = sqrtf(dirLen*dirLen - dir.y*dir.y);
+    result.y = -atan2f(dir.y, z);
+    return result;
 }
 
 void CameraNode::setNodeTransformation(glm::mat4 transform)
@@ -121,7 +130,7 @@ void CameraNode::setNodeTransformation(glm::mat4 transform)
     //_position = glm::vec3(0);
     //_yawPitchRoll = glm::vec3(0);
     _position = translation;
-    _yawPitchRoll = glm::eulerAngles(rotation) * 3.14159f / 180.f;
+    //_yawPitchRoll = glm::eulerAngles(rotation) * 3.14159f / 180.f;
 }
 
 void CameraNode::setPosition(glm::vec3 pos)

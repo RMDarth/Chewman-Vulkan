@@ -59,7 +59,12 @@ void MeshEntity::updateUniforms(UniformDataList uniformDataList) const
 
     UniformData newData = *uniformDataList[toInt(CommandsType::MainPass)];
 
-    _mesh->updateUniformDataBones(newData, Engine::getInstance()->getTime());
+    _time += Engine::getInstance()->getDeltaTime();
+    newData.time = _time;
+
+    if (_animationState == AnimationState::Play)
+        _animationTime += Engine::getInstance()->getDeltaTime();
+    _mesh->updateUniformDataBones(newData, _animationTime);
     _material->getVulkanMaterial()->setUniformData(_materialIndex, newData);
 
     if (_shadowMaterial)
@@ -207,6 +212,16 @@ bool MeshEntity::isInstanceRendering() const
 void MeshEntity::updateInstanceBuffers()
 {
     _material->getVulkanMaterial()->updateInstancedData();
+}
+
+void MeshEntity::setAnimationState(AnimationState animationState)
+{
+    _animationState = animationState;
+}
+
+void MeshEntity::resetTime(float time)
+{
+    _time = time;
 }
 
 } // namespace SVE

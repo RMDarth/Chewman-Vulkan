@@ -454,10 +454,13 @@ int runGame()
         bool quit = false;
         bool skipRendering = false;
         bool lockControl = false;
-        auto prevTime = engine->getTime();
+
+        auto startTime = std::chrono::high_resolution_clock::now();
+        auto prevTime = std::chrono::duration<float, std::chrono::seconds::period>(std::chrono::high_resolution_clock::now() - startTime).count();
         while (!quit)
         {
-            auto curTime = engine->getTime();
+            auto curTime = std::chrono::duration<float, std::chrono::seconds::period>(std::chrono::high_resolution_clock::now() - startTime).count();//engine->getTime();
+
             SDL_Event event;
             while (SDL_PollEvent(&event))
             {
@@ -554,7 +557,8 @@ int runGame()
             SDL_Delay(1);
             if (!skipRendering)
             {
-                engine->renderFrame();
+                gameMap.update(curTime - prevTime);
+                engine->renderFrame(curTime - prevTime);
 
                 updateNode(newNode, curTime);
                 for (auto& baseNode : baseNodes)
@@ -565,7 +569,7 @@ int runGame()
                 {
                     updateNode(circleNode, curTime * 5);
                 }
-                gameMap.update(engine->getDeltaTime());
+
             }
 
             prevTime = curTime;

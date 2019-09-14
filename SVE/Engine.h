@@ -70,12 +70,14 @@ public:
     float getDeltaTime();
 
     void renderFrame();
+    void renderFrame(float deltaTime);
 
 private:
     Engine(SDL_Window* window, EngineSettings settings);
     explicit Engine(SDL_Window* window);
 
     void updateTime();
+    void renderFrameImpl();
 private:
     static Engine* _engineInstance;
     std::unique_ptr<VulkanInstance> _vulkanInstance;

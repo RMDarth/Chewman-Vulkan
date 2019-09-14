@@ -11,6 +11,12 @@ namespace SVE
 class Mesh;
 class Material;
 
+enum class AnimationState : uint8_t
+{
+    Play,
+    Pause
+};
+
 class MeshEntity : public Entity
 {
 public:
@@ -32,6 +38,9 @@ public:
 
     bool isInstanceRendering() const override;
 
+    void setAnimationState(AnimationState animationState);
+    void resetTime(float time = 0.0f);
+
 private:
     void setupMaterial();
 
@@ -52,6 +61,11 @@ private:
     Material* _pointLightShadowMaterial;
     std::unique_ptr<Material> _bloomMaterial;
     //std::vector<uint32_t> _shadowMaterialIndexes;
+
+    // TODO: Move to animation class
+    AnimationState _animationState = AnimationState::Play;
+    mutable float _animationTime = 0.0f;
+    mutable float _time = 0.0f;
 };
 
 } // namespace SVE

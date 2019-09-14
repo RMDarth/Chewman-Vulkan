@@ -50,6 +50,7 @@ Player::Player(GameMap* gameMap, glm::ivec2 startPos)
     : _mapTraveller(std::make_shared<MapTraveller>(gameMap, startPos))
     , _gameMap(gameMap)
     , _startPos(startPos)
+    , _playerInfo(std::make_unique<PlayerInfo>())
 {
     _mapTraveller->setWaterAccessible(true);
 
@@ -64,43 +65,45 @@ Player::Player(GameMap* gameMap, glm::ivec2 startPos)
     _rootNode->setNodeTransformation(transform);
     gameMap->mapNode->attachSceneNode(_rootNode);
 
-    auto nunMesh = std::make_shared<SVE::MeshEntity>("trashman");
-    nunMesh->setMaterial("Yellow");
-    _rootNode->attachEntity(nunMesh);
+    _trashmanEntity = std::make_shared<SVE::MeshEntity>("trashman");
+    _trashmanEntity->setMaterial("Yellow");
+    _rootNode->attachEntity(_trashmanEntity);
 
     _rootNode->attachSceneNode(addLightEffect(engine));
 
-    _cameraAttachNode = engine->getSceneManager()->createSceneNode();
-    transform = glm::mat4(1);
-    transform = glm::translate(transform, glm::vec3(0, 16.0f, 19.0f));
-
-    _cameraAttachNode->setNodeTransformation(transform);
-
-    _rootNode->attachSceneNode(_cameraAttachNode);
+    createAppearEffect();
 }
 
 void Player::update(float deltaTime)
 {
     if (_followMode)
     {
-        if (_mapTraveller->isCloseToAffect(MapTraveller::toRealPos(_mapTraveller->getMapPosition())))
+        if (!_playerInfo->isDying)
         {
-            auto mapPos = _mapTraveller->getMapPosition();
-            if ( _gameMap->mapData[mapPos.x][mapPos.y].coin)
+            updateMovement(deltaTime);
+
+            auto camera = SVE::Engine::getInstance()->getSceneManager()->getMainCamera();
+            camera->setParent(_rootNode);
+            camera->setLookAt(glm::vec3(0.0f, 16.0f, 19.0f), glm::vec3(0), glm::vec3(0, 1, 0));
+
+            if (_appearing)
             {
-                _gameMap->mapNode->detachSceneNode(_gameMap->mapData[mapPos.x][mapPos.y].coin->rootNode);
-                _gameMap->mapData[mapPos.x][mapPos.y].coin = nullptr;
+                _appearTime += deltaTime;
+                updateAppearEffect();
+                if (_appearTime > 0.5f)
+                {
+                    showAppearEffect(false);
+                }
+                if (_appearTime > 1.0f)
+                {
+                    _appearing = false;
+                    _trashmanEntity->setMaterial("Yellow");
+                    _trashmanEntity->setRenderLast(false);
+                    _trashmanEntity->setCastShadows(true);
+                }
+
             }
         }
-
-        updateMovement(deltaTime);
-        if (checkForDeath())
-            playDeath();
-
-        auto camera = SVE::Engine::getInstance()->getSceneManager()->getMainCamera();
-        camera->setParent(_cameraAttachNode);
-        camera->setNodeTransformation(_cameraAttachNode->getTotalTransformation());
-        camera->setYawPitchRoll(glm::vec3(0.0f, -(float)atan2(16.0, 19.0), 0.0));
     }
 
     const auto realMapPos = _mapTraveller->getRealPosition();
@@ -156,31 +159,87 @@ void Player::updateMovement(float deltaTime)
     _mapTraveller->update(deltaTime);
 }
 
-bool Player::checkForDeath()
+std::shared_ptr<MapTraveller> Player::getMapTraveller()
 {
-    auto currentClosestPos = _mapTraveller->getMapPosition();
-    auto isCurrentPosAffected = _mapTraveller->isCloseToAffect(MapTraveller::toRealPos(currentClosestPos));
-
-    if (isCurrentPosAffected && _gameMap->mapData[currentClosestPos.x][currentClosestPos.y].cellType == CellType::Liquid)
-    {
-        return true;
-    }
-
-    for (auto& nun : _gameMap->nuns)
-    {
-        if (_mapTraveller->isCloseToAffect(nun.getPosition()))
-        {
-            return true;
-        }
-    }
-
-    return false;
+    return _mapTraveller;
 }
 
-void Player::playDeath()
+PlayerInfo* Player::getPlayerInfo()
 {
-    // TODO: Play death animation
+    return _playerInfo.get();
+}
+
+void Player::resetPosition()
+{
+    _trashmanEntity->setMaterial("YellowAppearTrashman");
+    _trashmanEntity->setAnimationState(SVE::AnimationState::Play);
+    _trashmanEntity->setRenderLast(true);
+    _trashmanEntity->setCastShadows(false);
+    _trashmanEntity->resetTime(0.3f);
     _mapTraveller->setPosition(_startPos);
+    _nextMove = MoveDirection::None;
+
+    showAppearEffect(true);
+}
+
+void Player::playDeathAnimation()
+{
+    _trashmanEntity->setMaterial("YellowBurnTrashman");
+    _trashmanEntity->setAnimationState(SVE::AnimationState::Pause);
+    _trashmanEntity->setRenderLast();
+    _trashmanEntity->setCastShadows(false);
+    _trashmanEntity->resetTime();
+}
+
+void Player::resetPlaying()
+{
+    _appearing = true;
+    _appearTime = 0.0f;
+}
+
+void Player::createAppearEffect()
+{
+    // Almost copy paste from teleport creation (except platform and light effect)
+    // TODO: remove copy-paste, unify code
+    auto* engine = SVE::Engine::getInstance();
+    auto color = glm::vec3(1.0, 1.0, 0.0);
+
+    _appearNode = engine->getSceneManager()->createSceneNode();
+    std::shared_ptr<SVE::ParticleSystemEntity> teleportPS = std::make_shared<SVE::ParticleSystemEntity>("TeleportStars");
+    teleportPS->getMaterialInfo()->diffuse = glm::vec4( color,0.6f);
+    _appearNode->attachEntity(teleportPS);
+
+    _appearNodeGlow = engine->getSceneManager()->createSceneNode();
+    _appearNode->attachSceneNode(_appearNodeGlow);
+    {
+        std::shared_ptr<SVE::MeshEntity> teleportCircleEntity = std::make_shared<SVE::MeshEntity>("cylinder");
+        teleportCircleEntity->setMaterial("TeleportCircleMaterial");
+        teleportCircleEntity->setRenderLast();
+        teleportCircleEntity->setCastShadows(false);
+        teleportCircleEntity->getMaterialInfo()->diffuse = { color, 1.0f };
+        _appearNodeGlow->attachEntity(teleportCircleEntity);
+    }
+}
+
+void Player::showAppearEffect(bool show)
+{
+    if (show)
+    {
+        _rootNode->attachSceneNode(_appearNode);
+    } else {
+        _rootNode->detachSceneNode(_appearNode);
+    }
+}
+
+void Player::updateAppearEffect()
+{
+    auto updateNode = [](std::shared_ptr<SVE::SceneNode>& node, float time)
+    {
+        auto nodeTransform = glm::rotate(glm::mat4(1.0f), time * glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        node->setNodeTransformation(nodeTransform);
+    };
+
+    updateNode(_appearNodeGlow, _appearTime * 5);
 }
 
 } // namespace Chewman

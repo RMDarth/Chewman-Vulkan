@@ -23,7 +23,8 @@ public:
     const glm::mat4& getViewMatrix();
     const CameraSettings& getCameraSettings() const;
 
-    void setLookAt(glm::vec3 pos, glm::vec3 target, glm::vec3 up);
+    void setLookAt(glm::vec3 pos, glm::vec3 target, glm::vec3 up, bool shiftPosition = true);
+    glm::vec3 getLookAtAngles(glm::vec3 pos, glm::vec3 target);
 
     void setPosition(glm::vec3 pos);
     void movePosition(glm::vec3 deltaPos);

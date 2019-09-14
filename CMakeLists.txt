@@ -125,7 +125,7 @@ add_executable(Chewman
         Game/GameMapLoader.cpp
         Game/GameMapLoader.h
         Game/GameUtils.cpp
-        Game/GameUtils.h Game/PowerUp.cpp Game/PowerUp.h Game/StaticObject.cpp Game/StaticObject.h Game/Player.cpp Game/Player.h)
+        Game/GameUtils.h Game/PowerUp.cpp Game/PowerUp.h Game/StaticObject.cpp Game/StaticObject.h Game/Player.cpp Game/Player.h SVE/TextNode.cpp SVE/TextNode.h Game/GameRulesProcessor.cpp Game/GameRulesProcessor.h)
 
 if (WIN32)
     target_link_libraries(Chewman mingw32 SDL2main SDL2 vulkan-1.lib VkLayer_core_validation.lib libassimp libcppfsd)

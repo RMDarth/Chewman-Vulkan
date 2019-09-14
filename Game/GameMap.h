@@ -16,6 +16,7 @@
 #include "Player.h"
 #include "StaticObject.h"
 #include "Enemies/Nun.h"
+#include "GameRulesProcessor.h"
 
 namespace Chewman
 {
@@ -54,6 +55,11 @@ public:
 
     void update(float time);
     void processInput(const SDL_Event& event);
+    void setState(GameState gameState);
+    GameState getState() const;
+    std::shared_ptr<GameMap> getGameMap();
+
+    float getDeltaTime();
 
 private:
     void updateGargoyle(float time, Gargoyle& gargoyle);
@@ -61,8 +67,11 @@ private:
     void updateCoin(float time, Coin& coin);
 
 private:
+    GameRulesProcessor _gameRulesProcessor;
+    GameState _state = GameState::Game;
     std::shared_ptr<GameMap> _gameMap;
     float _totalTime;
+    float _deltaTime = 0;
 };
 
 } // namespace Chewman

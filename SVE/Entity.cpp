@@ -42,9 +42,9 @@ void Entity::setMaterial(const std::string& materialName)
     // default do nothing
 }
 
-void Entity::setRenderLast()
+void Entity::setRenderLast(bool value)
 {
-    _renderLast = true;
+    _renderLast = value;
 }
 
 bool Entity::isRenderLast() const

@@ -42,7 +42,7 @@ public:
     glm::vec2 getRealPosition() const;
     bool isTargetReached() const;
 
-    bool isCloseToAffect(glm::vec2 pos);
+    bool isCloseToAffect(glm::vec2 pos) const;
 
     static glm::vec2 toRealPos(glm::ivec2 pos);
 

@@ -28,7 +28,7 @@ public:
     void clearParent();
 
     // TODO: Refactor, provide more agile ordering mechanism
-    void setRenderLast();
+    void setRenderLast(bool value = true);
     bool isRenderLast() const;
 
     // This is for special render to depth texture pass

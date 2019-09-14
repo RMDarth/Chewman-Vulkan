@@ -262,6 +262,22 @@ void Engine::renderFrame()
 {
     _vulkanInstance->waitAvailableFramebuffer();
     updateTime();
+    renderFrameImpl();
+}
+
+void Engine::renderFrame(float deltaTime)
+{
+    _vulkanInstance->waitAvailableFramebuffer();
+    _prevTime = _currentTime;
+    _currentTime += std::chrono::duration<int, std::chrono::microseconds::period>(static_cast<int>(deltaTime * 1000000));
+    _duration = std::chrono::duration<float, std::chrono::seconds::period>(_currentTime - _startTime).count();
+    _deltaTime = deltaTime;
+
+    renderFrameImpl();
+}
+
+void Engine::renderFrameImpl()
+{
     auto skybox = _sceneManager->getSkybox();
     auto currentFrame = _vulkanInstance->getCurrentFrameIndex();
     auto currentImage = _vulkanInstance->getCurrentImageIndex();
