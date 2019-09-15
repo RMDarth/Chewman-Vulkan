@@ -1,0 +1,19 @@
+{
+    "name": "PowerUpParticleMaterial",
+    "vertexShaderName": "particlesVertexShader",
+    "geometryShaderName": "particlesScaledGeomShader",
+    "fragmentShaderName": "particlesFragmentShader",
+    "cullFace": "None",
+    "useAlphaBlending": true,
+    "srcBlendFactor": "SrcAlpha",
+    "dstBlendFactor": "One",
+    "useDepthWrite": false,
+    "textures": [
+        {
+            "samplerName": "spritesheet",
+            "textureType": "ImageFile",
+            "filename": "textures/teleport/Sparkle_sprite_good.png",
+            "spritesheetSize": [ 1, 1 ]
+        }
+    ]
+}

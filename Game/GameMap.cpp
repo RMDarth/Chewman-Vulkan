@@ -54,7 +54,7 @@ void GameMapProcessor::update(float deltaTime)
 
     for (auto& gargoyle : _gameMap->gargoyles)
     {
-        updateGargoyle(_deltaTime, gargoyle);
+        updateGargoyle(deltaTime, gargoyle);
     }
 
     for (auto& nun : _gameMap->nuns)

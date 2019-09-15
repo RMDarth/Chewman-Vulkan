@@ -3,6 +3,7 @@
     "filename": "glsl/particles.geom.spv",
     "shaderType": "GeometryShader",
     "uniformList": [
-        { "uniformType": "ProjectionMatrix" }
+        { "uniformType": "ProjectionMatrix" },
+        { "uniformType": "ParticleEmitter" }
     ]
 }

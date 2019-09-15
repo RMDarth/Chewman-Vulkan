@@ -147,12 +147,19 @@ void PowerUp::rotateItem(float time)
 
 void PowerUp::update(float deltaTime)
 {
-    rotateItem(deltaTime);
+    if (!_isEaten)
+        rotateItem(deltaTime);
 }
 
 PowerUpType PowerUp::getType() const
 {
     return _type;
+}
+
+void PowerUp::eat()
+{
+    _isEaten = true;
+    _rootNode->getParent()->detachSceneNode(_rootNode);
 }
 
 } // namespace Chewman

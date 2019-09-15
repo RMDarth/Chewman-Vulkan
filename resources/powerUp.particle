@@ -1,0 +1,39 @@
+{
+    "name": "PowerUp",
+    "materialName": "PowerUpParticleMaterial",
+    "computeShaderName": "particlesComputeShader",
+
+    "quota": 500,
+    "sort": true,
+
+    "particleEmitter":
+    {
+        "direction": [ 0.0, 1.0, 0.0 ],
+        "angle": 0.0,
+        "originRadius": 0.8,
+
+        "emissionRate": 70,
+        "minLife": 0.5,
+        "maxLife": 0.6,
+        "minSpeed": 4.1,
+        "maxSpeed": 4.3,
+        "minSize": 0.5,
+        "maxSize": 0.5,
+        "sizeScale": 15.0,
+        "minRotate": 0,
+        "maxRotate": 0,
+        "colorRangeStart": [ 0.0, 0.0, 0.0, 0.0 ],
+        "colorRangeEnd": [ 0.0, 0.0, 0.0, 0.0 ]
+    },
+    "particleAffector":
+    {
+        "minAcceleration": 0.0,
+        "maxAcceleration": 0.2,
+        "minRotateSpeed": 0,
+        "maxRotateSpeed": 0,
+        "minScaleSpeed": 0,
+        "maxScaleSpeed": 0,
+
+        "colorChanger": [ 0.0, 0.0, 0.0, 0.0 ]
+    }
+}

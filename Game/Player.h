@@ -39,12 +39,15 @@ public:
     void resetPosition();
     void resetPlaying();
     void playDeathAnimation();
-
+    void playPowerUpAnimation();
 
 private:
     void updateMovement(float deltaTime);
     void createAppearEffect();
+    void createDisappearEffect();
+    void createPowerUpEffect();
     void showAppearEffect(bool show);
+    void showDisappearEffect(bool show);
     void updateAppearEffect();
 
 private:
@@ -63,6 +66,10 @@ private:
 
     std::shared_ptr<SVE::SceneNode> _appearNode;
     std::shared_ptr<SVE::SceneNode> _appearNodeGlow;
+    std::shared_ptr<SVE::SceneNode> _disappearNode;
+
+    std::shared_ptr<SVE::SceneNode> _powerUpEffectNode;
+    float _powerUpTime = 0.0f;
 
     MoveDirection _nextMove;
 };

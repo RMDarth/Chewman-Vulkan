@@ -70,7 +70,7 @@ void main()
     vec4 result = mix(vec4(color, 1.0), vec4(0,0,0,0), smoothstep(t + .1, t - .1, noise(fragTexCoord * 100.0)));
     // burning on the edges (when c.a < .1)
     result.rgb = clamp(result.rgb + step(result.a, .1) * 1.6 * noise(2000. * fragTexCoord) * vec3(1.2,.5,.0), 0., 1.);
-    result.a = mix(0.0, 1.0, smoothstep(0.0, 0.1, result.a));
+    result.a = mix(0.5, 1.0, smoothstep(0.0, 0.1, result.a));
 
     outColor = result;
 }

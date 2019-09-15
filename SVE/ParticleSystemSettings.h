@@ -23,9 +23,9 @@ struct ParticleEmitter
     float maxSpeed;                 // 23
     float minSize;                  // 24
     float maxSize;                  // 25
-    float minRotate;                // 26
-    float maxRotate;                // 27
-    float _padding_2[1];            // 28
+    float sizeScale = 1.0f;         // 26
+    float minRotate;                // 27
+    float maxRotate;                // 28
 
     glm::vec4 colorRangeStart = glm::vec4(1.0f);  // 32
     glm::vec4 colorRangeEnd = glm::vec4(1.0f);    // 36

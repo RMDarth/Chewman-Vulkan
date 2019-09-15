@@ -15,6 +15,7 @@ struct ParticleEmitter
     float maxSpeed;
     float minSize;
     float maxSize;
+    float sizeScale;
     float minRotate;
     float maxRotate;
 

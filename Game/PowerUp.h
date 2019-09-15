@@ -17,8 +17,12 @@ enum class PowerUpType : uint8_t
     Life,
     Bomb,
     Jackhammer, // lower walls
-    Teeth       // destroy walls
+    Teeth,      // destroy walls
+
+    // Power downs
+    Slow
 };
+constexpr uint8_t PowerUpCount = 8;
 
 class PowerUp
 {
@@ -28,11 +32,13 @@ public:
 
     PowerUpType getType() const;
 
+    void eat();
     void update(float deltaTime);
 private:
     void rotateItem(float time);
 
 private:
+    bool _isEaten = false;
     PowerUpType _type;
     std::shared_ptr<SVE::SceneNode> _rootNode;
 };

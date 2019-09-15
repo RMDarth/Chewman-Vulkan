@@ -308,6 +308,7 @@ ParticleSystemSettings loadParticleSystem(const cppfs::FilePath& directory, cons
     emitter.maxSpeed = emitterObject["maxSpeed"].GetFloat();
     emitter.minSize = emitterObject["minSize"].GetFloat();
     emitter.maxSize = emitterObject["maxSize"].GetFloat();
+    setOptional(emitter.sizeScale = emitterObject["sizeScale"].GetFloat());
     emitter.minRotate = emitterObject["minRotate"].GetFloat();
     emitter.maxRotate = emitterObject["maxRotate"].GetFloat();
     emitter.colorRangeStart = loadVector<4>(emitterObject, "colorRangeStart");

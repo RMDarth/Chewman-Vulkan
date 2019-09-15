@@ -7,7 +7,8 @@
 namespace Chewman
 {
 
-class Coin;
+struct Coin;
+class PowerUp;
 
 constexpr float CellSize = 3.0f;
 constexpr float MoveSpeed = 6.5f;
@@ -24,7 +25,9 @@ enum class CellType : uint8_t
 struct CellInfo
 {
     CellType cellType;
+
     Coin* coin = nullptr;
+    PowerUp* powerUp = nullptr;
 };
 
 using CellInfoMap = std::vector<std::vector<CellInfo>>;

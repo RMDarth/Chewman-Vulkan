@@ -72,6 +72,8 @@ Player::Player(GameMap* gameMap, glm::ivec2 startPos)
     _rootNode->attachSceneNode(addLightEffect(engine));
 
     createAppearEffect();
+    createDisappearEffect();
+    createPowerUpEffect();
 }
 
 void Player::update(float deltaTime)
@@ -102,6 +104,16 @@ void Player::update(float deltaTime)
                     _trashmanEntity->setCastShadows(true);
                 }
 
+            }
+            if (_powerUpTime > 0)
+            {
+                _powerUpTime-= deltaTime;
+
+                const auto rotateAngle = -90.0f * static_cast<uint8_t>(_mapTraveller->getCurrentDirection());
+                _powerUpEffectNode->setNodeTransformation(glm::rotate(glm::mat4(1), glm::radians(rotateAngle), glm::vec3(0, 1, 0)));
+
+            } else {
+                _rootNode->detachSceneNode(_powerUpEffectNode);
             }
         }
     }
@@ -179,11 +191,13 @@ void Player::resetPosition()
     _mapTraveller->setPosition(_startPos);
     _nextMove = MoveDirection::None;
 
+    showDisappearEffect(false);
     showAppearEffect(true);
 }
 
 void Player::playDeathAnimation()
 {
+    showDisappearEffect(true);
     _trashmanEntity->setMaterial("YellowBurnTrashman");
     _trashmanEntity->setAnimationState(SVE::AnimationState::Pause);
     _trashmanEntity->setRenderLast();
@@ -199,15 +213,13 @@ void Player::resetPlaying()
 
 void Player::createAppearEffect()
 {
-    // Almost copy paste from teleport creation (except platform and light effect)
-    // TODO: remove copy-paste, unify code
     auto* engine = SVE::Engine::getInstance();
-    auto color = glm::vec3(1.0, 1.0, 0.0);
+    auto color = glm::vec3(1.0, 1.0, 0.5);
 
     _appearNode = engine->getSceneManager()->createSceneNode();
-    std::shared_ptr<SVE::ParticleSystemEntity> teleportPS = std::make_shared<SVE::ParticleSystemEntity>("TeleportStars");
-    teleportPS->getMaterialInfo()->diffuse = glm::vec4( color,0.6f);
-    _appearNode->attachEntity(teleportPS);
+    std::shared_ptr<SVE::ParticleSystemEntity> starsPS = std::make_shared<SVE::ParticleSystemEntity>("PowerUp");
+    starsPS->getMaterialInfo()->diffuse = glm::vec4(color, 0.6f);
+    _appearNode->attachEntity(starsPS);
 
     _appearNodeGlow = engine->getSceneManager()->createSceneNode();
     _appearNode->attachSceneNode(_appearNodeGlow);
@@ -231,6 +243,16 @@ void Player::showAppearEffect(bool show)
     }
 }
 
+void Player::showDisappearEffect(bool show)
+{
+    if (show)
+    {
+        _rootNode->attachSceneNode(_disappearNode);
+    } else {
+        _rootNode->detachSceneNode(_disappearNode);
+    }
+}
+
 void Player::updateAppearEffect()
 {
     auto updateNode = [](std::shared_ptr<SVE::SceneNode>& node, float time)
@@ -240,6 +262,34 @@ void Player::updateAppearEffect()
     };
 
     updateNode(_appearNodeGlow, _appearTime * 5);
+}
+
+void Player::createPowerUpEffect()
+{
+    auto* engine = SVE::Engine::getInstance();
+    auto color = glm::vec3(0.5, 0.5, 1.0);
+
+    _powerUpEffectNode = engine->getSceneManager()->createSceneNode();
+    std::shared_ptr<SVE::ParticleSystemEntity> powerUpPS = std::make_shared<SVE::ParticleSystemEntity>("PowerUp");
+    powerUpPS->getMaterialInfo()->diffuse = glm::vec4(color, 0.6f);
+    _powerUpEffectNode->attachEntity(powerUpPS);
+}
+
+void Player::playPowerUpAnimation()
+{
+    _rootNode->attachSceneNode(_powerUpEffectNode);
+    _powerUpTime = 1.0f;
+}
+
+void Player::createDisappearEffect()
+{
+    auto* engine = SVE::Engine::getInstance();
+    auto color = glm::vec3(1.0, 0.5, 0.0);
+
+    _disappearNode = engine->getSceneManager()->createSceneNode();
+    std::shared_ptr<SVE::ParticleSystemEntity> disappearPS = std::make_shared<SVE::ParticleSystemEntity>("Disappear");
+    disappearPS->getMaterialInfo()->diffuse = glm::vec4(color, 1.5f);
+    _disappearNode->attachEntity(disappearPS);
 }
 
 } // namespace Chewman

@@ -17,6 +17,8 @@ layout(location = 0) in InData
 layout(set = 1, binding = 0) uniform UBO
 {
     mat4 projection;
+    mat4 model;
+    mat4 view;
     ParticleEmitter emitter;
 } ubo;
 
@@ -43,25 +45,25 @@ void main()
         vec4 position = gl_in[0].gl_Position;
         float lifePercent = geomData[0].geomLife / geomData[0].geomStartLife;
 
-        gl_Position = ubo.projection * (gl_in[0].gl_Position + vec4(rotateVector(-halfSize, halfSizeHoriz), 0.0, 0.0 ));
+        gl_Position = ubo.projection * (gl_in[0].gl_Position + ubo.view * ubo.model * vec4(rotateVector(-halfSize, halfSizeHoriz), 0.0, 0.0 ));
         fragTexCoord = vec2(0.0, 1.0);
         fragColor = geomData[0].geomColor;
         fragLifePercent = lifePercent;
         EmitVertex();
 
-        gl_Position = ubo.projection * (gl_in[0].gl_Position + vec4(rotateVector(-halfSize, -halfSizeHoriz), 0.0, 0.0 ));
+        gl_Position = ubo.projection * (gl_in[0].gl_Position + ubo.view * ubo.model * vec4(rotateVector(-halfSize, -halfSizeHoriz), 0.0, 0.0 ));
         fragTexCoord = vec2(0.0, 0.0);
         fragColor = geomData[0].geomColor;
         fragLifePercent = lifePercent;
         EmitVertex();
 
-        gl_Position = ubo.projection * (gl_in[0].gl_Position + vec4(rotateVector(halfSize, halfSizeHoriz), 0.0, 0.0 ));
+        gl_Position = ubo.projection * (gl_in[0].gl_Position + ubo.view * ubo.model * vec4(rotateVector(halfSize, halfSizeHoriz), 0.0, 0.0 ));
         fragTexCoord = vec2(1.0, 1.0);
         fragColor = geomData[0].geomColor;
         fragLifePercent = lifePercent;
         EmitVertex();
 
-        gl_Position = ubo.projection * (gl_in[0].gl_Position + vec4(rotateVector(halfSize, -halfSizeHoriz), 0.0, 0.0 ));
+        gl_Position = ubo.projection * (gl_in[0].gl_Position + ubo.view * ubo.model * vec4(rotateVector(halfSize, -halfSizeHoriz), 0.0, 0.0 ));
         fragTexCoord = vec2(1.0, 0.0);
         fragColor = geomData[0].geomColor;
         fragLifePercent = lifePercent;
