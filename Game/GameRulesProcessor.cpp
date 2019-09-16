@@ -9,6 +9,16 @@
 namespace Chewman
 {
 
+namespace
+{
+
+inline float smoothStep(float data)
+{
+    return glm::smoothstep(0.0f, 1.0f, data);
+}
+
+}
+
 GameRulesProcessor::GameRulesProcessor(GameMapProcessor& gameMapProcessor)
     : _gameMapProcessor(gameMapProcessor)
 {
@@ -54,6 +64,20 @@ void GameRulesProcessor::update(float deltaTime)
     {
         const auto& mapTraveller = player->getMapTraveller();
 
+        if (_isCameraMoving)
+        {
+            updateCameraAnimation(deltaTime);
+            if (!_isCameraMoving)
+            {
+                _gameMapProcessor.setState(GameState::Game);
+                player->setCameraFollow(true);
+            }
+            else
+            {
+                return;
+            }
+        }
+
         updateAffectors(deltaTime);
 
         // Eat coins and powerUps
@@ -73,7 +97,35 @@ void GameRulesProcessor::update(float deltaTime)
                 player->playPowerUpAnimation();
                 powerUp = nullptr;
             }
+            if (auto* teleport = gameMap->mapData[mapPos.x][mapPos.y].teleport)
+            {
+                if (mapTraveller->isTargetReached() && !_insideTeleport)
+                {
+                    auto camera = SVE::Engine::getInstance()->getSceneManager()->getMainCamera();
+                    auto& player = getPlayer();
+                    _cameraStart[0] = camera->getPosition();
+                    _cameraStart[1] = camera->getYawPitchRoll();
+
+                    mapTraveller->setPosition(teleport->secondEnd->position);
+                    player->update(0);
+                    camera->setLookAt(glm::vec3(0.0f, 16.0f, 19.0f), glm::vec3(0), glm::vec3(0, 1, 0));
+                    _cameraEnd[0] = camera->getPosition();
+                    _cameraEnd[1] = camera->getYawPitchRoll();
+
+                    _cameraSpeed = 1.5f;
+                    _cameraTime = 0.0f;
+                    _isCameraMoving = true;
+                    _gameMapProcessor.setState(GameState::Animation);
+                    updateCameraAnimation(0.0f);
+                    player->setCameraFollow(false);
+                    _insideTeleport = true;
+                    return;
+                }
+            }
+        } else {
+            _insideTeleport = false;
         }
+
 
         // Check death
         bool isPlayerDead = [&]() {
@@ -88,9 +140,14 @@ void GameRulesProcessor::update(float deltaTime)
 
             for (auto& nun : gameMap->nuns)
             {
+                if (nun.isDead())
+                    continue;
                 if (mapTraveller->isCloseToAffect(nun.getPosition()))
                 {
-                    return true;
+                    if (nun.isStateActive(EnemyState::Vulnerable))
+                        nun.increaseState(EnemyState::Dead);
+                    else
+                        return true;
                 }
             }
 
@@ -138,11 +195,6 @@ void GameRulesProcessor::playDeath(float deltaTime)
 {
     _deathTime += deltaTime;
 
-    auto smoothStep = [](float data)
-    {
-        return glm::smoothstep(0.0f, 1.0f, data);
-    };
-
     if (_deathTime <= 0.5f)
     {
         auto camera = SVE::Engine::getInstance()->getSceneManager()->getMainCamera();
@@ -164,12 +216,13 @@ void GameRulesProcessor::playDeath(float deltaTime)
             camera->setLookAt(glm::vec3(0.0f, 16.0f, 19.0f), glm::vec3(0), glm::vec3(0, 1, 0));
             _cameraEnd[0] = camera->getPosition();
             _cameraEnd[1] = camera->getYawPitchRoll();
+
+            _cameraSpeed = 1.1111f;
+            _cameraTime = 0.0f;
+            _isCameraMoving = true;
         }
 
-        auto pos = glm::mix(_cameraStart[0], _cameraEnd[0], smoothStep((_deathTime - 3.8f) * 1.1111f));
-        auto angles = glm::mix(_cameraStart[1], _cameraEnd[1], smoothStep((_deathTime - 3.8f) * 1.1111f));
-        camera->setPosition(pos);
-        camera->setYawPitchRoll(angles);
+        updateCameraAnimation(deltaTime);
     }
 }
 
@@ -198,11 +251,17 @@ void GameRulesProcessor::deactivatePowerUp(PowerUpType type)
     if (_activeState[typeIndex])
         return;
 
+    auto gameMap = _gameMapProcessor.getGameMap();
+
     switch (type)
     {
         case PowerUpType::Pentagram:
+            for (auto & enemy : gameMap->nuns)
+                enemy.resetState(EnemyState::Vulnerable);
             break;
         case PowerUpType::Freeze:
+            for (auto & enemy : gameMap->nuns)
+                enemy.resetState(EnemyState::Frozen);
             break;
         case PowerUpType::Acceleration:
             getPlayer()->getMapTraveller()->setSpeed(MoveSpeed);
@@ -224,11 +283,18 @@ void GameRulesProcessor::deactivatePowerUp(PowerUpType type)
 void GameRulesProcessor::activatePowerUp(PowerUpType type)
 {
     ++_activeState[static_cast<uint8_t>(type)];
+    auto gameMap = _gameMapProcessor.getGameMap();
     switch (type)
     {
         case PowerUpType::Pentagram:
+            _gameAffectors.push_back({type, 10.0f});
+            for (auto & enemy : gameMap->nuns)
+                enemy.increaseState(EnemyState::Vulnerable);
             break;
         case PowerUpType::Freeze:
+            _gameAffectors.push_back({type, 10.0f});
+            for (auto & enemy : gameMap->nuns)
+                enemy.increaseState(EnemyState::Frozen);
             break;
         case PowerUpType::Acceleration:
             _gameAffectors.push_back({type, 10.0f});
@@ -246,6 +312,22 @@ void GameRulesProcessor::activatePowerUp(PowerUpType type)
             _gameAffectors.push_back({type, 10.0f});
             getPlayer()->getMapTraveller()->setSpeed(MoveSpeed * 0.5f);
             break;
+    }
+}
+
+void GameRulesProcessor::updateCameraAnimation(float deltaTime)
+{
+    auto camera = SVE::Engine::getInstance()->getSceneManager()->getMainCamera();
+
+    _cameraTime += deltaTime * _cameraSpeed;
+    auto pos = glm::mix(_cameraStart[0], _cameraEnd[0], smoothStep(_cameraTime));
+    auto angles = glm::mix(_cameraStart[1], _cameraEnd[1], smoothStep(_cameraTime));
+    camera->setPosition(pos);
+    camera->setYawPitchRoll(angles);
+
+    if (_cameraTime >= 1.0f)
+    {
+        _isCameraMoving = false;
     }
 }
 

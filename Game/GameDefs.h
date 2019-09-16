@@ -9,6 +9,7 @@ namespace Chewman
 
 struct Coin;
 class PowerUp;
+struct Teleport;
 
 constexpr float CellSize = 3.0f;
 constexpr float MoveSpeed = 6.5f;
@@ -28,6 +29,7 @@ struct CellInfo
 
     Coin* coin = nullptr;
     PowerUp* powerUp = nullptr;
+    Teleport* teleport = nullptr;
 };
 
 using CellInfoMap = std::vector<std::vector<CellInfo>>;

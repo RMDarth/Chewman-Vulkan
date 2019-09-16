@@ -21,6 +21,7 @@ struct Teleport
 
     std::shared_ptr<SVE::SceneNode> circleNode;
     std::shared_ptr<SVE::SceneNode> glowNode;
+    glm::ivec2 position;
 
     Teleport* secondEnd;
     TeleportType type;

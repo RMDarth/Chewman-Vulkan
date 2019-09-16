@@ -36,6 +36,7 @@ public:
 
     std::shared_ptr<MapTraveller> getMapTraveller();
     PlayerInfo* getPlayerInfo();
+    void setCameraFollow(bool value);
     void resetPosition();
     void resetPlaying();
     void playDeathAnimation();
@@ -54,12 +55,16 @@ private:
     // for debug
     bool _followMode = false;
 
+    bool _isCameraFollow = true;
+
     float _appearTime = 0.0f;
     bool _appearing = false;
 
     glm::ivec2 _startPos;
     std::shared_ptr<SVE::SceneNode> _rootNode;
+    std::shared_ptr<SVE::SceneNode> _rotateNode;
     std::shared_ptr<SVE::MeshEntity> _trashmanEntity;
+    std::shared_ptr<SVE::MeshEntity> _powerUpEntity;
     std::shared_ptr<MapTraveller> _mapTraveller;
     std::unique_ptr<PlayerInfo> _playerInfo;
     GameMap* _gameMap;

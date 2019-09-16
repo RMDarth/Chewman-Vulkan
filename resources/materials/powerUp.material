@@ -1,0 +1,17 @@
+{
+    "name": "PowerUpMaterial",
+    "vertexShaderName": "phongVertexShader",
+    "fragmentShaderName": "powerUpFragmentShader",
+    "cullFace": "None",
+    "passType": "ScreenQuadMRTPass",
+    "useAlphaBlending": true,
+    "srcBlendFactor": "SrcAlpha",
+    "dstBlendFactor": "One",
+    "useDepthWrite": false,
+    "textures": [
+        {
+            "samplerName": "texSampler",
+            "filename": "textures/powerups/powerUp2.png"
+        }
+    ]
+}

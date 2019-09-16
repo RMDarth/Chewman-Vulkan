@@ -1,0 +1,16 @@
+{
+    "name": "DebuffMaterial",
+    "vertexShaderName": "phongVertexShader",
+    "fragmentShaderName": "debuffFragmentShader",
+    "cullFace": "None",
+    "useAlphaBlending": true,
+    "srcBlendFactor": "SrcAlpha",
+    "dstBlendFactor": "One",
+    "useDepthWrite": false,
+    "textures": [
+        {
+            "samplerName": "texSampler",
+            "filename": "textures/teleport/Sparkle_sprite_tp_green.png"
+        }
+    ]
+}

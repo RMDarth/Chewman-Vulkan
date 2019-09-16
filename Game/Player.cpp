@@ -65,9 +65,12 @@ Player::Player(GameMap* gameMap, glm::ivec2 startPos)
     _rootNode->setNodeTransformation(transform);
     gameMap->mapNode->attachSceneNode(_rootNode);
 
+    _rotateNode = engine->getSceneManager()->createSceneNode();
+    _rootNode->attachSceneNode(_rotateNode);
+
     _trashmanEntity = std::make_shared<SVE::MeshEntity>("trashman");
     _trashmanEntity->setMaterial("Yellow");
-    _rootNode->attachEntity(_trashmanEntity);
+    _rotateNode->attachEntity(_trashmanEntity);
 
     _rootNode->attachSceneNode(addLightEffect(engine));
 
@@ -84,9 +87,12 @@ void Player::update(float deltaTime)
         {
             updateMovement(deltaTime);
 
-            auto camera = SVE::Engine::getInstance()->getSceneManager()->getMainCamera();
-            camera->setParent(_rootNode);
-            camera->setLookAt(glm::vec3(0.0f, 16.0f, 19.0f), glm::vec3(0), glm::vec3(0, 1, 0));
+            if (_isCameraFollow)
+            {
+                auto camera = SVE::Engine::getInstance()->getSceneManager()->getMainCamera();
+                camera->setParent(_rootNode);
+                camera->setLookAt(glm::vec3(0.0f, 16.0f, 19.0f), glm::vec3(0), glm::vec3(0, 1, 0));
+            }
 
             if (_appearing)
             {
@@ -120,10 +126,9 @@ void Player::update(float deltaTime)
 
     const auto realMapPos = _mapTraveller->getRealPosition();
     const auto position = glm::vec3(realMapPos.y, 0, -realMapPos.x);
-    auto transform = glm::translate(glm::mat4(1), position);
+    _rootNode->setNodeTransformation(glm::translate(glm::mat4(1), position));
     const auto rotateAngle = 90.0f * static_cast<uint8_t>(_mapTraveller->getCurrentDirection());
-    transform = glm::rotate(transform, glm::radians(rotateAngle), glm::vec3(0, 1, 0));
-    _rootNode->setNodeTransformation(transform);
+    _rotateNode->setNodeTransformation(glm::rotate(glm::mat4(1), glm::radians(rotateAngle), glm::vec3(0, 1, 0)));
 }
 
 void Player::processInput(const SDL_Event& event)
@@ -273,12 +278,23 @@ void Player::createPowerUpEffect()
     std::shared_ptr<SVE::ParticleSystemEntity> powerUpPS = std::make_shared<SVE::ParticleSystemEntity>("PowerUp");
     powerUpPS->getMaterialInfo()->diffuse = glm::vec4(color, 0.6f);
     _powerUpEffectNode->attachEntity(powerUpPS);
+
+    auto spiralNode = engine->getSceneManager()->createSceneNode();
+    spiralNode->setNodeTransformation(glm::translate(glm::mat4(1), glm::vec3(0, 1, 0)));
+    _powerUpEffectNode->attachSceneNode(spiralNode);
+    _powerUpEntity = std::make_shared<SVE::MeshEntity>("spiral");
+    _powerUpEntity->setMaterial("PowerUpMaterial");
+    //powerUpNode->setRenderLast();
+    _powerUpEntity->setCastShadows(false);
+    _powerUpEntity->getMaterialInfo()->diffuse = {1.0, 1.0, 1.0, 1.0f };
+    spiralNode->attachEntity(_powerUpEntity);
 }
 
 void Player::playPowerUpAnimation()
 {
     _rootNode->attachSceneNode(_powerUpEffectNode);
-    _powerUpTime = 1.0f;
+    _powerUpEntity->resetTime();
+    _powerUpTime = 1.2f;
 }
 
 void Player::createDisappearEffect()
@@ -290,6 +306,11 @@ void Player::createDisappearEffect()
     std::shared_ptr<SVE::ParticleSystemEntity> disappearPS = std::make_shared<SVE::ParticleSystemEntity>("Disappear");
     disappearPS->getMaterialInfo()->diffuse = glm::vec4(color, 1.5f);
     _disappearNode->attachEntity(disappearPS);
+}
+
+void Player::setCameraFollow(bool value)
+{
+    _isCameraFollow = value;
 }
 
 } // namespace Chewman

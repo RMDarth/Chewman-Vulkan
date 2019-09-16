@@ -33,6 +33,7 @@ private:
 
     std::shared_ptr<Player>& getPlayer();
 
+    void updateCameraAnimation(float deltaTime);
 private:
     GameMapProcessor& _gameMapProcessor;
     std::shared_ptr<Player> _player;
@@ -44,7 +45,12 @@ private:
     float _deathTime = 0;
     bool _deathSecondPhase = false;
 
+    bool _insideTeleport = false;
+
     // Camera animation
+    bool _isCameraMoving = false;
+    float _cameraTime = 0.0f;
+    float _cameraSpeed = 1.0f;
     glm::vec3 _cameraStart[2]; // pos + angles
     glm::vec3 _cameraEnd[2];
 };

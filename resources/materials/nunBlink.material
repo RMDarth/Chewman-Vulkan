@@ -1,0 +1,15 @@
+{
+    "name": "NunBlinkMaterial",
+    "vertexShaderName": "phongShadowVertexShader",
+    "fragmentShaderName": "phongShadowBlinkFragmentShader",
+    "textures": [
+        {
+            "samplerName": "diffuseTex",
+            "filename": "textures/trashnun_dressed_tex.png"
+        },
+        {
+            "samplerName": "directShadowTex",
+            "textureType": "ShadowMapDirect"
+        }
+    ]
+}

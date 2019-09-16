@@ -147,6 +147,7 @@ std::shared_ptr<GameMap> GameMapLoader::loadMap(const std::string& filename)
 
     gameMap->coins.reserve(gameMap->width * gameMap->height);
     gameMap->powerUps.reserve(gameMap->width * gameMap->height);
+    gameMap->teleports.reserve(gameMap->width * gameMap->height);
     for (auto row = 0u; row < gameMap->height; ++row)
     {
         fin.getline(line, 100);
@@ -210,6 +211,7 @@ std::shared_ptr<GameMap> GameMapLoader::loadMap(const std::string& filename)
                 case 'y':
                     gameMap->mapData[curRow][column].cellType = CellType::Floor;
                     createTeleport(*gameMap, curRow, column, ch);
+                    gameMap->mapData[curRow][column].teleport = &gameMap->teleports.back();
                     break;
                 case 'E':
                     gameMap->mapData[curRow][column].cellType = CellType::Floor;
@@ -481,6 +483,7 @@ void GameMapLoader::createTeleport(GameMap& level, int row, int column, char map
 
     Teleport teleport {};
     glm::vec3 color = {};
+    teleport.position = {row, column};
     switch (mapType)
     {
         case 'r':
@@ -581,8 +584,8 @@ void GameMapLoader::createTeleport(GameMap& level, int row, int column, char map
         if (&currentTeleport != &otherTeleport &&
             currentTeleport.type == otherTeleport.type)
         {
-            teleport.secondEnd = &otherTeleport;
-            otherTeleport.secondEnd = &teleport;
+            currentTeleport.secondEnd = &otherTeleport;
+            otherTeleport.secondEnd = &currentTeleport;
         }
     }
 }

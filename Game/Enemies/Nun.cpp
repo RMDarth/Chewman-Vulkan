@@ -51,13 +51,25 @@ Nun::Nun(GameMap* map, glm::ivec2 startPos)
 
     _rootNode = engine->getSceneManager()->createSceneNode();
     auto transform = glm::translate(glm::mat4(1), position);
+    _rotateNode = engine->getSceneManager()->createSceneNode();
+    _rootNode->attachSceneNode(_rotateNode);
 
     _rootNode->setNodeTransformation(transform);
     map->mapNode->attachSceneNode(_rootNode);
 
-    auto nunMesh = std::make_shared<SVE::MeshEntity>("nun");
-    nunMesh->setMaterial("NunMaterial");
-    _rootNode->attachEntity(nunMesh);
+    _nunMesh = std::make_shared<SVE::MeshEntity>("nun");
+    _nunMesh->setMaterial("NunMaterial");
+    _rotateNode->attachEntity(_nunMesh);
+
+
+    _debuffNode = engine->getSceneManager()->createSceneNode();
+    //_rootNode->attachSceneNode(_debuffNode);
+    std::shared_ptr<SVE::MeshEntity> debuffEntity = std::make_shared<SVE::MeshEntity>("cylinder");
+    debuffEntity->setMaterial("DebuffMaterial");
+    debuffEntity->setRenderLast();
+    debuffEntity->setCastShadows(false);
+    debuffEntity->getMaterialInfo()->diffuse = {1.0, 1.0, 1.0, 1.0 };
+    _debuffNode->attachEntity(debuffEntity);
 
     _rootNode->attachSceneNode(addLightEffect(engine));
 }
@@ -69,9 +81,52 @@ void Nun::update(float deltaTime)
     const auto realMapPos = _mapTraveller->getRealPosition();
     const auto position = glm::vec3(realMapPos.y, 0, -realMapPos.x);
     auto transform = glm::translate(glm::mat4(1), position);
-    const auto rotateAngle = 180.0f + 90.0f * static_cast<uint8_t>(_mapTraveller->getCurrentDirection());
-    transform = glm::rotate(transform, glm::radians(rotateAngle), glm::vec3(0, 1, 0));
     _rootNode->setNodeTransformation(transform);
+    const auto rotateAngle = 180.0f + 90.0f * static_cast<uint8_t>(_mapTraveller->getCurrentDirection());
+    transform = glm::rotate(glm::mat4(1), glm::radians(rotateAngle), glm::vec3(0, 1, 0));
+    _rotateNode->setNodeTransformation(transform);
+
+    transform = glm::scale(glm::mat4(1), glm::vec3(1.0f, 2.0f, 1.0f));
+    transform = glm::rotate(transform, SVE::Engine::getInstance()->getTime() * glm::radians(90.0f) * 5.0f, glm::vec3(0.0f, 1.0f, 0.0f));
+    _debuffNode->setNodeTransformation(transform);
+}
+
+
+void Nun::increaseState(EnemyState state)
+{
+    Enemy::increaseState(state);
+    switch (state)
+    {
+        case EnemyState::Frozen:
+            break;
+        case EnemyState::Vulnerable:
+            _nunMesh->setMaterial("NunBlinkMaterial");
+            _rootNode->attachSceneNode(_debuffNode);
+            break;
+        case EnemyState::Dead:
+            _rootNode->getParent()->detachSceneNode(_rootNode);
+            break;
+    }
+}
+
+void Nun::decreaseState(EnemyState state)
+{
+    Enemy::decreaseState(state);
+    if (!isStateActive(state))
+    {
+        switch(state)
+        {
+            case EnemyState::Frozen:
+                break;
+            case EnemyState::Vulnerable:
+                _nunMesh->setMaterial("NunMaterial");
+                _rootNode->detachSceneNode(_debuffNode);
+                break;
+            case EnemyState::Dead:
+                _gameMap->mapNode->attachSceneNode(_rootNode);
+                break;
+        }
+    }
 }
 
 } // namespace Chewman
