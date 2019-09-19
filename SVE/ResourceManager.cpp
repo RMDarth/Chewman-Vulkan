@@ -9,6 +9,7 @@
 #include "MeshSettings.h"
 #include "LightSettings.h"
 #include "ParticleSystemManager.h"
+#include "FontManager.h"
 
 #include "Engine.h"
 #include "ShaderManager.h"
@@ -116,6 +117,9 @@ std::vector<UniformInfo> getUniformInfoList(rj::Document& document)
             {"ParticleCount",                   UniformType::ParticleCount},
             {"SpritesheetSize",                 UniformType::SpritesheetSize},
             {"ImageSize",                       UniformType::ImageSize},
+            {"TextInfo",                        UniformType::TextInfo},
+            {"GlyphInfoList",                   UniformType::GlyphInfoList},
+            {"TextSymbolList",                  UniformType::TextSymbolList},
             {"Time",                            UniformType::Time},
             {"DeltaTime",                       UniformType::DeltaTime},
     };
@@ -138,6 +142,7 @@ std::vector<BufferType> getBufferTypeList(rj::Document& document)
     static const std::map<std::string, BufferType> bufferMap{
             {"AtomicCounter",     BufferType::AtomicCounter },
             {"ModelMatrixList",   BufferType::ModelMatrixList },
+            {"TextSymbolList",    BufferType::TextSymbolList },
     };
 
     std::vector<BufferType> bufferList;
@@ -219,6 +224,7 @@ ShaderSettings loadShader(const cppfs::FilePath& directory, const std::string& d
     setOptional(shaderSettings.uniformList = getUniformInfoList(document));
     setOptional(shaderSettings.bufferList = getBufferTypeList(document));
     setOptional(shaderSettings.vertexInfo = getVertexInfo(document));
+    setOptional(shaderSettings.maxGlyphCount = document["maxGlyphCount"].GetUint());
     setOptional(shaderSettings.samplerNamesList = getStringList(document, "samplerNamesList"));
     shaderSettings.filename = directory.resolve(document["filename"].GetString()).fullPath();
     shaderSettings.shaderType = shaderTypeMap.at(document["shaderType"].GetString());
@@ -328,6 +334,40 @@ ParticleSystemSettings loadParticleSystem(const cppfs::FilePath& directory, cons
     particleSettings.particleAffector = std::move(affector);
 
     return particleSettings;
+}
+
+Font loadFont(const cppfs::FilePath& directory, const std::string& data)
+{
+    rj::Document document;
+    document.Parse(data.c_str());
+
+    Font font {};
+    font.fontName = document["name"].GetString();
+    font.image = document["image"].GetString();
+    font.width = document["width"].GetUint();
+    font.height = document["height"].GetUint();
+    font.maxHeight = 0;
+
+    auto characters = document["characters"].GetObject();
+    uint32_t symbolIndex = 0;
+    for (auto& character : characters)
+    {
+        auto characterInfo = character.value.GetObject();
+        GlyphInfo glyphInfo {};
+        glyphInfo.x = characterInfo["x"].GetUint();
+        glyphInfo.y = characterInfo["y"].GetUint();
+        glyphInfo.width = characterInfo["width"].GetUint();
+        glyphInfo.height = characterInfo["height"].GetUint();
+        glyphInfo.originX = characterInfo["originX"].GetInt();
+        glyphInfo.originY = characterInfo["originY"].GetInt();
+        glyphInfo.advance = characterInfo["advance"].GetUint();
+        font.symbolToInfoPos[character.name.GetString()[0]] = symbolIndex;
+        font.symbols[symbolIndex] = glyphInfo;
+        font.maxHeight = std::max(font.maxHeight, glyphInfo.originY);
+        ++symbolIndex;
+    }
+
+    return font;
 }
 
 MaterialSettings loadMaterial(const cppfs::FilePath& directory, const std::string& data)
@@ -490,6 +530,10 @@ void ResourceManager::initializeResources(LoadData& data)
     {
         engine->getParticleSystemManager()->registerParticleSystem(particleSystemSettings);
     }
+    for (auto& font : data.fontList)
+    {
+        engine->getFontManager()->addFont(font);
+    }
 }
 
 void ResourceManager::loadFolder(const std::string& folder)
@@ -550,7 +594,8 @@ void ResourceManager::loadFile(const std::string& filename, LoadData& loadData)
         {"material", ResourceType::Material},
         {"mesh", ResourceType::Mesh},
         {"light", ResourceType::Light},
-        {"particle", ResourceType::ParticleSystem}
+        {"particle", ResourceType::ParticleSystem},
+        {"font", ResourceType::Font}
     };
 
     if (resourceTypeMap.find(type) == resourceTypeMap.end())
@@ -585,6 +630,9 @@ void ResourceManager::loadFile(const std::string& filename, LoadData& loadData)
                 break;
             case ResourceType::ParticleSystem:
                 loadData.particleSystemList.emplace_back(loadParticleSystem(directory, fileContent));
+                break;
+            case ResourceType::Font:
+                loadData.fontList.emplace_back(loadFont(directory, fileContent));
                 break;
         }
     } catch (const std::exception& ex)

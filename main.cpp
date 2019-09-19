@@ -2,12 +2,14 @@
 #include "SVE/SceneManager.h"
 #include "SVE/CameraNode.h"
 #include "SVE/MeshEntity.h"
+#include "SVE/TextEntity.h"
 #include "SVE/ResourceManager.h"
 #include "SVE/LightManager.h"
 #include "SVE/MeshManager.h"
 #include "SVE/ParticleSystemManager.h"
 #include "SVE/ParticleSystemEntity.h"
 #include "SVE/PostEffectManager.h"
+#include "SVE/FontManager.h"
 
 #include "Game/GameMap.h"
 #include "Game/GameMapLoader.h"
@@ -451,10 +453,15 @@ int runGame()
         //levelNode->setNodeTransformation(glm::translate(glm::mat4(1), glm::vec3(10, 5, 0)));
         //levelNode->attachEntity(levelEntity);
 
+        /// Add text
+        auto textEntity = std::make_shared<SVE::TextEntity>(engine->getFontManager()->generateText("Hello world", "Helvetica"));
+        floorNode->attachEntity(textEntity);
+
         bool quit = false;
         bool skipRendering = false;
         bool lockControl = false;
 
+        uint32_t frames = 0;
         auto startTime = std::chrono::high_resolution_clock::now();
         auto prevTime = std::chrono::duration<float, std::chrono::seconds::period>(std::chrono::high_resolution_clock::now() - startTime).count();
         while (!quit)
@@ -570,6 +577,10 @@ int runGame()
                     updateNode(circleNode, curTime * 5);
                 }
 
+                ++frames;
+                float fps = frames / engine->getTime();
+
+                textEntity->setText(engine->getFontManager()->generateText("FPS: " + std::to_string(fps), "Helvetica"));
             }
 
             prevTime = curTime;

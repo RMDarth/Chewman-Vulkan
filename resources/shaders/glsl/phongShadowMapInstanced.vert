@@ -28,12 +28,14 @@ layout(location = 0) out OutData
     vec4 fragDirectLightSpacePos;
 };
 
-out gl_PerVertex {
+out gl_PerVertex
+{
     vec4 gl_Position;
     float gl_ClipDistance[];
 };
 
-void main() {
+void main()
+{
     vec4 worldPos = ssbo.modelList[gl_InstanceIndex] * vec4(inPosition, 1.0);
     vec4 camPos = uniforms.view * worldPos;
 
@@ -43,7 +45,7 @@ void main() {
     fragTexCoord = inTexCoord;
 
     fragPos = vec3(worldPos);
-    fragNormal = vec3(transpose(inverse(uniforms.model)) * vec4(inNormal.xyz, 1.0));
+    fragNormal = vec3(transpose(inverse(ssbo.modelList[gl_InstanceIndex])) * vec4(inNormal.xyz, 1.0));
 
     fragDirectLightSpacePos =  uniforms.lightDirectViewProjection * worldPos;
     fragDirectLightSpacePos.xyzw = fragDirectLightSpacePos.xyzw / fragDirectLightSpacePos.w;

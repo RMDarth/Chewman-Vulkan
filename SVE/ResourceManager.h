@@ -14,6 +14,7 @@ struct ShaderSettings;
 struct MeshLoadSettings;
 struct LightSettings;
 struct ParticleSystemSettings;
+struct Font;
 
 class ResourceManager
 {
@@ -26,6 +27,7 @@ public:
         std::vector<MeshLoadSettings> meshList;
         std::vector<LightSettings> lightList;
         std::vector<ParticleSystemSettings> particleSystemList;
+        std::vector<Font> fontList;
     };
 
     explicit ResourceManager(std::vector<std::string> folderList);
@@ -43,7 +45,8 @@ private:
         Material,
         Mesh,
         Light,
-        ParticleSystem
+        ParticleSystem,
+        Font
     };
 
 private:

@@ -38,6 +38,9 @@ const std::map<UniformType, size_t>& getUniformSizeMap()
             { UniformType::ParticleCount, sizeof(uint32_t) },
             { UniformType::SpritesheetSize, sizeof(glm::ivec2) },
             { UniformType::ImageSize, sizeof(glm::ivec4) },
+            { UniformType::TextInfo, sizeof(UniformTextInfo) },
+            { UniformType::GlyphInfoList, sizeof(GlyphInfo) },
+            { UniformType::TextSymbolList, sizeof(TextSymbolInfo) },
             { UniformType::Time, sizeof(float) },
             { UniformType::DeltaTime, sizeof(float) },
     };
@@ -213,6 +216,21 @@ std::vector<char> getUniformDataByType(const UniformData& data, UniformType type
             const char* byteData = reinterpret_cast<const char*>(&data.imageSize);
             return std::vector<char>(byteData, byteData + sizeof(data.imageSize));
         }
+        case UniformType::TextInfo:
+        {
+            const char* byteData = reinterpret_cast<const char*>(&data.textInfo);
+            return std::vector<char>(byteData, byteData + sizeof(data.textInfo));
+        }
+        case UniformType::GlyphInfoList:
+        {
+            const char* byteData = reinterpret_cast<const char*>(data.glyphList.data());
+            return std::vector<char>(byteData, byteData + sizeMap.at(type) * data.glyphList.size());
+        }
+        case UniformType::TextSymbolList:
+        {
+            const char* byteData = reinterpret_cast<const char*>(data.textSymbolList.data());
+            return std::vector<char>(byteData, byteData + sizeMap.at(type) * data.textSymbolList.size());
+        }
         case UniformType::Time:
         {
             const char* byteData = reinterpret_cast<const char*>(&data.time);
@@ -244,7 +262,7 @@ void updateStorageDataByUniforms(const UniformData& data, StorageData& storageDa
         }
     }
 
-    throw VulkanException("Unsupported uniform type");
+    throw VulkanException("Unsupported SSBO type");
 }
 
 } // namespace SVE

@@ -8,6 +8,7 @@
 #include "Libs.h"
 #include "LightSettings.h"
 #include "ParticleSystemSettings.h"
+#include "TextSettings.h"
 
 namespace SVE
 {
@@ -40,6 +41,9 @@ enum class UniformType : uint8_t
     ParticleCount,
     SpritesheetSize,
     ImageSize,
+    TextInfo,
+    GlyphInfoList,
+    TextSymbolList, // move to Buffer
     Time,
     DeltaTime
     // TODO: Add material properties, other matrices types etc.
@@ -48,7 +52,8 @@ enum class UniformType : uint8_t
 enum class BufferType : uint8_t
 {
     AtomicCounter,
-    ModelMatrixList
+    ModelMatrixList,
+    TextSymbolList
 };
 
 enum class ShaderType : uint8_t
@@ -99,6 +104,10 @@ struct UniformData
     uint32_t particleCount = 0;
     glm::ivec2 spritesheetSize;
     glm::ivec4 imageSize;
+
+    UniformTextInfo textInfo {};
+    std::vector<GlyphInfo> glyphList;
+    std::vector<TextSymbolInfo> textSymbolList;
 };
 
 struct UniformInfo
@@ -144,6 +153,8 @@ struct ShaderSettings
     uint32_t maxLightSize = 6;
     uint32_t maxCascadeLightSize = 5;
     uint32_t maxViewProjectionMatrices = 6 * maxShadowPointLightSize;
+    uint32_t maxGlyphCount = 300;
+    uint32_t maxTextSize = 100;
 
     std::string entryPoint = "main";
 };

@@ -17,6 +17,7 @@
 #include "ParticleSystemManager.h"
 #include "PostEffectManager.h"
 #include "ResourceManager.h"
+#include "FontManager.h"
 #include "Entity.h"
 #include "Skybox.h"
 #include "ShadowMap.h"
@@ -102,6 +103,7 @@ Engine::Engine(SDL_Window* window, EngineSettings settings)
     , _resourceManager(std::make_unique<ResourceManager>())
     , _particleSystemManager(std::make_unique<ParticleSystemManager>())
     , _postEffectManager(std::make_unique<PostEffectManager>())
+    , _fontManager(std::make_unique<FontManager>())
 {
     getTime();
 }
@@ -116,6 +118,7 @@ Engine::~Engine()
     _materialManager.reset();
     _vulkanInstance.reset();
     _postEffectManager.reset();
+    _fontManager.reset();
 }
 
 MaterialManager* Engine::getMaterialManager()
@@ -151,6 +154,11 @@ ParticleSystemManager* Engine::getParticleSystemManager()
 PostEffectManager* Engine::getPostEffectManager()
 {
     return _postEffectManager.get();
+}
+
+FontManager* Engine::getFontManager()
+{
+    return _fontManager.get();
 }
 
 void Engine::resizeWindow()

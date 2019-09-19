@@ -20,6 +20,7 @@ class MeshManager;
 class ResourceManager;
 class ParticleSystemManager;
 class PostEffectManager;
+class FontManager;
 
 enum class CommandsType : uint8_t
 {
@@ -56,6 +57,7 @@ public:
     ResourceManager* getResourceManager();
     ParticleSystemManager* getParticleSystemManager();
     PostEffectManager* getPostEffectManager();
+    FontManager* getFontManager();
 
     void resizeWindow();
     glm::ivec2 getRenderWindowSize();
@@ -89,6 +91,7 @@ private:
     std::unique_ptr<ResourceManager> _resourceManager;
     std::unique_ptr<ParticleSystemManager> _particleSystemManager;
     std::unique_ptr<PostEffectManager> _postEffectManager;
+    std::unique_ptr<FontManager> _fontManager;
 
     std::chrono::high_resolution_clock::time_point _startTime = std::chrono::high_resolution_clock::now();
     std::chrono::high_resolution_clock::time_point _currentTime = std::chrono::high_resolution_clock::now();

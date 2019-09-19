@@ -108,6 +108,14 @@ size_t VulkanShaderInfo::getShaderUniformsSize() const
         {
             size += sizeMap.at(info.uniformType) * _shaderSettings.maxViewProjectionMatrices;
         }
+        else if (info.uniformType == UniformType::GlyphInfoList)
+        {
+            size += sizeMap.at(info.uniformType) * _shaderSettings.maxGlyphCount;
+        }
+        else if (info.uniformType == UniformType::TextSymbolList)
+        {
+            size += sizeMap.at(info.uniformType) * _shaderSettings.maxTextSize;
+        }
         else
         {
             size += sizeMap.at(info.uniformType);
