@@ -136,19 +136,22 @@ void MeshEntity::applyDrawingCommands(uint32_t bufferIndex, uint32_t imageIndex)
         if (_material->isMRT())
             return;
 
-        if (_shadowMaterial && _castShadows)
-            _shadowMaterial->getVulkanMaterial()->applyDrawingCommands(
-                    bufferIndex,
-                    imageIndex,
-                    _shadowIndex);
+        if (!_castShadows || !_shadowMaterial)
+            return;
+
+        _shadowMaterial->getVulkanMaterial()->applyDrawingCommands(
+                bufferIndex,
+                imageIndex,
+                _shadowIndex);
     }
     else if (Engine::getInstance()->getPassType() == CommandsType::ShadowPassPointLights)
     {
-        if (_pointLightShadowMaterial && _castShadows)
-            _pointLightShadowMaterial->getVulkanMaterial()->applyDrawingCommands(
-                    bufferIndex,
-                    imageIndex,
-                    _pointLightShadowMaterial->getVulkanMaterial()->getInstanceForEntity(this));
+        if (!_castShadows || !_pointLightShadowMaterial)
+            return;
+        _pointLightShadowMaterial->getVulkanMaterial()->applyDrawingCommands(
+                bufferIndex,
+                imageIndex,
+                _pointLightShadowMaterial->getVulkanMaterial()->getInstanceForEntity(this));
     }
     else if (Engine::getInstance()->getPassType() == CommandsType::ScreenQuadDepthPass)
     {
@@ -162,15 +165,10 @@ void MeshEntity::applyDrawingCommands(uint32_t bufferIndex, uint32_t imageIndex)
                     imageIndex,
                     _depthIndex);
     }
-    else if (Engine::getInstance()->getPassType() == CommandsType::ScreenQuadMRTPass)
-    {
-        if (!_material->isMRT())
-            return;
-        _material->getVulkanMaterial()->applyDrawingCommands(bufferIndex, imageIndex, _materialIndex);
-    }
     else
     {
-        if (_material->isMRT())
+        bool isMRTPass = Engine::getInstance()->getPassType() == CommandsType::ScreenQuadMRTPass;
+        if (isMRTPass != _material->isMRT())
             return;
         _material->getVulkanMaterial()->applyDrawingCommands(bufferIndex, imageIndex, _materialIndex);
     }
