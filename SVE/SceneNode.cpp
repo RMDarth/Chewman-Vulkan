@@ -106,4 +106,14 @@ glm::mat4 SceneNode::getTotalTransformation() const
     return totalTransform;
 }
 
+void SceneNode::setCurrentFrame(uint64_t frame)
+{
+    _currentFrame = frame;
+}
+
+uint64_t SceneNode::getCurrentFrame() const
+{
+    return _currentFrame;
+}
+
 } // namespace SVE

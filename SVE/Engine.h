@@ -98,6 +98,7 @@ private:
     std::chrono::high_resolution_clock::time_point _prevTime = std::chrono::high_resolution_clock::now();
     float _duration;
     float _deltaTime;
+    uint64_t _frameId = 0;
 };
 
 } // namespace SVE

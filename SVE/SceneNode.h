@@ -15,8 +15,12 @@ class SceneNode : public std::enable_shared_from_this<SceneNode>
 public:
     explicit SceneNode(std::string name);
     SceneNode();
+    virtual ~SceneNode() noexcept = default;
 
     const std::string& getName() const;
+
+    void setCurrentFrame(uint64_t frame);
+    uint64_t getCurrentFrame() const;
 
     void setParent(std::shared_ptr<SceneNode> parent);
     std::shared_ptr<SceneNode> getParent() const;
@@ -39,6 +43,7 @@ private:
     std::weak_ptr<SceneNode> _parent;
     std::list<std::shared_ptr<Entity>> _entityList;
     std::list<std::shared_ptr<SceneNode>> _sceneNodeList;
+    uint64_t _currentFrame;
 
     glm::mat4 _transformation = glm::mat4(1);
 };

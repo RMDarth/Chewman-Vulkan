@@ -31,7 +31,21 @@ MeshEntity::MeshEntity(Mesh* mesh)
     }
 }
 
-MeshEntity::~MeshEntity() = default;
+MeshEntity::~MeshEntity()
+{
+    if (_material)
+    {
+        _material->getVulkanMaterial()->deleteInstancesForEntity(this);
+    }
+    if (_shadowMaterial)
+    {
+        _shadowMaterial->getVulkanMaterial()->deleteInstancesForEntity(this);
+    }
+    if (_pointLightShadowMaterial)
+    {
+        _pointLightShadowMaterial->getVulkanMaterial()->deleteInstancesForEntity(this);
+    }
+}
 
 void MeshEntity::setMaterial(const std::string& materialName)
 {

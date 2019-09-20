@@ -7,7 +7,6 @@
 #include <SVE/Engine.h>
 #include <SVE/MeshManager.h>
 #include <SVE/SceneManager.h>
-#include <SVE/LightManager.h>
 
 #include <fstream>
 #define GLM_ENABLE_EXPERIMENTAL
@@ -29,7 +28,7 @@ glm::quat rotationBetweenVectors(glm::vec3 start, glm::vec3 dest)
 
     rotationAxis = cross(start, dest);
 
-    float s = sqrt( (1+cosTheta)*2 );
+    float s = sqrtf( (1+cosTheta)*2 );
     float invs = 1 / s;
 
     return glm::quat(
@@ -127,7 +126,6 @@ std::shared_ptr<GameMap> GameMapLoader::loadMap(const std::string& filename)
     fin >> style >> waterStyle >> levelName;
 
     gameMap->mapNode = SVE::Engine::getInstance()->getSceneManager()->createSceneNode();
-    SVE::Engine::getInstance()->getSceneManager()->getRootNode()->attachSceneNode(gameMap->mapNode);
 
     gameMap->mapData.resize(gameMap->height);
     char ch;
@@ -247,6 +245,7 @@ std::shared_ptr<GameMap> GameMapLoader::loadMap(const std::string& filename)
             }
         }
     }
+    gameMap->activeCoins = gameMap->coins.size();
 
     fin.getline(line, 100);
     initMeshes(*gameMap);
@@ -261,6 +260,7 @@ std::shared_ptr<GameMap> GameMapLoader::loadMap(const std::string& filename)
         gargoyle.fireTime = (float)(finishTime - startTime) / 1000;
         finalizeGargoyle(*gameMap, gargoyle);
     }
+
     createSmoke(*gameMap);
 
     fin.close();
@@ -406,9 +406,7 @@ void GameMapLoader::createGargoyle(GameMap& level, int row, int column, char map
     lightSettings.constAtten = 1.0f * 0.8f;
     lightSettings.linearAtten = 0.35f * 0.15f;
     lightSettings.quadAtten = 0.44f * 0.15f;
-    auto lightManager = engine->getSceneManager()->getLightManager();
-    auto lightNode = std::make_shared<SVE::LightNode>(lightSettings, lightManager->getLightCount());
-    lightManager->setLight(lightNode, lightManager->getLightCount());
+    auto lightNode = std::make_shared<SVE::LightNode>(lightSettings);
     rootGargoyleNode->attachSceneNode(lightNode);
     gargoyle.startPoint = rootPos;
     gargoyle.lightNode = lightNode;
@@ -566,9 +564,7 @@ void GameMapLoader::createTeleport(GameMap& level, int row, int column, char map
         lightSettings.constAtten = 1.0f * 1.8f;
         lightSettings.linearAtten = 0.35f * 0.25f;
         lightSettings.quadAtten = 0.44f * 0.25f;
-        auto lightManager = engine->getSceneManager()->getLightManager();
-        auto lightNode = std::make_shared<SVE::LightNode>(lightSettings, lightManager->getLightCount());
-        lightManager->setLight(lightNode, lightManager->getLightCount());
+        auto lightNode = std::make_shared<SVE::LightNode>(lightSettings);
         teleportLightNode->attachSceneNode(lightNode);
     }
 
@@ -619,7 +615,7 @@ Coin* GameMapLoader::createCoin(GameMap& level, int row, int column)
 void GameMapLoader::createSmoke(GameMap& level) const
 {
     auto smokeNode = SVE::Engine::getInstance()->getSceneManager()->createSceneNode();
-    smokeNode->setNodeTransformation(glm::translate(glm::mat4(1), glm::vec3(0, -0.5, 0)));
+    smokeNode->setNodeTransformation(glm::translate(glm::mat4(1), glm::vec3(0, -0.52, 0)));
     level.mapNode->attachSceneNode(smokeNode);
     std::shared_ptr<SVE::MeshEntity> smokeEntity = std::make_shared<SVE::MeshEntity>("SmokeFloor");
     smokeEntity->setMaterial("SmokeMaterial");

@@ -3,6 +3,8 @@
 // Licensed under the MIT License
 #include "GameMap.h"
 #include "SVE/Engine.h"
+#include "SVE/SceneManager.h"
+#include "SVE/LightManager.h"
 
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -27,6 +29,13 @@ GameMapProcessor::GameMapProcessor(std::shared_ptr<GameMap> gameMap)
     : _gameRulesProcessor(*this)
     , _gameMap(std::move(gameMap))
 {
+    SVE::Engine::getInstance()->getSceneManager()->getRootNode()->attachSceneNode(_gameMap->mapNode);
+}
+
+GameMapProcessor::~GameMapProcessor()
+{
+    SVE::Engine::getInstance()->getSceneManager()->getRootNode()->detachSceneNode(_gameMap->mapNode);
+    _gameMap.reset();
 }
 
 void GameMapProcessor::update(float deltaTime)
@@ -37,7 +46,7 @@ void GameMapProcessor::update(float deltaTime)
 
     _gameRulesProcessor.update(deltaTime);
 
-    if (_state == GameState::Game)
+    if (_state == GameMapState::Game)
         _totalTime += deltaTime;
     else
         _deltaTime = 0.0f;
@@ -74,6 +83,12 @@ void GameMapProcessor::update(float deltaTime)
 
     _gameMap->player->update(_deltaTime);
 }
+
+void GameMapProcessor::hide()
+{
+    SVE::Engine::getInstance()->getSceneManager()->getRootNode()->detachSceneNode(_gameMap->mapNode);
+}
+
 
 void GameMapProcessor::processInput(const SDL_Event& event)
 {
@@ -145,12 +160,12 @@ std::shared_ptr<GameMap> GameMapProcessor::getGameMap()
     return _gameMap;
 }
 
-void GameMapProcessor::setState(GameState gameState)
+void GameMapProcessor::setState(GameMapState gameState)
 {
     _state = gameState;
 }
 
-GameState GameMapProcessor::getState() const
+GameMapState GameMapProcessor::getState() const
 {
     return _state;
 }

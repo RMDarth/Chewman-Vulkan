@@ -1,0 +1,18 @@
+{
+    "name": "FontNordBoldMaterial",
+    "vertexShaderName": "textVertexShader",
+    "fragmentShaderName": "textFragmentShader",
+    "cullFace": "FrontFace",
+    "useAlphaBlending": true,
+    "srcBlendFactor": "SrcAlpha",
+    "dstBlendFactor": "OneMinusSrcAlpha",
+    "useDepthWrite": true,
+    "useDepthTest": false,
+    "textures": [
+            {
+                "samplerName": "texSampler",
+                "textureType": "ImageFile",
+                "filename": "textures/fonts/NordBold.png"
+            }
+        ]
+}

@@ -12,7 +12,8 @@ class ShadowMap;
 class LightNode : public SceneNode
 {
 public:
-    explicit LightNode(LightSettings lightSettings, uint32_t lightIndex);
+    explicit LightNode(LightSettings lightSettings);
+    ~LightNode() noexcept override ;
 
     const glm::mat4& getViewMatrix();
     const glm::mat4& getProjectionMatrix();
@@ -30,7 +31,6 @@ private:
     void createProjectionMatrix();
 
 private:
-    uint32_t _lightIndex;
     glm::vec3 _originalPos;
 
     LightSettings _lightSettings;

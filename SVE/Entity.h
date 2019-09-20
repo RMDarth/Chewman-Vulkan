@@ -49,7 +49,7 @@ public:
 protected:
     bool _renderLast = false;
     bool _renderToDepth = false;
-    std::shared_ptr<SceneNode> _parent;
+    std::weak_ptr<SceneNode> _parent;
 };
 
 } // namespace SVE

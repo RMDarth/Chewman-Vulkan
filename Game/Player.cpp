@@ -6,7 +6,6 @@
 #include <SVE/Engine.h>
 #include <SVE/SceneManager.h>
 #include <SVE/MeshEntity.h>
-#include <SVE/LightManager.h>
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "Game/GameMap.h"
@@ -36,10 +35,8 @@ std::shared_ptr<SVE::LightNode> addLightEffect(SVE::Engine* engine)
     lightSettings.constAtten = 1.0f * 1.8f;
     lightSettings.linearAtten = 0.35f * 0.15f;
     lightSettings.quadAtten = 0.44f * 0.15f;
-    auto lightManager = engine->getSceneManager()->getLightManager();
-    auto lightNode = std::make_shared<SVE::LightNode>(lightSettings, lightManager->getLightCount());
+    auto lightNode = std::make_shared<SVE::LightNode>(lightSettings);
     lightNode->setNodeTransformation(glm::translate(glm::mat4(1), glm::vec3(0, 2.5, 0)));
-    lightManager->setLight(lightNode, lightManager->getLightCount());
 
     return lightNode;
 }

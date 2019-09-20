@@ -45,8 +45,7 @@ void SceneManager::setMainCamera(std::shared_ptr<CameraNode> cameraEntity)
 
 std::shared_ptr<LightNode> SceneManager::createLight(LightSettings lightSettings)
 {
-    auto lightNode = std::make_shared<LightNode>(lightSettings, getLightManager()->getLightCount());
-    getLightManager()->setLight(lightNode, getLightManager()->getLightCount());
+    auto lightNode = std::make_shared<LightNode>(lightSettings);
     _root->attachSceneNode(lightNode);
 
     return lightNode;

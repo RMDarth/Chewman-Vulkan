@@ -24,33 +24,41 @@ LightManager::LightManager(bool useCascadeShadowMap)
 
 LightManager::~LightManager() = default;
 
-void LightManager::setLight(std::shared_ptr<LightNode> light, uint32_t index)
+void LightManager::addLight(LightNode* light)
 {
     if (light->getLightSettings().lightType == LightType::SunLight)
     {
-        _directLight = std::move(light);
+        _directLight = light;
     }
     else
     {
-        if (_lightList.size() <= index)
-            _lightList.resize(index + 1);
-
         if (light->getLightSettings().lightType == LightType::ShadowPointLight)
         {
             _usePointLightShadow = true;
         }
 
-        _lightList[index] = std::move(light);
+        _lightList.insert(light);
     }
 }
 
-std::shared_ptr<LightNode> LightManager::getLight(uint32_t index) const
+void LightManager::removeLight(LightNode* light)
 {
-    assert(index < _lightList.size());
-    return _lightList[index];
+    _lightList.erase(light);
 }
 
-std::shared_ptr<LightNode> LightManager::getDirectionLight() const
+LightNode* LightManager::getLight(uint32_t index) const
+{
+    assert(index < _lightList.size());
+    auto iter = _lightList.begin();
+    while(index)
+    {
+        --index;
+        ++iter;
+    }
+    return *iter;
+}
+
+LightNode* LightManager::getDirectionLight() const
 {
     return _directLight;
 }
@@ -77,13 +85,15 @@ std::shared_ptr<ShadowMap> LightManager::getDirectLightShadowMap()
 void LightManager::fillUniformData(UniformData& data, LightType viewSourceLightType)
 {
     data.lightPointViewProjectionList.resize(MAX_LIGHTS);
-    for (auto i = 0u; i < _lightList.size(); i++)
+    auto activeLights = 0;
+    for (auto& light : _lightList)
     {
-        if (_lightList[i])
+        if (light && light->getCurrentFrame() == _currentFrame)
         {
-            if (viewSourceLightType == LightType::ShadowPointLight && !_lightList[i]->castShadows())
+            if (viewSourceLightType == LightType::ShadowPointLight && !light->castShadows())
                 continue;
-            _lightList[i]->fillUniformData(data, i + 1, false);
+            light->fillUniformData(data, activeLights + 1, false);
+            ++activeLights;
         }
     }
     if (_directLight)
@@ -95,10 +105,15 @@ void LightManager::fillUniformData(UniformData& data, LightType viewSourceLightT
         _directLight->fillUniformData(data, 0, true);
     } else if (viewSourceLightType == LightType::ShadowPointLight)
     {
-        for (auto i = 0u; i < _lightList.size(); i++)
+        activeLights = 0;
+        for (auto& light : _lightList)
         {
-            if (_lightList[i] && _lightList[i]->castShadows())
-                _lightList[i]->fillUniformData(data, i + 1, true);
+            if (light && light->getCurrentFrame() == _currentFrame)
+            {
+                if (light->castShadows())
+                    light->fillUniformData(data, activeLights + 1, true);
+                ++activeLights;
+            }
         }
     }
 
@@ -114,9 +129,9 @@ void LightManager::fillUniformData(UniformData& data, LightType viewSourceLightT
     data.pointLightList.resize(20);
 }
 
-void LightManager::removeLight(uint32_t index)
+void LightManager::setCurrentFrame(uint64_t frame)
 {
-    _lightList.erase(_lightList.begin() + index);
+    _currentFrame = frame;
 }
 
 } // namespace SVE

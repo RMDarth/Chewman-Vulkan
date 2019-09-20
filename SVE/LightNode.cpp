@@ -13,11 +13,19 @@
 namespace SVE
 {
 
-LightNode::LightNode(LightSettings lightSettings, uint32_t lightIndex)
-    : _lightIndex(lightIndex)
-    , _lightSettings(std::move(lightSettings))
+LightNode::LightNode(LightSettings lightSettings)
+    : _lightSettings(std::move(lightSettings))
 {
     createProjectionMatrix();
+    Engine::getInstance()->getSceneManager()->getLightManager()->addLight(this);
+}
+
+LightNode::~LightNode() noexcept
+{
+    if (Engine::getInstance()->getSceneManager() != nullptr)
+    {
+        Engine::getInstance()->getSceneManager()->getLightManager()->removeLight(this);
+    }
 }
 
 LightSettings& LightNode::getLightSettings()
@@ -35,7 +43,6 @@ void LightNode::updateViewMatrix(glm::vec3 cameraPos, glm::vec3 cameraDir)
 
         _viewMatrix = glm::lookAt(_originalPos + cameraPos, _lightSettings.lookAt + cameraPos,
                                   glm::vec3(0.0f, 1.0f, 0.0f));
-
 
     }
 }
@@ -257,6 +264,5 @@ void LightNode::setNodeTransformation(glm::mat4 transform)
     SceneNode::setNodeTransformation(transform);
     createViewMatrix();
 }
-
 
 } // namespace SVE

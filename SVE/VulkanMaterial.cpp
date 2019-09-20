@@ -194,11 +194,30 @@ uint32_t VulkanMaterial::getInstanceForEntity(const Entity* entity, uint32_t ind
     }
 
     createUniformBuffers();
-    createStorageBuffers();
+    //createStorageBuffers();
     createDescriptorPool();
     createDescriptorSets();
     _entityInstanceMap[entity][index] = _instanceData.size() - 1;
     return _instanceData.size() - 1;
+}
+
+void VulkanMaterial::deleteInstancesForEntity(const Entity* entity)
+{
+    auto instanceIter = _entityInstanceMap.find(entity);
+    if (instanceIter == _entityInstanceMap.end())
+    {
+        return;
+    }
+
+    for (auto& index : instanceIter->second)
+    {
+        deleteDescriptorSets(_instanceData[index]);
+        deleteDescriptorPool(_instanceData[index]);
+        deleteUniformBuffers(_instanceData[index]);
+        _instanceData[index] = {};
+    }
+
+    _entityInstanceMap.erase(instanceIter);
 }
 
 bool VulkanMaterial::isSkeletal() const
@@ -851,23 +870,28 @@ void VulkanMaterial::deleteUniformBuffers()
 {
     for (auto& instance : _instanceData)
     {
-        for (auto buffer : instance.vertexUniformBuffers)
-        {
-            vkDestroyBuffer(_device, buffer, nullptr);
-        }
-        for (auto buffer : instance.geometryUniformBuffer)
-        {
-            vkDestroyBuffer(_device, buffer, nullptr);
-        }
-        for (auto buffer : instance.fragmentUniformBuffer)
-        {
-            vkDestroyBuffer(_device, buffer, nullptr);
-        }
+        deleteUniformBuffers(instance);
+    }
+}
 
-        for (auto memory : instance.uniformBuffersMemory)
-        {
-            vkFreeMemory(_device, memory, nullptr);
-        }
+void VulkanMaterial::deleteUniformBuffers(PerInstanceData& instance)
+{
+    for (auto buffer : instance.vertexUniformBuffers)
+    {
+        vkDestroyBuffer(_device, buffer, nullptr);
+    }
+    for (auto buffer : instance.geometryUniformBuffer)
+    {
+        vkDestroyBuffer(_device, buffer, nullptr);
+    }
+    for (auto buffer : instance.fragmentUniformBuffer)
+    {
+        vkDestroyBuffer(_device, buffer, nullptr);
+    }
+
+    for (auto memory : instance.uniformBuffersMemory)
+    {
+        vkFreeMemory(_device, memory, nullptr);
     }
 }
 
@@ -945,8 +969,13 @@ void VulkanMaterial::deleteDescriptorPool()
 {
     for (auto &instance : _instanceData)
     {
-        vkDestroyDescriptorPool(_device, instance.descriptorPool, nullptr);
+        deleteDescriptorPool(instance);
     }
+}
+
+void VulkanMaterial::deleteDescriptorPool(PerInstanceData& instance)
+{
+    vkDestroyDescriptorPool(_device, instance.descriptorPool, nullptr);
 }
 
 void VulkanMaterial::createDescriptorSets()
@@ -1087,6 +1116,11 @@ void VulkanMaterial::createDescriptorSets()
 }
 
 void VulkanMaterial::deleteDescriptorSets()
+{
+
+}
+
+void VulkanMaterial::deleteDescriptorSets(VulkanMaterial::PerInstanceData& instance)
 {
 
 }

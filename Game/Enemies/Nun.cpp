@@ -6,7 +6,6 @@
 #include <SVE/Engine.h>
 #include <SVE/SceneManager.h>
 #include <SVE/MeshEntity.h>
-#include <SVE/LightManager.h>
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "Game/GameMap.h"
@@ -29,10 +28,8 @@ std::shared_ptr<SVE::LightNode> addLightEffect(SVE::Engine* engine)
     lightSettings.constAtten = 1.0f * 1.8f;
     lightSettings.linearAtten = 0.35f * 0.25f;
     lightSettings.quadAtten = 0.44f * 0.25f;
-    auto lightManager = engine->getSceneManager()->getLightManager();
-    auto lightNode = std::make_shared<SVE::LightNode>(lightSettings, lightManager->getLightCount());
+    auto lightNode = std::make_shared<SVE::LightNode>(lightSettings);
     lightNode->setNodeTransformation(glm::translate(glm::mat4(1), glm::vec3(0, 1.5, 0)));
-    lightManager->setLight(lightNode, lightManager->getLightCount());
 
     return lightNode;
 }
@@ -61,7 +58,6 @@ Nun::Nun(GameMap* map, glm::ivec2 startPos)
     _nunMesh->setMaterial("NunMaterial");
     _rotateNode->attachEntity(_nunMesh);
 
-
     _debuffNode = engine->getSceneManager()->createSceneNode();
     //_rootNode->attachSceneNode(_debuffNode);
     std::shared_ptr<SVE::MeshEntity> debuffEntity = std::make_shared<SVE::MeshEntity>("cylinder");
@@ -73,7 +69,6 @@ Nun::Nun(GameMap* map, glm::ivec2 startPos)
 
     _rootNode->attachSceneNode(addLightEffect(engine));
 }
-
 
 void Nun::update(float deltaTime)
 {

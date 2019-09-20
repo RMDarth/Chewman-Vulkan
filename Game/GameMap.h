@@ -36,12 +36,14 @@ struct GameMap
     std::vector<StaticObject> staticObjects;
     std::vector<Nun> nuns;
 
+    uint32_t activeCoins;
+
     CellInfoMap mapData;
     size_t width;
     size_t height;
 };
 
-enum class GameState
+enum class GameMapState
 {
     Game,
     Pause,
@@ -52,11 +54,13 @@ class GameMapProcessor
 {
 public:
     explicit GameMapProcessor(std::shared_ptr<GameMap> gameMap);
+    ~GameMapProcessor();
 
     void update(float time);
+    void hide();
     void processInput(const SDL_Event& event);
-    void setState(GameState gameState);
-    GameState getState() const;
+    void setState(GameMapState gameState);
+    GameMapState getState() const;
     std::shared_ptr<GameMap> getGameMap();
 
     float getDeltaTime();
@@ -68,7 +72,7 @@ private:
 
 private:
     GameRulesProcessor _gameRulesProcessor;
-    GameState _state = GameState::Game;
+    GameMapState _state = GameMapState::Game;
     std::shared_ptr<GameMap> _gameMap;
     float _totalTime;
     float _deltaTime = 0;

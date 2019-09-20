@@ -17,7 +17,7 @@ inline float smoothStep(float data)
     return glm::smoothstep(0.0f, 1.0f, data);
 }
 
-}
+} // anon namespace
 
 GameRulesProcessor::GameRulesProcessor(GameMapProcessor& gameMapProcessor)
     : _gameMapProcessor(gameMapProcessor)
@@ -50,13 +50,13 @@ void GameRulesProcessor::update(float deltaTime)
 
             if (playerInfo->lives)
             {
-                _gameMapProcessor.setState(GameState::Game);
+                _gameMapProcessor.setState(GameMapState::Game);
                 --playerInfo->lives;
             }
             else
             {
                 // TODO: GameOver
-                _gameMapProcessor.setState(GameState::Pause);
+                _gameMapProcessor.setState(GameMapState::Pause);
             }
         }
     }
@@ -69,7 +69,7 @@ void GameRulesProcessor::update(float deltaTime)
             updateCameraAnimation(deltaTime);
             if (!_isCameraMoving)
             {
-                _gameMapProcessor.setState(GameState::Game);
+                _gameMapProcessor.setState(GameMapState::Game);
                 player->setCameraFollow(true);
             }
             else
@@ -89,6 +89,11 @@ void GameRulesProcessor::update(float deltaTime)
                 gameMap->mapNode->detachSceneNode(coin->rootNode);
                 coin = nullptr;
                 playerInfo->points += 10;
+                --gameMap->activeCoins;
+                if (gameMap->activeCoins == 0)
+                {
+                    std::cout << "You won!" << std::endl;
+                }
             }
             if (auto& powerUp = gameMap->mapData[mapPos.x][mapPos.y].powerUp)
             {
@@ -115,7 +120,7 @@ void GameRulesProcessor::update(float deltaTime)
                     _cameraSpeed = 1.5f;
                     _cameraTime = 0.0f;
                     _isCameraMoving = true;
-                    _gameMapProcessor.setState(GameState::Animation);
+                    _gameMapProcessor.setState(GameMapState::Animation);
                     updateCameraAnimation(0.0f);
                     player->setCameraFollow(false);
                     _insideTeleport = true;
@@ -183,7 +188,7 @@ void GameRulesProcessor::update(float deltaTime)
         player->getPlayerInfo()->isDying = isPlayerDead;
         if (isPlayerDead)
         {
-            _gameMapProcessor.setState(GameState::Animation);
+            _gameMapProcessor.setState(GameMapState::Animation);
             _deathTime = 0.0f;
             player->playDeathAnimation();
             _deathSecondPhase = false;

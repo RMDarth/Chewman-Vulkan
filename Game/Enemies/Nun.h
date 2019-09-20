@@ -28,7 +28,6 @@ private:
     std::shared_ptr<SVE::SceneNode> _rotateNode;
     std::shared_ptr<SVE::SceneNode> _debuffNode;
     std::shared_ptr<SVE::MeshEntity> _nunMesh;
-    bool isVulnerable = false;
 };
 
 } // namespace Chewman

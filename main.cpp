@@ -59,7 +59,7 @@ void moveCamera(const Uint8* keystates, float deltaTime, std::shared_ptr<SVE::Ca
     //camera->movePosition(glm::vec3(0,0,5.0f*deltaTime));
 }
 
-void moveLight(SDL_Keycode key, std::shared_ptr<SVE::LightNode>& lightNode)
+void moveLight(SDL_Keycode key, SVE::LightNode* lightNode)
 {
     static float x = 50;
     static float y = 50;
@@ -237,85 +237,9 @@ SVE::MeshSettings constructPlane(std::string name, glm::vec3 center, float width
 }
 
 
-auto CreateTeleport(SVE::Engine* engine, glm::vec3 position, glm::vec3 color)
-{
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [engine]{
-        auto meshSettings = constructPlane("TeleportBase",
-                                           glm::vec3(0, 0, 0), 0.9f, 0.9f, glm::vec3(0.0f, 1.0f, 0.0f));
-        meshSettings.materialName = "TeleportBaseMaterial";
-        auto teleportBaseMesh = std::make_shared<SVE::Mesh>(meshSettings);
-        engine->getMeshManager()->registerMesh(teleportBaseMesh);
-    });
-
-    auto adjustColor = [](float comp, float step = 0.4f)
-    {
-        return comp < 0.01f ? step : comp;
-    };
-
-    auto adjustColor3 = [&adjustColor](glm::vec3 color, float num)
-    {
-        return glm::vec3(adjustColor(color.r, num), adjustColor(color.g, num), adjustColor(color.b, num));
-    };
-
-    auto teleportNode = engine->getSceneManager()->createSceneNode();
-    teleportNode->setNodeTransformation(glm::translate(glm::mat4(1), position));
-    engine->getSceneManager()->getRootNode()->attachSceneNode(teleportNode);
-    std::shared_ptr<SVE::ParticleSystemEntity> teleportPS = std::make_shared<SVE::ParticleSystemEntity>("TeleportStars");
-    teleportPS->getMaterialInfo()->diffuse = glm::vec4(color, 1.0f);
-    teleportNode->attachEntity(teleportPS);
-
-    auto teleportCircleNode = engine->getSceneManager()->createSceneNode();
-    auto teleportGlowNode = engine->getSceneManager()->createSceneNode();
-    auto teleportLightNode = engine->getSceneManager()->createSceneNode();
-    auto teleportPlatformNode = engine->getSceneManager()->createSceneNode();
-    teleportNode->attachSceneNode(teleportCircleNode);
-    teleportNode->attachSceneNode(teleportGlowNode);
-    teleportNode->attachSceneNode(teleportLightNode);
-    teleportNode->attachSceneNode(teleportPlatformNode);
-    {
-        teleportPlatformNode->setNodeTransformation(glm::translate(glm::mat4(1), glm::vec3(-1.0, -0.2, 1.0)));
-        std::shared_ptr<SVE::MeshEntity> teleportPlatformEntity = std::make_shared<SVE::MeshEntity>("teleport");
-        teleportPlatformEntity->setMaterial("TeleportPlatformMaterial");
-        teleportPlatformEntity->getMaterialInfo()->diffuse = { adjustColor3(color, 0.4f), 1.0f };
-        teleportPlatformNode->attachEntity(teleportPlatformEntity);
-
-        std::shared_ptr<SVE::MeshEntity> teleportBaseEntity = std::make_shared<SVE::MeshEntity>("TeleportBase");
-        teleportBaseEntity->setRenderLast();
-        teleportBaseEntity->setCastShadows(false);
-        teleportBaseEntity->getMaterialInfo()->diffuse = { adjustColor3(color, 0.6f), 2.0f };
-        teleportCircleNode->attachEntity(teleportBaseEntity);
-
-        std::shared_ptr<SVE::MeshEntity> teleportCircleEntity = std::make_shared<SVE::MeshEntity>("cylinder");
-        teleportCircleEntity->setMaterial("TeleportCircleMaterial");
-        teleportCircleEntity->setRenderLast();
-        teleportCircleEntity->setCastShadows(false);
-        teleportCircleEntity->getMaterialInfo()->diffuse = { adjustColor3(color, 0.6f), 2.0f };
-        teleportGlowNode->attachEntity(teleportCircleEntity);
-
-        // Add light effect
-        teleportLightNode->setNodeTransformation(glm::translate(glm::mat4(1), glm::vec3(0, 1.5, 0)));
-        SVE::LightSettings lightSettings {};
-        lightSettings.lightType = SVE::LightType::PointLight;
-        lightSettings.castShadows = false;
-        lightSettings.diffuseStrength = glm::vec4(color, 1.0f);
-        lightSettings.specularStrength = glm::vec4(color * 0.5f, 1.0f);
-        lightSettings.ambientStrength = { color * 0.2f, 1.0f };
-        lightSettings.shininess = 16;
-        lightSettings.constAtten = 1.0f * 1.8f;
-        lightSettings.linearAtten = 0.35f * 0.25f;
-        lightSettings.quadAtten = 0.44f * 0.25f;
-        auto lightManager = engine->getSceneManager()->getLightManager();
-        auto lightNode = std::make_shared<SVE::LightNode>(lightSettings, lightManager->getLightCount());
-        lightManager->setLight(lightNode, lightManager->getLightCount());
-        teleportLightNode->attachSceneNode(lightNode);
-    }
-
-    return std::make_tuple(teleportCircleNode, teleportGlowNode);
-}
-
 int runGame()
 {
+
     SDL_Window *window;
     SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS);
 
@@ -341,6 +265,7 @@ int runGame()
         engine->getResourceManager()->loadFolder("resources/shaders");
         engine->getResourceManager()->loadFolder("resources/materials");
         engine->getResourceManager()->loadFolder("resources/models");
+        engine->getResourceManager()->loadFolder("resources/fonts");
         engine->getResourceManager()->loadFolder("resources");
 
         //engine->getPostEffectManager()->addPostEffect("GrayscaleEffect", "GrayscaleEffect");
@@ -393,7 +318,10 @@ int runGame()
 
         // Create level floor
         Chewman::GameMapLoader mapLoader;
-        Chewman::GameMapProcessor gameMap(mapLoader.loadMap("resources/game/levels/level7.map"));
+        auto gameMap
+            = std::make_unique<Chewman::GameMapProcessor>(mapLoader.loadMap("resources/game/levels/level7.map"));
+        std::unique_ptr<Chewman::GameMapProcessor> oldGameMap;
+        uint32_t oldGameMapCount = 0;
 
         // create teleport test
         std::array<std::shared_ptr<SVE::SceneNode>, 0> baseNodes;
@@ -454,7 +382,8 @@ int runGame()
         //levelNode->attachEntity(levelEntity);
 
         /// Add text
-        auto textEntity = std::make_shared<SVE::TextEntity>(engine->getFontManager()->generateText("Hello world", "Helvetica"));
+        auto textEntity = std::make_shared<SVE::TextEntity>(
+                engine->getFontManager()->generateText("Hello world", "NordBold"), "FontNordBoldMaterial");
         floorNode->attachEntity(textEntity);
 
         bool quit = false;
@@ -471,7 +400,7 @@ int runGame()
             SDL_Event event;
             while (SDL_PollEvent(&event))
             {
-                gameMap.processInput(event);
+                gameMap->processInput(event);
                 if (event.type == SDL_QUIT)
                 {
                     quit = true;
@@ -498,6 +427,14 @@ int runGame()
                     if (event.key.keysym.sym == SDLK_f)
                     {
                         lockControl = !lockControl;
+                    }
+                    if (event.key.keysym.sym == SDLK_o)
+                    {
+                        oldGameMap = std::move(gameMap);
+                        oldGameMap->hide();
+                        oldGameMapCount = 5;
+                        gameMap = std::make_unique<Chewman::GameMapProcessor>(mapLoader.loadMap("resources/game/levels/level1.map"));
+                        lockControl = false;
                     }
                     if (event.key.keysym.sym == SDLK_SPACE)
                     {
@@ -548,7 +485,6 @@ int runGame()
                 }
                 if (event.type == SDL_MOUSEMOTION && !lockControl)
                 {
-                    //std::cout << "FPS: " << 1.0f / (curTime - prevTime) << std::endl;
                     if (event.motion.state && SDL_BUTTON(1))
                         rotateCamera(event.motion, camera);
                 }
@@ -564,8 +500,14 @@ int runGame()
             SDL_Delay(1);
             if (!skipRendering)
             {
-                gameMap.update(curTime - prevTime);
+                gameMap->update(curTime - prevTime);
                 engine->renderFrame(curTime - prevTime);
+                if (oldGameMapCount > 0)
+                {
+                    --oldGameMapCount;
+                    if (!oldGameMapCount)
+                        oldGameMap.reset();
+                }
 
                 updateNode(newNode, curTime);
                 for (auto& baseNode : baseNodes)
@@ -580,7 +522,7 @@ int runGame()
                 ++frames;
                 float fps = frames / engine->getTime();
 
-                textEntity->setText(engine->getFontManager()->generateText("FPS: " + std::to_string(fps), "Helvetica"));
+                textEntity->setText(engine->getFontManager()->generateText("FPS: " + std::to_string(fps), "NordBold"));
             }
 
             prevTime = curTime;

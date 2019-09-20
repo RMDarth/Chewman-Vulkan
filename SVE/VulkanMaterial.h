@@ -36,6 +36,7 @@ public:
     std::vector<VkDescriptorSet> getDescriptorSets(uint32_t materialIndex, size_t index) const;
 
     uint32_t getInstanceForEntity(const Entity* entity, uint32_t index = 0);
+    void deleteInstancesForEntity(const Entity* entity);
     bool isSkeletal() const;
     bool isMainInstance(uint32_t materialIndex) const;
     uint32_t getInstanceCount() const;
@@ -47,6 +48,8 @@ public:
     void updateInstancedData();
 
 private:
+    struct PerInstanceData;
+
     void createPipelineLayout();
     void deletePipelineLayout();
 
@@ -63,14 +66,17 @@ private:
 
     void createUniformBuffers();
     void deleteUniformBuffers();
+    void deleteUniformBuffers(PerInstanceData& instance);
 
     void createStorageBuffers();
     void deleteStorageBuffers();
 
     void createDescriptorPool();
     void deleteDescriptorPool();
+    void deleteDescriptorPool(PerInstanceData& instance);
     void createDescriptorSets();
     void deleteDescriptorSets();
+    void deleteDescriptorSets(PerInstanceData& instance);
 
     void updateDescriptorSet(uint32_t imageIndex,
                              const VkBuffer* shaderBuffer,

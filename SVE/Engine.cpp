@@ -229,6 +229,7 @@ void createNodeDrawCommands(const std::shared_ptr<SceneNode>& node, uint32_t buf
 
 void createNodeComputeCommands(const std::shared_ptr<SceneNode>& node, uint32_t bufferIndex, uint32_t imageIndex)
 {
+
     for (auto& entity : node->getAttachedEntities())
     {
         if (entity->isComputeEntity())
@@ -241,6 +242,15 @@ void createNodeComputeCommands(const std::shared_ptr<SceneNode>& node, uint32_t 
     for (auto& child : node->getChildren())
     {
         createNodeComputeCommands(child, bufferIndex, imageIndex);
+    }
+}
+
+void setFrameNumber(const std::shared_ptr<SceneNode>& node, uint64_t frameId)
+{
+    node->setCurrentFrame(frameId);
+    for (auto& child : node->getChildren())
+    {
+        setFrameNumber(child, frameId);
     }
 }
 
@@ -286,6 +296,7 @@ void Engine::renderFrame(float deltaTime)
 
 void Engine::renderFrameImpl()
 {
+    ++_frameId;
     auto skybox = _sceneManager->getSkybox();
     auto currentFrame = _vulkanInstance->getCurrentFrameIndex();
     auto currentImage = _vulkanInstance->getCurrentImageIndex();
@@ -293,12 +304,14 @@ void Engine::renderFrameImpl()
     ////// update command buffers
 
     _vulkanInstance->reallocateCommandBuffers();
+    setFrameNumber(_sceneManager->getRootNode(), _frameId);
 
     ComputeEntity::startComputeStep();
     createNodeComputeCommands(_sceneManager->getRootNode(), BUFFER_INDEX_COMPUTE_PARTICLES, currentImage);
     ComputeEntity::finishComputeStep();
 
     _commandsType = CommandsType::ShadowPassDirectLight;
+    _sceneManager->getLightManager()->setCurrentFrame(_frameId);
     if (auto directLight = _sceneManager->getLightManager()->getDirectionLight())
     {
         if (auto sunLightShadowMap = _sceneManager->getLightManager()->getDirectLightShadowMap())
@@ -533,6 +546,7 @@ bool Engine::isWaterEnabled() const
 void Engine::destroyInstance()
 {
     delete _engineInstance;
+    _engineInstance = nullptr;
 }
 
 } // namespace SVE

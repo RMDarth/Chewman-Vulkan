@@ -11,23 +11,23 @@ namespace SVE
 
 void Entity::setParent(std::shared_ptr<SceneNode> parent)
 {
-    if (_parent)
+    if (!_parent.expired())
     {
-        _parent->detachEntity(shared_from_this());
+        _parent.lock()->detachEntity(shared_from_this());
     }
-    _parent = std::move(parent);
+    _parent = parent;
 }
 
 std::shared_ptr<SceneNode> Entity::getParent()
 {
-    return _parent;
+    return _parent.lock();
 }
 
 void Entity::detachFromParent()
 {
-    if (_parent)
+    if (!_parent.expired())
     {
-        _parent->detachEntity(shared_from_this());
+        _parent.lock()->detachEntity(shared_from_this());
     }
     _parent.reset();
 }
