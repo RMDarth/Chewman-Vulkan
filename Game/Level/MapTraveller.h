@@ -6,7 +6,7 @@
 #include <functional>
 #include <glm/glm.hpp>
 #include <memory>
-#include "GameDefs.h"
+#include "GameMapDefs.h"
 
 namespace Chewman
 {

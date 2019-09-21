@@ -2,7 +2,7 @@
 // Copyright (c) 2018-2019, Igor Barinov
 // Licensed under the MIT License
 #include "GameUtils.h"
-#include "GameDefs.h"
+#include "GameMapDefs.h"
 
 namespace Chewman
 {

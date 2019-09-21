@@ -11,8 +11,7 @@
 #include "SVE/PostEffectManager.h"
 #include "SVE/FontManager.h"
 
-#include "Game/GameMap.h"
-#include "Game/GameMapLoader.h"
+#include "Game/Game.h"
 
 #include <SDL2/SDL.h>
 #include <vulkan/vulkan.h>
@@ -36,12 +35,6 @@
 // main.cpp currenly holds some test data for engine features tests.
 // TODO: clean this code
 
-void updateNode(std::shared_ptr<SVE::SceneNode>& node, float time)
-{
-    auto nodeTransform = glm::rotate(glm::mat4(1.0f), time * glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-    node->setNodeTransformation(nodeTransform);
-}
-
 void moveCamera(const Uint8* keystates, float deltaTime, std::shared_ptr<SVE::CameraNode>& camera)
 {
     auto pos = camera->getPosition();
@@ -57,101 +50,6 @@ void moveCamera(const Uint8* keystates, float deltaTime, std::shared_ptr<SVE::Ca
         camera->movePosition(glm::vec3(0,0,12.0f*deltaTime));
 
     //camera->movePosition(glm::vec3(0,0,5.0f*deltaTime));
-}
-
-void moveLight(SDL_Keycode key, SVE::LightNode* lightNode)
-{
-    static float x = 50;
-    static float y = 50;
-    static float z = -50;
-    const float speed = 5.0f;
-    bool updated = false;
-
-    if (key == SDLK_UP)
-    {
-        z = z + speed;
-        updated = true;
-
-    }
-    if (key == SDLK_RIGHT)
-    {
-        x = x + speed;
-        updated = true;
-    }
-    if (key == SDLK_DOWN)
-    {
-        z = z - speed;
-        updated = true;
-
-    }
-    if (key == SDLK_LEFT)
-    {
-        x = x - speed;
-        updated = true;
-    }
-    if (key == SDLK_n)
-    {
-        y -= speed;
-        updated = true;
-    }
-    if (key == SDLK_m)
-    {
-        y += speed;
-        updated = true;
-    }
-
-    if (updated)
-        lightNode->setNodeTransformation(
-                glm::translate(glm::mat4(1), glm::vec3(x, y, z)));
-}
-
-void configFloor(SDL_Keycode key, std::shared_ptr<SVE::SceneNode>& floor)
-{
-    static float x = -12;
-    static float z = -21;
-    static float y = -11;
-    bool updated = false;
-    /*if (key == SDLK_UP)
-    {
-        z = z + 1;
-        updated = true;
-
-    }
-    if (key == SDLK_RIGHT)
-    {
-        x = x + 1;
-        updated = true;
-    }
-    if (key == SDLK_DOWN)
-    {
-        z = z - 1;
-        updated = true;
-
-    }
-    if (key == SDLK_LEFT)
-    {
-        x = x - 1;
-        updated = true;
-    }*/
-    if (key == SDLK_z)
-    {
-        y = y + 1;
-        updated = true;
-
-    }
-    if (key == SDLK_x)
-    {
-        y = y - 1;
-        updated = true;
-    }
-
-    if (updated)
-    {
-        auto nodeTransform = glm::translate(glm::mat4(1), glm::vec3(x, y, z));
-        floor->setNodeTransformation(nodeTransform);
-
-        std::cout << x << " " << y << " " << z << std::endl;
-    }
 }
 
 void rotateCamera(SDL_MouseMotionEvent& event, std::shared_ptr<SVE::CameraNode>& camera)
@@ -268,27 +166,18 @@ int runGame()
         engine->getResourceManager()->loadFolder("resources/fonts");
         engine->getResourceManager()->loadFolder("resources");
 
-        //engine->getPostEffectManager()->addPostEffect("GrayscaleEffect", "GrayscaleEffect");
-
-
         auto windowSize = engine->getRenderWindowSize();
         engine->getPostEffectManager()->addPostEffect("OnlyBrightEffect", "OnlyBrightEffect",windowSize.x / 4, windowSize.y / 4);
         engine->getPostEffectManager()->addPostEffect("VBlurEffect", "VBlurEffect",windowSize.x / 8, windowSize.y / 8);
         engine->getPostEffectManager()->addPostEffect("HBlurEffect", "HBlurEffect",windowSize.x / 8, windowSize.y / 8);
         engine->getPostEffectManager()->addPostEffect("BloomEffect", "BloomEffect");
-      //  engine->getPostEffectManager()->addPostEffect("PencilEffect", "PencilEffect");
+        // engine->getPostEffectManager()->addPostEffect("GrayscaleEffect", "GrayscaleEffect");
+        // engine->getPostEffectManager()->addPostEffect("PencilEffect", "PencilEffect");
 
         // configure light
         auto sunLight = engine->getSceneManager()->getLightManager()->getDirectionLight();
         sunLight->setNodeTransformation(
                 glm::translate(glm::mat4(1), glm::vec3(80, 80, -80)));
-
-
-        auto particleNode = engine->getSceneManager()->createSceneNode();
-        particleNode->setNodeTransformation(glm::translate(glm::mat4(1), glm::vec3(3, 5, 0)));
-        engine->getSceneManager()->getRootNode()->attachSceneNode(particleNode);
-        std::shared_ptr<SVE::ParticleSystemEntity> particleSystem = std::make_shared<SVE::ParticleSystemEntity>("FireLineParticle");
-        //particleNode->attachEntity(particleSystem);
 
         // create camera
         auto camera = engine->getSceneManager()->createMainCamera();
@@ -298,93 +187,13 @@ int runGame()
         // create skybox
         engine->getSceneManager()->setSkybox("Skybox4");
 
-        // create floor
-        auto meshSettings = constructPlane("Floor", glm::vec3(0, 0, 0), 10.0f, 10.0f, glm::vec3(0.0f, 1.0f, 0.0f));
-        meshSettings.materialName = "Floor";
-        auto floorMesh = std::make_shared<SVE::Mesh>(meshSettings);
-        engine->getMeshManager()->registerMesh(floorMesh);
-
-        // create liquid mesh
-        auto liquidMeshSettings = constructPlane("LiquidMesh", glm::vec3(15.0, -0.5f, -15.0) + glm::vec3(13.5f, 0, -13.5), 30.0f, 30.0f, glm::vec3(0.0f, 1.0f, 0.0f));
-        liquidMeshSettings.materialName = "LavaMaterial";
-        auto liquidMesh = std::make_shared<SVE::Mesh>(liquidMeshSettings);
-        engine->getMeshManager()->registerMesh(liquidMesh);
-
-        auto bigFloorMeshSettings = constructPlane("BigFloor", glm::vec3(0, 0, 0), 30.0f, 30.0f,
-                                                   glm::vec3(0.0f, 1.0f, 0.0f));
-        bigFloorMeshSettings.materialName = "Floor";
-        auto bigFloorMesh = std::make_shared<SVE::Mesh>(bigFloorMeshSettings);
-        engine->getMeshManager()->registerMesh(bigFloorMesh);
-
         // Create level floor
-        Chewman::GameMapLoader mapLoader;
-        auto gameMap
-            = std::make_unique<Chewman::GameMapProcessor>(mapLoader.loadMap("resources/game/levels/level7.map"));
-        std::unique_ptr<Chewman::GameMapProcessor> oldGameMap;
-        uint32_t oldGameMapCount = 0;
+        auto* game = Chewman::Game::getInstance();
 
-        // create teleport test
-        std::array<std::shared_ptr<SVE::SceneNode>, 0> baseNodes;
-        std::array<std::shared_ptr<SVE::SceneNode>, 0> circleNodes;
-        //std::tie(baseNodes[0], circleNodes[0]) = CreateTeleport(engine, glm::vec3(9, 0.2, -3), glm::vec3(1.0, 0.0, 0.0));
-        //std::tie(baseNodes[1], circleNodes[1]) = CreateTeleport(engine, glm::vec3(18, 0.2, -3), glm::vec3(0.0, 1.0, 0.0));
-        //std::tie(baseNodes[2], circleNodes[2]) = CreateTeleport(engine, glm::vec3(18, 0.2, -18), glm::vec3(1.0, 0.0, 1.0));
-        //std::tie(baseNodes[3], circleNodes[3]) = CreateTeleport(engine, glm::vec3(3, 0.2, -9), glm::vec3(0.0, 1.0, 1.0));
-
-        // create nodes
-        auto newNodeMid = engine->getSceneManager()->createSceneNode();
-        auto newNode = engine->getSceneManager()->createSceneNode();
-        auto newNode2 = engine->getSceneManager()->createSceneNode();
-        auto terrainNode = engine->getSceneManager()->createSceneNode();
-        auto floorNode = engine->getSceneManager()->createSceneNode();
-        auto bigFloorNode = engine->getSceneManager()->createSceneNode();
-        auto liquidNode = engine->getSceneManager()->createSceneNode();
-        engine->getSceneManager()->getRootNode()->attachSceneNode(newNodeMid);
-        newNodeMid->attachSceneNode(newNode);
-        engine->getSceneManager()->getRootNode()->attachSceneNode(newNode2);
-        engine->getSceneManager()->getRootNode()->attachSceneNode(terrainNode);
-        engine->getSceneManager()->getRootNode()->attachSceneNode(floorNode);
-        engine->getSceneManager()->getRootNode()->attachSceneNode(liquidNode);
-        //engine->getSceneManager()->getRootNode()->attachSceneNode(bigFloorNode);
-
-        // create entities
-        std::shared_ptr<SVE::Entity> meshEntity = std::make_shared<SVE::MeshEntity>("trashman");
-        std::shared_ptr<SVE::Entity> meshEntity2 = std::make_shared<SVE::MeshEntity>("nun");
-        std::shared_ptr<SVE::Entity> terrainEntity = std::make_shared<SVE::MeshEntity>("terrain");
-        std::shared_ptr<SVE::Entity> floorEntity = std::make_shared<SVE::MeshEntity>("Floor");
-        std::shared_ptr<SVE::MeshEntity> liquidEntity = std::make_shared<SVE::MeshEntity>("LiquidMesh");
-        liquidEntity->setMaterial("LavaMaterial");
-
-        meshEntity->setMaterial("Yellow");
-        meshEntity2->setMaterial("NunMaterial");
-        terrainEntity->setMaterial("Terrain");
-        //bigFloorEntity->setMaterial("TestMaterial");
-
-        // configure and attach objects to nodes
-        //newNode->attachEntity(meshEntity);
-        newNodeMid->setNodeTransformation(glm::translate(glm::mat4(1), glm::vec3(3, 0, -3)));
-        newNode2->setNodeTransformation(glm::translate(glm::mat4(1), glm::vec3(5, 0, 2)));
-
-        {
-            terrainNode->attachEntity(terrainEntity);
-            auto nodeTransform = glm::translate(glm::mat4(1), glm::vec3(-12, -31, -21));
-            terrainNode->setNodeTransformation(nodeTransform);
-        }
-
-        floorNode->attachEntity(floorEntity);
-        floorNode->setNodeTransformation(glm::translate(glm::mat4(1), glm::vec3(-20, 5, 0)));
-
-        liquidNode->setNodeTransformation(glm::translate(glm::mat4(1), glm::vec3(0, 0, 0)));
-        liquidNode->attachEntity(liquidEntity);
-        //bigFloorNode->attachEntity(bigFloorEntity);
-        //bigFloorNode->setNodeTransformation(glm::translate(glm::mat4(1), glm::vec3(0, -5, 0)));
-        //levelNode->setNodeTransformation(glm::translate(glm::mat4(1), glm::vec3(10, 5, 0)));
-        //levelNode->attachEntity(levelEntity);
-
-        /// Add text
+        // Add text
         auto textEntity = std::make_shared<SVE::TextEntity>(
-                engine->getFontManager()->generateText("Hello world", "NordBold"), "FontNordBoldMaterial");
-        floorNode->attachEntity(textEntity);
+                engine->getFontManager()->generateText("Hello world", "NordBold"));
+        engine->getSceneManager()->getRootNode()->attachEntity(textEntity);
 
         bool quit = false;
         bool skipRendering = false;
@@ -400,7 +209,7 @@ int runGame()
             SDL_Event event;
             while (SDL_PollEvent(&event))
             {
-                gameMap->processInput(event);
+                game->processInput(event);
                 if (event.type == SDL_QUIT)
                 {
                     quit = true;
@@ -428,14 +237,6 @@ int runGame()
                     {
                         lockControl = !lockControl;
                     }
-                    if (event.key.keysym.sym == SDLK_o)
-                    {
-                        oldGameMap = std::move(gameMap);
-                        oldGameMap->hide();
-                        oldGameMapCount = 5;
-                        gameMap = std::make_unique<Chewman::GameMapProcessor>(mapLoader.loadMap("resources/game/levels/level1.map"));
-                        lockControl = false;
-                    }
                     if (event.key.keysym.sym == SDLK_SPACE)
                     {
                         static bool isNight = false;
@@ -452,36 +253,6 @@ int runGame()
                             sunLight->getLightSettings().specularStrength = {0.05f, 0.05f, 0.05f, 1.0f};
                         }
                     }
-                    if (event.key.keysym.sym == SDLK_j)
-                    {
-                        if (newNode2->getAttachedEntities().empty())
-                        {
-                            newNode2->attachEntity(meshEntity2);
-                            auto& emitter = particleSystem->getSettings().particleEmitter;
-                            auto& affector = particleSystem->getSettings().particleAffector;
-                            emitter.minLife = 0.0f;
-                            emitter.maxLife = 0.0f;
-
-                            affector.colorChanger = glm::vec4(0.0, 0.0, 0.0, -3.5f);
-                            affector.lifeDrain = 5.0f;
-
-                        }
-                        else
-                        {
-                            auto& emitter = particleSystem->getSettings().particleEmitter;
-                            auto& affector = particleSystem->getSettings().particleAffector;
-                            emitter.minLife = 10.0f;
-                            emitter.maxLife = 10.0f;
-
-                            affector.colorChanger = glm::vec4(0.0, 0.0, 0.0, 0.0f);
-                            affector.lifeDrain = 0.0f;
-
-                            newNode2->detachEntity(meshEntity2);
-                        }
-                    }
-
-                    configFloor(event.key.keysym.sym, terrainNode);
-                    moveLight(event.key.keysym.sym, sunLight);
                 }
                 if (event.type == SDL_MOUSEMOTION && !lockControl)
                 {
@@ -500,24 +271,8 @@ int runGame()
             SDL_Delay(1);
             if (!skipRendering)
             {
-                gameMap->update(curTime - prevTime);
+                game->update(curTime - prevTime);
                 engine->renderFrame(curTime - prevTime);
-                if (oldGameMapCount > 0)
-                {
-                    --oldGameMapCount;
-                    if (!oldGameMapCount)
-                        oldGameMap.reset();
-                }
-
-                updateNode(newNode, curTime);
-                for (auto& baseNode : baseNodes)
-                {
-                    updateNode(baseNode, curTime * 2);
-                }
-                for (auto& circleNode : circleNodes)
-                {
-                    updateNode(circleNode, curTime * 5);
-                }
 
                 ++frames;
                 float fps = frames / engine->getTime();

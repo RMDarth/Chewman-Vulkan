@@ -97,35 +97,35 @@ add_executable(Chewman
         SVE/VulkanParticleSystem.h
         SVE/ParticleSystemSettings.cpp
         SVE/ParticleSystemSettings.h
-        Game/BlockMeshGenerator.cpp
-        Game/BlockMeshGenerator.h
-        Game/GameMap.cpp
-        Game/GameMap.h
+        Game/Level/BlockMeshGenerator.cpp
+        Game/Level/BlockMeshGenerator.h
+        Game/Level/GameMap.cpp
+        Game/Level/GameMap.h
         SVE/ParticleSystemManager.cpp
         SVE/ParticleSystemManager.h
         SVE/ComputeEntity.cpp
         SVE/ComputeEntity.h
-        Game/Gargoyle.h
-        Game/Teleport.h
-        Game/Coin.h
+        Game/Level/Gargoyle.h
+        Game/Level/Teleport.h
+        Game/Level/Coin.h
         SVE/PostEffectManager.cpp
         SVE/PostEffectManager.h
         SVE/VulkanPostEffect.cpp
         SVE/VulkanPostEffect.h
-        Game/MapTraveller.cpp
-        Game/MapTraveller.h
-        Game/GameDefs.h
-        Game/Enemies/Enemy.cpp
-        Game/Enemies/Enemy.h
-        Game/Enemies/EnemyAI.h
-        Game/Enemies/Nun.cpp
-        Game/Enemies/Nun.h
-        Game/Enemies/RandomWalkerAI.cpp
-        Game/Enemies/RandomWalkerAI.h
-        Game/GameMapLoader.cpp
-        Game/GameMapLoader.h
-        Game/GameUtils.cpp
-        Game/GameUtils.h Game/PowerUp.cpp Game/PowerUp.h Game/StaticObject.cpp Game/StaticObject.h Game/Player.cpp Game/Player.h SVE/TextEntity.cpp SVE/TextEntity.h Game/GameRulesProcessor.cpp Game/GameRulesProcessor.h SVE/TextSettings.h SVE/FontManager.cpp SVE/FontManager.h)
+        Game/Level/MapTraveller.cpp
+        Game/Level/MapTraveller.h
+        Game/Level/GameMapDefs.h
+        Game/Level/Enemies/Enemy.cpp
+        Game/Level/Enemies/Enemy.h
+        Game/Level/Enemies/EnemyAI.h
+        Game/Level/Enemies/Nun.cpp
+        Game/Level/Enemies/Nun.h
+        Game/Level/Enemies/RandomWalkerAI.cpp
+        Game/Level/Enemies/RandomWalkerAI.h
+        Game/Level/GameMapLoader.cpp
+        Game/Level/GameMapLoader.h
+        Game/Level/GameUtils.cpp
+        Game/Level/GameUtils.h Game/Level/PowerUp.cpp Game/Level/PowerUp.h Game/Level/StaticObject.cpp Game/Level/StaticObject.h Game/Level/Player.cpp Game/Level/Player.h SVE/TextEntity.cpp SVE/TextEntity.h Game/Level/GameRulesProcessor.cpp Game/Level/GameRulesProcessor.h SVE/TextSettings.h SVE/FontManager.cpp SVE/FontManager.h Game/Game.cpp Game/Game.h Game/StateProcessor.h Game/Level/LevelStateProcessor.cpp Game/Level/LevelStateProcessor.h Game/Menu/MenuStateProcessor.cpp Game/Menu/MenuStateProcessor.h Game/ProgressManager.cpp Game/ProgressManager.h Game/GameDefs.h)
 
 if (WIN32)
     target_link_libraries(Chewman mingw32 SDL2main SDL2 vulkan-1.lib VkLayer_core_validation.lib libassimp libcppfsd)

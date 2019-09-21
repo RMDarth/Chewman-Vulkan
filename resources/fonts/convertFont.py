@@ -7,7 +7,7 @@ from xml.dom import minidom
 # .fnt file can be generated here: http://kvazars.com/littera/
 def convert_font():
     if len(sys.argv) < 4:
-        print("Usage: convertFont.py fontfile.fnt imagefile.png fontName")
+        print("Usage: convertFont.py fontfile.fnt materialName fontName")
         return
     print("Converting %s..." % sys.argv[1])
     xmldoc = minidom.parse(sys.argv[1])
@@ -23,7 +23,7 @@ def convert_font():
     data['italic'] = bool(int(info.getAttribute('italic')))
     data['width'] = int(common.getAttribute('scaleW'))
     data['height'] = int(common.getAttribute('scaleH'))
-    data['image'] = sys.argv[2]
+    data['material'] = sys.argv[2]
     data['characters'] = {}
     characters = data['characters']
 

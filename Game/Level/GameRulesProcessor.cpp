@@ -55,8 +55,7 @@ void GameRulesProcessor::update(float deltaTime)
             }
             else
             {
-                // TODO: GameOver
-                _gameMapProcessor.setState(GameMapState::Pause);
+                _gameMapProcessor.setState(GameMapState::GameOver);
             }
         }
     }
@@ -93,6 +92,7 @@ void GameRulesProcessor::update(float deltaTime)
                 if (gameMap->activeCoins == 0)
                 {
                     std::cout << "You won!" << std::endl;
+                    _gameMapProcessor.setState(GameMapState::Victory);
                 }
             }
             if (auto& powerUp = gameMap->mapData[mapPos.x][mapPos.y].powerUp)

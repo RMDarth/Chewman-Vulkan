@@ -8,7 +8,7 @@
 #include <SVE/MeshEntity.h>
 #include <glm/gtc/matrix_transform.hpp>
 
-#include "Game/GameMap.h"
+#include "Game/Level/GameMap.h"
 #include "RandomWalkerAI.h"
 
 namespace Chewman

@@ -8,7 +8,7 @@
 #include <SVE/MeshEntity.h>
 #include <glm/gtc/matrix_transform.hpp>
 
-#include "Game/GameMap.h"
+#include "GameMap.h"
 
 #include <SDL2/SDL_events.h>
 

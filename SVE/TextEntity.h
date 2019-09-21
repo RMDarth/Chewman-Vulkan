@@ -13,7 +13,8 @@ namespace SVE
 class TextEntity : public Entity
 {
 public:
-    explicit TextEntity(TextInfo textInfo, const std::string& fontMaterial = "TextMaterial");
+    explicit TextEntity(TextInfo textInfo);
+    ~TextEntity() override;
 
     TextInfo& getText();
     void setText(TextInfo textInfo);

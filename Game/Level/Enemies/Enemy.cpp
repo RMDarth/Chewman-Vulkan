@@ -2,7 +2,7 @@
 // Copyright (c) 2018-2019, Igor Barinov
 // Licensed under the MIT License
 #include "Enemy.h"
-#include "Game/GameMap.h"
+#include "Game/Level/GameMap.h"
 
 namespace Chewman
 {

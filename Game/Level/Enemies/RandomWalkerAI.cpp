@@ -2,7 +2,7 @@
 // Copyright (c) 2018-2019, Igor Barinov
 // Licensed under the MIT License
 #include "RandomWalkerAI.h"
-#include "Game/GameUtils.h"
+#include "Game/Level/GameUtils.h"
 
 namespace Chewman
 {

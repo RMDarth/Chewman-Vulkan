@@ -343,7 +343,7 @@ Font loadFont(const cppfs::FilePath& directory, const std::string& data)
 
     Font font {};
     font.fontName = document["name"].GetString();
-    font.image = document["image"].GetString();
+    font.materialName = document["material"].GetString();
     font.width = document["width"].GetUint();
     font.height = document["height"].GetUint();
     font.maxHeight = 0;

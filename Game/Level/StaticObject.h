@@ -3,7 +3,7 @@
 // Licensed under the MIT License
 #pragma once
 #include "SVE/SceneNode.h"
-#include "GameDefs.h"
+#include "GameMapDefs.h"
 
 namespace Chewman
 {

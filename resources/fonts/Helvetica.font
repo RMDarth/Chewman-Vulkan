@@ -5,7 +5,7 @@
   "italic": false,
   "width": 2048,
   "height": 256,
-  "image": "materials/textures/fonts/helvetica.png",
+  "material": "TextMaterial",
   "characters": {
     "0":{"x":1114,"y":63,"width":31,"height":46,"originX":-1,"originY":44,"advance":33},
     "1":{"x":72,"y":162,"width":19,"height":45,"originX":-5,"originY":44,"advance":33},

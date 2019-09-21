@@ -5,7 +5,7 @@
     "italic": false,
     "width": 1201,
     "height": 512,
-    "image": "font.png",
+    "material": "FontNordBoldMaterial",
     "characters": {
         "!": {
             "x": 10,

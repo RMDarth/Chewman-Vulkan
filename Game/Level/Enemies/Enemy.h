@@ -3,8 +3,8 @@
 // Licensed under the MIT License
 #pragma once
 #include <memory>
-#include "Game/MapTraveller.h"
-#include "Game/GameDefs.h"
+#include "Game/Level/MapTraveller.h"
+#include "Game/Level/GameMapDefs.h"
 #include "EnemyAI.h"
 
 namespace Chewman

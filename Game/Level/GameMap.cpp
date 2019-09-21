@@ -84,9 +84,14 @@ void GameMapProcessor::update(float deltaTime)
     _gameMap->player->update(_deltaTime);
 }
 
-void GameMapProcessor::hide()
+void GameMapProcessor::setVisible(bool visible)
 {
-    SVE::Engine::getInstance()->getSceneManager()->getRootNode()->detachSceneNode(_gameMap->mapNode);
+    if (!visible)
+    {
+        SVE::Engine::getInstance()->getSceneManager()->getRootNode()->detachSceneNode(_gameMap->mapNode);
+    } else {
+        SVE::Engine::getInstance()->getSceneManager()->getRootNode()->attachSceneNode(_gameMap->mapNode);
+    }
 }
 
 

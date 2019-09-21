@@ -262,6 +262,7 @@ std::shared_ptr<GameMap> GameMapLoader::loadMap(const std::string& filename)
     }
 
     createSmoke(*gameMap);
+    createLava(*gameMap);
 
     fin.close();
 
@@ -610,6 +611,29 @@ Coin* GameMapLoader::createCoin(GameMap& level, int row, int column)
     level.coins.push_back(std::move(coin));
 
     return &level.coins.back();
+}
+
+void GameMapLoader::createLava(GameMap& level) const
+{
+    auto* engine = SVE::Engine::getInstance();
+    auto liquidMeshSettings = constructPlane(
+            "LiquidMesh",
+            glm::vec3(0.0f),
+            level.width * CellSize * 0.5, level.height * CellSize * 0.5,
+            glm::vec3(0.0f, 1.0f, 0.0f));
+    liquidMeshSettings.materialName = "LavaMaterial";
+    auto liquidMesh = std::make_shared<SVE::Mesh>(liquidMeshSettings);
+    engine->getMeshManager()->registerMesh(liquidMesh);
+
+    auto lavaNode = SVE::Engine::getInstance()->getSceneManager()->createSceneNode();
+    lavaNode->setNodeTransformation(
+            glm::translate(glm::mat4(1), glm::vec3((level.width - 1) * CellSize * 0.5f, -0.5f, -((level.height - 1) * CellSize * 0.5f))));
+    level.mapNode->attachSceneNode(lavaNode);
+    std::shared_ptr<SVE::MeshEntity> lavaEntity = std::make_shared<SVE::MeshEntity>("LiquidMesh");
+    lavaEntity->setMaterial("LavaMaterial");
+    lavaNode->attachEntity(lavaEntity);
+
+    level.lavaEntity = std::move(lavaEntity);
 }
 
 void GameMapLoader::createSmoke(GameMap& level) const

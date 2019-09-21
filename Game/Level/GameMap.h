@@ -7,7 +7,7 @@
 #include <SVE/SceneNode.h>
 #include <SVE/MeshEntity.h>
 #include <SVE/Mesh.h>
-#include "GameDefs.h"
+#include "GameMapDefs.h"
 #include "BlockMeshGenerator.h"
 #include "Gargoyle.h"
 #include "Teleport.h"
@@ -15,7 +15,7 @@
 #include "PowerUp.h"
 #include "Player.h"
 #include "StaticObject.h"
-#include "Enemies/Nun.h"
+#include "Game/Level/Enemies/Nun.h"
 #include "GameRulesProcessor.h"
 
 namespace Chewman
@@ -47,7 +47,9 @@ enum class GameMapState
 {
     Game,
     Pause,
-    Animation
+    Animation,
+    Victory,
+    GameOver
 };
 
 class GameMapProcessor
@@ -57,9 +59,10 @@ public:
     ~GameMapProcessor();
 
     void update(float time);
-    void hide();
+    void setVisible(bool visible);
     void processInput(const SDL_Event& event);
     void setState(GameMapState gameState);
+
     GameMapState getState() const;
     std::shared_ptr<GameMap> getGameMap();
 
