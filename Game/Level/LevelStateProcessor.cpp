@@ -59,6 +59,13 @@ GameState LevelStateProcessor::update(float deltaTime)
             return GameState::MainMenu;
     }
 
+    if (_countToRemove > 0)
+    {
+        --_countToRemove;
+        if (!_countToRemove)
+            _oldGameMap.reset();
+    }
+
     return GameState::Level;
 }
 

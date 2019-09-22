@@ -13,7 +13,7 @@ namespace SVE
 class FontManager
 {
 public:
-    TextInfo generateText(const std::string& text, const std::string& font, glm::ivec2 shift = {0, 0});
+    TextInfo generateText(const std::string& text, const std::string& font, float scale = 1.0f, glm::ivec2 shift = {0, 0});
     void addFont(Font font);
 
     // TODO: move this to Overlay manager

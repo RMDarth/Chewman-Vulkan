@@ -1,15 +1,12 @@
 #include "SVE/Engine.h"
 #include "SVE/SceneManager.h"
 #include "SVE/CameraNode.h"
-#include "SVE/MeshEntity.h"
 #include "SVE/TextEntity.h"
 #include "SVE/ResourceManager.h"
 #include "SVE/LightManager.h"
-#include "SVE/MeshManager.h"
-#include "SVE/ParticleSystemManager.h"
-#include "SVE/ParticleSystemEntity.h"
 #include "SVE/PostEffectManager.h"
 #include "SVE/FontManager.h"
+#include "SVE/OverlayManager.h"
 
 #include "Game/Game.h"
 
@@ -60,81 +57,6 @@ void rotateCamera(SDL_MouseMotionEvent& event, std::shared_ptr<SVE::CameraNode>&
     camera->setYawPitchRoll(yawPitchRoll);
 }
 
-glm::quat rotationBetweenVectors(glm::vec3 start, glm::vec3 dest){
-    start = normalize(start);
-    dest = normalize(dest);
-
-    float cosTheta = dot(start, dest);
-    glm::vec3 rotationAxis;
-
-    rotationAxis = cross(start, dest);
-
-    float s = sqrt( (1+cosTheta)*2 );
-    float invs = 1 / s;
-
-    return glm::quat(
-            s * 0.5f,
-            rotationAxis.x * invs,
-            rotationAxis.y * invs,
-            rotationAxis.z * invs
-    );
-}
-
-SVE::MeshSettings constructPlane(std::string name, glm::vec3 center, float width, float height, glm::vec3 normal)
-{
-    std::vector<glm::vec3> points =
-            {
-                    {-1.0f,  0.0f,  1.0f},
-                    {-1.0f,  0.0f, -1.0f},
-                    {1.0f,   0.0f, -1.0f},
-                    {1.0f,   0.0f, -1.0f},
-                    {1.0f,   0.0f, 1.0f},
-                    {-1.0f,  0.0f, 1.0f},
-            };
-    std::vector<glm::vec2> texCoords =
-            {
-                    {0, 0},
-                    {0, 1},
-                    {1, 1},
-                    {1, 1},
-                    {1, 0},
-                    {0, 0}
-            };
-    std::vector<uint32_t> indexes;
-    std::vector<glm::vec3> normals(6, normal);
-
-    std::vector<glm::vec3> tangent(6, glm::vec3(0.0f, 0.0f, 1.0f));
-    std::vector<glm::vec3> bitangent(6, glm::vec3(1.0f, 0.0f, 0.0f));
-
-    std::vector<glm::vec3> colors(6, glm::vec3(1.0f, 1.0f, 1.0f));
-
-    uint32_t currentIndex = 0;
-    for (auto& point : points)
-    {
-        auto mat = glm::toMat4(rotationBetweenVectors(glm::vec3(0.0, 1.0, 0.0), normal));
-        mat = mat * glm::scale(glm::mat4(1), glm::vec3(width, 0, height));
-        point = glm::vec3(mat * glm::vec4(point, 1.0f));
-        point += center;
-
-        indexes.push_back(currentIndex++);
-    }
-
-    SVE::MeshSettings settings {};
-
-    settings.name = std::move(name);
-    settings.vertexPosData = std::move(points);
-    settings.vertexTexData = std::move(texCoords);
-    settings.vertexNormalData = std::move(normals);
-    settings.vertexTangentData = std::move(tangent);
-    settings.vertexBinormalData = std::move(bitangent);
-    settings.vertexColorData = std::move(colors);
-    settings.indexData = std::move(indexes);
-    settings.boneNum = 0;
-
-    return settings;
-}
-
-
 int runGame()
 {
 
@@ -149,7 +71,7 @@ int runGame()
             SDL_WINDOWPOS_CENTERED,
             SDL_WINDOWPOS_CENTERED,
             1024, 768,
-            SDL_WINDOW_SHOWN | SDL_WINDOW_VULKAN | SDL_WINDOW_RESIZABLE);
+            SDL_WINDOW_SHOWN | SDL_WINDOW_VULKAN);
 
     if(!window)
     {
@@ -187,13 +109,31 @@ int runGame()
         // create skybox
         engine->getSceneManager()->setSkybox("Skybox4");
 
-        // Create level floor
+        // Create game controller
         auto* game = Chewman::Game::getInstance();
 
         // Add text
         auto textEntity = std::make_shared<SVE::TextEntity>(
                 engine->getFontManager()->generateText("Hello world", "NordBold"));
         engine->getSceneManager()->getRootNode()->attachEntity(textEntity);
+
+        // Add overlay
+        SVE::OverlayInfo overlayInfo {};
+        overlayInfo.x = 100;
+        overlayInfo.y = 100;
+        overlayInfo.width = 500;
+        overlayInfo.height = 200;
+        overlayInfo.name = "Button";
+        overlayInfo.materialName = "OverlayButtonMaterial";
+        overlayInfo.textInfo = engine->getFontManager()->generateText("Hello", "Helvetica", 0.8f);
+        overlayInfo.textHAlignment = SVE::TextAlignment::Center;
+        overlayInfo.textVAlignment = SVE::TextVerticalAlignment::Center;
+        engine->getOverlayManager()->addOverlay(overlayInfo);
+        overlayInfo.x = 130;
+        overlayInfo.y = 160;
+        overlayInfo.zOrder = 10;
+        overlayInfo.name = "Button2";
+        engine->getOverlayManager()->addOverlay(overlayInfo);
 
         bool quit = false;
         bool skipRendering = false;

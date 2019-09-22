@@ -12,7 +12,7 @@ namespace SVE
 
 TextEntity::TextEntity(TextInfo textInfo)
     : _textInfo(std::move(textInfo))
-    , _material(Engine::getInstance()->getMaterialManager()->getMaterial(textInfo.font->materialName))
+    , _material(Engine::getInstance()->getMaterialManager()->getMaterial(_textInfo.font->materialName))
 {
     _materialIndex = _material->getVulkanMaterial()->getInstanceForEntity(this);
     _renderLast = true;
@@ -41,6 +41,7 @@ void TextEntity::updateUniforms(UniformDataList uniformDataList) const
     uniformData.textInfo.fontImageSize = glm::vec2(_textInfo.font->width, _textInfo.font->height);
     uniformData.textInfo.imageSize = Engine::getInstance()->getRenderWindowSize();
     uniformData.textInfo.maxHeight = _textInfo.font->maxHeight;
+    uniformData.textInfo.scale = _textInfo.scale;
     uniformData.glyphList.reserve(300);
     std::copy(_textInfo.font->symbols, _textInfo.font->symbols + 300, std::back_inserter(uniformData.glyphList));
     uniformData.glyphList.resize(300);
@@ -52,7 +53,8 @@ void TextEntity::updateUniforms(UniformDataList uniformDataList) const
 
 void TextEntity::applyDrawingCommands(uint32_t bufferIndex, uint32_t imageIndex) const
 {
-    if (Engine::getInstance()->getPassType() == CommandsType::MainPass || Engine::getInstance()->getPassType() == CommandsType::ScreenQuadPass
+    if (Engine::getInstance()->getPassType() == CommandsType::MainPass
+        || Engine::getInstance()->getPassType() == CommandsType::ScreenQuadPass
         || Engine::getInstance()->getPassType() == CommandsType::ScreenQuadLatePass)
     {
         auto commandBuffer = Engine::getInstance()->getVulkanInstance()->getCommandBuffer(bufferIndex);

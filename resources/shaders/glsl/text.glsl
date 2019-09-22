@@ -28,4 +28,5 @@ struct TextInfo
     vec2 imageSize;
     uint symbolCount;
     uint maxHeight;
+    float scale;
 };

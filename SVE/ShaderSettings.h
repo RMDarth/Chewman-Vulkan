@@ -9,6 +9,7 @@
 #include "LightSettings.h"
 #include "ParticleSystemSettings.h"
 #include "TextSettings.h"
+#include "OverlaySettings.h"
 
 namespace SVE
 {
@@ -44,6 +45,7 @@ enum class UniformType : uint8_t
     TextInfo,
     GlyphInfoList,
     TextSymbolList, // move to Buffer
+    OverlayInfo,
     Time,
     DeltaTime
     // TODO: Add material properties, other matrices types etc.
@@ -106,6 +108,7 @@ struct UniformData
     glm::ivec4 imageSize;
 
     UniformTextInfo textInfo {};
+    UniformOverlayInfo overlayInfo {};
     std::vector<GlyphInfo> glyphList;
     std::vector<TextSymbolInfo> textSymbolList;
 };

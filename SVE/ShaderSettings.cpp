@@ -41,6 +41,7 @@ const std::map<UniformType, size_t>& getUniformSizeMap()
             { UniformType::TextInfo, sizeof(UniformTextInfo) },
             { UniformType::GlyphInfoList, sizeof(GlyphInfo) },
             { UniformType::TextSymbolList, sizeof(TextSymbolInfo) },
+            { UniformType::OverlayInfo, sizeof(UniformOverlayInfo) },
             { UniformType::Time, sizeof(float) },
             { UniformType::DeltaTime, sizeof(float) },
     };
@@ -230,6 +231,11 @@ std::vector<char> getUniformDataByType(const UniformData& data, UniformType type
         {
             const char* byteData = reinterpret_cast<const char*>(data.textSymbolList.data());
             return std::vector<char>(byteData, byteData + sizeMap.at(type) * data.textSymbolList.size());
+        }
+        case UniformType::OverlayInfo:
+        {
+            const char* byteData = reinterpret_cast<const char*>(&data.overlayInfo);
+            return std::vector<char>(byteData, byteData + sizeof(data.overlayInfo));
         }
         case UniformType::Time:
         {

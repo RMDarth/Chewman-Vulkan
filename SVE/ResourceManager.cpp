@@ -120,6 +120,7 @@ std::vector<UniformInfo> getUniformInfoList(rj::Document& document)
             {"TextInfo",                        UniformType::TextInfo},
             {"GlyphInfoList",                   UniformType::GlyphInfoList},
             {"TextSymbolList",                  UniformType::TextSymbolList},
+            {"OverlayInfo",                     UniformType::OverlayInfo},
             {"Time",                            UniformType::Time},
             {"DeltaTime",                       UniformType::DeltaTime},
     };
@@ -346,6 +347,7 @@ Font loadFont(const cppfs::FilePath& directory, const std::string& data)
     font.materialName = document["material"].GetString();
     font.width = document["width"].GetUint();
     font.height = document["height"].GetUint();
+    font.size = document["size"].GetUint();
     font.maxHeight = 0;
 
     auto characters = document["characters"].GetObject();

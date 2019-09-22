@@ -18,6 +18,7 @@
 #include "PostEffectManager.h"
 #include "ResourceManager.h"
 #include "FontManager.h"
+#include "OverlayManager.h"
 #include "Entity.h"
 #include "Skybox.h"
 #include "ShadowMap.h"
@@ -104,6 +105,7 @@ Engine::Engine(SDL_Window* window, EngineSettings settings)
     , _particleSystemManager(std::make_unique<ParticleSystemManager>())
     , _postEffectManager(std::make_unique<PostEffectManager>())
     , _fontManager(std::make_unique<FontManager>())
+    , _overlayManager(std::make_unique<OverlayManager>())
 {
     getTime();
 }
@@ -159,6 +161,11 @@ PostEffectManager* Engine::getPostEffectManager()
 FontManager* Engine::getFontManager()
 {
     return _fontManager.get();
+}
+
+OverlayManager* Engine::getOverlayManager()
+{
+    return _overlayManager.get();
 }
 
 void Engine::resizeWindow()
@@ -389,6 +396,8 @@ void Engine::renderFrameImpl()
         screenQuad->reallocateCommandBuffers(VulkanScreenQuad::Late);
         screenQuad->startRenderCommandBufferCreation(VulkanScreenQuad::Late);
         createNodeStageDrawCommands(_sceneManager->getRootNode(), BUFFER_INDEX_SCREEN_QUAD_LATE, currentImage, PassStage::Deferred);
+        // TODO: move it after post effects
+        _overlayManager->applyDrawingCommands(BUFFER_INDEX_SCREEN_QUAD_LATE, currentImage);
         screenQuad->endRenderCommandBufferCreation(VulkanScreenQuad::Late);
 
         _commandsType = CommandsType::PostEffectPasses;
@@ -462,6 +471,7 @@ void Engine::renderFrameImpl()
     if (skybox)
         skybox->updateUniforms(uniformDataList);
     updateNode(_sceneManager->getRootNode(), uniformDataList);
+    _overlayManager->updateUniforms(uniformDataList);
 
     ///////  Submit command buffers to queue
     //if (particleSystemManager)
@@ -490,6 +500,7 @@ void Engine::renderFrameImpl()
         _vulkanInstance->submitCommands(CommandsType::ReflectionPass, BUFFER_INDEX_WATER_REFLECTION);
         _vulkanInstance->submitCommands(CommandsType::RefractionPass, BUFFER_INDEX_WATER_REFRACTION);
     }
+
     // TODO: Check if screen quad rendering enabled
     if (_vulkanInstance->getScreenQuad())
     {

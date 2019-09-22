@@ -30,6 +30,7 @@ struct Font
     std::string materialName;
     uint32_t width;
     uint32_t height;
+    uint32_t size;
     int32_t maxHeight;
 };
 
@@ -41,11 +42,28 @@ struct TextSymbolInfo
     uint32_t _padding;
 };
 
+enum class TextAlignment
+{
+    Left,
+    Center,
+    Right
+};
+
+enum class TextVerticalAlignment
+{
+    Top,
+    Center,
+    Bottom
+};
+
 struct TextInfo
 {
-    Font* font;
-    uint32_t symbolCount;
+    std::string text;
+    Font* font = nullptr;
+    uint32_t symbolCount = 0;
     std::vector<TextSymbolInfo> symbols;
+    glm::ivec2 textSize;
+    float scale = 1.0f;
 };
 
 struct UniformTextInfo
@@ -54,7 +72,8 @@ struct UniformTextInfo
     glm::vec2 imageSize;
     uint32_t symbolCount;
     uint32_t maxHeight;
-    uint32_t _padding[2];
+    float scale;
+    uint32_t _padding[1];
 };
 
 } // namespace SVE

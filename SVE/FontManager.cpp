@@ -11,9 +11,10 @@ void FontManager::addFont(Font font)
     _fontList[font.fontName] = std::move(font);
 }
 
-TextInfo FontManager::generateText(const std::string& text, const std::string& font, glm::ivec2 shift)
+TextInfo FontManager::generateText(const std::string& text, const std::string& font, float scale, glm::ivec2 shift)
 {
     TextInfo info {};
+    info.text = text;
     info.font = &_fontList.at(font);
     info.symbolCount = text.size();
 
@@ -26,9 +27,13 @@ TextInfo FontManager::generateText(const std::string& text, const std::string& f
         symbolInfo.y = currentShift.y;
 
         auto& glyphInfo = info.font->symbols[symbolInfo.symbolInfoIndex];
-        currentShift.x += glyphInfo.advance;
+        currentShift.x += glyphInfo.advance * scale;
         info.symbols.push_back(symbolInfo);
     }
+
+    info.textSize.x = currentShift.x - shift.x;
+    info.textSize.y = info.font->size * scale;
+    info.scale = scale;
 
     return info;
 };
