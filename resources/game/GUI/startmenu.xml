@@ -1,0 +1,11 @@
+<document>
+    <!--Panel name="panel" x="0.25" y="0.3" width="0.5" height="0.6" /-->
+    <Button name="start" text="Single game" alignment="center" y="0.75" width="0.4" height="0.12" />
+    <Button name="story" text="Story" alignment="center" y="0.85" width="0.4" height="0.12"  />
+
+    <Label name="energybank" text="Bank: $300000" font-size="20" font-color="0.9 0.88 0.4 0.8" x="0.75" y="0.67" height="0.1" />
+    <Label name="bestscore" text="Best score: 123456" font-size="20" font-color="0.9 0.88 0.4 0.8" x="0.75" y="0.74" height="0.1" />
+
+    <Button name="config" text="" x="0.05" y="0.85" width="0.08" height="-1"
+            image="buttons/config.png" hoverimage="buttons/config_hover.png" pressedimage="buttons/config_pressed.png" />
+</document>

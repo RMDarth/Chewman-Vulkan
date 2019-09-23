@@ -121,6 +121,7 @@ Engine::~Engine()
     _vulkanInstance.reset();
     _postEffectManager.reset();
     _fontManager.reset();
+    _overlayManager.reset();
 }
 
 MaterialManager* Engine::getMaterialManager()

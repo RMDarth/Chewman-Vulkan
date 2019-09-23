@@ -11,7 +11,7 @@ namespace SVE
 class OverlayManager
 {
 public:
-    void addOverlay(OverlayInfo info);
+    std::shared_ptr<OverlayEntity> addOverlay(OverlayInfo info);
     void addOverlay(std::shared_ptr<OverlayEntity> entity);
     void removeOverlay(const std::string& name);
     void changeOverlayOrder(const std::string& name, uint32_t newOrder);

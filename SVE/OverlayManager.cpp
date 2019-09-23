@@ -6,11 +6,13 @@
 namespace SVE
 {
 
-void OverlayManager::addOverlay(OverlayInfo info)
+std::shared_ptr<OverlayEntity> OverlayManager::addOverlay(OverlayInfo info)
 {
     auto overlayEntity = std::make_shared<OverlayEntity>(info);
     _overlayList[info.name] = overlayEntity;
-    _overlayZMap[info.zOrder].push_back(std::move(overlayEntity));
+    _overlayZMap[info.zOrder].push_back(overlayEntity);
+
+    return overlayEntity;
 }
 
 void OverlayManager::addOverlay(std::shared_ptr<OverlayEntity> entity)
@@ -21,9 +23,16 @@ void OverlayManager::addOverlay(std::shared_ptr<OverlayEntity> entity)
 
 void OverlayManager::removeOverlay(const std::string& name)
 {
-    auto overlay = _overlayList.at(name);
-    auto zList = _overlayZMap.at(overlay->getInfo().zOrder);
-    zList.erase(std::remove(zList.begin(), zList.end(), overlay), zList.end());
+    auto overlayIter = _overlayList.find(name);
+    if (overlayIter == _overlayList.end())
+        return;
+    auto overlay = overlayIter->second;
+    auto zListIter = _overlayZMap.find(overlay->getInfo().zOrder);
+    if (zListIter != _overlayZMap.end())
+    {
+        auto& zList = zListIter->second;
+        zList.erase(std::remove(zList.begin(), zList.end(), overlay), zList.end());
+    }
     _overlayList.erase(name);
 }
 

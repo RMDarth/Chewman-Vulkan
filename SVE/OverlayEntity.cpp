@@ -16,13 +16,15 @@ OverlayEntity::OverlayEntity(OverlayInfo overlayInfo)
     , _material(Engine::getInstance()->getMaterialManager()->getMaterial(_overlayInfo.materialName))
 {
     _materialIndex = _material->getVulkanMaterial()->getInstanceForEntity(this);
+    _materialList.insert(_material);
     _renderLast = true;
     initText();
 }
 
 OverlayEntity::~OverlayEntity()
 {
-    _material->getVulkanMaterial()->deleteInstancesForEntity(this);
+    for (auto& material : _materialList)
+        material->getVulkanMaterial()->deleteInstancesForEntity(this);
     if (_textMaterial)
         _textMaterial->getVulkanMaterial()->deleteInstancesForEntity(this);
 }
@@ -68,6 +70,9 @@ void OverlayEntity::updateUniforms(UniformDataList uniformDataList) const
 
 void OverlayEntity::applyDrawingCommands(uint32_t bufferIndex, uint32_t imageIndex) const
 {
+    if (!_isVisible)
+        return;
+
     if (Engine::getInstance()->getPassType() == CommandsType::MainPass
         || Engine::getInstance()->getPassType() == CommandsType::ScreenQuadPass
         || Engine::getInstance()->getPassType() == CommandsType::ScreenQuadLatePass)
@@ -128,6 +133,23 @@ void OverlayEntity::initText()
         _textMaterial = Engine::getInstance()->getMaterialManager()->getMaterial(_overlayInfo.textInfo.font->materialName);
         _textMaterialIndex = _textMaterial->getVulkanMaterial()->getInstanceForEntity(this);
     }
+}
+
+void OverlayEntity::setMaterial(const std::string& materialName)
+{
+    auto* material = Engine::getInstance()->getMaterialManager()->getMaterial(materialName);
+    if (material != _material)
+    {
+        _overlayInfo.materialName = materialName;
+        _material = material;
+        _materialIndex = _material->getVulkanMaterial()->getInstanceForEntity(this);
+        _materialList.insert(_material);
+    }
+}
+
+void OverlayEntity::setVisible(bool visible)
+{
+    _isVisible = visible;
 }
 
 } // namespace SVE

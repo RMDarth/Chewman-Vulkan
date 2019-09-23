@@ -9,6 +9,7 @@ link_directories(./deps/lib/Vulkan)
 link_directories(./deps/lib/assimp)
 link_directories(./deps/lib/cppfs)
 
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/deps")
 set(CMAKE_CXX_STANDARD 14)
 
 add_executable(Chewman
@@ -153,7 +154,7 @@ add_executable(Chewman
         Game/Menu/MenuStateProcessor.h
         Game/ProgressManager.cpp
         Game/ProgressManager.h
-        Game/StateProcessor.h)
+        Game/StateProcessor.h Game/Controls/Control.cpp Game/Controls/Control.h Game/Controls/IEventHandler.h Game/Controls/ControlDocument.cpp Game/Controls/ControlDocument.h Game/Controls/ControlFactory.cpp Game/Controls/ControlFactory.h Game/Controls/ButtonControl.cpp Game/Controls/ButtonControl.h Game/Controls/ContainerControl.cpp Game/Controls/ContainerControl.h Game/Controls/LabelControl.cpp Game/Controls/LabelControl.h Game/Controls/ImageControl.cpp Game/Controls/ImageControl.h Game/Controls/PanelControl.cpp Game/Controls/PanelControl.h)
 
 if (WIN32)
     target_link_libraries(Chewman mingw32 SDL2main SDL2 vulkan-1.lib VkLayer_core_validation.lib libassimp libcppfsd)
@@ -169,5 +170,8 @@ if (UNIX)
     find_package(cppfs REQUIRED)
     include_directories(${cppfs_INCLUDE_DIRS})
 
-    target_link_libraries(Chewman ${SDL2_LIBRARIES} assimp cppfs vulkan)
+    find_package(TinyXML2 REQUIRED)
+    include_directories(${TinyXML2_INCLUDE_DIRS})
+
+    target_link_libraries(Chewman ${SDL2_LIBRARIES} assimp cppfs vulkan tinyxml2)
 endif(UNIX)

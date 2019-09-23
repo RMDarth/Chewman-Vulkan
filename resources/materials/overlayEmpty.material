@@ -1,5 +1,5 @@
 {
-    "name": "OverlayButtonMaterial",
+    "name": "OverlayEmptyMaterial",
     "vertexShaderName": "overlayVertexShader",
     "fragmentShaderName": "overlayFragmentShader",
     "cullFace": "FrontFace",
@@ -12,7 +12,7 @@
             {
                 "samplerName": "texSampler",
                 "textureType": "ImageFile",
-                "filename": "textures/overlay/button.png"
+                "filename": "textures/overlay/empty.png"
             }
         ]
 }

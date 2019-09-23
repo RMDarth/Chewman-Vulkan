@@ -4,7 +4,7 @@
 <img src="https://img.shields.io/badge/Version%20-0.5a-orange.svg?style=flat-square" alt="Version 0.5a"/>
 
 A cross-platform 3D Pacman-style game written in pure Vulkan and C++, with minimal dependencies. 
-Main dependencies: SDL (windows initialization and controls) and assimp (3D assets loading)
+Main dependencies: SDL (windows initialization and controls) and assimp (3D assets loading).
 
 Game development is currently in progress (early stage, current version is 0.5a).
 

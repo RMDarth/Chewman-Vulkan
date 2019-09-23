@@ -19,6 +19,8 @@
 #include <iostream>
 #include <memory>
 #include <mutex>
+#include <Game/Controls/Control.h>
+#include <Game/Controls/ControlDocument.h>
 
 // Thanks to:
 // Karl "ThinMatrix" for his video blogs on OpenGL techniques
@@ -117,23 +119,8 @@ int runGame()
                 engine->getFontManager()->generateText("Hello world", "NordBold"));
         engine->getSceneManager()->getRootNode()->attachEntity(textEntity);
 
-        // Add overlay
-        SVE::OverlayInfo overlayInfo {};
-        overlayInfo.x = 100;
-        overlayInfo.y = 100;
-        overlayInfo.width = 500;
-        overlayInfo.height = 200;
-        overlayInfo.name = "Button";
-        overlayInfo.materialName = "OverlayButtonMaterial";
-        overlayInfo.textInfo = engine->getFontManager()->generateText("Hello", "Helvetica", 0.8f);
-        overlayInfo.textHAlignment = SVE::TextAlignment::Center;
-        overlayInfo.textVAlignment = SVE::TextVerticalAlignment::Center;
-        engine->getOverlayManager()->addOverlay(overlayInfo);
-        overlayInfo.x = 130;
-        overlayInfo.y = 160;
-        overlayInfo.zOrder = 10;
-        overlayInfo.name = "Button2";
-        engine->getOverlayManager()->addOverlay(overlayInfo);
+        // Add document
+        Chewman::ControlDocument document("resources/game/GUI/pausemenu.xml");
 
         bool quit = false;
         bool skipRendering = false;
@@ -144,7 +131,7 @@ int runGame()
         auto prevTime = std::chrono::duration<float, std::chrono::seconds::period>(std::chrono::high_resolution_clock::now() - startTime).count();
         while (!quit)
         {
-            auto curTime = std::chrono::duration<float, std::chrono::seconds::period>(std::chrono::high_resolution_clock::now() - startTime).count();//engine->getTime();
+            auto curTime = std::chrono::duration<float, std::chrono::seconds::period>(std::chrono::high_resolution_clock::now() - startTime).count();
 
             SDL_Event event;
             while (SDL_PollEvent(&event))
@@ -176,6 +163,7 @@ int runGame()
                     if (event.key.keysym.sym == SDLK_f)
                     {
                         lockControl = !lockControl;
+                        lockControl ? document.hide() : document.show();
                     }
                     if (event.key.keysym.sym == SDLK_SPACE)
                     {
@@ -198,6 +186,15 @@ int runGame()
                 {
                     if (event.motion.state && SDL_BUTTON(1))
                         rotateCamera(event.motion, camera);
+                    document.onMouseMove(event.motion.x, event.motion.y, 0);
+                }
+                if (event.type == SDL_MOUSEBUTTONDOWN)
+                {
+                    document.onMouseDown(event.button.x, event.button.y);
+                }
+                if (event.type == SDL_MOUSEBUTTONUP)
+                {
+                    document.onMouseUp(event.button.x, event.button.y);
                 }
                 if (event.type == SDL_MOUSEWHEEL && !lockControl)
                 {
