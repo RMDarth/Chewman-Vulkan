@@ -3,6 +3,7 @@
 // Licensed under the MIT License
 #pragma once
 #include "Game/StateProcessor.h"
+#include "Game/Controls/IEventHandler.h"
 #include "GameMap.h"
 #include "GameMapLoader.h"
 
@@ -11,8 +12,9 @@ namespace Chewman
 
 class GameMapProcessor;
 class ProgressManager;
+class ControlDocument;
 
-class LevelStateProcessor : public StateProcessor
+class LevelStateProcessor : public StateProcessor, public IEventHandler
 {
 public:
     LevelStateProcessor();
@@ -28,10 +30,19 @@ public:
 
     bool isOverlapping() override;
 
+    // IEventHandler
+    void ProcessEvent(Control* control, EventType type, int x, int y) override;
+
+private:
+    void updateHUD();
+
 private:
     GameMapLoader _mapLoader;
     ProgressManager& _progressManager;
     std::unique_ptr<GameMapProcessor> _gameMapProcessor;
+
+    std::unique_ptr<ControlDocument> _document;
+    float _time = 0.0f;
 
     // As prev game map could be still in some commands, we need to finish rendering them all before release
     // TODO: Fix this in Engine so it won't destroy until all commands are finished

@@ -1,3 +1,5 @@
+# Copyright (c) 2018-2019, Igor Barinov
+# Licensed under the MIT License
 import sys
 import json
 from xml.dom import minidom

@@ -6,21 +6,14 @@
 #include "SVE/LightManager.h"
 #include "SVE/PostEffectManager.h"
 #include "SVE/FontManager.h"
-#include "SVE/OverlayManager.h"
 
 #include "Game/Game.h"
+#include "Game/Controls/ControlDocument.h"
 
 #include <SDL2/SDL.h>
 #include <vulkan/vulkan.h>
-#define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtx/rotate_vector.hpp>
-#include <glm/gtx/quaternion.hpp>
-#include <iostream>
 #include <memory>
-#include <mutex>
-#include <Game/Controls/Control.h>
-#include <Game/Controls/ControlDocument.h>
 
 // Thanks to:
 // Karl "ThinMatrix" for his video blogs on OpenGL techniques
@@ -47,8 +40,6 @@ void moveCamera(const Uint8* keystates, float deltaTime, std::shared_ptr<SVE::Ca
         camera->movePosition(glm::vec3(0,0,-12.0f*deltaTime));
     if (keystates[SDL_SCANCODE_S])
         camera->movePosition(glm::vec3(0,0,12.0f*deltaTime));
-
-    //camera->movePosition(glm::vec3(0,0,5.0f*deltaTime));
 }
 
 void rotateCamera(SDL_MouseMotionEvent& event, std::shared_ptr<SVE::CameraNode>& camera)
@@ -95,7 +86,7 @@ int runGame()
         engine->getPostEffectManager()->addPostEffect("VBlurEffect", "VBlurEffect",windowSize.x / 8, windowSize.y / 8);
         engine->getPostEffectManager()->addPostEffect("HBlurEffect", "HBlurEffect",windowSize.x / 8, windowSize.y / 8);
         engine->getPostEffectManager()->addPostEffect("BloomEffect", "BloomEffect");
-        // engine->getPostEffectManager()->addPostEffect("GrayscaleEffect", "GrayscaleEffect");
+        //engine->getPostEffectManager()->addPostEffect("GrayscaleEffect", "GrayscaleEffect");
         // engine->getPostEffectManager()->addPostEffect("PencilEffect", "PencilEffect");
 
         // configure light
@@ -117,10 +108,7 @@ int runGame()
         // Add text
         auto textEntity = std::make_shared<SVE::TextEntity>(
                 engine->getFontManager()->generateText("Hello world", "NordBold"));
-        engine->getSceneManager()->getRootNode()->attachEntity(textEntity);
-
-        // Add document
-        Chewman::ControlDocument document("resources/game/GUI/pausemenu.xml");
+        //engine->getSceneManager()->getRootNode()->attachEntity(textEntity);
 
         bool quit = false;
         bool skipRendering = false;
@@ -163,7 +151,7 @@ int runGame()
                     if (event.key.keysym.sym == SDLK_f)
                     {
                         lockControl = !lockControl;
-                        lockControl ? document.hide() : document.show();
+                        //lockControl ? document.hide() : document.show();
                     }
                     if (event.key.keysym.sym == SDLK_SPACE)
                     {
@@ -186,15 +174,6 @@ int runGame()
                 {
                     if (event.motion.state && SDL_BUTTON(1))
                         rotateCamera(event.motion, camera);
-                    document.onMouseMove(event.motion.x, event.motion.y, 0);
-                }
-                if (event.type == SDL_MOUSEBUTTONDOWN)
-                {
-                    document.onMouseDown(event.button.x, event.button.y);
-                }
-                if (event.type == SDL_MOUSEBUTTONUP)
-                {
-                    document.onMouseUp(event.button.x, event.button.y);
                 }
                 if (event.type == SDL_MOUSEWHEEL && !lockControl)
                 {

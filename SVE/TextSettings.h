@@ -64,12 +64,14 @@ struct TextInfo
     std::vector<TextSymbolInfo> symbols;
     glm::ivec2 textSize;
     float scale = 1.0f;
+    glm::vec4 color = { 1.0f, 1.0f, 1.0f, 1.0f };
 };
 
 struct UniformTextInfo
 {
     glm::ivec2 fontImageSize;
     glm::vec2 imageSize;
+    glm::vec4 color;
     uint32_t symbolCount;
     uint32_t maxHeight;
     float scale;

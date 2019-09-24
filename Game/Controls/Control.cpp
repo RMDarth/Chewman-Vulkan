@@ -74,6 +74,7 @@ Control::Control(ControlType controlType, std::string name,
     overlayInfo.height = _height;
     overlayInfo.name = formatMessage(_name, "_", _index);
     overlayInfo.materialName = _defaultMaterial;
+    overlayInfo.textHAlignment = _width > 0 ? SVE::TextAlignment::Center : SVE::TextAlignment::Left;
     _overlay = SVE::Engine::getInstance()->getOverlayManager()->addOverlay(overlayInfo);
 }
 
@@ -119,9 +120,9 @@ uint32_t Control::getRenderOrder() const
     return _overlay->getInfo().zOrder;
 }
 
-void Control::setText(const std::string& text, const std::string& font, float scale)
+void Control::setText(const std::string& text, const std::string& font, float scale, glm::vec4 color)
 {
-    _overlay->setText(SVE::Engine::getInstance()->getFontManager()->generateText(text, font, scale));
+    _overlay->setText(SVE::Engine::getInstance()->getFontManager()->generateText(text, font, scale, {0, 0}, color));
     _text = text;
 }
 
@@ -129,6 +130,17 @@ const std::string& Control::getText() const
 {
     return _text;
 }
+
+void Control::setTextColor(glm::vec4 color)
+{
+    _overlay->getInfo().textInfo.color = color;
+}
+
+glm::vec4 Control::getTextColor() const
+{
+    return _overlay->getInfo().textInfo.color;
+}
+
 
 const std::string& Control::getName() const
 {
@@ -154,6 +166,16 @@ void Control::setVisible(bool visible)
 bool Control::isVisible() const
 {
     return _visible;
+}
+
+void Control::setMouseTransparent(bool mouseTransparent)
+{
+    _mouseTransparent = mouseTransparent;
+}
+
+bool Control::isMouseTransparent() const
+{
+    return _mouseTransparent;
 }
 
 glm::ivec2 Control::getPosition() const
@@ -186,7 +208,7 @@ void Control::setMouseMoveHandler(IEventHandler* handler)
     _mouseMoveHandlerList.push_back(handler);
 }
 
-bool Control::onMouseMove(int x, int y, float deltaTime)
+bool Control::onMouseMove(int x, int y)
 {
     if (isInside(x, y) && _visible)
     {
@@ -226,7 +248,7 @@ bool Control::onMouseDown(int x, int y)
         }
         _pressed = true;
 
-        //if (!_mouseTransparent)
+        if (!_mouseTransparent)
             return true;
     }
 
@@ -246,7 +268,7 @@ bool Control::onMouseUp(int x, int y)
                           [&](IEventHandler* handler) { handler->ProcessEvent(this, IEventHandler::MouseUp, x, y); });
         }
 
-        //if (!_mouseTransparent)
+        if (!_mouseTransparent)
             result = true;
     } else if (_visible) {
         _overlay->setMaterial(_defaultMaterial);
@@ -292,21 +314,23 @@ void Control::setCustomAttribute(const std::string& name, std::string value)
         float color[4];
         str >> color[0] >> color[1] >> color[2] >> color[3];
         setDiffuseColor(color);
-    }
+    }*/
     if (name == "font-color")
     {
         std::stringstream str(value);
-        float color[4];
+        glm::vec4 color;
         str >> color[0] >> color[1] >> color[2] >> color[3];
-        setFontColor(color);
+        setTextColor(color);
     }
     if (name == "font-size")
     {
         std::stringstream str(value);
         float size;
         str >> size;
-        setFontSize(size);
-    }*/
+        auto* font = _overlay->getInfo().textInfo.font;
+        if (font)
+            setText(_text, font->fontName, (size / font->size) * 0.5f, _overlay->getInfo().textInfo.color);
+    }
 }
 
 std::string Control::getCustomAttribute(const std::string& name)
@@ -347,6 +371,11 @@ std::string Control::createMaterial(const std::string& textureFile)
 std::string Control::getDefaultOverlayFolder()
 {
     return "resources/materials/textures/overlay/";
+}
+
+void Control::setText(const std::string& text)
+{
+    setText(text, _overlay->getInfo().textInfo.font->fontName, _overlay->getInfo().textInfo.scale, _overlay->getInfo().textInfo.color);
 }
 
 } // namespace Chewman

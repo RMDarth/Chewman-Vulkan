@@ -2,8 +2,10 @@
 // Copyright (c) 2018-2019, Igor Barinov
 // Licensed under the MIT License
 #include <sstream>
+#include <iomanip>
 #include "LevelStateProcessor.h"
 #include "Game/Game.h"
+#include "Game/Controls/ControlDocument.h"
 
 namespace Chewman
 {
@@ -11,6 +13,9 @@ namespace Chewman
 LevelStateProcessor::LevelStateProcessor()
     : _progressManager(Game::getInstance()->getProgressManager())
 {
+    _document = std::make_unique<ControlDocument>("resources/game/GUI/HUD.xml");
+    _document->setMouseUpHandler(this);
+    _document->hide();
 }
 
 LevelStateProcessor::~LevelStateProcessor()
@@ -36,6 +41,8 @@ void LevelStateProcessor::initMap()
 GameState LevelStateProcessor::update(float deltaTime)
 {
     _gameMapProcessor->update(deltaTime);
+    _time += _gameMapProcessor->getDeltaTime();
+    updateHUD();
 
     switch (_gameMapProcessor->getState())
     {
@@ -72,6 +79,7 @@ GameState LevelStateProcessor::update(float deltaTime)
 void LevelStateProcessor::processInput(const SDL_Event& event)
 {
     _gameMapProcessor->processInput(event);
+    processDocument(event, _document.get());
 }
 
 void LevelStateProcessor::show()
@@ -81,17 +89,44 @@ void LevelStateProcessor::show()
         _progressManager.setStarted(true);
         _progressManager.setVictory(false);
         initMap();
+        _document->show();
+        _time = 0.0f;
     }
 }
 
 void LevelStateProcessor::hide()
 {
     _gameMapProcessor->setVisible(false);
+    _document->hide();
 }
 
 bool LevelStateProcessor::isOverlapping()
 {
     return false;
+}
+
+void LevelStateProcessor::ProcessEvent(Control* control, IEventHandler::EventType type, int x, int y)
+{
+
+}
+
+void LevelStateProcessor::updateHUD()
+{
+    std::stringstream stream;
+    stream << (int)_time / 60 << ":" << std::setfill('0') << std::setw(2) << (int)_time % 60;
+    static auto timeControl = _document->getControlByName("time");
+    timeControl->setText(stream.str());
+
+    static auto scoreControl = _document->getControlByName("score");
+    scoreControl->setText(std::to_string(_gameMapProcessor->getGameMap()->player->getPlayerInfo()->points));
+
+    static auto livesControl = _document->getControlByName("lifecount");
+    livesControl->setText(std::to_string(_gameMapProcessor->getGameMap()->player->getPlayerInfo()->lives));
+
+    static auto fps = _document->getControlByName("FPS");
+    static uint32_t frames = 0;
+    frames++;
+    fps->setText(std::to_string((int)(frames/_time)));
 }
 
 } // namespace Chewman

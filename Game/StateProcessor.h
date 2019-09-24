@@ -9,6 +9,8 @@ union SDL_Event;
 namespace Chewman
 {
 
+class ControlDocument;
+
 class StateProcessor
 {
 public:
@@ -21,6 +23,8 @@ public:
     virtual void show() = 0;
     virtual void hide() = 0;
     virtual bool isOverlapping() = 0;
+
+    static void processDocument(const SDL_Event& event, ControlDocument* controlDocument);
 };
 
 } // namespace Chewman

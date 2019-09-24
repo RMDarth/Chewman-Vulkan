@@ -45,8 +45,11 @@ public:
 
     virtual void setRenderOrder(uint32_t order);
     virtual uint32_t getRenderOrder() const;
-    virtual void setText(const std::string& text, const std::string& font, float scale = 1.0f);
+    virtual void setText(const std::string& text, const std::string& font, float scale = 1.0f, glm::vec4 color = {1,1,1,1});
+    virtual void setText(const std::string& text);
     virtual const std::string& getText() const;
+    virtual void setTextColor(glm::vec4 color);
+    virtual glm::vec4 getTextColor() const;
 
     virtual const std::string& getName() const;
 
@@ -55,6 +58,9 @@ public:
 
     virtual void setVisible(bool visible);
     virtual bool isVisible() const;
+
+    virtual void setMouseTransparent(bool mouseTransparent);
+    virtual bool isMouseTransparent() const;
 
     virtual glm::ivec2 getPosition() const;
     virtual glm::ivec2 getSize() const;
@@ -69,7 +75,7 @@ public:
     virtual void setMouseUpHandler(IEventHandler* handler);
     virtual void setMouseMoveHandler(IEventHandler* handler);
 
-    virtual bool onMouseMove(int x, int y, float deltaTime);
+    virtual bool onMouseMove(int x, int y);
     virtual bool onMouseDown(int x, int y);
     virtual bool onMouseUp(int x, int y);
 
@@ -95,6 +101,7 @@ protected:
     bool _visible = true;
     bool _enabled = true;
     bool _pressed = false;
+    bool _mouseTransparent = false;
 
     std::vector<std::shared_ptr<Control>> _children;
     Control* _parent;

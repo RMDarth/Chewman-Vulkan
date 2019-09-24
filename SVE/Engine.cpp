@@ -397,8 +397,6 @@ void Engine::renderFrameImpl()
         screenQuad->reallocateCommandBuffers(VulkanScreenQuad::Late);
         screenQuad->startRenderCommandBufferCreation(VulkanScreenQuad::Late);
         createNodeStageDrawCommands(_sceneManager->getRootNode(), BUFFER_INDEX_SCREEN_QUAD_LATE, currentImage, PassStage::Deferred);
-        // TODO: move it after post effects
-        _overlayManager->applyDrawingCommands(BUFFER_INDEX_SCREEN_QUAD_LATE, currentImage);
         screenQuad->endRenderCommandBufferCreation(VulkanScreenQuad::Late);
 
         _commandsType = CommandsType::PostEffectPasses;
@@ -413,6 +411,9 @@ void Engine::renderFrameImpl()
         _materialManager->getMaterial("ScreenQuad")->getVulkanMaterial()->applyDrawingCommands(currentFrame, currentImage, index);
         auto commandBuffer = _vulkanInstance->getCommandBuffer(currentFrame);
         vkCmdDraw(commandBuffer, 6, 1, 0, 0);
+
+        // Draw GUI
+        _overlayManager->applyDrawingCommands(currentFrame, currentImage);
     } else
     {
         if (skybox)
@@ -502,7 +503,6 @@ void Engine::renderFrameImpl()
         _vulkanInstance->submitCommands(CommandsType::RefractionPass, BUFFER_INDEX_WATER_REFRACTION);
     }
 
-    // TODO: Check if screen quad rendering enabled
     if (_vulkanInstance->getScreenQuad())
     {
         _vulkanInstance->submitCommands(CommandsType::ScreenQuadDepthPass, BUFFER_INDEX_SCREEN_QUAD_DEPTH);

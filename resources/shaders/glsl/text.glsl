@@ -26,6 +26,7 @@ struct TextInfo
 {
     ivec2 fontImageSize;
     vec2 imageSize;
+    vec4 color;
     uint symbolCount;
     uint maxHeight;
     float scale;

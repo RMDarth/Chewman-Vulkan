@@ -57,6 +57,7 @@ void OverlayEntity::updateUniforms(UniformDataList uniformDataList) const
         uniformData.textInfo.imageSize = Engine::getInstance()->getRenderWindowSize();
         uniformData.textInfo.maxHeight = _overlayInfo.textInfo.font->maxHeight;
         uniformData.textInfo.scale = _overlayInfo.textInfo.scale;
+        uniformData.textInfo.color = _overlayInfo.textInfo.color;
         uniformData.glyphList.clear();
         uniformData.glyphList.reserve(300);
         std::copy(_overlayInfo.textInfo.font->symbols, _overlayInfo.textInfo.font->symbols + 300, std::back_inserter(uniformData.glyphList));
@@ -94,7 +95,9 @@ void OverlayEntity::initText()
 {
     if (_textMaterial)
     {
-        _textMaterial->getVulkanMaterial()->deleteInstancesForEntity(this);
+        auto newMaterial = _textMaterial = Engine::getInstance()->getMaterialManager()->getMaterial(_overlayInfo.textInfo.font->materialName);
+        if (newMaterial != _textMaterial)
+            _textMaterial->getVulkanMaterial()->deleteInstancesForEntity(this);
     }
     if (_overlayInfo.textInfo.symbolCount)
     {
@@ -128,7 +131,8 @@ void OverlayEntity::initText()
                 break;
         }
 
-        _overlayInfo.textInfo = Engine::getInstance()->getFontManager()->generateText(textInfo.text, textInfo.font->fontName, textInfo.scale, glm::ivec2(textX, textY) );
+        _overlayInfo.textInfo = Engine::getInstance()->getFontManager()->generateText(
+                textInfo.text, textInfo.font->fontName, textInfo.scale, glm::ivec2(textX, textY), textInfo.color);
 
         _textMaterial = Engine::getInstance()->getMaterialManager()->getMaterial(_overlayInfo.textInfo.font->materialName);
         _textMaterialIndex = _textMaterial->getVulkanMaterial()->getInstanceForEntity(this);

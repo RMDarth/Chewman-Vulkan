@@ -29,9 +29,9 @@ public:
     void setMouseMoveHandler(IEventHandler* handler);
 
     void addControl(std::shared_ptr<Control> control);
-    std::shared_ptr<Control> getControlByName(std::string name);
+    std::shared_ptr<Control> getControlByName(const std::string& name);
 
-    virtual bool onMouseMove(int x, int y, float deltaTime);
+    virtual bool onMouseMove(int x, int y);
     virtual bool onMouseDown(int x, int y);
     virtual bool onMouseUp(int x, int y);
 

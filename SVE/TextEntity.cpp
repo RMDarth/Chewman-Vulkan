@@ -42,6 +42,7 @@ void TextEntity::updateUniforms(UniformDataList uniformDataList) const
     uniformData.textInfo.imageSize = Engine::getInstance()->getRenderWindowSize();
     uniformData.textInfo.maxHeight = _textInfo.font->maxHeight;
     uniformData.textInfo.scale = _textInfo.scale;
+    uniformData.textInfo.color = _textInfo.color;
     uniformData.glyphList.reserve(300);
     std::copy(_textInfo.font->symbols, _textInfo.font->symbols + 300, std::back_inserter(uniformData.glyphList));
     uniformData.glyphList.resize(300);

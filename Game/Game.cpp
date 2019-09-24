@@ -67,6 +67,8 @@ void Game::initStates()
 {
     registerStateProcessor(GameState::Level, std::make_shared<LevelStateProcessor>());
     registerStateProcessor(GameState::MainMenu, std::make_shared<MenuStateProcessor>());
+
+    _stateProcessors[_gameState]->show();
 }
 
 } // namespace Chewman

@@ -29,6 +29,8 @@ void ControlDocument::loadDocument(const std::string& filename)
                 0.0f, 0.0f, 1.0f, 1.0f, nullptr);
 
         addChildren(_rootControl, element);
+    } else {
+        std::cerr << "Can't load control document " << filename << std::endl;
     }
 }
 
@@ -93,22 +95,20 @@ void ControlDocument::addChildren(std::shared_ptr<Control> parent, tinyxml2::XML
 
         if (gameControl)
         {
+            if (xmlControl->Attribute("text") != nullptr)
+            {
+                gameControl->setText(xmlControl->Attribute("text"), "NordBold", 0.5f, gameControl->getTextColor());
+            }
+
             for (auto* attribute = xmlControl->FirstAttribute(); attribute != nullptr; attribute = attribute->Next())
             {
                 gameControl->setCustomAttribute(attribute->Name(), attribute->Value());
             }
 
-            if (xmlControl->Attribute("text") != nullptr)
+            if (xmlControl->Attribute("mousetransparent") != nullptr)
             {
-                gameControl->setText(xmlControl->Attribute("text"), "NordBold", 0.5f);
+                gameControl->setMouseTransparent(xmlControl->BoolAttribute("mousetransparent"));
             }
-
-            /*if (xmlControl->Attribute("mousetransparent") != nullptr)
-            {
-                gameControl->SetMouseTransparent(xmlControl->BoolAttribute("mousetransparent"));
-            }*/
-
-            //SetCustomAttributes(gameControl, xmlControl);
 
             parent->addChild(gameControl);
             _controlList.push_back(gameControl);
@@ -153,7 +153,7 @@ void ControlDocument::addControl(std::shared_ptr<Control> control)
     _controlList.push_back(std::move(control));
 }
 
-std::shared_ptr<Control> ControlDocument::getControlByName(std::string name)
+std::shared_ptr<Control> ControlDocument::getControlByName(const std::string& name)
 {
     for (auto& control : _controlList)
     {
@@ -166,12 +166,12 @@ std::shared_ptr<Control> ControlDocument::getControlByName(std::string name)
     return nullptr;
 }
 
-bool ControlDocument::onMouseMove(int x, int y, float deltaTime)
+bool ControlDocument::onMouseMove(int x, int y)
 {
     bool result = false;
     for (auto& control : _controlList)
     {
-        result = result | control->onMouseMove(x, y, deltaTime);
+        result = result | control->onMouseMove(x, y);
     }
 
     return result;
