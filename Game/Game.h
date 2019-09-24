@@ -4,6 +4,7 @@
 #pragma once
 #include <memory>
 #include <map>
+#include <vector>
 #include "GameDefs.h"
 #include "StateProcessor.h"
 #include "ProgressManager.h"
@@ -38,6 +39,8 @@ private:
     GameState _gameState = GameState::MainMenu;
     ProgressManager _progressManager;
     std::map<GameState, std::shared_ptr<StateProcessor>> _stateProcessors;
+
+    std::vector<GameState> _overlappedStateList;
 };
 
 } // namespace Chewman

@@ -47,6 +47,11 @@ void ParticleSystemEntity::updateUniforms(UniformDataList uniformDataList) const
     data.particleAffector = _settings.particleAffector;
     data.particleCount = _settings.quota;
     data.spritesheetSize = _material->getVulkanMaterial()->getSpritesheetSize();
+    if (_isTimePaused)
+    {
+        data.time = _pauseTime;
+        data.deltaTime = 0;
+    }
 
     _material->getVulkanMaterial()->setUniformData(_materialIndex, data);
     _vulkanComputeEntity->setUniformData(data);

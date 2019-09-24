@@ -6,6 +6,7 @@
 #include <utility>
 #include "Game/Level/LevelStateProcessor.h"
 #include "Game/Menu/MenuStateProcessor.h"
+#include "Game/Menu/PauseStateProcessor.h"
 
 namespace Chewman
 {
@@ -31,9 +32,15 @@ void Game::update(float deltaTime)
 void Game::setState(GameState newState)
 {
     auto& newStateProcessor = _stateProcessors[newState];
-
-    // TODO: Add support for overlapping states
-    _stateProcessors[_gameState]->hide();
+    if (!newStateProcessor->isOverlapping())
+    {
+        _stateProcessors[_gameState]->hide();
+        for (auto state : _overlappedStateList)
+            _stateProcessors[state]->hide();
+        _overlappedStateList.clear();
+    } else {
+        _overlappedStateList.push_back(_gameState);
+    }
 
     _gameState = newState;
     newStateProcessor->show();
@@ -67,6 +74,7 @@ void Game::initStates()
 {
     registerStateProcessor(GameState::Level, std::make_shared<LevelStateProcessor>());
     registerStateProcessor(GameState::MainMenu, std::make_shared<MenuStateProcessor>());
+    registerStateProcessor(GameState::Pause, std::make_shared<PauseStateProcessor>());
 
     _stateProcessors[_gameState]->show();
 }

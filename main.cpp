@@ -8,7 +8,6 @@
 #include "SVE/FontManager.h"
 
 #include "Game/Game.h"
-#include "Game/Controls/ControlDocument.h"
 
 #include <SDL2/SDL.h>
 #include <vulkan/vulkan.h>

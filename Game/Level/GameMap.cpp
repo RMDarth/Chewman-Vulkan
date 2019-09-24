@@ -86,12 +86,17 @@ void GameMapProcessor::update(float deltaTime)
 
 void GameMapProcessor::setVisible(bool visible)
 {
+    if (visible == _isVisible)
+        return;
+
     if (!visible)
     {
         SVE::Engine::getInstance()->getSceneManager()->getRootNode()->detachSceneNode(_gameMap->mapNode);
     } else {
         SVE::Engine::getInstance()->getSceneManager()->getRootNode()->attachSceneNode(_gameMap->mapNode);
     }
+
+    _isVisible = visible;
 }
 
 
@@ -167,7 +172,22 @@ std::shared_ptr<GameMap> GameMapProcessor::getGameMap()
 
 void GameMapProcessor::setState(GameMapState gameState)
 {
+    if (gameState == GameMapState::Pause)
+    {
+        for (auto& gargoyle : _gameMap->gargoyles)
+        {
+            gargoyle.particleSystem->pauseTime();
+        }
+    } else if (_state == GameMapState::Pause)
+    {
+        for (auto& gargoyle : _gameMap->gargoyles)
+        {
+            gargoyle.particleSystem->unpauseTime();
+        }
+    }
+
     _state = gameState;
+
 }
 
 GameMapState GameMapProcessor::getState() const

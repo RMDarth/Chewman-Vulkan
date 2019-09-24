@@ -73,10 +73,11 @@ void MeshEntity::updateUniforms(UniformDataList uniformDataList) const
 
     UniformData newData = *uniformDataList[toInt(CommandsType::MainPass)];
 
-    _time += Engine::getInstance()->getDeltaTime();
+    if (!_isTimePaused)
+        _time += Engine::getInstance()->getDeltaTime();
     newData.time = _time;
 
-    if (_animationState == AnimationState::Play)
+    if (_animationState == AnimationState::Play && !_isTimePaused)
         _animationTime += Engine::getInstance()->getDeltaTime();
     _mesh->updateUniformDataBones(newData, _animationTime);
     _material->getVulkanMaterial()->setUniformData(_materialIndex, newData);

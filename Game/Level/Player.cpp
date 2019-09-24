@@ -112,8 +112,8 @@ void Player::update(float deltaTime)
             {
                 _powerUpTime-= deltaTime;
 
-                const auto rotateAngle = -90.0f * static_cast<uint8_t>(_mapTraveller->getCurrentDirection());
-                _powerUpEffectNode->setNodeTransformation(glm::rotate(glm::mat4(1), glm::radians(rotateAngle), glm::vec3(0, 1, 0)));
+                //const auto rotateAngle = -90.0f * static_cast<uint8_t>(_mapTraveller->getCurrentDirection());
+                //_powerUpEffectNode->setNodeTransformation(glm::rotate(glm::mat4(1), glm::radians(rotateAngle), glm::vec3(0, 1, 0)));
 
             } else {
                 _rootNode->detachSceneNode(_powerUpEffectNode);

@@ -1,7 +1,7 @@
 # Chewman Vulkan
-<img src="https://img.shields.io/badge/Language%20-C++11-blue.svg?style=flat-square" alt="Made with C++11"/>
-<img src="https://img.shields.io/badge/Version%20-0.5a-orange.svg?style=flat-square" alt="Version 0.5a"/>
-<img src="https://sloc.xyz/github/RMDarth/Chewman-Vulkan" />
+[![Language](https://img.shields.io/badge/Language%20-C++11-blue.svg?style=flat-square)](https://github.com/RMDarth/Chewman-Vulkan/)
+[![Version](https://img.shields.io/badge/Version%20-0.5a-orange.svg?style=flat-square)](https://github.com/RMDarth/Chewman-Vulkan/)
+[![Scc Count Badge](https://sloc.xyz/github/RMDarth/Chewman-Vulkan/)](https://github.com/RMDarth/Chewman-Vulkan/)
 
 A cross-platform 3D Pacman-style game written in pure Vulkan and C++, with minimal dependencies. 
 Main dependencies: SDL (windows initialization and controls) and assimp (3D assets loading).

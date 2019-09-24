@@ -41,7 +41,7 @@ void LevelStateProcessor::initMap()
 GameState LevelStateProcessor::update(float deltaTime)
 {
     _gameMapProcessor->update(deltaTime);
-    _time += _gameMapProcessor->getDeltaTime();
+    _time += deltaTime;
     updateHUD();
 
     switch (_gameMapProcessor->getState())
@@ -89,9 +89,12 @@ void LevelStateProcessor::show()
         _progressManager.setStarted(true);
         _progressManager.setVictory(false);
         initMap();
-        _document->show();
         _time = 0.0f;
+    } else {
+        _gameMapProcessor->setState(GameMapState::Game);
     }
+    _gameMapProcessor->setVisible(true);
+    _document->show();
 }
 
 void LevelStateProcessor::hide()
@@ -107,7 +110,14 @@ bool LevelStateProcessor::isOverlapping()
 
 void LevelStateProcessor::ProcessEvent(Control* control, IEventHandler::EventType type, int x, int y)
 {
-
+    if (type == IEventHandler::MouseUp)
+    {
+        if (control->getName() == "pause")
+        {
+            _gameMapProcessor->setState(GameMapState::Pause);
+            Game::getInstance()->setState(GameState::Pause);
+        }
+    }
 }
 
 void LevelStateProcessor::updateHUD()

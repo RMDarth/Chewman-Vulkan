@@ -34,6 +34,8 @@ public:
     // This is for special render to depth texture pass
     bool isRenderToDepth() const;
     void setRenderToDepth(bool renderToDepth);
+    void pauseTime();
+    void unpauseTime();
 
     virtual bool isComputeEntity() const;
     virtual bool isInstanceRendering() const;
@@ -47,6 +49,9 @@ public:
     virtual void applyDrawingCommands(uint32_t bufferIndex, uint32_t imageIndex) const = 0;
 
 protected:
+    bool _isTimePaused = false;
+    float _pauseTime = 0;
+
     bool _renderLast = false;
     bool _renderToDepth = false;
     std::weak_ptr<SceneNode> _parent;

@@ -79,6 +79,8 @@ private:
     std::shared_ptr<GameMap> _gameMap;
     float _totalTime;
     float _deltaTime = 0;
+
+    bool _isVisible = true;
 };
 
 } // namespace Chewman

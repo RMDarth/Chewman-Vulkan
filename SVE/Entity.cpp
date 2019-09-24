@@ -5,6 +5,7 @@
 #include <utility>
 #include "Entity.h"
 #include "SceneNode.h"
+#include "Engine.h"
 
 namespace SVE
 {
@@ -85,6 +86,17 @@ bool Entity::isRenderToDepth() const
 void Entity::setRenderToDepth(bool renderToDepth)
 {
     _renderToDepth = renderToDepth;
+}
+
+void Entity::pauseTime()
+{
+    _pauseTime = Engine::getInstance()->getTime();
+    _isTimePaused = true;
+}
+
+void Entity::unpauseTime()
+{
+    _isTimePaused = false;
 }
 
 } // namespace SVE
