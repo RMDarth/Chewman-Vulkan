@@ -4,6 +4,7 @@
 #include "PowerUp.h"
 #include "GameMap.h"
 #include "GameUtils.h"
+#include "SVE/Engine.h"
 #include "SVE/SceneManager.h"
 
 #include <glm/gtc/matrix_transform.hpp>

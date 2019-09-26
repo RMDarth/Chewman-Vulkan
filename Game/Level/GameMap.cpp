@@ -66,9 +66,9 @@ void GameMapProcessor::update(float deltaTime)
         updateGargoyle(deltaTime, gargoyle);
     }
 
-    for (auto& nun : _gameMap->nuns)
+    for (auto& enemy : _gameMap->enemies)
     {
-        nun.update(_deltaTime);
+        enemy->update(_deltaTime);
     }
 
     for (auto& powerUp : _gameMap->powerUps)

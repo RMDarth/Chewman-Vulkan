@@ -8,6 +8,9 @@
 #include <SVE/MeshManager.h>
 #include <SVE/SceneManager.h>
 
+#include "Game/Level/Enemies/Nun.h"
+#include "Game/Level/Enemies/Angel.h"
+
 #include <fstream>
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtc/matrix_transform.hpp>
@@ -213,7 +216,11 @@ std::shared_ptr<GameMap> GameMapLoader::loadMap(const std::string& filename)
                     break;
                 case 'E':
                     gameMap->mapData[curRow][column].cellType = CellType::Floor;
-                    gameMap->nuns.emplace_back(gameMap.get(), glm::ivec2(curRow, column));
+                    gameMap->enemies.push_back(std::make_unique<Nun>(gameMap.get(), glm::ivec2(curRow, column)));
+                    break;
+                case 'Q':
+                    gameMap->mapData[curRow][column].cellType = CellType::Floor;
+                    gameMap->enemies.push_back((std::make_unique<Angel>(gameMap.get(), glm::ivec2(curRow, column))));
                     break;
                 case 'J':
                 case 'D':

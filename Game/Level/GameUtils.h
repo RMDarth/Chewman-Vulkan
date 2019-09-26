@@ -3,7 +3,14 @@
 // Licensed under the MIT License
 #pragma once
 #include <random>
+#include <memory>
 #include <glm/vec3.hpp>
+
+namespace SVE
+{
+class LightNode;
+class Engine;
+}
 
 namespace Chewman
 {
@@ -11,5 +18,7 @@ namespace Chewman
 std::mt19937& getRandomEngine();
 
 glm::vec3 getWorldPos(int row, int column, float y = 0.0f);
+
+std::shared_ptr<SVE::LightNode> addEnemyLightEffect(SVE::Engine* engine);
 
 } // namespace Chewman

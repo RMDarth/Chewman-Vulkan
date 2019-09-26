@@ -78,6 +78,7 @@ void MapTraveller::move(MoveDirection dir)
 
     auto mapPosition = getMapPosition();
     moveTo(dir, mapPosition);
+    _start = _position;
     _target = toRealPos(mapPosition);
 }
 
@@ -106,6 +107,11 @@ glm::ivec2 MapTraveller::getMapPosition() const
     return glm::ivec2(_position.x / CellSize + 0.5, _position.y / CellSize + 0.5);
 }
 
+glm::ivec2 MapTraveller::getMapPosition(glm::vec2 realPos)
+{
+    return glm::ivec2(realPos.x / CellSize + 0.5, realPos.y / CellSize + 0.5);
+}
+
 glm::vec2 MapTraveller::getRealPosition() const
 {
     return _position;
@@ -126,7 +132,7 @@ bool MapTraveller::isFreePosition(glm::ivec2 position)
         case CellType::Wall:
         case CellType::InvisibleWallWithFloor:
         case CellType::InvisibleWallEmpty:
-            return false;
+            return _wallAllowed;
     }
 
     return false;
@@ -142,9 +148,24 @@ bool MapTraveller::isTargetReached() const
     return _targetReached;
 }
 
+glm::vec2 MapTraveller::getStartPos() const
+{
+    return _start;
+}
+
+glm::vec2 MapTraveller::getTargetPos() const
+{
+    return _target;
+}
+
 void MapTraveller::setWaterAccessible(bool accessible)
 {
     _waterAllowed = accessible;
+}
+
+void MapTraveller::setWallAccessible(bool accessible)
+{
+    _wallAllowed = accessible;
 }
 
 MoveDirection MapTraveller::getCurrentDirection() const

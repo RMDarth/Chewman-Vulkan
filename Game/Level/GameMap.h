@@ -15,7 +15,7 @@
 #include "PowerUp.h"
 #include "Player.h"
 #include "StaticObject.h"
-#include "Game/Level/Enemies/Nun.h"
+#include "Game/Level/Enemies/Enemy.h"
 #include "GameRulesProcessor.h"
 
 namespace Chewman
@@ -34,7 +34,7 @@ struct GameMap
     std::vector<Coin> coins;
     std::vector<PowerUp> powerUps;
     std::vector<StaticObject> staticObjects;
-    std::vector<Nun> nuns;
+    std::vector<std::unique_ptr<Enemy>> enemies;
 
     uint32_t activeCoins;
 

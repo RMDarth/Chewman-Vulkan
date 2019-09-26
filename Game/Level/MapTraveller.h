@@ -34,13 +34,18 @@ public:
     void update(float deltaTime);
     void setSpeed(float speed);
     void setWaterAccessible(bool accessible);
+    void setWallAccessible(bool accessible);
 
     void setPosition(glm::ivec2 position);
 
     MoveDirection getCurrentDirection() const;
     glm::ivec2 getMapPosition() const;
+    static glm::ivec2 getMapPosition(glm::vec2 realPos);
     glm::vec2 getRealPosition() const;
     bool isTargetReached() const;
+
+    glm::vec2 getStartPos() const;
+    glm::vec2 getTargetPos() const;
 
     bool isCloseToAffect(glm::vec2 pos) const;
 
@@ -57,8 +62,10 @@ private:
     MoveDirection _direction = MoveDirection::Forward;
     glm::vec2 _position  = {};
     glm::vec2 _target = {};
+    glm::vec2 _start = {};
     bool _targetReached = true;
     bool _waterAllowed = false;
+    bool _wallAllowed = false;
 
     glm::vec2 _speed = {};
 };

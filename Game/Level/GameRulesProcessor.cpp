@@ -3,6 +3,7 @@
 // Licensed under the MIT License
 #include "GameRulesProcessor.h"
 #include "GameMap.h"
+#include "SVE/Engine.h"
 #include "SVE/SceneManager.h"
 #include "SVE/CameraNode.h"
 
@@ -143,14 +144,14 @@ void GameRulesProcessor::update(float deltaTime)
                 return true;
             }
 
-            for (auto& nun : gameMap->nuns)
+            for (auto& enemy : gameMap->enemies)
             {
-                if (nun.isDead())
+                if (enemy->isDead())
                     continue;
-                if (mapTraveller->isCloseToAffect(nun.getPosition()))
+                if (mapTraveller->isCloseToAffect(enemy->getPosition()))
                 {
-                    if (nun.isStateActive(EnemyState::Vulnerable))
-                        nun.increaseState(EnemyState::Dead);
+                    if (enemy->isStateActive(EnemyState::Vulnerable))
+                        enemy->increaseState(EnemyState::Dead);
                     else
                         return true;
                 }
@@ -261,12 +262,12 @@ void GameRulesProcessor::deactivatePowerUp(PowerUpType type)
     switch (type)
     {
         case PowerUpType::Pentagram:
-            for (auto & enemy : gameMap->nuns)
-                enemy.resetState(EnemyState::Vulnerable);
+            for (auto & enemy : gameMap->enemies)
+                enemy->resetState(EnemyState::Vulnerable);
             break;
         case PowerUpType::Freeze:
-            for (auto & enemy : gameMap->nuns)
-                enemy.resetState(EnemyState::Frozen);
+            for (auto & enemy : gameMap->enemies)
+                enemy->resetState(EnemyState::Frozen);
             break;
         case PowerUpType::Acceleration:
             getPlayer()->getMapTraveller()->setSpeed(MoveSpeed);
@@ -293,13 +294,13 @@ void GameRulesProcessor::activatePowerUp(PowerUpType type)
     {
         case PowerUpType::Pentagram:
             _gameAffectors.push_back({type, 10.0f});
-            for (auto & enemy : gameMap->nuns)
-                enemy.increaseState(EnemyState::Vulnerable);
+            for (auto & enemy : gameMap->enemies)
+                enemy->increaseState(EnemyState::Vulnerable);
             break;
         case PowerUpType::Freeze:
             _gameAffectors.push_back({type, 10.0f});
-            for (auto & enemy : gameMap->nuns)
-                enemy.increaseState(EnemyState::Frozen);
+            for (auto & enemy : gameMap->enemies)
+                enemy->increaseState(EnemyState::Frozen);
             break;
         case PowerUpType::Acceleration:
             _gameAffectors.push_back({type, 10.0f});
