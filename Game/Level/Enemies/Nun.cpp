@@ -18,7 +18,7 @@ namespace Chewman
 Nun::Nun(GameMap* map, glm::ivec2 startPos)
     : Enemy(map, startPos)
 {
-    _ai = std::make_shared<RandomWalkerAI>(*_mapTraveller, 85);
+    _ai = std::make_shared<RandomWalkerAI>(*_mapTraveller, 95);
 
     auto* engine = SVE::Engine::getInstance();
 

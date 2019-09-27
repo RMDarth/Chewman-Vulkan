@@ -36,7 +36,9 @@ Angel::Angel(GameMap* map, glm::ivec2 startPos)
     map->mapNode->attachSceneNode(_rootNode);
 
     auto meshNode = engine->getSceneManager()->createSceneNode();
-    meshNode->setNodeTransformation(glm::scale(glm::mat4(1), glm::vec3(2.0f)));
+    auto tranform = glm::scale(glm::mat4(1), glm::vec3(2.0f));
+    transform = glm::rotate(tranform, glm::radians(180.0f), glm::vec3(0, 1, 0));
+    meshNode->setNodeTransformation(transform);
     _rotateNode->attachSceneNode(meshNode);
     _angelMesh = std::make_shared<SVE::MeshEntity>("angel");
     _angelMesh->setMaterial("AngelMaterial");

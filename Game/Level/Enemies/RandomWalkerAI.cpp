@@ -7,9 +7,9 @@
 namespace Chewman
 {
 
-RandomWalkerAI::RandomWalkerAI(MapTraveller& mapWalker, uint8_t sameWayChance)
+RandomWalkerAI::RandomWalkerAI(MapTraveller& mapWalker, uint8_t noReturnWayChance)
     : EnemyAI(mapWalker)
-    , _sameWayChange(sameWayChance)
+    , _noReturnWayChance(noReturnWayChance)
 {
 }
 
@@ -23,17 +23,16 @@ void RandomWalkerAI::update(float deltaTime)
         };
 
         auto currentDirection = _mapTraveller->getCurrentDirection();
-        if (_mapTraveller->isMovePossible(currentDirection)
-            && std::uniform_int_distribution<>(0, 100)(getRandomEngine()) < _sameWayChange)
+
+        MoveDirection direction;
+        do
         {
-            _mapTraveller->move(currentDirection);
-        } else {
-            auto direction = getRandomDirection();
-            while (!_mapTraveller->tryMove(getRandomDirection()))
+            direction = getRandomDirection();
+            while (isAntiDirection(currentDirection, direction) && std::uniform_int_distribution<>(0, 100)(getRandomEngine()) < _noReturnWayChance)
             {
                 direction = static_cast<MoveDirection>((static_cast<uint8_t>(direction) + 1) % 4);
             }
-        }
+        } while (!_mapTraveller->tryMove(direction));
     }
 
     _mapTraveller->update(deltaTime);

@@ -11,12 +11,12 @@ namespace Chewman
 class RandomWalkerAI : public EnemyAI
 {
 public:
-    explicit RandomWalkerAI(MapTraveller& mapWalker, uint8_t sameWayChance = 75);
+    explicit RandomWalkerAI(MapTraveller& mapWalker, uint8_t noReturnWayChance = 75);
 
     void update(float deltaTime) override;
 
 private:
-    uint8_t _sameWayChange = 75;
+    uint8_t _noReturnWayChance = 75;
 };
 
 } // namespace Chewman

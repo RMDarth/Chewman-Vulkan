@@ -40,4 +40,9 @@ std::shared_ptr<SVE::LightNode> addEnemyLightEffect(SVE::Engine* engine)
     return lightNode;
 }
 
+bool isAntiDirection(MoveDirection curDir, MoveDirection newDir)
+{
+    return curDir != MoveDirection::None && curDir != newDir && static_cast<uint8_t>(curDir) % 2 == static_cast<uint8_t>(newDir) % 2;
+}
+
 } // namespace Chewman

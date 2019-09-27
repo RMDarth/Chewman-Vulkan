@@ -9,6 +9,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "GameMap.h"
+#include "GameUtils.h"
 
 #include <SDL2/SDL_events.h>
 
@@ -17,11 +18,6 @@ namespace Chewman
 
 namespace
 {
-
-auto isAntiDirection(MoveDirection curDir, MoveDirection newDir)
-{
-    return static_cast<uint8_t>(curDir) % 2 == static_cast<uint8_t>(newDir) % 2;
-}
 
 std::shared_ptr<SVE::LightNode> addLightEffect(SVE::Engine* engine)
 {
