@@ -72,6 +72,9 @@ std::shared_ptr<SVE::MeshEntity> getPowerUpEntity(PowerUpType type)
             meshName = "teeth";
             materialName = "TeethMaterial";
             break;
+        case PowerUpType::Slow:
+            assert(!"Slow is only effect and shouldn't be on map");
+            break;
     }
 
     auto powerUpMesh = std::make_shared<SVE::MeshEntity>(meshName);
@@ -95,36 +98,38 @@ PowerUp::PowerUp(GameMap* gameMap, glm::ivec2 startPos, PowerUpType type)
     auto position = getWorldPos(startPos.x, startPos.y, 1.0f);
 
     _rootNode = engine->getSceneManager()->createSceneNode();
-    auto transform = glm::translate(glm::mat4(1), position);
+    _rootNode->setNodeTransformation(glm::translate(glm::mat4(1), position));
+
+    _rotateNode = engine->getSceneManager()->createSceneNode();
+    _rootNode->attachSceneNode(_rotateNode);
     switch (_type)
     {
         case PowerUpType::Pentagram:
         case PowerUpType::Freeze:
         case PowerUpType::Acceleration:
         case PowerUpType::Teeth:
-            transform = glm::rotate(transform, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+            _rotateNode->setNodeTransformation(glm::rotate(glm::mat4(1), glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f)));
             break;
         case PowerUpType::Life:
-            transform = glm::rotate(transform, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+            _rotateNode->setNodeTransformation(glm::rotate(glm::mat4(1), glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f)));
             break;
         case PowerUpType::Bomb:
         case PowerUpType::Jackhammer:
+        case PowerUpType::Slow:
             break;
     }
 
-
-    _rootNode->setNodeTransformation(transform);
     gameMap->mapNode->attachSceneNode(_rootNode);
 
     auto powerUpEntity = getPowerUpEntity(type);
-    _rootNode->attachEntity(std::move(powerUpEntity));
+    _rotateNode->attachEntity(std::move(powerUpEntity));
 
     rotateItem(std::uniform_real_distribution<float>(0.0f, 5.0f)(getRandomEngine()));
 }
 
 void PowerUp::rotateItem(float time)
 {
-    auto transform = _rootNode->getNodeTransformation();
+    auto transform = _rotateNode->getNodeTransformation();
     switch (_type)
     {
         case PowerUpType::Pentagram:
@@ -143,7 +148,7 @@ void PowerUp::rotateItem(float time)
             break;
     }
 
-    _rootNode->setNodeTransformation(transform);
+    _rotateNode->setNodeTransformation(transform);
 }
 
 void PowerUp::update(float deltaTime)

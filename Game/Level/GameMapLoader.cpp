@@ -8,6 +8,7 @@
 #include <SVE/MeshManager.h>
 #include <SVE/SceneManager.h>
 
+#include "Bomb.h"
 #include "Game/Level/Enemies/Nun.h"
 #include "Game/Level/Enemies/Angel.h"
 
@@ -235,12 +236,16 @@ std::shared_ptr<GameMap> GameMapLoader::loadMap(const std::string& filename)
                 case 'F':
                 case 'A':
                 case 'X':
-                case 'B':
                 case 'H':
                 case 'T':
                     gameMap->mapData[curRow][column].cellType = CellType::Floor;
-                    gameMap->powerUps.emplace_back(gameMap.get(), glm::ivec2(curRow, column), ch);
-                    gameMap->mapData[curRow][column].powerUp = &gameMap->powerUps.back();
+                    gameMap->powerUps.emplace_back(std::make_unique<PowerUp>(gameMap.get(), glm::ivec2(curRow, column), ch));
+                    gameMap->mapData[curRow][column].powerUp = gameMap->powerUps.back().get();
+                    break;
+                case 'B':
+                    gameMap->mapData[curRow][column].cellType = CellType::Floor;
+                    gameMap->powerUps.emplace_back(std::make_unique<Bomb>(gameMap.get(), glm::ivec2(curRow, column)));
+                    gameMap->mapData[curRow][column].powerUp = gameMap->powerUps.back().get();
                     break;
                 case 'S':
                     gameMap->mapData[curRow][column].cellType = CellType::Floor;
@@ -253,6 +258,7 @@ std::shared_ptr<GameMap> GameMapLoader::loadMap(const std::string& filename)
         }
     }
     gameMap->activeCoins = gameMap->coins.size();
+    gameMap->totalCoins = gameMap->coins.size();
 
     fin.getline(line, 100);
     initMeshes(*gameMap);
@@ -278,6 +284,22 @@ std::shared_ptr<GameMap> GameMapLoader::loadMap(const std::string& filename)
 
 void GameMapLoader::initMeshes(GameMap& level)
 {
+    buildLevelMeshes(level, _meshGenerator);
+
+    level.mapEntity[0] = std::make_shared<SVE::MeshEntity>("MapT");
+    level.mapEntity[1] = std::make_shared<SVE::MeshEntity>("MapB");
+    level.mapEntity[2] = std::make_shared<SVE::MeshEntity>("MapV");
+    for (auto i = 0; i < 3; ++i)
+        level.mapEntity[i]->setRenderToDepth(true);
+
+    //level.mapNode->setNodeTransformation(glm::translate(glm::mat4(1), glm::vec3(10, 5, 0)));
+    level.mapNode->attachEntity(level.mapEntity[0]);
+    level.mapNode->attachEntity(level.mapEntity[1]);
+    level.mapNode->attachEntity(level.mapEntity[2]);
+}
+
+void buildLevelMeshes(const GameMap& level, BlockMeshGenerator& meshGenerator)
+{
     std::vector<Submesh> top;
     std::vector<Submesh> bottom;
     std::vector<Submesh> vertical;
@@ -292,21 +314,18 @@ void GameMapLoader::initMeshes(GameMap& level)
             switch (level.mapData[x][y].cellType)
             {
                 case CellType::Wall:
-                    cellT = _meshGenerator.GenerateWall(position, ModelType::Top);
-                    cellB = _meshGenerator.GenerateWall(position, ModelType::Bottom);
-                    cellV = _meshGenerator.GenerateWall(position, ModelType::Vertical);
+                    cellT = meshGenerator.GenerateWall(position, Top);
+                    cellB = meshGenerator.GenerateWall(position, Bottom);
+                    cellV = meshGenerator.GenerateWall(position, Vertical);
                     break;
                 case CellType::Floor:
                 case CellType::InvisibleWallWithFloor:
-                    cellT = _meshGenerator.GenerateFloor(position, ModelType::Top);
-                    cellB = _meshGenerator.GenerateFloor(position, ModelType::Bottom);
-                    cellV = _meshGenerator.GenerateFloor(position, ModelType::Vertical);
+                    cellT = meshGenerator.GenerateFloor(position, Top);
+                    cellB = meshGenerator.GenerateFloor(position, Bottom);
+                    cellV = meshGenerator.GenerateFloor(position, Vertical);
                     break;
                 case CellType::Liquid:
-                    //cellT = _meshGenerator.GenerateLiquid(position, ModelType::Top);
-                    //cellB = _meshGenerator.GenerateLiquid(position, ModelType::Bottom);
-                    //cellV = _meshGenerator.GenerateLiquid(position, ModelType::Vertical);
-                    cellV = _meshGenerator.GenerateLiquid(position, ModelType::Vertical, x, y, level.height - 1, level.width - 1);
+                    cellV = meshGenerator.GenerateLiquid(position, Vertical, x, y, level.height - 1, level.width - 1);
                     break;
             }
             top.insert(top.end(), cellT.begin(), cellT.end());
@@ -315,33 +334,22 @@ void GameMapLoader::initMeshes(GameMap& level)
         }
     }
 
-    auto meshSettingsT = _meshGenerator.CombineMeshes("MapT", top);
+    auto meshSettingsT = meshGenerator.CombineMeshes("MapT", top);
     meshSettingsT.materialName = "CeilingNormals";
-    auto meshSettingsB = _meshGenerator.CombineMeshes("MapB", bottom);
+    auto meshSettingsB = meshGenerator.CombineMeshes("MapB", bottom);
     meshSettingsB.materialName = "FloorParallax";
-    auto meshSettingsV = _meshGenerator.CombineMeshes("MapV", vertical);
+    auto meshSettingsV = meshGenerator.CombineMeshes("MapV", vertical);
     meshSettingsV.materialName = "WallParallax";
 
     auto* engine = SVE::Engine::getInstance();
 
     std::shared_ptr<SVE::Mesh> mapMesh[3];
-    mapMesh[0] = std::make_unique<SVE::Mesh>(meshSettingsT);
+    mapMesh[0] = std::make_shared<SVE::Mesh>(meshSettingsT);
     engine->getMeshManager()->registerMesh(mapMesh[0]);
     mapMesh[1] = std::make_shared<SVE::Mesh>(meshSettingsB);
     engine->getMeshManager()->registerMesh(mapMesh[1]);
     mapMesh[2] = std::make_shared<SVE::Mesh>(meshSettingsV);
     engine->getMeshManager()->registerMesh(mapMesh[2]);
-
-    level.mapEntity[0] = std::make_shared<SVE::MeshEntity>("MapT");
-    level.mapEntity[1] = std::make_shared<SVE::MeshEntity>("MapB");
-    level.mapEntity[2] = std::make_shared<SVE::MeshEntity>("MapV");
-    for (auto i = 0; i < 3; ++i)
-        level.mapEntity[i]->setRenderToDepth(true);
-
-    //level.mapNode->setNodeTransformation(glm::translate(glm::mat4(1), glm::vec3(10, 5, 0)));
-    level.mapNode->attachEntity(level.mapEntity[0]);
-    level.mapNode->attachEntity(level.mapEntity[1]);
-    level.mapNode->attachEntity(level.mapEntity[2]);
 }
 
 void GameMapLoader::createGargoyle(GameMap& level, int row, int column, char mapType)

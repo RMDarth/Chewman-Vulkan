@@ -133,10 +133,14 @@ void LevelStateProcessor::updateHUD()
     static auto livesControl = _document->getControlByName("lifecount");
     livesControl->setText(std::to_string(_gameMapProcessor->getGameMap()->player->getPlayerInfo()->lives));
 
-    static auto fps = _document->getControlByName("FPS");
-    static uint32_t frames = 0;
+    static auto fps = _document->getControlByName("Coins");
+    stream.str("");
+    stream << _gameMapProcessor->getGameMap()->activeCoins << "/" << _gameMapProcessor->getGameMap()->totalCoins;
+    fps->setText(stream.str());
+    /*static uint32_t frames = 0;
     frames++;
-    fps->setText(std::to_string((int)(frames/_time)));
+    fps->setText(std::to_string((int)(frames/_time)));*/
+
 }
 
 } // namespace Chewman

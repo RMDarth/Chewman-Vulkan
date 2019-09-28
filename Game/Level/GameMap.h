@@ -32,10 +32,11 @@ struct GameMap
     std::vector<Gargoyle> gargoyles;
     std::vector<Teleport> teleports;
     std::vector<Coin> coins;
-    std::vector<PowerUp> powerUps;
+    std::vector<std::unique_ptr<PowerUp>> powerUps;
     std::vector<StaticObject> staticObjects;
     std::vector<std::unique_ptr<Enemy>> enemies;
 
+    uint32_t totalCoins;
     uint32_t activeCoins;
 
     CellInfoMap mapData;

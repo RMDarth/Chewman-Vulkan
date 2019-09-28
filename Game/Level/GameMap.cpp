@@ -73,7 +73,7 @@ void GameMapProcessor::update(float deltaTime)
 
     for (auto& powerUp : _gameMap->powerUps)
     {
-        powerUp.update(_deltaTime);
+        powerUp->update(_deltaTime);
     }
 
     for (auto& staticObject : _gameMap->staticObjects)

@@ -7,8 +7,8 @@
 	<Image name="lifeimg" x="0.5" y="0.01" height="0.1" width="-1" image="trashlife.png" mousetransparent="true" />
 	<Label name="lifecount" text="2" font-size="45" x="0.53" y="0.005" height="0.08" width="-1" mousetransparent="true" />
 	
-	<Label name="FPStext" text="FPS:" x="0.6" y="0.02" width="0.1" height="0.05" mousetransparent="true" />
-	<Label name="FPS" text="0" x="0.68" y="0.02" width="0.1" height="0.05" mousetransparent="true" />
+	<Label name="CoinsText" text="C:" x="0.6" y="0.02" width="0.1" height="0.05" mousetransparent="true" />
+	<Label name="Coins" text="0" x="0.68" y="0.02" width="0.1" height="0.05" mousetransparent="true" />
 
 	<Button name="pause" text="" x="0.87" y="0.01" width="0.1" height="-1" image="buttons/pause.png" hoverimage="buttons/pause_hover.png" pressedimage="buttons/pause_pressed.png"/>
 </document>

@@ -29,18 +29,20 @@ class PowerUp
 public:
     PowerUp(GameMap* gameMap, glm::ivec2 startPos, char symbolType);
     PowerUp(GameMap* gameMap, glm::ivec2 startPos, PowerUpType type);
+    virtual ~PowerUp() = default;
 
     PowerUpType getType() const;
 
-    void eat();
-    void update(float deltaTime);
-private:
+    virtual void eat();
+    virtual void update(float deltaTime);
+protected:
     void rotateItem(float time);
 
-private:
+protected:
     bool _isEaten = false;
     PowerUpType _type;
     std::shared_ptr<SVE::SceneNode> _rootNode;
+    std::shared_ptr<SVE::SceneNode> _rotateNode;
 };
 
 } // namespace Chewman

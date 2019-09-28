@@ -12,9 +12,9 @@ class GameMapLoader
 public:
     GameMapLoader();
     std::shared_ptr<GameMap> loadMap(const std::string& filename);
+    void initMeshes(GameMap& level);
 
 private:
-    void initMeshes(GameMap& level);
     void createGargoyle(GameMap& level, int row, int column, char mapType);
     void finalizeGargoyle(GameMap& level, Gargoyle& gargoyle);
 
@@ -27,6 +27,8 @@ private:
 private:
     BlockMeshGenerator _meshGenerator;
 };
+
+void buildLevelMeshes(const GameMap& level, BlockMeshGenerator& meshGenerator);
 
 
 } // namespace Chewman

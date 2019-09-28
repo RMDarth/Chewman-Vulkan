@@ -6,6 +6,7 @@
 #include "SVE/Engine.h"
 #include "SVE/SceneManager.h"
 #include "SVE/CameraNode.h"
+#include "GameMapLoader.h"
 
 namespace Chewman
 {
@@ -309,7 +310,13 @@ void GameRulesProcessor::activatePowerUp(PowerUpType type)
         case PowerUpType::Life:
             break;
         case PowerUpType::Bomb:
+        {
+            DestroyWalls(getPlayer()->getMapTraveller()->getMapPosition());
+            for (auto& enemy : gameMap->enemies)
+                if (glm::length(enemy->getPosition() - _player->getMapTraveller()->getRealPosition()) < 9.0f)
+                    enemy->increaseState(EnemyState::Dead);
             break;
+        }
         case PowerUpType::Jackhammer:
             break;
         case PowerUpType::Teeth:
@@ -334,6 +341,36 @@ void GameRulesProcessor::updateCameraAnimation(float deltaTime)
     if (_cameraTime >= 1.0f)
     {
         _isCameraMoving = false;
+    }
+}
+
+void GameRulesProcessor::DestroyWalls(glm::ivec2 pos)
+{
+    auto gameMap = _gameMapProcessor.getGameMap();
+    for (auto x = pos.x - 2; x <= pos.x + 2; x++)
+    {
+        for (auto y = pos.y - 2; y <= pos.y + 2; y++)
+        {
+            if (x < 0 || y < 0 || x >= gameMap->height || y >= gameMap->width)
+                continue;
+
+            if (gameMap->mapData[x][y].cellType == CellType::Wall)
+            {
+                gameMap->mapData[x][y].cellType = CellType::Floor;
+            }
+        }
+    }
+
+    BlockMeshGenerator blockMeshGenerator(CellSize);
+    buildLevelMeshes(*gameMap, blockMeshGenerator);
+
+    std::string meshNames[] = { "MapT", "MapB", "MapV" };
+    for (auto i = 0; i < 3; ++i)
+    {
+        gameMap->mapNode->detachEntity(gameMap->mapEntity[i]);
+        gameMap->mapEntity[i] = std::make_shared<SVE::MeshEntity>(meshNames[i]);
+        gameMap->mapEntity[i]->setRenderToDepth(true);
+        gameMap->mapNode->attachEntity(gameMap->mapEntity[i]);
     }
 }
 
