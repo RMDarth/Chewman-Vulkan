@@ -11,6 +11,7 @@
 #include "Bomb.h"
 #include "Game/Level/Enemies/Nun.h"
 #include "Game/Level/Enemies/Angel.h"
+#include "Game/Level/Enemies/ChewmanEnemy.h"
 
 #include <fstream>
 #define GLM_ENABLE_EXPERIMENTAL
@@ -140,10 +141,10 @@ std::shared_ptr<GameMap> GameMapLoader::loadMap(const std::string& filename)
     char staticObjectType = 0;
 
     std::map<std::pair<size_t, size_t>, CellType> definedCellType;
-    auto addCellTypes = [&definedCellType](CellType cellType, size_t row, size_t column, std::pair<size_t, size_t> size)
+    auto addCellTypes = [&definedCellType](CellType cellType, int row, int column, std::pair<size_t, size_t> size)
     {
-        for (auto x = row; x > row - size.first; --x)
-            for (auto y = column; y < column + size.second; ++y)
+        for (auto x = row; x > row - (int)size.first; --x)
+            for (auto y = column; y < column + (int)size.second; ++y)
                 definedCellType[{x, y}] = cellType;
     };
 
@@ -223,12 +224,16 @@ std::shared_ptr<GameMap> GameMapLoader::loadMap(const std::string& filename)
                     gameMap->mapData[curRow][column].cellType = CellType::Floor;
                     gameMap->enemies.push_back((std::make_unique<Angel>(gameMap.get(), glm::ivec2(curRow, column))));
                     break;
+                case 'R':
+                    gameMap->mapData[curRow][column].cellType = CellType::Floor;
+                    gameMap->enemies.push_back((std::make_unique<ChewmanEnemy>(gameMap.get(), glm::ivec2(curRow, column))));
+                    break;
                 case 'J':
                 case 'D':
                 case 'V':
                 case 'Z':
                 case 'Y':
-                    nextIsRotation = ch == 'D' ? 2 : 1;
+                    nextIsRotation = (ch == 'D') ? 2 : 1;
                     staticObjectType = ch;
                     gameMap->mapData[curRow][column].cellType = StaticObject::getCellType(ch);
                     break;

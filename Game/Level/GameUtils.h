@@ -20,7 +20,7 @@ std::mt19937& getRandomEngine();
 
 glm::vec3 getWorldPos(int row, int column, float y = 0.0f);
 
-std::shared_ptr<SVE::LightNode> addEnemyLightEffect(SVE::Engine* engine);
+std::shared_ptr<SVE::LightNode> addEnemyLightEffect(SVE::Engine* engine, float height = 1.5f);
 
 bool isAntiDirection(MoveDirection curDir, MoveDirection newDir);
 

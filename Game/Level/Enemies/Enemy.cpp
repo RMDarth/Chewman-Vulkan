@@ -7,9 +7,10 @@
 namespace Chewman
 {
 
-Enemy::Enemy(GameMap* map, glm::ivec2 startPos)
+Enemy::Enemy(GameMap* map, glm::ivec2 startPos, EnemyType enemyType)
     : _gameMap(map)
     , _mapTraveller(std::make_shared<MapTraveller>(map, startPos))
+    , _enemyType(enemyType)
 {
 }
 
@@ -29,12 +30,12 @@ void Enemy::decreaseState(EnemyState state)
     --_state[(uint8_t)state];
 }
 
-bool Enemy::isStateActive(EnemyState state)
+bool Enemy::isStateActive(EnemyState state) const
 {
     return _state[(uint8_t)state];
 }
 
-bool Enemy::isDead()
+bool Enemy::isDead() const
 {
     return isStateActive(EnemyState::Dead);
 }
@@ -43,6 +44,16 @@ void Enemy::resetState(EnemyState state)
 {
     while (isStateActive(state))
         decreaseState(state);
+}
+
+EnemyType Enemy::getEnemyType() const
+{
+    return _enemyType;
+}
+
+std::shared_ptr<MapTraveller> Enemy::getMapTraveller()
+{
+    return _mapTraveller;
 }
 
 } // namespace Chewman

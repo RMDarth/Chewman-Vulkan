@@ -1,0 +1,42 @@
+// Chewman Vulkan game
+// Copyright (c) 2018-2019, Igor Barinov
+// Licensed under the MIT License
+#pragma once
+#include <SVE/SceneNode.h>
+#include <SVE/Engine.h>
+#include "Enemy.h"
+
+namespace SVE
+{
+class MeshEntity;
+}
+
+namespace Chewman
+{
+
+class DefaultEnemy : public Enemy
+{
+public:
+    DefaultEnemy(GameMap* map, glm::ivec2 startPos, EnemyType enemyType,
+                 std::string meshName, std::string normalMaterial, std::string vulnerableMaterial,
+                 int noReturnWayChance = 85, float lightHeight = 1.5f);
+
+    void update(float deltaTime) override;
+    void increaseState(EnemyState state) override;
+    void decreaseState(EnemyState state) override;
+
+protected:
+    virtual float getHeight();
+
+protected:
+    std::shared_ptr<SVE::SceneNode> _rootNode;
+    std::shared_ptr<SVE::SceneNode> _rotateNode;
+    std::shared_ptr<SVE::SceneNode> _meshNode;
+    std::shared_ptr<SVE::SceneNode> _debuffNode;
+    std::shared_ptr<SVE::MeshEntity> _enemyMesh;
+
+    std::string _normalMaterial;
+    std::string _vulnerableMaterial;
+};
+
+} // namespace Chewman

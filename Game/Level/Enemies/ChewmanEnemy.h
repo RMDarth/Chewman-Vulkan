@@ -7,13 +7,10 @@
 namespace Chewman
 {
 
-class Angel final : public DefaultEnemy
+class ChewmanEnemy : public DefaultEnemy
 {
 public:
-    Angel(GameMap* map, glm::ivec2 startPos);
-
-protected:
-    float getHeight() override;
+    ChewmanEnemy(GameMap* map, glm::ivec2 startPos);
 };
 
 } // namespace Chewman

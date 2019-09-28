@@ -22,7 +22,7 @@ glm::vec3 getWorldPos(int row, int column, float y)
     return glm::vec3(CellSize * column, y, -CellSize * row);
 }
 
-std::shared_ptr<SVE::LightNode> addEnemyLightEffect(SVE::Engine* engine)
+std::shared_ptr<SVE::LightNode> addEnemyLightEffect(SVE::Engine* engine, float height)
 {
     SVE::LightSettings lightSettings {};
     lightSettings.lightType = SVE::LightType::PointLight;
@@ -35,7 +35,7 @@ std::shared_ptr<SVE::LightNode> addEnemyLightEffect(SVE::Engine* engine)
     lightSettings.linearAtten = 0.35f * 0.25f;
     lightSettings.quadAtten = 0.44f * 0.25f;
     auto lightNode = std::make_shared<SVE::LightNode>(lightSettings);
-    lightNode->setNodeTransformation(glm::translate(glm::mat4(1), glm::vec3(0, 1.5, 0)));
+    lightNode->setNodeTransformation(glm::translate(glm::mat4(1), glm::vec3(0, height, 0)));
 
     return lightNode;
 }

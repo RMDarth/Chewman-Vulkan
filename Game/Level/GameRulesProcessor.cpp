@@ -100,7 +100,7 @@ void GameRulesProcessor::update(float deltaTime)
             if (auto& powerUp = gameMap->mapData[mapPos.x][mapPos.y].powerUp)
             {
                 powerUp->eat();
-                activatePowerUp(powerUp->getType());
+                activatePowerUp(powerUp->getType(), mapPos);
                 player->playPowerUpAnimation();
                 powerUp = nullptr;
             }
@@ -131,6 +131,36 @@ void GameRulesProcessor::update(float deltaTime)
             }
         } else {
             _insideTeleport = false;
+        }
+
+        for (auto& enemy : gameMap->enemies)
+        {
+            if (enemy->getEnemyType() == EnemyType::Chewman)
+            {
+                auto enemyTraveller = enemy->getMapTraveller();
+                auto enemyPos = enemyTraveller->getMapPosition();
+                if (enemyTraveller->isCloseToAffect(MapTraveller::toRealPos(enemyPos)))
+                {
+                    if (auto& coin = gameMap->mapData[enemyPos.x][enemyPos.y].coin)
+                    {
+                        gameMap->mapNode->detachSceneNode(coin->rootNode);
+                        coin = nullptr;
+                        --gameMap->activeCoins;
+                        if (gameMap->activeCoins == 0)
+                        {
+                            std::cout << "You won!" << std::endl;
+                            _gameMapProcessor.setState(GameMapState::Victory);
+                        }
+                    }
+                    if (auto& powerUp = gameMap->mapData[enemyPos.x][enemyPos.y].powerUp)
+                    {
+                        powerUp->eat();
+                        activatePowerUp(powerUp->getType(), enemyPos);
+                        player->playPowerUpAnimation();
+                        powerUp = nullptr;
+                    }
+                }
+            }
         }
 
 
@@ -177,7 +207,7 @@ void GameRulesProcessor::update(float deltaTime)
                                 return true;
                                 break;
                             case GargoyleType::Frost:
-                                activatePowerUp(PowerUpType::Slow);
+                                activatePowerUp(PowerUpType::Slow, mapTraveller->getMapPosition());
                                 break;
                         }
                     }
@@ -287,7 +317,7 @@ void GameRulesProcessor::deactivatePowerUp(PowerUpType type)
     }
 }
 
-void GameRulesProcessor::activatePowerUp(PowerUpType type)
+void GameRulesProcessor::activatePowerUp(PowerUpType type, glm::ivec2 pos)
 {
     ++_activeState[static_cast<uint8_t>(type)];
     auto gameMap = _gameMapProcessor.getGameMap();
@@ -311,9 +341,9 @@ void GameRulesProcessor::activatePowerUp(PowerUpType type)
             break;
         case PowerUpType::Bomb:
         {
-            DestroyWalls(getPlayer()->getMapTraveller()->getMapPosition());
+            DestroyWalls(pos);
             for (auto& enemy : gameMap->enemies)
-                if (glm::length(enemy->getPosition() - _player->getMapTraveller()->getRealPosition()) < 9.0f)
+                if (glm::length(enemy->getPosition() - getPlayer()->getMapTraveller()->getRealPosition()) < 9.0f)
                     enemy->increaseState(EnemyState::Dead);
             break;
         }

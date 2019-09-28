@@ -1,7 +1,7 @@
 {
-    "name": "BlueChewmanMaterial",
+    "name": "BlueChewmanBlinkMaterial",
     "vertexShaderName": "bonesPhongShadowVertexShader",
-    "fragmentShaderName": "phongShadowFragmentShader",
+    "fragmentShaderName": "phongShadowBlinkFragmentShader",
     "textures": [
         {
             "samplerName": "diffuseTex",

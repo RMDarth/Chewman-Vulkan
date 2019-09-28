@@ -28,7 +28,7 @@ private:
     void playDeath(float deltaTime);
 
     void updateAffectors(float deltaTime);
-    void activatePowerUp(PowerUpType type);
+    void activatePowerUp(PowerUpType type, glm::ivec2 pos);
     void deactivatePowerUp(PowerUpType type);
 
     std::shared_ptr<Player>& getPlayer();

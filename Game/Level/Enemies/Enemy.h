@@ -19,12 +19,21 @@ enum class EnemyState
     Dead
 };
 
+enum class EnemyType
+{
+    Nun,
+    Angel,
+    Chewman,
+    Witch,
+    Knight
+};
+
 constexpr size_t EnemyStateCount = 4;
 
 class Enemy
 {
 public:
-    Enemy(GameMap* map, glm::ivec2 startPos);
+    Enemy(GameMap* map, glm::ivec2 startPos, EnemyType enemyType);
     virtual ~Enemy() noexcept = default;
 
     virtual void update(float deltaTime) = 0;
@@ -32,16 +41,20 @@ public:
 
     virtual void increaseState(EnemyState state);
     virtual void decreaseState(EnemyState state);
-    bool isStateActive(EnemyState state);
+    bool isStateActive(EnemyState state) const;
     void resetState(EnemyState state);
 
-    bool isDead();
+    bool isDead() const;
+    EnemyType getEnemyType() const;
+    std::shared_ptr<MapTraveller> getMapTraveller();
 
 protected:
     GameMap* _gameMap;
     uint8_t _state[EnemyStateCount] = {};
     std::shared_ptr<MapTraveller> _mapTraveller;
     std::shared_ptr<EnemyAI> _ai;
+
+    EnemyType _enemyType = EnemyType::Nun;
 };
 
 } // namespace Chewman
