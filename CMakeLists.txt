@@ -8,6 +8,7 @@ link_directories(./deps/lib)
 link_directories(./deps/lib/Vulkan)
 link_directories(./deps/lib/assimp)
 link_directories(./deps/lib/cppfs)
+link_directories(./deps/lib/tinyxml2)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/deps")
 set(CMAKE_CXX_STANDARD 14)
@@ -157,7 +158,7 @@ add_executable(Chewman
         Game/StateProcessor.h Game/Controls/Control.cpp Game/Controls/Control.h Game/Controls/IEventHandler.h Game/Controls/ControlDocument.cpp Game/Controls/ControlDocument.h Game/Controls/ControlFactory.cpp Game/Controls/ControlFactory.h Game/Controls/ButtonControl.cpp Game/Controls/ButtonControl.h Game/Controls/ContainerControl.cpp Game/Controls/ContainerControl.h Game/Controls/LabelControl.cpp Game/Controls/LabelControl.h Game/Controls/ImageControl.cpp Game/Controls/ImageControl.h Game/Controls/PanelControl.cpp Game/Controls/PanelControl.h Game/StateProcessor.cpp Game/Menu/PauseStateProcessor.cpp Game/Menu/PauseStateProcessor.h Game/Level/Enemies/Angel.cpp Game/Level/Enemies/Angel.h Game/Level/Bomb.cpp Game/Level/Bomb.h Game/Level/Enemies/ChewmanEnemy.cpp Game/Level/Enemies/ChewmanEnemy.h Game/Level/Enemies/DefaultEnemy.cpp Game/Level/Enemies/DefaultEnemy.h)
 
 if (WIN32)
-    target_link_libraries(Chewman mingw32 SDL2main SDL2 vulkan-1.lib VkLayer_core_validation.lib libassimp libcppfsd)
+    target_link_libraries(Chewman mingw32 SDL2main SDL2 vulkan-1.lib VkLayer_core_validation.lib libassimp libcppfsd libtinyxml2)
 endif(WIN32)
 
 if (UNIX)
