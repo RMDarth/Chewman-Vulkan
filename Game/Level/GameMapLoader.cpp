@@ -131,6 +131,8 @@ std::shared_ptr<GameMap> GameMapLoader::loadMap(const std::string& filename)
     fin >> style >> waterStyle >> levelName;
 
     gameMap->mapNode = SVE::Engine::getInstance()->getSceneManager()->createSceneNode();
+    gameMap->upperLevelMeshNode = SVE::Engine::getInstance()->getSceneManager()->createSceneNode();
+    gameMap->mapNode->attachSceneNode(gameMap->upperLevelMeshNode);
 
     gameMap->mapData.resize(gameMap->height);
     char ch;
@@ -297,10 +299,9 @@ void GameMapLoader::initMeshes(GameMap& level)
     for (auto i = 0; i < 3; ++i)
         level.mapEntity[i]->setRenderToDepth(true);
 
-    //level.mapNode->setNodeTransformation(glm::translate(glm::mat4(1), glm::vec3(10, 5, 0)));
-    level.mapNode->attachEntity(level.mapEntity[0]);
+    level.upperLevelMeshNode->attachEntity(level.mapEntity[0]);
     level.mapNode->attachEntity(level.mapEntity[1]);
-    level.mapNode->attachEntity(level.mapEntity[2]);
+    level.upperLevelMeshNode->attachEntity(level.mapEntity[2]);
 }
 
 void buildLevelMeshes(const GameMap& level, BlockMeshGenerator& meshGenerator)

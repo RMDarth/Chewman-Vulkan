@@ -130,6 +130,11 @@ void Player::processInput(const SDL_Event& event)
         {
             _followMode = !_followMode;
         }
+        if (event.key.keysym.sym == SDLK_g)
+        {
+            // for safety
+            _followMode = !_followMode;
+        }
     }
 
     if (_followMode)
@@ -290,8 +295,8 @@ void Player::playPowerUpAnimation()
 void Player::playPowerDownAnimation()
 {
     _powerUpEntity->setMaterial("PowerDownMaterial");
-    _powerUpEntity->getMaterialInfo()->diffuse = {1.0, 0.1, 0.5, 1.0f };
-    _powerUpPS->getMaterialInfo()->diffuse = glm::vec4(1.0f, 0.0f, 0.5f, 0.9f);
+    _powerUpEntity->getMaterialInfo()->diffuse = {0.4, 0.4, 0.4, 0.9f };
+    _powerUpPS->getMaterialInfo()->diffuse = glm::vec4(0.1f, 0.1f, 0.1f, 0.9f);
     _rootNode->attachSceneNode(_powerUpEffectNode);
     _powerUpEntity->resetTime();
     _powerUpTime = 1.2f;

@@ -23,5 +23,5 @@ void main() {
 
     vec3 result = diffuse.rgb * ubo.materialInfo.diffuse.rgb * fragColor;
     outColor = vec4(result, diffuse.a * ubo.materialInfo.diffuse.a);
-    outColorBloom = vec4(outColor.rgb, 0.8);
+    outColorBloom = vec4(outColor.rgb, 0.3);
 }

@@ -9,6 +9,8 @@
 #include "SVE/SceneManager.h"
 #include "SVE/CameraNode.h"
 
+#include <glm/gtc/matrix_transform.hpp>
+
 namespace Chewman
 {
 
@@ -80,6 +82,9 @@ void GameRulesProcessor::update(float deltaTime)
         }
 
         updateAffectors(deltaTime);
+
+        if (_wallsDownTime > 0.0f)
+            updateWallsDown(deltaTime);
 
         // Eat coins and powerUps
         if (mapTraveller->isCloseToAffect(MapTraveller::toRealPos(mapTraveller->getMapPosition())))
@@ -314,6 +319,7 @@ void GameRulesProcessor::deactivatePowerUp(PowerUpType type)
         case PowerUpType::Bomb:
             break;
         case PowerUpType::Jackhammer:
+            getPlayer()->getMapTraveller()->setWallAccessible(false);
             break;
         case PowerUpType::Teeth:
             break;
@@ -330,36 +336,40 @@ void GameRulesProcessor::activatePowerUp(PowerUpType type, glm::ivec2 pos)
     switch (type)
     {
         case PowerUpType::Pentagram:
-            _gameAffectors.push_back({type, 10.0f});
+            _gameAffectors.push_back({type, PentagrammTotalTime});
             for (auto & enemy : gameMap->enemies)
                 enemy->increaseState(EnemyState::Vulnerable);
             break;
         case PowerUpType::Freeze:
-            _gameAffectors.push_back({type, 10.0f});
+            _gameAffectors.push_back({type, FreezeTotalTime});
             for (auto & enemy : gameMap->enemies)
                 enemy->increaseState(EnemyState::Frozen);
             break;
         case PowerUpType::Acceleration:
-            _gameAffectors.push_back({type, 10.0f});
+            _gameAffectors.push_back({type, AccelerationTotalTime});
             getPlayer()->getMapTraveller()->setSpeed(MoveSpeed * 2.0f);
             _activeState[static_cast<uint8_t>(PowerUpType::Slow)] = 0;
             break;
         case PowerUpType::Life:
+            Game::getInstance()->getProgressManager().getPlayerInfo().lives += 2;
             break;
         case PowerUpType::Bomb:
         {
-            DestroyWalls(pos);
+            destroyWalls(pos);
             for (auto& enemy : gameMap->enemies)
                 if (glm::length(enemy->getPosition() - getPlayer()->getMapTraveller()->getRealPosition()) < 9.0f)
                     enemy->increaseState(EnemyState::Dead);
             break;
         }
         case PowerUpType::Jackhammer:
+            _gameAffectors.push_back({type, JackhammerTotalTime});
+            _wallsDownTime = JackhammerTotalTime;
+            getPlayer()->getMapTraveller()->setWallAccessible(true);
             break;
         case PowerUpType::Teeth:
             break;
         case PowerUpType::Slow:
-            _gameAffectors.push_back({type, 10.0f});
+            _gameAffectors.push_back({type, SlowTotalTime});
             getPlayer()->getMapTraveller()->setSpeed(MoveSpeed * 0.5f);
             _activeState[static_cast<uint8_t>(PowerUpType::Acceleration)] = 0;
             break;
@@ -382,7 +392,7 @@ void GameRulesProcessor::updateCameraAnimation(float deltaTime)
     }
 }
 
-void GameRulesProcessor::DestroyWalls(glm::ivec2 pos)
+void GameRulesProcessor::destroyWalls(glm::ivec2 pos)
 {
     auto gameMap = _gameMapProcessor.getGameMap();
     for (auto x = pos.x - 2; x <= pos.x + 2; x++)
@@ -403,13 +413,36 @@ void GameRulesProcessor::DestroyWalls(glm::ivec2 pos)
     buildLevelMeshes(*gameMap, blockMeshGenerator);
 
     std::string meshNames[] = { "MapT", "MapB", "MapV" };
+    std::shared_ptr<SVE::SceneNode> nodes[] = {
+            gameMap->upperLevelMeshNode,
+            gameMap->mapNode,
+            gameMap->upperLevelMeshNode
+    };
     for (auto i = 0; i < 3; ++i)
     {
-        gameMap->mapNode->detachEntity(gameMap->mapEntity[i]);
+        nodes[i]->detachEntity(gameMap->mapEntity[i]);
         gameMap->mapEntity[i] = std::make_shared<SVE::MeshEntity>(meshNames[i]);
         gameMap->mapEntity[i]->setRenderToDepth(true);
-        gameMap->mapNode->attachEntity(gameMap->mapEntity[i]);
+        nodes[i]->attachEntity(gameMap->mapEntity[i]);
     }
+}
+
+void GameRulesProcessor::updateWallsDown(float deltaTime)
+{
+    auto gameMap = _gameMapProcessor.getGameMap();
+    _wallsDownTime -= deltaTime;
+
+    float scale = 0.05f;
+    if (_wallsDownTime + 0.5f > JackhammerTotalTime)
+    {
+        auto delta = JackhammerTotalTime - _wallsDownTime; // 0...0.5
+        scale = std::max(1.0f - delta * 2, 0.05f);
+    }
+    else if (_wallsDownTime < 0.5f)
+    {
+        scale = std::min(1.0f - _wallsDownTime * 2, 1.0f);
+    }
+    gameMap->upperLevelMeshNode->setNodeTransformation(glm::scale(glm::mat4(1), glm::vec3(1.0f, scale, 1.0)));
 }
 
 

@@ -1,12 +1,12 @@
 # Chewman Vulkan
-[![Language](https://img.shields.io/badge/Language%20-C++11-blue.svg?style=flat-square)](https://github.com/RMDarth/Chewman-Vulkan/)
+[![Language](https://img.shields.io/badge/Language%20-C++14-blue.svg?style=flat-square)](https://github.com/RMDarth/Chewman-Vulkan/)
 [![Version](https://img.shields.io/badge/Version%20-0.5a-orange.svg?style=flat-square)](https://github.com/RMDarth/Chewman-Vulkan/)
 [![Scc Count Badge](https://sloc.xyz/github/RMDarth/Chewman-Vulkan/)](https://github.com/RMDarth/Chewman-Vulkan/)
 
 A cross-platform 3D Pacman-style game written in pure Vulkan and C++, with minimal dependencies. 
 Main dependencies: SDL (windows initialization and controls) and assimp (3D assets loading).
 
-Game development is currently in progress (early stage, current version is 0.5a).
+Game development is currently in progress (early stage, current version is 0.6a).
 
 ![Screenshot](https://github.com/RMDarth/Chewman-Vulkan/blob/master/Screenshot_20190826.png?raw=true)
 
@@ -29,6 +29,7 @@ particles and shaders management etc. Design of the engine is somewhat similar t
 - Shadow maps, cascade shadow maps, point light shadows
 - Instancing
 - Particle system based on compute and geometry shaders
+- Overlays and GUI rendering
 - Post-effects (like bloom, grayscale)
 
 
