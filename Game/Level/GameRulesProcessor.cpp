@@ -268,6 +268,11 @@ void GameRulesProcessor::updateAffectors(float deltaTime)
     for (auto& affector : _gameAffectors)
     {
         affector.remainingTime -= deltaTime;
+        if (affector.remainingTime < 1.0 && !affector.isPoweredDown)
+        {
+            getPlayer()->playPowerDownAnimation();
+            affector.isPoweredDown = true;
+        }
         if (affector.remainingTime <= 0)
         {
             deactivatePowerUp(affector.powerUp);
@@ -284,7 +289,8 @@ void GameRulesProcessor::updateAffectors(float deltaTime)
 void GameRulesProcessor::deactivatePowerUp(PowerUpType type)
 {
     auto typeIndex = static_cast<uint8_t>(type);
-    --_activeState[typeIndex];
+    if (_activeState[typeIndex] > 0)
+        --_activeState[typeIndex];
     if (_activeState[typeIndex])
         return;
 
@@ -336,6 +342,7 @@ void GameRulesProcessor::activatePowerUp(PowerUpType type, glm::ivec2 pos)
         case PowerUpType::Acceleration:
             _gameAffectors.push_back({type, 10.0f});
             getPlayer()->getMapTraveller()->setSpeed(MoveSpeed * 2.0f);
+            _activeState[static_cast<uint8_t>(PowerUpType::Slow)] = 0;
             break;
         case PowerUpType::Life:
             break;
@@ -354,6 +361,7 @@ void GameRulesProcessor::activatePowerUp(PowerUpType type, glm::ivec2 pos)
         case PowerUpType::Slow:
             _gameAffectors.push_back({type, 10.0f});
             getPlayer()->getMapTraveller()->setSpeed(MoveSpeed * 0.5f);
+            _activeState[static_cast<uint8_t>(PowerUpType::Acceleration)] = 0;
             break;
     }
 }

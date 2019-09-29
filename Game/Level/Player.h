@@ -12,6 +12,7 @@ union SDL_Event;
 namespace SVE
 {
 class MeshEntity;
+class ParticleSystemEntity;
 }
 
 namespace Chewman
@@ -41,6 +42,7 @@ public:
     void resetPlaying();
     void playDeathAnimation();
     void playPowerUpAnimation();
+    void playPowerDownAnimation();
 
 private:
     void updateMovement(float deltaTime);
@@ -65,6 +67,8 @@ private:
     std::shared_ptr<SVE::SceneNode> _rotateNode;
     std::shared_ptr<SVE::MeshEntity> _trashmanEntity;
     std::shared_ptr<SVE::MeshEntity> _powerUpEntity;
+    std::shared_ptr<SVE::ParticleSystemEntity> _powerUpPS;
+
     std::shared_ptr<MapTraveller> _mapTraveller;
     std::unique_ptr<PlayerInfo> _playerInfo;
     GameMap* _gameMap;

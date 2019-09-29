@@ -11,8 +11,10 @@ namespace Chewman
 
 Angel::Angel(GameMap* map, glm::ivec2 startPos)
     : DefaultEnemy(map, startPos, EnemyType::Angel,
-                   "angel", "AngelMaterial", "AngelBlinkMaterial", 85)
+                   "angel", "AngelMaterial", 85)
 {
+    createMaterials();
+
     _mapTraveller->setWaterAccessible(true);
     _mapTraveller->setWallAccessible(true);
 

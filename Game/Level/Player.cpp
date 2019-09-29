@@ -110,7 +110,6 @@ void Player::update(float deltaTime)
 
                 //const auto rotateAngle = -90.0f * static_cast<uint8_t>(_mapTraveller->getCurrentDirection());
                 //_powerUpEffectNode->setNodeTransformation(glm::rotate(glm::mat4(1), glm::radians(rotateAngle), glm::vec3(0, 1, 0)));
-
             } else {
                 _rootNode->detachSceneNode(_powerUpEffectNode);
             }
@@ -268,9 +267,9 @@ void Player::createPowerUpEffect()
     auto color = glm::vec3(0.5, 0.5, 1.0);
 
     _powerUpEffectNode = engine->getSceneManager()->createSceneNode();
-    std::shared_ptr<SVE::ParticleSystemEntity> powerUpPS = std::make_shared<SVE::ParticleSystemEntity>("PowerUp");
-    powerUpPS->getMaterialInfo()->diffuse = glm::vec4(color, 0.6f);
-    _powerUpEffectNode->attachEntity(powerUpPS);
+    _powerUpPS = std::make_shared<SVE::ParticleSystemEntity>("PowerUp");
+    _powerUpPS->getMaterialInfo()->diffuse = glm::vec4(color, 0.6f);
+    _powerUpEffectNode->attachEntity(_powerUpPS);
 
     auto spiralNode = engine->getSceneManager()->createSceneNode();
     spiralNode->setNodeTransformation(glm::translate(glm::mat4(1), glm::vec3(0, 1, 0)));
@@ -285,6 +284,19 @@ void Player::createPowerUpEffect()
 
 void Player::playPowerUpAnimation()
 {
+    _powerUpEntity->setMaterial("PowerUpMaterial");
+    _powerUpEntity->getMaterialInfo()->diffuse = {1.0, 1.0, 1.0, 1.0f };
+    _powerUpPS->getMaterialInfo()->diffuse = glm::vec4(0.5f, 0.5f, 1.0f, 0.6f);
+    _rootNode->attachSceneNode(_powerUpEffectNode);
+    _powerUpEntity->resetTime();
+    _powerUpTime = 1.2f;
+}
+
+void Player::playPowerDownAnimation()
+{
+    _powerUpEntity->setMaterial("PowerDownMaterial");
+    _powerUpEntity->getMaterialInfo()->diffuse = {1.0, 0.1, 0.5, 1.0f };
+    _powerUpPS->getMaterialInfo()->diffuse = glm::vec4(1.0f, 0.0f, 0.5f, 0.9f);
     _rootNode->attachSceneNode(_powerUpEffectNode);
     _powerUpEntity->resetTime();
     _powerUpTime = 1.2f;

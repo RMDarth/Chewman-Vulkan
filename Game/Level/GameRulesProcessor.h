@@ -14,6 +14,7 @@ struct GameAffector
 {
     PowerUpType powerUp;
     float remainingTime;
+    bool isPoweredDown = false;
 };
 
 

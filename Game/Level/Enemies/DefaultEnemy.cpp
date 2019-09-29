@@ -5,6 +5,8 @@
 
 #include "SVE/Engine.h"
 #include "SVE/SceneManager.h"
+#include "SVE/MaterialManager.h"
+#include "SVE/VulkanMaterial.h"
 #include "SVE/MeshEntity.h"
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -16,11 +18,10 @@ namespace Chewman
 {
 
 DefaultEnemy::DefaultEnemy(GameMap* map, glm::ivec2 startPos, EnemyType enemyType,
-                           std::string meshName, std::string normalMaterial, std::string vulnerableMaterial,
+                           const std::string& meshName, std::string normalMaterial,
                            int noReturnWayChance, float lightHeight)
         : Enemy(map, startPos, enemyType)
         , _normalMaterial(std::move(normalMaterial))
-        , _vulnerableMaterial(std::move(vulnerableMaterial))
 {
     _ai = std::make_shared<RandomWalkerAI>(*_mapTraveller, noReturnWayChance);
 
@@ -56,7 +57,8 @@ DefaultEnemy::DefaultEnemy(GameMap* map, glm::ivec2 startPos, EnemyType enemyTyp
 
 void DefaultEnemy::update(float deltaTime)
 {
-    _ai->update(deltaTime);
+    if (!isStateActive(EnemyState::Frozen))
+        _ai->update(deltaTime);
     const auto realMapPos = _mapTraveller->getRealPosition();
     const auto position = glm::vec3(realMapPos.y, getHeight(), -realMapPos.x);
     auto transform = glm::translate(glm::mat4(1), position);
@@ -76,9 +78,11 @@ void DefaultEnemy::increaseState(EnemyState state)
     switch (state)
     {
         case EnemyState::Frozen:
+            _enemyMesh->setMaterial(isStateActive(EnemyState::Vulnerable) ? _frostVulnerableMaterial : _frostMaterial);
+            _enemyMesh->resetTime();
             break;
         case EnemyState::Vulnerable:
-            _enemyMesh->setMaterial(_vulnerableMaterial);
+            _enemyMesh->setMaterial(isStateActive(EnemyState::Frozen) ? _frostVulnerableMaterial : _vulnerableMaterial);
             _rootNode->attachSceneNode(_debuffNode);
             break;
         case EnemyState::Dead:
@@ -95,9 +99,10 @@ void DefaultEnemy::decreaseState(EnemyState state)
         switch(state)
         {
             case EnemyState::Frozen:
+                _enemyMesh->setMaterial(isStateActive(EnemyState::Vulnerable) ? _vulnerableMaterial : _normalMaterial);
                 break;
             case EnemyState::Vulnerable:
-                _enemyMesh->setMaterial(_normalMaterial);
+                _enemyMesh->setMaterial(isStateActive(EnemyState::Frozen) ? _frostMaterial : _normalMaterial);
                 _rootNode->detachSceneNode(_debuffNode);
                 break;
             case EnemyState::Dead:
@@ -110,6 +115,31 @@ void DefaultEnemy::decreaseState(EnemyState state)
 float DefaultEnemy::getHeight()
 {
     return 0.0f;
+}
+
+void DefaultEnemy::createMaterials()
+{
+    auto* materialManager = SVE::Engine::getInstance()->getMaterialManager();
+    auto* baseMaterial = materialManager->getMaterial(_normalMaterial);
+    auto baseMaterialSettings = baseMaterial->getVulkanMaterial()->getSettings();
+    _vulnerableMaterial = "Blink" + _normalMaterial;
+    _frostMaterial = "Frost" + _normalMaterial;
+    _frostVulnerableMaterial = "Frost" + _vulnerableMaterial;
+
+    auto setFragShader = [&](const std::string& materialName, const std::string& shaderName)
+    {
+        auto* material = materialManager->getMaterial(materialName, true);
+        if (!material)
+        {
+            baseMaterialSettings.name = materialName;
+            baseMaterialSettings.fragmentShaderName = shaderName;
+            materialManager->registerMaterial(std::make_shared<SVE::Material>(baseMaterialSettings));
+        }
+    };
+
+    setFragShader(_vulnerableMaterial, "phongShadowBlinkFragmentShader");
+    setFragShader(_frostMaterial, "phongShadowFrostFragmentShader");
+    setFragShader(_frostVulnerableMaterial, "phongShadowFrostBlinkFragmentShader");
 }
 
 } // namespace Chewman

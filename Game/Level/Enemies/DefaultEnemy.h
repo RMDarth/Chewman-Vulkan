@@ -18,7 +18,7 @@ class DefaultEnemy : public Enemy
 {
 public:
     DefaultEnemy(GameMap* map, glm::ivec2 startPos, EnemyType enemyType,
-                 std::string meshName, std::string normalMaterial, std::string vulnerableMaterial,
+                 const std::string& meshName, std::string normalMaterial,
                  int noReturnWayChance = 85, float lightHeight = 1.5f);
 
     void update(float deltaTime) override;
@@ -27,6 +27,7 @@ public:
 
 protected:
     virtual float getHeight();
+    void createMaterials();
 
 protected:
     std::shared_ptr<SVE::SceneNode> _rootNode;
@@ -37,6 +38,8 @@ protected:
 
     std::string _normalMaterial;
     std::string _vulnerableMaterial;
+    std::string _frostMaterial;
+    std::string _frostVulnerableMaterial;
 };
 
 } // namespace Chewman

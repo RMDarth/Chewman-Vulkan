@@ -8,8 +8,9 @@ namespace Chewman
 
 Nun::Nun(GameMap* map, glm::ivec2 startPos)
     : DefaultEnemy(map, startPos, EnemyType::Nun,
-                   "nun", "NunMaterial", "NunBlinkMaterial", 95)
+                   "nun", "NunMaterial", 95)
 {
+    createMaterials();
 }
 
 } // namespace Chewman

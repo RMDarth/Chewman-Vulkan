@@ -10,9 +10,10 @@ namespace Chewman
 
 ChewmanEnemy::ChewmanEnemy(GameMap* map, glm::ivec2 startPos)
     : DefaultEnemy(map, startPos, EnemyType::Chewman,
-            "trashman", "BlueChewmanMaterial", "BlueChewmanBlinkMaterial",
+            "trashman", "BlueChewmanMaterial",
             95, 2.5f)
 {
+    createMaterials();
     _meshNode->setNodeTransformation(glm::rotate(glm::mat4(1), glm::radians(180.0f), glm::vec3(0, 1, 0)));
 }
 
