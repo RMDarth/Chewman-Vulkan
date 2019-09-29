@@ -50,7 +50,7 @@ private:
 
 private:
     // for debug
-    bool _followMode = false;
+    bool _followMode = true;
 
     bool _isCameraFollow = true;
 

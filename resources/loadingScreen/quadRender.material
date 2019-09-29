@@ -1,0 +1,12 @@
+{
+    "name": "ScreenQuad",
+    "vertexShaderName": "quadRenderVertexShader",
+    "fragmentShaderName": "quadRenderFragmentShader",
+    "cullFace": "FrontFace",
+    "textures": [
+            {
+                "samplerName": "texSampler",
+                "textureType": "LastEffect"
+            }
+        ]
+}

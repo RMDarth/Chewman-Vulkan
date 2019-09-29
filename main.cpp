@@ -8,11 +8,13 @@
 #include "SVE/FontManager.h"
 
 #include "Game/Game.h"
+#include "Game/Controls/ControlDocument.h"
 
 #include <SDL2/SDL.h>
 #include <vulkan/vulkan.h>
 #include <glm/gtc/matrix_transform.hpp>
 #include <memory>
+
 
 // Thanks to:
 // Karl "ThinMatrix" for his video blogs on OpenGL techniques
@@ -73,12 +75,21 @@ int runGame()
 
     SVE::Engine* engine = SVE::Engine::createInstance(window, "resources/main.engine");
     {
+        auto camera = engine->getSceneManager()->createMainCamera();
+        std::cout << "Start loading resources..." << std::endl;
+        // show loading screen
+        engine->getResourceManager()->loadFolder("resources/loadingScreen");
+        Chewman::ControlDocument loadingScreen("resources/game/GUI/loading.xml");
+        engine->renderFrame(0.0f);
+
         // load resources
         engine->getResourceManager()->loadFolder("resources/shaders");
         engine->getResourceManager()->loadFolder("resources/materials");
         engine->getResourceManager()->loadFolder("resources/models");
         engine->getResourceManager()->loadFolder("resources/fonts");
         engine->getResourceManager()->loadFolder("resources");
+        std::cout << "Resources loading finished." << std::endl;
+        loadingScreen.hide();
 
         auto windowSize = engine->getRenderWindowSize();
         engine->getPostEffectManager()->addPostEffect("OnlyBrightEffect", "OnlyBrightEffect",windowSize.x / 4, windowSize.y / 4);
@@ -94,7 +105,6 @@ int runGame()
                 glm::translate(glm::mat4(1), glm::vec3(80, 80, -80)));
 
         // create camera
-        auto camera = engine->getSceneManager()->createMainCamera();
         camera->setNearFarPlane(0.1f, 500.0f);
         camera->setPosition(glm::vec3(5.0f, 5.0f, 5.0f));
 
@@ -111,7 +121,7 @@ int runGame()
 
         bool quit = false;
         bool skipRendering = false;
-        bool lockControl = false;
+        bool lockControl = true;
 
         uint32_t frames = 0;
         auto startTime = std::chrono::high_resolution_clock::now();
