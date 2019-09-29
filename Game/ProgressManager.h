@@ -7,6 +7,12 @@
 namespace Chewman
 {
 
+struct PlayerInfo
+{
+    uint32_t lives = 2;
+    uint32_t points = 0;
+};
+
 class ProgressManager
 {
 public:
@@ -21,10 +27,15 @@ public:
     bool isVictory();
     void setVictory(bool value);
 
+    PlayerInfo& getPlayerInfo();
+    void resetPlayerInfo();
+
 private:
     uint32_t _currentLevel = 1;
     bool _isStarted = false;
     bool _isVictory = false;
+
+    PlayerInfo _playerInfo;
 };
 
 } // namespace Chewman

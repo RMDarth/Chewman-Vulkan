@@ -3,10 +3,11 @@
 // Licensed under the MIT License
 #include "GameRulesProcessor.h"
 #include "GameMap.h"
+#include "GameMapLoader.h"
+#include "Game/Game.h"
 #include "SVE/Engine.h"
 #include "SVE/SceneManager.h"
 #include "SVE/CameraNode.h"
-#include "GameMapLoader.h"
 
 namespace Chewman
 {
@@ -39,21 +40,20 @@ std::shared_ptr<Player>& GameRulesProcessor::getPlayer()
 void GameRulesProcessor::update(float deltaTime)
 {
     auto gameMap = _gameMapProcessor.getGameMap();
-    auto& player = gameMap->player;
-    auto* playerInfo = player->getPlayerInfo();
+    auto& player = getPlayer();
+    auto& playerInfo = Game::getInstance()->getProgressManager().getPlayerInfo();
 
-    if (playerInfo->isDying)
+    if (player->isDying())
     {
         playDeath(deltaTime);
         if (_deathTime > 4.7f)
         {
             player->resetPlaying();
-            playerInfo->isDying = false;
 
-            if (playerInfo->lives)
+            if (playerInfo.lives)
             {
                 _gameMapProcessor.setState(GameMapState::Game);
-                --playerInfo->lives;
+                --playerInfo.lives;
             }
             else
             {
@@ -89,7 +89,7 @@ void GameRulesProcessor::update(float deltaTime)
             {
                 gameMap->mapNode->detachSceneNode(coin->rootNode);
                 coin = nullptr;
-                playerInfo->points += 10;
+                playerInfo.points += 10;
                 --gameMap->activeCoins;
                 if (gameMap->activeCoins == 0)
                 {
@@ -217,7 +217,7 @@ void GameRulesProcessor::update(float deltaTime)
             return false;
         }();
 
-        player->getPlayerInfo()->isDying = isPlayerDead;
+        player->setIsDying(isPlayerDead);
         if (isPlayerDead)
         {
             _gameMapProcessor.setState(GameMapState::Animation);

@@ -43,7 +43,6 @@ Player::Player(GameMap* gameMap, glm::ivec2 startPos)
     : _mapTraveller(std::make_shared<MapTraveller>(gameMap, startPos))
     , _gameMap(gameMap)
     , _startPos(startPos)
-    , _playerInfo(std::make_unique<PlayerInfo>())
 {
     _mapTraveller->setWaterAccessible(true);
 
@@ -76,7 +75,7 @@ void Player::update(float deltaTime)
 {
     if (_followMode)
     {
-        if (!_playerInfo->isDying)
+        if (!_isDying)
         {
             updateMovement(deltaTime);
 
@@ -173,11 +172,6 @@ std::shared_ptr<MapTraveller> Player::getMapTraveller()
     return _mapTraveller;
 }
 
-PlayerInfo* Player::getPlayerInfo()
-{
-    return _playerInfo.get();
-}
-
 void Player::resetPosition()
 {
     _trashmanEntity->setMaterial("YellowAppearTrashman");
@@ -206,6 +200,7 @@ void Player::resetPlaying()
 {
     _appearing = true;
     _appearTime = 0.0f;
+    _isDying = false;
 }
 
 void Player::createAppearEffect()
@@ -300,6 +295,16 @@ void Player::playPowerDownAnimation()
     _rootNode->attachSceneNode(_powerUpEffectNode);
     _powerUpEntity->resetTime();
     _powerUpTime = 1.2f;
+}
+
+void Player::setIsDying(bool isDying)
+{
+    _isDying = isDying;
+}
+
+bool Player::isDying()
+{
+    return _isDying;
 }
 
 void Player::createDisappearEffect()

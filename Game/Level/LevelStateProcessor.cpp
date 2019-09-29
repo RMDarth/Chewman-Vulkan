@@ -128,10 +128,10 @@ void LevelStateProcessor::updateHUD()
     timeControl->setText(stream.str());
 
     static auto scoreControl = _document->getControlByName("score");
-    scoreControl->setText(std::to_string(_gameMapProcessor->getGameMap()->player->getPlayerInfo()->points));
+    scoreControl->setText(std::to_string(_progressManager.getPlayerInfo().points));
 
     static auto livesControl = _document->getControlByName("lifecount");
-    livesControl->setText(std::to_string(_gameMapProcessor->getGameMap()->player->getPlayerInfo()->lives));
+    livesControl->setText(std::to_string(_progressManager.getPlayerInfo().lives));
 
     static auto fps = _document->getControlByName("Coins");
     stream.str("");

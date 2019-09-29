@@ -40,4 +40,14 @@ void ProgressManager::setVictory(bool value)
     _isVictory = value;
 }
 
+PlayerInfo& ProgressManager::getPlayerInfo()
+{
+    return _playerInfo;
+}
+
+void ProgressManager::resetPlayerInfo()
+{
+    _playerInfo = {};
+}
+
 } // namespace Chewman

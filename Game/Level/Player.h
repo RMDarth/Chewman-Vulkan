@@ -20,13 +20,6 @@ namespace Chewman
 
 struct GameMap;
 
-struct PlayerInfo
-{
-    uint32_t lives = 2;
-    bool isDying = false;
-    uint32_t points = 0;
-};
-
 class Player
 {
 public:
@@ -36,13 +29,15 @@ public:
     void processInput(const SDL_Event& event);
 
     std::shared_ptr<MapTraveller> getMapTraveller();
-    PlayerInfo* getPlayerInfo();
     void setCameraFollow(bool value);
     void resetPosition();
     void resetPlaying();
     void playDeathAnimation();
     void playPowerUpAnimation();
     void playPowerDownAnimation();
+
+    void setIsDying(bool isDying);
+    bool isDying();
 
 private:
     void updateMovement(float deltaTime);
@@ -70,7 +65,6 @@ private:
     std::shared_ptr<SVE::ParticleSystemEntity> _powerUpPS;
 
     std::shared_ptr<MapTraveller> _mapTraveller;
-    std::unique_ptr<PlayerInfo> _playerInfo;
     GameMap* _gameMap;
 
     std::shared_ptr<SVE::SceneNode> _appearNode;
@@ -79,6 +73,7 @@ private:
 
     std::shared_ptr<SVE::SceneNode> _powerUpEffectNode;
     float _powerUpTime = 0.0f;
+    bool _isDying = false;
 
     MoveDirection _nextMove;
 };
