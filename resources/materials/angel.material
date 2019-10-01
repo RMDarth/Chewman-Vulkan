@@ -1,12 +1,12 @@
 {
     "name": "AngelMaterial",
-    "vertexShaderName": "bonesPhongShadowVertexShader",
+    "vertexShaderName": "phongShadowVertexShader",
     "fragmentShaderName": "phongShadowFragmentShader",
     "cullFace": "BackFace",
     "textures": [
         {
             "samplerName": "diffuseTex",
-            "filename": "textures/enemies/trashangel_dressed.png"
+            "filename": "textures/enemies/angelNew.jpg"
         },
         {
             "samplerName": "directShadowTex",

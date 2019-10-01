@@ -30,14 +30,14 @@ layout(location = 0) out vec4 outColor;
 
 void main()
 {
-    vec3 diffuse = vec3(texture(diffuseTex, fragTexCoord).rgb);
+    vec4 diffuse = texture(diffuseTex, fragTexCoord);
 
     vec3 normal = normalize(fragNormal);
     vec3 viewDir = normalize(ubo.cameraPos.xyz - fragPos);
 
     vec3 lightEffect = calculateLight(normal, viewDir);
 
-    vec3 result = diffuse * lightEffect * fragColor;
+    vec3 result = diffuse.rgb * lightEffect * fragColor;
     //vec3 result = vec3(shadow);
-    outColor = vec4(result, 1.0);
+    outColor = vec4(result, diffuse.a);
 }

@@ -1,0 +1,19 @@
+{
+    "name": "AngelWingsMaterial",
+    "vertexShaderName": "bonesPhongShadowVertexShader",
+    "fragmentShaderName": "phongShadowFragmentShader",
+    "cullFace": "None",
+    "useAlphaBlending": true,
+    "srcBlendFactor": "SrcAlpha",
+    "dstBlendFactor": "OneMinusSrcAlpha",
+    "textures": [
+        {
+            "samplerName": "diffuseTex",
+            "filename": "textures/enemies/angelWings.png"
+        },
+        {
+            "samplerName": "directShadowTex",
+            "textureType": "ShadowMapDirect"
+        }
+    ]
+}
