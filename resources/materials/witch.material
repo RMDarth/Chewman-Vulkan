@@ -1,0 +1,16 @@
+{
+    "name": "WitchMaterial",
+    "vertexShaderName": "bonesPhongShadowVertexShader",
+    "fragmentShaderName": "phongShadowFragmentShader",
+    "cullFace": "None",
+    "textures": [
+        {
+            "samplerName": "diffuseTex",
+            "filename": "textures/enemies/witch_Diffuse.png"
+        },
+        {
+            "samplerName": "directShadowTex",
+            "textureType": "ShadowMapDirect"
+        }
+    ]
+}

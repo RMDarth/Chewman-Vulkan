@@ -12,6 +12,7 @@
 #include "Game/Level/Enemies/Nun.h"
 #include "Game/Level/Enemies/Angel.h"
 #include "Game/Level/Enemies/ChewmanEnemy.h"
+#include "Game/Level/Enemies/Witch.h"
 
 #include <fstream>
 #define GLM_ENABLE_EXPERIMENTAL
@@ -229,6 +230,10 @@ std::shared_ptr<GameMap> GameMapLoader::loadMap(const std::string& filename)
                 case 'R':
                     gameMap->mapData[curRow][column].cellType = CellType::Floor;
                     gameMap->enemies.push_back((std::make_unique<ChewmanEnemy>(gameMap.get(), glm::ivec2(curRow, column))));
+                    break;
+                case 'M':
+                    gameMap->mapData[curRow][column].cellType = CellType::Floor;
+                    gameMap->enemies.push_back(std::make_unique<Witch>(gameMap.get(), glm::ivec2(curRow, column)));
                     break;
                 case 'J':
                 case 'D':
