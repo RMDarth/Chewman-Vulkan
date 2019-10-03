@@ -35,6 +35,7 @@ public:
     void setSpeed(float speed);
     void setWaterAccessible(bool accessible);
     void setWallAccessible(bool accessible);
+    void setAffectDistance(float distance);
 
     void setPosition(glm::ivec2 position);
 
@@ -68,6 +69,8 @@ private:
     bool _wallAllowed = false;
 
     glm::vec2 _speed = {};
+
+    float _affectDistance = 1.3f;
 };
 
 } // namespace Chewman

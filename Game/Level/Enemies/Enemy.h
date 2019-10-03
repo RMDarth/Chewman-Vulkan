@@ -25,7 +25,8 @@ enum class EnemyType
     Angel,
     Chewman,
     Witch,
-    Knight
+    Knight,
+    Projectile
 };
 
 constexpr size_t EnemyStateCount = 4;

@@ -50,6 +50,7 @@ private:
     // change to map
     std::list<GameAffector> _gameAffectors;
     uint8_t _activeState[PowerUpCount] = {};
+    PowerUpType _lastSpeedPowerUp;
 
     float _deathTime = 0;
     bool _deathSecondPhase = false;

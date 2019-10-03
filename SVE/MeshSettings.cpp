@@ -187,6 +187,7 @@ void iterateBones(
 std::vector<glm::mat4> getAnimationTransforms(const MeshSettings& meshSettings, uint32_t animationId, float time)
 {
     // TODO: Only for looped anims
+    time *= meshSettings.animationSpeed;
     auto duration = meshSettings.animation->animations[animationId]->mDuration;
     if (duration > 0)
     {

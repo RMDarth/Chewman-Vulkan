@@ -436,6 +436,7 @@ MeshLoadSettings loadMesh(const cppfs::FilePath& directory, const std::string& d
     meshLoadSettings.name = document["name"].GetString();
     setOptional(meshLoadSettings.switchYZ = document["switchYZ"].GetBool());
     setOptional(meshLoadSettings.scale = loadVector<3>(document, "scale"));
+    setOptional(meshLoadSettings.animationSpeed = document["animationSpeed"].GetFloat());
 
     return meshLoadSettings;
 }

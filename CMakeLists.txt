@@ -185,7 +185,7 @@ add_executable(Chewman
         Game/Level/Enemies/ChewmanEnemy.cpp
         Game/Level/Enemies/ChewmanEnemy.h
         Game/Level/Enemies/DefaultEnemy.cpp
-        Game/Level/Enemies/DefaultEnemy.h)
+        Game/Level/Enemies/DefaultEnemy.h Game/Level/Enemies/Projectile.cpp Game/Level/Enemies/Projectile.h)
 
 if (WIN32)
     target_link_libraries(Chewman mingw32 SDL2main SDL2 vulkan-1.lib VkLayer_core_validation.lib libassimp libcppfsd libtinyxml2)

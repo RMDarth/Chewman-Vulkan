@@ -39,7 +39,7 @@ public:
     bool isInstanceRendering() const override;
 
     void setAnimationState(AnimationState animationState);
-    void resetTime(float time = 0.0f);
+    void resetTime(float time = 0.0f, bool resetAnimation = false);
 
 private:
     void setupMaterial();

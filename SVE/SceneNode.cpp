@@ -60,8 +60,20 @@ void SceneNode::detachEntity(std::shared_ptr<Entity> entity)
 
 const std::list<std::shared_ptr<Entity>>& SceneNode::getAttachedEntities() const
 {
+    if (_entitiesHidden)
+    {
+        static std::list<std::shared_ptr<Entity>> emptyList {};
+        return emptyList;
+    }
+
     return _entityList;
 }
+
+void SceneNode::setHideEntities(bool value)
+{
+    _entitiesHidden = value;
+}
+
 
 void SceneNode::attachSceneNode(std::shared_ptr<SceneNode> sceneNode)
 {

@@ -168,6 +168,11 @@ void MapTraveller::setWallAccessible(bool accessible)
     _wallAllowed = accessible;
 }
 
+void MapTraveller::setAffectDistance(float distance)
+{
+    _affectDistance = distance;
+}
+
 MoveDirection MapTraveller::getCurrentDirection() const
 {
     return _direction;
@@ -183,7 +188,7 @@ void MapTraveller::setPosition(glm::ivec2 position)
 
 bool MapTraveller::isCloseToAffect(glm::vec2 pos) const
 {
-    return glm::distance(_position, pos) < 1.3f;
+    return glm::distance(_position, pos) < _affectDistance;
 }
 
 glm::vec2 MapTraveller::toRealPos(glm::ivec2 pos)

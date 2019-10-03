@@ -1,4 +1,5 @@
 {
     "name": "witch",
-    "filename": "assets/witch_walk.DAE"
+    "filename": "assets/witch_walk.DAE",
+    "animationSpeed": 2.0
 }

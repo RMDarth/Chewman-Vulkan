@@ -31,6 +31,7 @@ struct MeshLoadSettings
     std::string filename;
     bool switchYZ = false;
     glm::vec3 scale = {1.0f, 1.0f, 1.0f};
+    float animationSpeed = 1.0f;
 };
 
 struct MeshSettings
@@ -48,6 +49,7 @@ struct MeshSettings
     std::vector<glm::ivec4> vertexBoneIndexData;
     std::vector<glm::vec4> vertexBoneWeightData;
     std::shared_ptr<AnimationSettings> animation;
+    float animationSpeed = 1.0f;
 
     std::string materialName;
 };

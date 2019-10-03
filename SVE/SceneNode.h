@@ -29,6 +29,8 @@ public:
     void detachEntity(std::shared_ptr<Entity> entity);
     const std::list<std::shared_ptr<Entity>>& getAttachedEntities() const;
 
+    void setHideEntities(bool value);
+
     void attachSceneNode(std::shared_ptr<SceneNode> sceneNode);
     void detachSceneNode(std::shared_ptr<SceneNode> sceneNode);
     const std::list<std::shared_ptr<SceneNode>>& getChildren() const;
@@ -44,6 +46,8 @@ private:
     std::list<std::shared_ptr<Entity>> _entityList;
     std::list<std::shared_ptr<SceneNode>> _sceneNodeList;
     uint64_t _currentFrame;
+
+    bool _entitiesHidden = false;
 
     glm::mat4 _transformation = glm::mat4(1);
 };

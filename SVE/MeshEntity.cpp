@@ -232,9 +232,11 @@ void MeshEntity::setAnimationState(AnimationState animationState)
     _animationState = animationState;
 }
 
-void MeshEntity::resetTime(float time)
+void MeshEntity::resetTime(float time, bool resetAnimation)
 {
     _time = time;
+    if (resetAnimation)
+        _animationTime = time;
 }
 
 } // namespace SVE

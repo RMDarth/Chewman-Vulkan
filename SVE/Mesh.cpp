@@ -52,6 +52,7 @@ Mesh::Mesh(MeshLoadSettings meshLoadSettings)
 
     //Assimp::Importer importer;
     meshSettings.animation = std::make_shared<AnimationSettings>();
+    meshSettings.animationSpeed = meshLoadSettings.animationSpeed;
     auto& importer = meshSettings.animation->importer;
 
     std::map<std::string, uint32_t> boneMap;

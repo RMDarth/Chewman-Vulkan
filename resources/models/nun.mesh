@@ -1,4 +1,5 @@
 {
     "name": "nun",
-    "filename": "assets/newNun2.DAE"
+    "filename": "assets/newNunFixed.DAE",
+    "animationSpeed": 1.5
 }

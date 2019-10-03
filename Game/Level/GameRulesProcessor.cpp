@@ -171,6 +171,7 @@ void GameRulesProcessor::update(float deltaTime)
 
         // Check death
         bool isPlayerDead = [&]() {
+            auto mtRealPos = mapTraveller->getRealPosition();
             auto currentClosestPos = mapTraveller->getMapPosition();
             auto isCurrentPosAffected = mapTraveller->isCloseToAffect(MapTraveller::toRealPos(currentClosestPos));
 
@@ -184,7 +185,7 @@ void GameRulesProcessor::update(float deltaTime)
             {
                 if (enemy->isDead())
                     continue;
-                if (mapTraveller->isCloseToAffect(enemy->getPosition()))
+                if (enemy->getMapTraveller()->isCloseToAffect(mtRealPos))
                 {
                     if (enemy->isStateActive(EnemyState::Vulnerable))
                         enemy->increaseState(EnemyState::Dead);
@@ -193,7 +194,7 @@ void GameRulesProcessor::update(float deltaTime)
                 }
             }
 
-            const auto playerRealPos = glm::vec3(mapTraveller->getRealPosition().y, 0.75, -mapTraveller->getRealPosition().x);
+            const auto playerRealPos = glm::vec3(mtRealPos.y, 0.75, -mtRealPos.x);
             for (auto& gargoyle : gameMap->gargoyles)
             {
                 auto toGarg = playerRealPos - gargoyle.startPoint;
@@ -312,7 +313,8 @@ void GameRulesProcessor::deactivatePowerUp(PowerUpType type)
                 enemy->resetState(EnemyState::Frozen);
             break;
         case PowerUpType::Acceleration:
-            getPlayer()->getMapTraveller()->setSpeed(MoveSpeed);
+            if (_lastSpeedPowerUp == type)
+                getPlayer()->getMapTraveller()->setSpeed(MoveSpeed);
             break;
         case PowerUpType::Life:
             break;
@@ -324,7 +326,8 @@ void GameRulesProcessor::deactivatePowerUp(PowerUpType type)
         case PowerUpType::Teeth:
             break;
         case PowerUpType::Slow:
-            getPlayer()->getMapTraveller()->setSpeed(MoveSpeed);
+            if (_lastSpeedPowerUp == type)
+                getPlayer()->getMapTraveller()->setSpeed(MoveSpeed);
             break;
     }
 }
@@ -349,6 +352,7 @@ void GameRulesProcessor::activatePowerUp(PowerUpType type, glm::ivec2 pos)
             _gameAffectors.push_back({type, AccelerationTotalTime});
             getPlayer()->getMapTraveller()->setSpeed(MoveSpeed * 2.0f);
             _activeState[static_cast<uint8_t>(PowerUpType::Slow)] = 0;
+            _lastSpeedPowerUp = type;
             break;
         case PowerUpType::Life:
             Game::getInstance()->getProgressManager().getPlayerInfo().lives += 2;
@@ -372,6 +376,7 @@ void GameRulesProcessor::activatePowerUp(PowerUpType type, glm::ivec2 pos)
             _gameAffectors.push_back({type, SlowTotalTime});
             getPlayer()->getMapTraveller()->setSpeed(MoveSpeed * 0.5f);
             _activeState[static_cast<uint8_t>(PowerUpType::Acceleration)] = 0;
+            _lastSpeedPowerUp = type;
             break;
     }
 }
