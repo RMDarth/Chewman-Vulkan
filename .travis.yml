@@ -1,7 +1,13 @@
 language: cpp
-
+sudo: required
+dist: bionic
 compiler:
   - gcc
+os:
+  - linux
+
+before_install:
+  - sudo apt-get install -y libsdl2-dev libassimp-dev libtinyxml2-dev libcppfs-dev libglm-dev rapidjson-dev
 
 before_script:
   - mkdir build
