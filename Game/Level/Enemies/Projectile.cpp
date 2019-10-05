@@ -7,6 +7,7 @@
 #include "SVE/ParticleSystemEntity.h"
 
 #include "Game/Level/GameMap.h"
+#include "Game/Level/GameUtils.h"
 
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -18,17 +19,20 @@ Projectile::Projectile(GameMap* map, glm::ivec2 startPos)
 {
     _mapTraveller->setSpeed(MoveSpeed * 2);
     _mapTraveller->setWaterAccessible(true);
-    _mapTraveller->setAffectDistance(2.5f);
+    _mapTraveller->setAffectDistance(2.2f);
 
-    _rootNode = SVE::Engine::getInstance()->getSceneManager()->createSceneNode();
-    _rotateNode = SVE::Engine::getInstance()->getSceneManager()->createSceneNode();
-    auto psNode = SVE::Engine::getInstance()->getSceneManager()->createSceneNode();
+    auto* engine = SVE::Engine::getInstance();
+    _rootNode = engine->getSceneManager()->createSceneNode();
+    _rotateNode = engine->getSceneManager()->createSceneNode();
+    auto psNode = engine->getSceneManager()->createSceneNode();
     _rootNode->attachSceneNode(_rotateNode);
     _rotateNode->attachSceneNode(psNode);
     psNode->setNodeTransformation(glm::translate(glm::mat4(1), glm::vec3(0.0f, 0.0f, -2.0f)));
 
     std::shared_ptr<SVE::ParticleSystemEntity> fireballPS = std::make_shared<SVE::ParticleSystemEntity>("Fireball");
     psNode->attachEntity(fireballPS);
+
+    _rootNode->attachSceneNode(addEnemyLightEffect(engine, 2.0));
 
     _state[(uint8_t)EnemyState::Dead] = 1;
 }

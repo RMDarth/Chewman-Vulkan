@@ -90,11 +90,14 @@ void MeshEntity::updateUniforms(UniformDataList uniformDataList) const
                 _shadowIndex,
                 newShadowData);
 
-        UniformData depthData = *uniformDataList[toInt(CommandsType::ScreenQuadDepthPass)];
-        depthData.bones = newData.bones;
-        _shadowMaterial->getVulkanMaterial()->setUniformData(
-                _depthIndex,
-                depthData);
+        if (_renderToDepth)
+        {
+            UniformData depthData = *uniformDataList[toInt(CommandsType::ScreenQuadDepthPass)];
+            depthData.bones = newData.bones;
+            _shadowMaterial->getVulkanMaterial()->setUniformData(
+                    _depthIndex,
+                    depthData);
+        }
     }
     if (_pointLightShadowMaterial)
     {
@@ -133,10 +136,6 @@ void MeshEntity::applyDrawingCommands(uint32_t bufferIndex, uint32_t imageIndex)
     }
     else if (Engine::getInstance()->getPassType() == CommandsType::ShadowPassDirectLight)
     {
-        // temp
-        if (_material->isMRT())
-            return;
-
         if (!_castShadows || !_shadowMaterial)
             return;
 
@@ -156,8 +155,7 @@ void MeshEntity::applyDrawingCommands(uint32_t bufferIndex, uint32_t imageIndex)
     }
     else if (Engine::getInstance()->getPassType() == CommandsType::ScreenQuadDepthPass)
     {
-        // temp
-        if (_material->isMRT())
+        if (!_renderToDepth)
             return;
 
         if (_shadowMaterial)
@@ -198,7 +196,8 @@ void MeshEntity::setupMaterial()
         }
         else
         {
-            _shadowMaterial = Engine::getInstance()->getMaterialManager()->getMaterial("SimpleDepth");
+            _shadowMaterial = Engine::getInstance()->getMaterialManager()->getMaterial(
+                    _material->getVulkanMaterial()->getSettings().useInstancing ? "SimpleDepthInstanced" : "SimpleDepth");
             _pointLightShadowMaterial = Engine::getInstance()->getMaterialManager()->getMaterial("FullDepth");
         }
 
@@ -225,6 +224,10 @@ bool MeshEntity::isInstanceRendering() const
 void MeshEntity::updateInstanceBuffers()
 {
     _material->getVulkanMaterial()->updateInstancedData();
+    if (_shadowMaterial)
+    {
+        _shadowMaterial->getVulkanMaterial()->updateInstancedData();
+    }
 }
 
 void MeshEntity::setAnimationState(AnimationState animationState)

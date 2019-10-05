@@ -1,0 +1,11 @@
+{
+    "name": "SimpleDepthInstanced",
+    "vertexShaderName": "simpleDepthInstancedVertexShader",
+    "geometryShaderName": "simpleDepthGeomShader",
+    "fragmentShaderName": "simpleDepthFragmentShader",
+    "useDepthBias": true,
+    "useMultisampling": false,
+    "useInstancing": true,
+    "instanceMaxCount": 20000,
+    "passType": "ShadowPassDirectLight"
+}
