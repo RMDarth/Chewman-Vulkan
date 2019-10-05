@@ -5,6 +5,11 @@
 #include "DefaultEnemy.h"
 #include "Projectile.h"
 
+namespace SVE
+{
+class ParticleSystemEntity;
+}
+
 namespace Chewman
 {
 
@@ -24,6 +29,9 @@ private:
 
     bool isPlayerOnLine();
     void startMagic(MagicType magicType);
+
+    void updateMagic(float deltaTime);
+
     void applyMagic();
     void stopCasting();
 
@@ -35,7 +43,12 @@ private:
     MoveDirection _magicDirection;
     std::shared_ptr<SVE::MeshEntity> _castMesh;
 
-    float _magicRestore = 0.0;
+    std::shared_ptr<SVE::MeshEntity> _teleportMesh;
+    bool _teleportPSAttached = false;
+    std::shared_ptr<SVE::ParticleSystemEntity> _teleportPS;
+
+    float _fireMagicRestore = 0.0;
+    float _teleportMagicRestore = 6.5f;
 };
 
 } // namespace Chewman

@@ -2,10 +2,14 @@
 // Copyright (c) 2018-2019, Igor Barinov
 // Licensed under the MIT License
 #include "Witch.h"
+#include "Game/Level/GameMap.h"
+#include "Game/Level/GameUtils.h"
+
 #include "SVE/MeshEntity.h"
+#include "SVE/SceneManager.h"
+
 #include <glm/gtc/matrix_transform.hpp>
-#include <Game/Level/GameMap.h>
-#include <SVE/SceneManager.h>
+
 
 namespace Chewman
 {
@@ -24,6 +28,12 @@ Witch::Witch(GameMap* map, glm::ivec2 startPos)
     _castMesh = std::make_shared<SVE::MeshEntity>("witchCast");
     _castMesh->setMaterial(_normalMaterial);
 
+    _teleportMesh = std::make_shared<SVE::MeshEntity>("witchCastTeleport");
+    _teleportMesh->setMaterial(_normalMaterial);
+
+    _teleportPS = std::make_shared<SVE::ParticleSystemEntity>("WitchTeleport");
+    _teleportPS->getMaterialInfo()->diffuse = glm::vec4(0.7, 0.3, 1.0, 1.5f);
+
     // Init projectile
     auto projectile = std::make_unique<Projectile>(_gameMap, startPos);
     _projectile = projectile.get();
@@ -32,21 +42,25 @@ Witch::Witch(GameMap* map, glm::ivec2 startPos)
 
 void Witch::update(float deltaTime)
 {
-    if (_magicRestore > 0)
-        _magicRestore -= deltaTime;
+    if (_fireMagicRestore > 0)
+        _fireMagicRestore -= deltaTime;
+    if (_teleportMagicRestore > 0)
+        _teleportMagicRestore -= deltaTime;
 
-    if (_mapTraveller->isTargetReached() && !_projectile->isActive() && isPlayerOnLine() && _castingTime <= 0 && _magicRestore <= 0)
+    if (_mapTraveller->isTargetReached())
     {
-        startMagic(MagicType::Fireball);
+        if (!_projectile->isActive() && isPlayerOnLine() && _castingTime <= 0 && _fireMagicRestore <= 0)
+        {
+            startMagic(MagicType::Fireball);
+        } else if (_castingTime <= 0 && _fireMagicRestore <= 0 && _teleportMagicRestore <= 0)
+        {
+            startMagic(MagicType::Teleport);
+        }
     }
 
     if (_castingTime > 0)
     {
-        _castingTime -= deltaTime;
-        if (_castingTime < 0.35 && _magicRestore <= 0)
-            applyMagic();
-        if (_castingTime <= 0)
-            stopCasting();
+        updateMagic(deltaTime);
     }
     else
     {
@@ -107,16 +121,55 @@ void Witch::startMagic(MagicType magicType)
     switch (magicType)
     {
         case MagicType::Fireball:
+        {
             _meshNode->attachEntity(_castMesh);
             _castMesh->resetTime(0, true);
             _castingTime = 1.2f;
+
+            float rotateAngle = _projectile->getRotateAngle(_magicDirection);
+            _rotateNode->setNodeTransformation(
+                    glm::rotate(glm::mat4(1), glm::radians(rotateAngle), glm::vec3(0, 1, 0)));
             break;
+        }
         case MagicType::Teleport:
+        {
+            _meshNode->attachEntity(_teleportMesh);
+            _teleportMesh->resetTime(0, true);
+            _castingTime = 2.1f;
             break;
+        }
+    }
+}
+
+void Witch::updateMagic(float deltaTime)
+{
+    _castingTime -= deltaTime;
+    switch (_magicType)
+    {
+        case MagicType::Fireball:
+        {
+            if (_castingTime < 0.35 && _fireMagicRestore <= 0)
+                applyMagic();
+            if (_castingTime <= 0)
+                stopCasting();
+            break;
+        }
+        case MagicType::Teleport:
+        {
+            if (_castingTime < 1.4 && !_teleportPSAttached)
+            {
+                _teleportPSAttached = true;
+                _rootNode->attachEntity(_teleportPS);
+            }
+            if (_castingTime < 0.6 && _teleportMagicRestore <= 0)
+                applyMagic();
+            if (_castingTime <= 0)
+                stopCasting();
+            break;
+        }
+
     }
 
-    float rotateAngle = _projectile->getRotateAngle(_magicDirection);
-    _rotateNode->setNodeTransformation(glm::rotate(glm::mat4(1), glm::radians(rotateAngle), glm::vec3(0, 1, 0)));
 }
 
 void Witch::stopCasting()
@@ -129,21 +182,39 @@ void Witch::stopCasting()
             _meshNode->detachEntity(_castMesh);
             break;
         case MagicType::Teleport:
+            _meshNode->detachEntity(_teleportMesh);
+            _rootNode->detachEntity(_teleportPS);
+            _teleportPSAttached = false;
             break;
     }
 }
 
 void Witch::applyMagic()
 {
-    _magicRestore = 4.0f;
-
+    auto& randomEngine = getRandomEngine();
     switch (_magicType)
     {
         case MagicType::Fireball:
-            _projectile->activate(_magicDirection, _mapTraveller->getMapPosition(), ProjectileType::Fire);
+        {
+            _fireMagicRestore = 4.0f;
+            auto type = std::uniform_int_distribution<>(0, 4)(randomEngine) < 2 ? ProjectileType::Frost : ProjectileType::Fire;
+            _projectile->activate(_magicDirection, _mapTraveller->getMapPosition(), type);
             break;
+        }
         case MagicType::Teleport:
+        {
+            _teleportMagicRestore = std::uniform_real_distribution<float>(6.0f, 14.0f)(randomEngine);
+            auto playerPos = _gameMap->player->getMapTraveller()->getMapPosition();
+            int x, y;
+            do
+            {
+                x = std::uniform_int_distribution<>(0, _gameMap->height - 1)(randomEngine);
+                y = std::uniform_int_distribution<>(0, _gameMap->width - 1)(randomEngine);
+            } while(_gameMap->mapData[x][y].cellType != CellType::Floor || (abs(playerPos.x - x) < 2 && abs(playerPos.y - y) < 2));
+            _mapTraveller->setPosition({x, y});
+            DefaultEnemy::update(0);
             break;
+        }
     }
 }
 

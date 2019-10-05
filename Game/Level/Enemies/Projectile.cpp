@@ -24,13 +24,13 @@ Projectile::Projectile(GameMap* map, glm::ivec2 startPos)
     auto* engine = SVE::Engine::getInstance();
     _rootNode = engine->getSceneManager()->createSceneNode();
     _rotateNode = engine->getSceneManager()->createSceneNode();
-    auto psNode = engine->getSceneManager()->createSceneNode();
+    _psNode = engine->getSceneManager()->createSceneNode();
     _rootNode->attachSceneNode(_rotateNode);
-    _rotateNode->attachSceneNode(psNode);
-    psNode->setNodeTransformation(glm::translate(glm::mat4(1), glm::vec3(0.0f, 0.0f, -2.0f)));
+    _rotateNode->attachSceneNode(_psNode);
+    _psNode->setNodeTransformation(glm::translate(glm::mat4(1), glm::vec3(0.0f, 0.0f, -2.0f)));
 
-    std::shared_ptr<SVE::ParticleSystemEntity> fireballPS = std::make_shared<SVE::ParticleSystemEntity>("Fireball");
-    psNode->attachEntity(fireballPS);
+    _fireballPS = std::make_shared<SVE::ParticleSystemEntity>("Fireball");
+    _frostballPS = std::make_shared<SVE::ParticleSystemEntity>("Frostball");
 
     _rootNode->attachSceneNode(addEnemyLightEffect(engine, 2.0));
 
@@ -88,6 +88,17 @@ void Projectile::activate(MoveDirection direction, glm::ivec2 pos, ProjectileTyp
     _magicDirection = direction;
     _type = projectileType;
     _rotateNode->setNodeTransformation(glm::rotate(glm::mat4(1), glm::radians(getRotateAngle(direction)), glm::vec3(0, 1, 0)));
+    switch (projectileType)
+    {
+        case ProjectileType::Fire:
+            _psNode->detachEntity(_frostballPS);
+            _psNode->attachEntity(_fireballPS);
+            break;
+        case ProjectileType::Frost:
+            _psNode->detachEntity(_fireballPS);
+            _psNode->attachEntity(_frostballPS);
+            break;
+    }
     decreaseState(EnemyState::Dead);
 }
 
@@ -106,6 +117,11 @@ float Projectile::getRotateAngle(MoveDirection direction)
     }
     assert(!"Invalid direction");
     return 0.0f;
+}
+
+ProjectileType Projectile::getProjectileType() const
+{
+    return _type;
 }
 
 

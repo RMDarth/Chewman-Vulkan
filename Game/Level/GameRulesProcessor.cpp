@@ -10,6 +10,7 @@
 #include "SVE/CameraNode.h"
 
 #include <glm/gtc/matrix_transform.hpp>
+#include <Game/Level/Enemies/Projectile.h>
 
 namespace Chewman
 {
@@ -187,7 +188,13 @@ void GameRulesProcessor::update(float deltaTime)
                     continue;
                 if (enemy->getMapTraveller()->isCloseToAffect(mtRealPos))
                 {
-                    if (enemy->isStateActive(EnemyState::Vulnerable))
+                    if (enemy->getEnemyType() == EnemyType::Projectile
+                        && static_cast<Projectile*>(enemy.get())->getProjectileType() == ProjectileType::Frost)
+                    {
+                        activatePowerUp(PowerUpType::Slow, mapTraveller->getMapPosition());
+                        enemy->increaseState(EnemyState::Dead);
+                    }
+                    else if (enemy->isStateActive(EnemyState::Vulnerable))
                         enemy->increaseState(EnemyState::Dead);
                     else
                         return true;

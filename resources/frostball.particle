@@ -1,6 +1,6 @@
 {
-    "name": "Fireball",
-    "materialName": "FireParticleMaterial",
+    "name": "Frostball",
+    "materialName": "FrostLineParticleMaterial",
     "computeShaderName": "particlesComputeShader",
 
     "quota": 1984,
@@ -12,7 +12,7 @@
         "angle": 0.5,
         "originRadius": 0.2,
 
-        "emissionRate": 100,
+        "emissionRate": 20,
         "minLife": 1.6,
         "maxLife": 2.0,
         "minSpeed": 0.0,
@@ -21,8 +21,8 @@
         "maxSize": 1.4,
         "minRotate": -3.14,
         "maxRotate": 3.14,
-        "colorRangeStart": [ 1.0, 0.0, 0.0, 0.02 ],
-        "colorRangeEnd": [ 1.0, 1.0, 0.0, 0.02 ]
+        "colorRangeStart": [ 0.0, 0.0, 1.0, 0.02 ],
+        "colorRangeEnd": [ 0.0, 0.0, 1.0, 0.02 ]
     },
     "particleAffector":
     {

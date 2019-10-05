@@ -6,6 +6,11 @@
 #include <SVE/Engine.h>
 #include "Enemy.h"
 
+namespace SVE
+{
+class ParticleSystemEntity;
+} // namespace SVE
+
 namespace Chewman
 {
 
@@ -28,10 +33,16 @@ public:
     void decreaseState(EnemyState state) override;
 
     static float getRotateAngle(MoveDirection direction);
+    ProjectileType getProjectileType() const;
 
 protected:
     std::shared_ptr<SVE::SceneNode> _rootNode;
     std::shared_ptr<SVE::SceneNode> _rotateNode;
+    std::shared_ptr<SVE::SceneNode> _psNode;
+    std::shared_ptr<SVE::ParticleSystemEntity> _fireballPS;
+    std::shared_ptr<SVE::ParticleSystemEntity> _frostballPS;
+
+
     MoveDirection _magicDirection = MoveDirection::None;
     ProjectileType _type = ProjectileType::Fire;
     bool _isActive = false;
