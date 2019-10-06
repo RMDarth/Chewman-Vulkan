@@ -137,6 +137,11 @@ void GameRulesProcessor::update(float deltaTime)
                     return;
                 }
             }
+            if (gameMap->mapData[mapPos.x][mapPos.y].cellType == CellType::Wall && _activeState[static_cast<uint8_t>(PowerUpType::Teeth)])
+            {
+                gameMap->mapData[mapPos.x][mapPos.y].cellType = CellType::Floor;
+                regenerateMap();
+            }
         } else {
             _insideTeleport = false;
         }
@@ -336,6 +341,7 @@ void GameRulesProcessor::deactivatePowerUp(PowerUpType type)
             getPlayer()->getMapTraveller()->setWallAccessible(false);
             break;
         case PowerUpType::Teeth:
+            getPlayer()->getMapTraveller()->setWallAccessible(false);
             break;
         case PowerUpType::Slow:
             if (_lastSpeedPowerUp == type)
@@ -372,16 +378,11 @@ void GameRulesProcessor::activatePowerUp(PowerUpType type, glm::ivec2 pos)
         case PowerUpType::Bomb:
         {
             destroyWalls(pos);
-            bool hasKnights = false;
             for (auto& enemy : gameMap->enemies)
             {
                 if (glm::length(enemy->getPosition() - getPlayer()->getMapTraveller()->getRealPosition()) < 9.0f)
                     enemy->increaseState(EnemyState::Dead);
-                if (enemy->getEnemyType() == EnemyType::Knight)
-                    hasKnights = true;
             }
-            if (hasKnights)
-                Knight::updatePathMap(gameMap.get());
             break;
         }
         case PowerUpType::Jackhammer:
@@ -390,6 +391,8 @@ void GameRulesProcessor::activatePowerUp(PowerUpType type, glm::ivec2 pos)
             getPlayer()->getMapTraveller()->setWallAccessible(true);
             break;
         case PowerUpType::Teeth:
+            _gameAffectors.push_back({type, TeethTotalTime});
+            getPlayer()->getMapTraveller()->setWallAccessible(true);
             break;
         case PowerUpType::Slow:
             _gameAffectors.push_back({type, SlowTotalTime});
@@ -433,22 +436,7 @@ void GameRulesProcessor::destroyWalls(glm::ivec2 pos)
         }
     }
 
-    BlockMeshGenerator blockMeshGenerator(CellSize);
-    buildLevelMeshes(*gameMap, blockMeshGenerator);
-
-    std::string meshNames[] = { "MapT", "MapB", "MapV" };
-    std::shared_ptr<SVE::SceneNode> nodes[] = {
-            gameMap->upperLevelMeshNode,
-            gameMap->mapNode,
-            gameMap->upperLevelMeshNode
-    };
-    for (auto i = 0; i < 3; ++i)
-    {
-        nodes[i]->detachEntity(gameMap->mapEntity[i]);
-        gameMap->mapEntity[i] = std::make_shared<SVE::MeshEntity>(meshNames[i]);
-        gameMap->mapEntity[i]->setRenderToDepth(true);
-        nodes[i]->attachEntity(gameMap->mapEntity[i]);
-    }
+    regenerateMap();
 }
 
 void GameRulesProcessor::updateWallsDown(float deltaTime)
@@ -467,6 +455,34 @@ void GameRulesProcessor::updateWallsDown(float deltaTime)
         scale = std::min(1.0f - _wallsDownTime * 2, 1.0f);
     }
     gameMap->upperLevelMeshNode->setNodeTransformation(glm::scale(glm::mat4(1), glm::vec3(1.0f, scale, 1.0)));
+}
+
+void GameRulesProcessor::regenerateMap()
+{
+    auto gameMap = _gameMapProcessor.getGameMap();
+
+    BlockMeshGenerator blockMeshGenerator(CellSize);
+    buildLevelMeshes(*gameMap, blockMeshGenerator);
+
+    std::string meshNames[] = { "MapT", "MapB", "MapV" };
+    std::shared_ptr<SVE::SceneNode> nodes[] = {
+            gameMap->upperLevelMeshNode,
+            gameMap->mapNode,
+            gameMap->upperLevelMeshNode
+    };
+    for (auto i = 0; i < 3; ++i)
+    {
+        nodes[i]->detachEntity(gameMap->mapEntity[i]);
+        gameMap->mapEntity[i] = std::make_shared<SVE::MeshEntity>(meshNames[i]);
+        gameMap->mapEntity[i]->setRenderToDepth(true);
+        nodes[i]->attachEntity(gameMap->mapEntity[i]);
+    }
+
+    if (std::any_of(gameMap->enemies.begin(), gameMap->enemies.end(),
+                    [](std::unique_ptr<Enemy>& enemy) { return enemy->getEnemyType() == EnemyType::Knight; }))
+    {
+        Knight::updatePathMap(gameMap.get());
+    }
 }
 
 

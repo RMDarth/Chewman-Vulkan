@@ -14,6 +14,7 @@ constexpr float JackhammerTotalTime = 10.0f;
 constexpr float FreezeTotalTime = 10.0f;
 constexpr float PentagrammTotalTime = 10.0f;
 constexpr float AccelerationTotalTime = 10.0f;
+constexpr float TeethTotalTime = 10.0f;
 constexpr float SlowTotalTime = 10.0f;
 
 struct GameAffector
@@ -42,6 +43,7 @@ private:
     void updateCameraAnimation(float deltaTime);
     void destroyWalls(glm::ivec2 pos);
     void updateWallsDown(float deltaTime);
+    void regenerateMap();
 
 private:
     GameMapProcessor& _gameMapProcessor;
