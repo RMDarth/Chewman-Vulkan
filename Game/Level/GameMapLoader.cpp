@@ -13,6 +13,7 @@
 #include "Game/Level/Enemies/Angel.h"
 #include "Game/Level/Enemies/ChewmanEnemy.h"
 #include "Game/Level/Enemies/Witch.h"
+#include "Game/Level/Enemies/Knight.h"
 
 #include <fstream>
 #define GLM_ENABLE_EXPERIMENTAL
@@ -235,6 +236,10 @@ std::shared_ptr<GameMap> GameMapLoader::loadMap(const std::string& filename)
                     gameMap->mapData[curRow][column].cellType = CellType::Floor;
                     gameMap->enemies.push_back(std::make_unique<Witch>(gameMap.get(), glm::ivec2(curRow, column)));
                     break;
+                case 'K':
+                    gameMap->mapData[curRow][column].cellType = CellType::Floor;
+                    gameMap->enemies.push_back(std::make_unique<Knight>(gameMap.get(), glm::ivec2(curRow, column)));
+                    break;
                 case 'J':
                 case 'D':
                 case 'V':
@@ -285,6 +290,9 @@ std::shared_ptr<GameMap> GameMapLoader::loadMap(const std::string& filename)
         gargoyle.fireTime = (float)(finishTime - startTime) / 1000;
         finalizeGargoyle(*gameMap, gargoyle);
     }
+
+    for (auto& enemy : gameMap->enemies)
+        enemy->init();
 
     createSmoke(*gameMap);
     createLava(*gameMap);

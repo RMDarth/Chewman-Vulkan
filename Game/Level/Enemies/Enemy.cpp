@@ -14,6 +14,10 @@ Enemy::Enemy(GameMap* map, glm::ivec2 startPos, EnemyType enemyType)
 {
 }
 
+void Enemy::init()
+{
+}
+
 glm::vec2 Enemy::getPosition()
 {
     return _mapTraveller->getRealPosition();
@@ -44,6 +48,10 @@ void Enemy::resetState(EnemyState state)
 {
     while (isStateActive(state))
         decreaseState(state);
+}
+
+void Enemy::attackPlayer()
+{
 }
 
 EnemyType Enemy::getEnemyType() const

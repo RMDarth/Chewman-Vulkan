@@ -7,6 +7,7 @@
 #include <vector>
 #include <glm/gtc/quaternion.hpp>
 #include <map>
+#include <unordered_map>
 #include <memory>
 
 #include <assimp/Importer.hpp>
@@ -14,6 +15,8 @@
 
 namespace SVE
 {
+
+using BonesAttachments = std::unordered_map<std::string, glm::mat4>;
 
 struct AnimationSettings
 {
@@ -54,6 +57,6 @@ struct MeshSettings
     std::string materialName;
 };
 
-std::vector<glm::mat4> getAnimationTransforms(const MeshSettings& meshSettings, uint32_t animationId, float time);
+std::vector<glm::mat4> getAnimationTransforms(const MeshSettings& meshSettings, uint32_t animationId, float time, BonesAttachments& bonesAttachments);
 
 } // namespace SVE

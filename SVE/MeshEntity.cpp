@@ -242,4 +242,19 @@ void MeshEntity::resetTime(float time, bool resetAnimation)
         _animationTime = time;
 }
 
+void MeshEntity::subscribeToAttachment(const std::string& name)
+{
+    _mesh->subscribeToAttachment(name);
+}
+
+glm::mat4 MeshEntity::getAttachment(const std::string& name)
+{
+    return _mesh->getAttachment(name);
+}
+
+void MeshEntity::unsubscribeFromAttachment(const std::string& name)
+{
+    _mesh->unsubscribeFromAttachment(name);
+}
+
 } // namespace SVE

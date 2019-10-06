@@ -95,9 +95,12 @@ const std::list<std::shared_ptr<SceneNode>>& SceneNode::getChildren() const
     return _sceneNodeList;
 }
 
-const glm::mat4& SceneNode::getNodeTransformation() const
+glm::mat4 SceneNode::getNodeTransformation() const
 {
-    return _transformation;
+    if (!_attachment)
+        return _transformation;
+    else
+        return _attachment->getAttachment(_attachmentName) * _transformation;
 }
 
 void SceneNode::setNodeTransformation(glm::mat4 transform)
@@ -126,6 +129,18 @@ void SceneNode::setCurrentFrame(uint64_t frame)
 uint64_t SceneNode::getCurrentFrame() const
 {
     return _currentFrame;
+}
+
+void SceneNode::setEntityAttachment(std::shared_ptr<Entity> entity, const std::string& attachmentName)
+{
+    if (_attachment)
+    {
+        _attachment->unsubscribeFromAttachment(_attachmentName);
+    }
+
+    _attachment = std::move(entity);
+    _attachment->subscribeToAttachment(attachmentName);
+    _attachmentName = attachmentName;
 }
 
 } // namespace SVE

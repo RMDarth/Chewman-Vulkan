@@ -21,10 +21,10 @@ void moveTo(MoveDirection dir, glm::ivec2& mapPosition)
         case MoveDirection::Right:
             mapPosition.x++;
             break;
-        case MoveDirection::Forward:
+        case MoveDirection::Up:
             mapPosition.y++;
             break;
-        case MoveDirection::Backward:
+        case MoveDirection::Down:
             mapPosition.y--;
             break;
     }
@@ -65,10 +65,10 @@ void MapTraveller::move(MoveDirection dir)
         case MoveDirection::Right:
             _speed.x = _moveSpeed;
             break;
-        case MoveDirection::Forward:
+        case MoveDirection::Up:
             _speed.y = _moveSpeed;
             break;
-        case MoveDirection::Backward:
+        case MoveDirection::Down:
             _speed.y = -_moveSpeed;
             break;
     }
@@ -156,6 +156,11 @@ glm::vec2 MapTraveller::getStartPos() const
 glm::vec2 MapTraveller::getTargetPos() const
 {
     return _target;
+}
+
+GameMap* MapTraveller::getGameMap() const
+{
+    return _map;
 }
 
 void MapTraveller::setWaterAccessible(bool accessible)

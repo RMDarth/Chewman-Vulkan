@@ -16,9 +16,9 @@ struct GameMap;
 enum class MoveDirection : uint8_t
 {
     Left,
-    Forward,
+    Up,
     Right,
-    Backward,
+    Down,
     None
 };
 
@@ -47,6 +47,7 @@ public:
 
     glm::vec2 getStartPos() const;
     glm::vec2 getTargetPos() const;
+    GameMap* getGameMap() const;
 
     bool isCloseToAffect(glm::vec2 pos) const;
 
@@ -60,7 +61,7 @@ private:
 
     float _moveSpeed = 0.0f;
 
-    MoveDirection _direction = MoveDirection::Forward;
+    MoveDirection _direction = MoveDirection::Up;
     glm::vec2 _position  = {};
     glm::vec2 _target = {};
     glm::vec2 _start = {};

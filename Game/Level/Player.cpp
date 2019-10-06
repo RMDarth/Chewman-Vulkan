@@ -141,9 +141,9 @@ void Player::processInput(const SDL_Event& event)
     {
         const Uint8* keystates = SDL_GetKeyboardState(nullptr);
         if (keystates[SDL_SCANCODE_A])
-            _nextMove = MoveDirection::Backward;
+            _nextMove = MoveDirection::Down;
         if (keystates[SDL_SCANCODE_D])
-            _nextMove = MoveDirection::Forward;
+            _nextMove = MoveDirection::Up;
         if (keystates[SDL_SCANCODE_W])
             _nextMove = MoveDirection::Right;
         if (keystates[SDL_SCANCODE_S])

@@ -108,11 +108,11 @@ float Projectile::getRotateAngle(MoveDirection direction)
     {
         case MoveDirection::Left:
             return 180.0f; // Down
-        case MoveDirection::Forward:
+        case MoveDirection::Up:
             return  -90.0f; // Right
         case MoveDirection::Right:
             return 0.0f; // Up
-        case MoveDirection::Backward:
+        case MoveDirection::Down:
             return 90.0f; // Left
     }
     assert(!"Invalid direction");

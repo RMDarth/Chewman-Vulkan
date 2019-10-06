@@ -41,6 +41,10 @@ public:
     void setAnimationState(AnimationState animationState);
     void resetTime(float time = 0.0f, bool resetAnimation = false);
 
+    void subscribeToAttachment(const std::string& name) override;
+    void unsubscribeFromAttachment(const std::string& name) override;
+    glm::mat4 getAttachment(const std::string& name) override;
+
 private:
     void setupMaterial();
 

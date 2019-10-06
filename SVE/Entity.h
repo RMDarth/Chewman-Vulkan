@@ -5,6 +5,7 @@
 #include <memory>
 #include <vector>
 #include <map>
+#include <glm/glm.hpp>
 
 namespace SVE
 {
@@ -47,6 +48,10 @@ public:
     virtual void updateUniforms(UniformDataList uniformDataList) const = 0;
     virtual void updateInstanceBuffers();
     virtual void applyDrawingCommands(uint32_t bufferIndex, uint32_t imageIndex) const = 0;
+
+    virtual void subscribeToAttachment(const std::string& name);
+    virtual void unsubscribeFromAttachment(const std::string& name);
+    virtual glm::mat4 getAttachment(const std::string& name);
 
 protected:
     bool _isTimePaused = false;

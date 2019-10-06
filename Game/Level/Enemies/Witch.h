@@ -20,11 +20,14 @@ public:
 
     void update(float deltaTime) override;
 
+    void increaseState(EnemyState state) override;
+
 private:
     enum class MagicType
     {
         Fireball,
-        Teleport
+        Teleport,
+        Defrost
     };
 
     bool isPlayerOnLine();

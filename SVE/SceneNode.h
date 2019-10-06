@@ -25,6 +25,8 @@ public:
     void setParent(std::shared_ptr<SceneNode> parent);
     std::shared_ptr<SceneNode> getParent() const;
 
+    void setEntityAttachment(std::shared_ptr<Entity> entity, const std::string& attachmentName);
+
     void attachEntity(std::shared_ptr<Entity> entity);
     void detachEntity(std::shared_ptr<Entity> entity);
     const std::list<std::shared_ptr<Entity>>& getAttachedEntities() const;
@@ -35,7 +37,7 @@ public:
     void detachSceneNode(std::shared_ptr<SceneNode> sceneNode);
     const std::list<std::shared_ptr<SceneNode>>& getChildren() const;
 
-    const glm::mat4& getNodeTransformation() const;
+    glm::mat4 getNodeTransformation() const;
     virtual void setNodeTransformation(glm::mat4 transform);
 
     glm::mat4 getTotalTransformation() const;
@@ -46,6 +48,9 @@ private:
     std::list<std::shared_ptr<Entity>> _entityList;
     std::list<std::shared_ptr<SceneNode>> _sceneNodeList;
     uint64_t _currentFrame;
+
+    std::shared_ptr<Entity> _attachment;
+    std::string _attachmentName;
 
     bool _entitiesHidden = false;
 

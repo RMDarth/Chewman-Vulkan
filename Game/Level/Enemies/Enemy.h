@@ -37,6 +37,9 @@ public:
     Enemy(GameMap* map, glm::ivec2 startPos, EnemyType enemyType);
     virtual ~Enemy() noexcept = default;
 
+    // Initialization after full game map is loaded
+    virtual void init();
+
     virtual void update(float deltaTime) = 0;
     virtual glm::vec2 getPosition();
 
@@ -44,6 +47,8 @@ public:
     virtual void decreaseState(EnemyState state);
     bool isStateActive(EnemyState state) const;
     void resetState(EnemyState state);
+
+    virtual void attackPlayer();
 
     bool isDead() const;
     EnemyType getEnemyType() const;

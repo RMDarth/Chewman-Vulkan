@@ -99,4 +99,21 @@ void Entity::unpauseTime()
     _isTimePaused = false;
 }
 
+void Entity::subscribeToAttachment(const std::string& name)
+{
+
+}
+
+void Entity::unsubscribeFromAttachment(const std::string& name)
+{
+
+}
+
+glm::mat4 Entity::getAttachment(const std::string& name)
+{
+    return glm::mat4();
+}
+
+
+
 } // namespace SVE

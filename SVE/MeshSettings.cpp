@@ -144,7 +144,8 @@ void iterateBones(
         const std::shared_ptr<AnimationSettings>& animationSettings,
         const uint32_t animationId,
         const aiNode* node,
-        const aiMatrix4x4& parentTransform)
+        const aiMatrix4x4& parentTransform,
+        BonesAttachments& bonesAttachments)
 {
     std::string nodeName(node->mName.data);
 
@@ -171,20 +172,35 @@ void iterateBones(
         {
             auto finalTransform =
                     animationSettings->globalInverse * globalTransformation * animationSettings->boneOffset[boneIndex];
-            boneData[boneIndex] = glm::transpose(glm::make_mat4(&finalTransform.a1));
+            auto resultMat = glm::transpose(glm::make_mat4(&finalTransform.a1));
+            boneData[boneIndex] = resultMat;
+
+            auto attachment = bonesAttachments.find(nodeName);
+            if (attachment != bonesAttachments.end())
+            {
+                auto toBoneSpace = animationSettings->boneOffset[boneIndex];
+                aiVector3D scale, rot, pos;
+                toBoneSpace.Decompose(scale, rot, pos);
+                aiMatrix4x4 scaleMatrix;
+                aiMatrix4x4::Scaling(scale, scaleMatrix);
+                auto finalTransform =
+                        animationSettings->globalInverse  * globalTransformation * scaleMatrix;
+
+                attachment->second = glm::transpose(glm::make_mat4(&finalTransform.a1));
+            }
         }
     }
 
     for (uint32_t i = 0; i < node->mNumChildren; i++)
     {
-        iterateBones(boneData, time, animationSettings, animationId, node->mChildren[i], globalTransformation);
+        iterateBones(boneData, time, animationSettings, animationId, node->mChildren[i], globalTransformation, bonesAttachments);
     }
 }
 
 } // anon namespace
 
 
-std::vector<glm::mat4> getAnimationTransforms(const MeshSettings& meshSettings, uint32_t animationId, float time)
+std::vector<glm::mat4> getAnimationTransforms(const MeshSettings& meshSettings, uint32_t animationId, float time, BonesAttachments& bonesAttachments)
 {
     // TODO: Only for looped anims
     time *= meshSettings.animationSpeed;
@@ -198,7 +214,7 @@ std::vector<glm::mat4> getAnimationTransforms(const MeshSettings& meshSettings, 
     }
 
     std::vector<glm::mat4> result(meshSettings.boneNum, glm::mat4(1));
-    iterateBones(result, time, meshSettings.animation, animationId, meshSettings.animation->rootNode, aiMatrix4x4());
+    iterateBones(result, time, meshSettings.animation, animationId, meshSettings.animation->rootNode, aiMatrix4x4(), bonesAttachments);
 
     return result;
 }

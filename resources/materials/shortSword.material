@@ -1,0 +1,16 @@
+{
+    "name": "ShortSwordMaterial",
+    "vertexShaderName": "phongShadowVertexShader",
+    "fragmentShaderName": "phongShadowFragmentShader",
+    "textures": [
+        {
+            "samplerName": "diffuseTex",
+            "textureType": "ImageFile",
+            "filename": "textures/enemies/shortsword.png"
+        },
+        {
+            "samplerName": "directShadowTex",
+            "textureType": "ShadowMapDirect"
+        }
+    ]
+}

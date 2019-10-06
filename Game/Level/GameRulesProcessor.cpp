@@ -5,12 +5,14 @@
 #include "GameMap.h"
 #include "GameMapLoader.h"
 #include "Game/Game.h"
+#include "Game/Level/Enemies/Projectile.h"
+#include "Game/Level/Enemies/Knight.h"
 #include "SVE/Engine.h"
 #include "SVE/SceneManager.h"
 #include "SVE/CameraNode.h"
 
 #include <glm/gtc/matrix_transform.hpp>
-#include <Game/Level/Enemies/Projectile.h>
+
 
 namespace Chewman
 {
@@ -197,7 +199,10 @@ void GameRulesProcessor::update(float deltaTime)
                     else if (enemy->isStateActive(EnemyState::Vulnerable))
                         enemy->increaseState(EnemyState::Dead);
                     else
+                    {
+                        enemy->attackPlayer();
                         return true;
+                    }
                 }
             }
 
@@ -367,9 +372,16 @@ void GameRulesProcessor::activatePowerUp(PowerUpType type, glm::ivec2 pos)
         case PowerUpType::Bomb:
         {
             destroyWalls(pos);
+            bool hasKnights = false;
             for (auto& enemy : gameMap->enemies)
+            {
                 if (glm::length(enemy->getPosition() - getPlayer()->getMapTraveller()->getRealPosition()) < 9.0f)
                     enemy->increaseState(EnemyState::Dead);
+                if (enemy->getEnemyType() == EnemyType::Knight)
+                    hasKnights = true;
+            }
+            if (hasKnights)
+                Knight::updatePathMap(gameMap.get());
             break;
         }
         case PowerUpType::Jackhammer:

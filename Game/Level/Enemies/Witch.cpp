@@ -15,7 +15,7 @@ namespace Chewman
 {
 
 Witch::Witch(GameMap* map, glm::ivec2 startPos)
-    : DefaultEnemy(map, startPos, EnemyType::Nun,
+    : DefaultEnemy(map, startPos, EnemyType::Knight,
                    "witch", "WitchMaterial", 95)
 {
     createMaterials();
@@ -47,6 +47,9 @@ void Witch::update(float deltaTime)
     if (_teleportMagicRestore > 0)
         _teleportMagicRestore -= deltaTime;
 
+    if (isStateActive(EnemyState::Dead))
+        return;
+
     if (_mapTraveller->isTargetReached())
     {
         if (!_projectile->isActive() && isPlayerOnLine() && _castingTime <= 0 && _fireMagicRestore <= 0)
@@ -66,6 +69,16 @@ void Witch::update(float deltaTime)
     {
         DefaultEnemy::update(deltaTime);
     }
+}
+
+void Witch::increaseState(EnemyState state)
+{
+    if (state == EnemyState::Frozen)
+    {
+        startMagic(MagicType::Defrost);
+        return;
+    }
+    DefaultEnemy::increaseState(state);
 }
 
 bool Witch::isPlayerOnLine()
@@ -88,7 +101,7 @@ bool Witch::isPlayerOnLine()
             }
         }
 
-        _magicDirection = playerPos.y > witchPos.y ? MoveDirection::Forward : MoveDirection::Backward;
+        _magicDirection = playerPos.y > witchPos.y ? MoveDirection::Up : MoveDirection::Down;
         return true;
     }
     else if (playerPos.y == witchPos.y)
@@ -138,6 +151,12 @@ void Witch::startMagic(MagicType magicType)
             _castingTime = 2.1f;
             break;
         }
+        case MagicType::Defrost:
+        {
+            _meshNode->attachEntity(_teleportMesh);
+            _teleportMesh->resetTime(0, true);
+            _castingTime = 2.1f;
+        }
     }
 }
 
@@ -159,6 +178,7 @@ void Witch::updateMagic(float deltaTime)
             if (_castingTime < 1.4 && !_teleportPSAttached)
             {
                 _teleportPSAttached = true;
+                _teleportPS->getMaterialInfo()->diffuse = glm::vec4(0.7, 0.3, 1.0, 1.5f);
                 _rootNode->attachEntity(_teleportPS);
             }
             if (_castingTime < 0.6 && _teleportMagicRestore <= 0)
@@ -168,8 +188,19 @@ void Witch::updateMagic(float deltaTime)
             break;
         }
 
+        case MagicType::Defrost:
+        {
+            if (_castingTime < 1.4 && !_teleportPSAttached)
+            {
+                _teleportPSAttached = true;
+                _teleportPS->getMaterialInfo()->diffuse = glm::vec4(0.3, 0.3, 1.0, 1.5f);
+                _rootNode->attachEntity(_teleportPS);
+            }
+            if (_castingTime <= 0)
+                stopCasting();
+            break;
+        }
     }
-
 }
 
 void Witch::stopCasting()
@@ -182,6 +213,11 @@ void Witch::stopCasting()
             _meshNode->detachEntity(_castMesh);
             break;
         case MagicType::Teleport:
+            _meshNode->detachEntity(_teleportMesh);
+            _rootNode->detachEntity(_teleportPS);
+            _teleportPSAttached = false;
+            break;
+        case MagicType::Defrost:
             _meshNode->detachEntity(_teleportMesh);
             _rootNode->detachEntity(_teleportPS);
             _teleportPSAttached = false;
