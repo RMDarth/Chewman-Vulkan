@@ -77,6 +77,15 @@ void Projectile::decreaseState(EnemyState state)
     }
 }
 
+bool Projectile::isStateActive(EnemyState state) const
+{
+    if (state == EnemyState::Vulnerable)
+        return false;
+
+    return Enemy::isStateActive(state);
+}
+
+
 bool Projectile::isActive()
 {
     return _isActive;
@@ -123,6 +132,5 @@ ProjectileType Projectile::getProjectileType() const
 {
     return _type;
 }
-
 
 } // namespace Chewman

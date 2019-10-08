@@ -118,7 +118,6 @@ void GameRulesProcessor::update(float deltaTime)
                 if (mapTraveller->isTargetReached() && !_insideTeleport)
                 {
                     auto camera = SVE::Engine::getInstance()->getSceneManager()->getMainCamera();
-                    auto& player = getPlayer();
                     _cameraStart[0] = camera->getPosition();
                     _cameraStart[1] = camera->getYawPitchRoll();
 
@@ -230,7 +229,6 @@ void GameRulesProcessor::update(float deltaTime)
                         {
                             case GargoyleType::Fire:
                                 return true;
-                                break;
                             case GargoyleType::Frost:
                                 activatePowerUp(PowerUpType::Slow, mapTraveller->getMapPosition());
                                 break;
@@ -268,8 +266,12 @@ void GameRulesProcessor::playDeath(float deltaTime)
         auto camera = SVE::Engine::getInstance()->getSceneManager()->getMainCamera();
         if (!_deathSecondPhase)
         {
+            if (Game::getInstance()->getProgressManager().getPlayerInfo().lives == 0)
+                return;
+
             _deathSecondPhase = true;
             auto& player = getPlayer();
+
             _cameraStart[0] = camera->getPosition();
             _cameraStart[1] = camera->getYawPitchRoll();
 
@@ -282,6 +284,10 @@ void GameRulesProcessor::playDeath(float deltaTime)
             _cameraSpeed = 1.1111f;
             _cameraTime = 0.0f;
             _isCameraMoving = true;
+
+            auto& enemies = _gameMapProcessor.getGameMap()->enemies;
+            for (auto& enemy : enemies)
+                enemy->resetAll();
         }
 
         updateCameraAnimation(deltaTime);

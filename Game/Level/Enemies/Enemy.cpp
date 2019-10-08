@@ -9,6 +9,7 @@ namespace Chewman
 
 Enemy::Enemy(GameMap* map, glm::ivec2 startPos, EnemyType enemyType)
     : _gameMap(map)
+    , _startPos(startPos)
     , _mapTraveller(std::make_shared<MapTraveller>(map, startPos))
     , _enemyType(enemyType)
 {
@@ -21,6 +22,18 @@ void Enemy::init()
 glm::vec2 Enemy::getPosition()
 {
     return _mapTraveller->getRealPosition();
+}
+
+void Enemy::resetPosition()
+{
+    _mapTraveller->setPosition(_startPos);
+}
+
+void Enemy::resetAll()
+{
+    resetPosition();
+    for (auto i = 0; i < EnemyStateCount; ++i)
+        resetState(static_cast<EnemyState>(i));
 }
 
 void Enemy::increaseState(EnemyState state)

@@ -52,7 +52,7 @@ private:
     // change to map
     std::list<GameAffector> _gameAffectors;
     uint8_t _activeState[PowerUpCount] = {};
-    PowerUpType _lastSpeedPowerUp;
+    PowerUpType _lastSpeedPowerUp = {};
 
     float _deathTime = 0;
     bool _deathSecondPhase = false;
@@ -65,8 +65,8 @@ private:
     bool _isCameraMoving = false;
     float _cameraTime = 0.0f;
     float _cameraSpeed = 1.0f;
-    glm::vec3 _cameraStart[2]; // pos + angles
-    glm::vec3 _cameraEnd[2];
+    glm::vec3 _cameraStart[2] = {}; // pos + angles
+    glm::vec3 _cameraEnd[2] = {};
 };
 
 } // namespace Chewman

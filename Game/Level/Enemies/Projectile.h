@@ -31,6 +31,7 @@ public:
     void update(float deltaTime) override;
     void increaseState(EnemyState state) override;
     void decreaseState(EnemyState state) override;
+    bool isStateActive(EnemyState state) const override;
 
     static float getRotateAngle(MoveDirection direction);
     ProjectileType getProjectileType() const;

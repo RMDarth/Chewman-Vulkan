@@ -49,6 +49,7 @@ struct Gargoyle
     uint32_t column;
 
     GargoyleState state = GargoyleState::Rest;
+    bool isFading = false;
     GargoyleType type;
     GargoyleDir dir;
 };

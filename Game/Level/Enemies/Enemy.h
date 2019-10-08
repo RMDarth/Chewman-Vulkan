@@ -42,10 +42,12 @@ public:
 
     virtual void update(float deltaTime) = 0;
     virtual glm::vec2 getPosition();
+    virtual void resetPosition();
+    virtual void resetAll();
 
     virtual void increaseState(EnemyState state);
     virtual void decreaseState(EnemyState state);
-    bool isStateActive(EnemyState state) const;
+    virtual bool isStateActive(EnemyState state) const;
     void resetState(EnemyState state);
 
     virtual void attackPlayer();
@@ -56,6 +58,7 @@ public:
 
 protected:
     GameMap* _gameMap;
+    glm::ivec2 _startPos;
     uint8_t _state[EnemyStateCount] = {};
     std::shared_ptr<MapTraveller> _mapTraveller;
     std::shared_ptr<EnemyAI> _ai;

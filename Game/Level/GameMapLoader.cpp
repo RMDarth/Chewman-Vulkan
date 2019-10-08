@@ -499,6 +499,7 @@ void GameMapLoader::finalizeGargoyle(GameMap& level, Gargoyle &gargoyle)
     auto& emitter = gargoyle.particleSystem->getSettings().particleEmitter;
     emitter.minSpeed = CellSize * length / gargoyle.fireTime;
     emitter.maxSpeed = emitter.minSpeed;
+    //gargoyle.particleSystem->getSettings().quota = (gargoyle.fireTime + gargoyle.restTime) * 200;
 
     auto &affector = gargoyle.particleSystem->getSettings().particleAffector;
     affector.minScaleSpeed = gargoyle.type == GargoyleType::Fire ? (1.5f / gargoyle.fireTime) : (1.0f / gargoyle.fireTime);

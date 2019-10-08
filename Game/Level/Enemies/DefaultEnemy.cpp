@@ -86,7 +86,8 @@ void DefaultEnemy::increaseState(EnemyState state)
             _rootNode->attachSceneNode(_debuffNode);
             break;
         case EnemyState::Dead:
-            _rootNode->getParent()->detachSceneNode(_rootNode);
+            if (_rootNode->getParent())
+                _rootNode->getParent()->detachSceneNode(_rootNode);
             break;
     }
 }

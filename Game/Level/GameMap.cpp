@@ -113,13 +113,20 @@ void GameMapProcessor::updateGargoyle(float time, Gargoyle& gargoyle)
     {
         case GargoyleState::Fire:
         {
-            if (gargoyle.currentTime > gargoyle.fireTime - 0.2f)
+            if (gargoyle.currentTime > gargoyle.fireTime && gargoyle.isFading)
             {
                 gargoyle.state = GargoyleState::Rest;
                 gargoyle.currentTime = 0;
                 gargoyle.currentLength = 0;
-                updateGargoyleParticles(gargoyle, 0.0f, -3.5f, 5.0f);
-            } else {
+                gargoyle.isFading = false;
+            }
+            else if (gargoyle.currentTime > gargoyle.fireTime - 0.2f && !gargoyle.isFading)
+            {
+                gargoyle.isFading = true;
+                updateGargoyleParticles(gargoyle, 0, -3.5f, 5.0f);
+            }
+            else
+            {
                 float finishPercent = gargoyle.currentTime / gargoyle.fireTime;
                 gargoyle.currentLength = (float)gargoyle.lengthInCells * finishPercent;
 

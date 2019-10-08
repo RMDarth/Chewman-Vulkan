@@ -1,17 +1,12 @@
 {
     "name": "KnightMaterial",
     "vertexShaderName": "bonesPhongShadowVertexShader",
-    "fragmentShaderName": "phongShadowEmitFragmentShader",
+    "fragmentShaderName": "phongShadowFragmentShader",
     "cullFace": "BackFace",
-    "passType": "ScreenQuadMRTPass",
     "textures": [
         {
             "samplerName": "diffuseTex",
-            "filename": "textures/enemies/knight.png"
-        },
-        {
-            "samplerName": "emitTex",
-            "filename": "textures/enemies/knight.png"
+            "filename": "textures/enemies/knight2.png"
         },
         {
             "samplerName": "directShadowTex",
