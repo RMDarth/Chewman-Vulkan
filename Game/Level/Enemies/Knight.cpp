@@ -20,14 +20,13 @@ Knight::Knight(GameMap* map, glm::ivec2 startPos)
     createMaterials();
 
     auto transform = glm::scale(glm::mat4(1), glm::vec3(1.5f));
-    transform = glm::rotate(transform, glm::radians(180.0f), glm::vec3(0, 1, 0));
     _meshNode->setNodeTransformation(transform);
 
     auto* engine = SVE::Engine::getInstance();
 
     _attachmentNode = engine->getSceneManager()->createSceneNode();
     _meshNode->attachSceneNode(_attachmentNode);
-    _attachmentNode->setEntityAttachment(_enemyMesh, "mixamorig_RightHandIndex3");
+    _attachmentNode->setEntityAttachment(_enemyMesh, "mount0");
     _attachmentNode->setNodeTransformation(glm::translate(glm::mat4(1), glm::vec3(0.0f, 0.0f, 0.1f)));
 
     auto sword = std::make_shared<SVE::MeshEntity>("sword");
@@ -66,7 +65,7 @@ void Knight::update(float deltaTime)
         {
             _meshNode->attachEntity(_enemyMesh);
             _meshNode->detachEntity(_attackMesh);
-            _attachmentNode->setEntityAttachment(_enemyMesh, "mixamorig_RightHandIndex3");
+            _attachmentNode->setEntityAttachment(_enemyMesh, "mount0");
         }
     }
     DefaultEnemy::update(deltaTime);
@@ -79,7 +78,7 @@ void Knight::attackPlayer()
     _meshNode->detachEntity(_enemyMesh);
     _attackMesh->resetTime();
 
-    _attachmentNode->setEntityAttachment(_attackMesh, "mixamorig_RightHandIndex3");
+    _attachmentNode->setEntityAttachment(_attackMesh, "mount0");
 
     _attackTime = 0.1f;
 }

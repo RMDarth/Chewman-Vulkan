@@ -82,6 +82,7 @@ void GameMapProcessor::update(float deltaTime)
     }
 
     _gameMap->player->update(_deltaTime);
+    _gameMap->eatEffectManager->update(_deltaTime);
 }
 
 void GameMapProcessor::setVisible(bool visible)

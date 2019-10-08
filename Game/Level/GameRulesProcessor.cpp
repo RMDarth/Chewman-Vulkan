@@ -96,6 +96,7 @@ void GameRulesProcessor::update(float deltaTime)
             if (auto& coin = gameMap->mapData[mapPos.x][mapPos.y].coin)
             {
                 gameMap->mapNode->detachSceneNode(coin->rootNode);
+                //gameMap->eatEffectManager->addEffect(EatEffectType::Gold, mapPos);
                 coin = nullptr;
                 playerInfo.points += 10;
                 --gameMap->activeCoins;
@@ -140,6 +141,7 @@ void GameRulesProcessor::update(float deltaTime)
             if (gameMap->mapData[mapPos.x][mapPos.y].cellType == CellType::Wall && _activeState[static_cast<uint8_t>(PowerUpType::Teeth)])
             {
                 gameMap->mapData[mapPos.x][mapPos.y].cellType = CellType::Floor;
+                gameMap->eatEffectManager->addEffect(EatEffectType::Walls, mapPos);
                 regenerateMap();
             }
         } else {

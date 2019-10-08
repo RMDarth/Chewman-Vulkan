@@ -174,21 +174,28 @@ void iterateBones(
                     animationSettings->globalInverse * globalTransformation * animationSettings->boneOffset[boneIndex];
             auto resultMat = glm::transpose(glm::make_mat4(&finalTransform.a1));
             boneData[boneIndex] = resultMat;
-
-            auto attachment = bonesAttachments.find(nodeName);
-            if (attachment != bonesAttachments.end())
-            {
-                auto toBoneSpace = animationSettings->boneOffset[boneIndex];
-                aiVector3D scale, rot, pos;
-                toBoneSpace.Decompose(scale, rot, pos);
-                aiMatrix4x4 scaleMatrix;
-                aiMatrix4x4::Scaling(scale, scaleMatrix);
-                auto finalTransform =
-                        animationSettings->globalInverse  * globalTransformation * scaleMatrix;
-
-                attachment->second = glm::transpose(glm::make_mat4(&finalTransform.a1));
-            }
         }
+    }
+    auto attachment = bonesAttachments.find(nodeName);
+    if (attachment != bonesAttachments.end())
+    {
+        std::string name = nodeName;
+        auto* curNode = node;
+        while (animationSettings->boneMap.find(name) == animationSettings->boneMap.end())
+        {
+            curNode = curNode->mParent;
+            name = curNode->mParent->mName.C_Str();
+        }
+        uint32_t boneIndex = animationSettings->boneMap.at(name);
+        auto toBoneSpace = animationSettings->boneOffset[boneIndex];
+        aiVector3D scale, rot, pos;
+        toBoneSpace.Decompose(scale, rot, pos);
+        aiMatrix4x4 scaleMatrix;
+        aiMatrix4x4::Scaling(scale, scaleMatrix);
+        auto finalTransform =
+                animationSettings->globalInverse  * globalTransformation * scaleMatrix;
+
+        attachment->second = glm::transpose(glm::make_mat4(&finalTransform.a1));
     }
 
     for (uint32_t i = 0; i < node->mNumChildren; i++)

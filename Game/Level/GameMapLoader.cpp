@@ -294,6 +294,8 @@ std::shared_ptr<GameMap> GameMapLoader::loadMap(const std::string& filename)
     for (auto& enemy : gameMap->enemies)
         enemy->init();
 
+    gameMap->eatEffectManager = std::make_unique<EatEffectManager>(gameMap.get());
+
     createSmoke(*gameMap);
     createLava(*gameMap);
 

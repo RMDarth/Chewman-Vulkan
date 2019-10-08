@@ -15,6 +15,7 @@
 #include "PowerUp.h"
 #include "Player.h"
 #include "StaticObject.h"
+#include "EatEffectManager.h"
 #include "Game/Level/Enemies/Enemy.h"
 #include "GameRulesProcessor.h"
 
@@ -36,6 +37,7 @@ struct GameMap
     std::vector<std::unique_ptr<PowerUp>> powerUps;
     std::vector<StaticObject> staticObjects;
     std::vector<std::unique_ptr<Enemy>> enemies;
+    std::unique_ptr<EatEffectManager> eatEffectManager;
 
     uint32_t totalCoins;
     uint32_t activeCoins;

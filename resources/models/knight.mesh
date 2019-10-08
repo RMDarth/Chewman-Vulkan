@@ -1,5 +1,5 @@
 {
     "name": "knight",
-    "filename": "assets/knight_walk.dae",
+    "filename": "assets/knight_walk_orig.dae",
     "animationSpeed": 1.5
 }

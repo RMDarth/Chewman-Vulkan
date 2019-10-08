@@ -1,0 +1,38 @@
+{
+    "name": "TeethSmokeParticle",
+    "materialName": "SmokeWhiteParticleMaterial",
+    "computeShaderName": "particlesComputeShader",
+
+    "quota": 4000,
+    "sort": true,
+
+    "particleEmitter":
+    {
+        "direction": [ 0.0, 1.0, 0.0 ],
+        "angle": 0.0,
+        "originRadius": 1.5,
+
+        "emissionRate": 300,
+        "minLife": 0.5,
+        "maxLife": 0.5,
+        "minSpeed": 2.0,
+        "maxSpeed": 2.0,
+        "minSize": 1.7,
+        "maxSize": 1.8,
+        "minRotate": -3.14,
+        "maxRotate": 3.14,
+        "colorRangeStart": [ 0.0, 0.0, 0.0, 0.0 ],
+        "colorRangeEnd": [ 0.0, 0.0, 0.0, 0.0 ]
+    },
+    "particleAffector":
+    {
+        "minAcceleration": 0.0,
+        "maxAcceleration": 0.0,
+        "minRotateSpeed": -1.0,
+        "maxRotateSpeed": 1.0,
+        "minScaleSpeed": 0.5,
+        "maxScaleSpeed": 0.5,
+
+        "colorChanger": [ 0.0, 0.0, 0.0, -1.0 ]
+    }
+}
