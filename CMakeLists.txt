@@ -117,19 +117,54 @@ add_executable(Chewman
         SVE/VulkanWater.h
         SVE/Water.cpp
         SVE/Water.h
+        Game/Controls/ButtonControl.cpp
+        Game/Controls/ButtonControl.h
+        Game/Controls/ContainerControl.cpp
+        Game/Controls/ContainerControl.h
+        Game/Controls/Control.cpp
+        Game/Controls/Control.h
+        Game/Controls/ControlDocument.cpp
+        Game/Controls/ControlDocument.h
+        Game/Controls/ControlFactory.cpp
+        Game/Controls/ControlFactory.h
+        Game/Controls/IEventHandler.h
+        Game/Controls/ImageControl.cpp
+        Game/Controls/ImageControl.h
+        Game/Controls/LabelControl.cpp
+        Game/Controls/LabelControl.h
+        Game/Controls/PanelControl.cpp
+        Game/Controls/PanelControl.h
         Game/Game.cpp
         Game/Game.h
         Game/GameDefs.h
         Game/Level/BlockMeshGenerator.cpp
         Game/Level/BlockMeshGenerator.h
+        Game/Level/Bomb.cpp
+        Game/Level/Bomb.h
         Game/Level/Coin.h
+        Game/Level/EatEffectManager.cpp
+        Game/Level/EatEffectManager.h
+        Game/Level/Enemies/Angel.cpp
+        Game/Level/Enemies/Angel.h
+        Game/Level/Enemies/ChewmanEnemy.cpp
+        Game/Level/Enemies/ChewmanEnemy.h
+        Game/Level/Enemies/DefaultEnemy.cpp
+        Game/Level/Enemies/DefaultEnemy.h
         Game/Level/Enemies/Enemy.cpp
         Game/Level/Enemies/Enemy.h
         Game/Level/Enemies/EnemyAI.h
+        Game/Level/Enemies/HuntAI.cpp
+        Game/Level/Enemies/HuntAI.h
+        Game/Level/Enemies/Knight.cpp
+        Game/Level/Enemies/Knight.h
         Game/Level/Enemies/Nun.cpp
         Game/Level/Enemies/Nun.h
+        Game/Level/Enemies/Projectile.cpp
+        Game/Level/Enemies/Projectile.h
         Game/Level/Enemies/RandomWalkerAI.cpp
         Game/Level/Enemies/RandomWalkerAI.h
+        Game/Level/Enemies/Witch.cpp
+        Game/Level/Enemies/Witch.h
         Game/Level/GameMap.cpp
         Game/Level/GameMap.h
         Game/Level/GameMapDefs.h
@@ -153,39 +188,14 @@ add_executable(Chewman
         Game/Level/Teleport.h
         Game/Menu/MenuStateProcessor.cpp
         Game/Menu/MenuStateProcessor.h
-        Game/ProgressManager.cpp
-        Game/ProgressManager.h
-        Game/StateProcessor.h
-        Game/Controls/Control.cpp
-        Game/Controls/Control.h
-        Game/Controls/IEventHandler.h
-        Game/Controls/ControlDocument.cpp
-        Game/Controls/ControlDocument.h
-        Game/Controls/ControlFactory.cpp
-        Game/Controls/ControlFactory.h
-        Game/Controls/ButtonControl.cpp
-        Game/Controls/ButtonControl.h
-        Game/Controls/ContainerControl.cpp
-        Game/Controls/ContainerControl.h
-        Game/Controls/LabelControl.cpp
-        Game/Controls/LabelControl.h
-        Game/Controls/ImageControl.cpp
-        Game/Controls/ImageControl.h
-        Game/Controls/PanelControl.cpp
-        Game/Controls/PanelControl.h
-        Game/StateProcessor.cpp
         Game/Menu/PauseStateProcessor.cpp
         Game/Menu/PauseStateProcessor.h
-        Game/Level/Enemies/Angel.cpp
-        Game/Level/Enemies/Angel.h
-        Game/Level/Enemies/Witch.cpp
-        Game/Level/Enemies/Witch.h
-        Game/Level/Bomb.cpp
-        Game/Level/Bomb.h
-        Game/Level/Enemies/ChewmanEnemy.cpp
-        Game/Level/Enemies/ChewmanEnemy.h
-        Game/Level/Enemies/DefaultEnemy.cpp
-        Game/Level/Enemies/DefaultEnemy.h Game/Level/Enemies/Projectile.cpp Game/Level/Enemies/Projectile.h Game/Level/Enemies/Knight.cpp Game/Level/Enemies/Knight.h Game/Level/Enemies/HuntAI.cpp Game/Level/Enemies/HuntAI.h Game/Level/EatEffectManager.cpp Game/Level/EatEffectManager.h)
+        Game/Menu/ScoreStateProcessor.cpp
+        Game/Menu/ScoreStateProcessor.h
+        Game/ProgressManager.cpp
+        Game/ProgressManager.h
+        Game/StateProcessor.cpp
+        Game/StateProcessor.h)
 
 if (WIN32)
     target_link_libraries(Chewman mingw32 SDL2main SDL2 vulkan-1.lib VkLayer_core_validation.lib libassimp libcppfsd libtinyxml2)

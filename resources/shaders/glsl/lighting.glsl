@@ -18,7 +18,7 @@ struct PointLight
     vec4 diffuse;
     vec4 specular;
 
-    float constant;
+    float constAttenuation;
     float linear;
     float quadratic;
     float padding;
@@ -33,7 +33,7 @@ struct PlaneLight
     vec4 diffuse;
     vec4 specular;
 
-    float constant;
+    float constAttenuation;
     float linear;
     float quadratic;
     float padding;
@@ -51,7 +51,7 @@ struct SpotLight
     float cutOff;
     float outerCutOff;
 
-    float constant;
+    float constAttenuation;
     float linear;
     float quadratic;
     // float[3] padding
@@ -66,7 +66,7 @@ struct LineLight
     vec4 diffuse;
     vec4 specular;
 
-    float constant;
+    float constAttenuation;
     float linear;
     float quadratic;
     float padding;
@@ -123,7 +123,7 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir, M
     float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
     // attenuation
     float distance = length(vec3(light.position) - fragPos);
-    float attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * (distance * distance));
+    float attenuation = 1.0 / (light.constAttenuation + light.linear * distance + light.quadratic * (distance * distance));
     // combine results
     vec3 ambient = vec3(light.ambient * material.diffuse);
     vec3 diffuse = vec3(light.diffuse * diff * material.diffuse);
@@ -171,7 +171,7 @@ vec3 CalcLineLight(LineLight light, vec3 normal, vec3 fragPos, vec3 viewDir, Mat
     pl.ambient = light.ambient;
     pl.diffuse = light.diffuse;
     pl.specular = light.specular;
-    pl.constant = light.constant;
+    pl.constAttenuation = light.constAttenuation;
     pl.linear = light.linear;
     pl.quadratic = light.quadratic;
 
@@ -190,7 +190,7 @@ vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir, Mat
     float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
     // attenuation
     float distance = length(lightPos - fragPos);
-    float attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * (distance * distance));
+    float attenuation = 1.0 / (light.constAttenuation + light.linear * distance + light.quadratic * (distance * distance));
     // spotlight intensity
     float theta = dot(lightDir, normalize(-vec3(light.direction)));
     float epsilon = light.cutOff - light.outerCutOff;

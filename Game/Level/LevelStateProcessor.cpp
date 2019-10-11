@@ -55,15 +55,14 @@ GameState LevelStateProcessor::update(float deltaTime)
         case GameMapState::Victory:
             // TODO: Display victory menu
             _progressManager.setCurrentLevel(_progressManager.getCurrentLevel() + 1);
-            _progressManager.setVictory(false);
-            initMap();
-            break;
+            _progressManager.setVictory(true);
+            _progressManager.setStarted(false);
+            return GameState::Score;
         case GameMapState::GameOver:
-            // TODO: Display gameover menu
             _progressManager.setCurrentLevel(1);
             _progressManager.setVictory(false);
             _progressManager.setStarted(false);
-            return GameState::MainMenu;
+            return GameState::Score;
     }
 
     if (_countToRemove > 0)

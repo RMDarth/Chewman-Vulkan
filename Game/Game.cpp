@@ -7,6 +7,7 @@
 #include "Game/Level/LevelStateProcessor.h"
 #include "Game/Menu/MenuStateProcessor.h"
 #include "Game/Menu/PauseStateProcessor.h"
+#include "Game/Menu/ScoreStateProcessor.h"
 
 namespace Chewman
 {
@@ -75,6 +76,7 @@ void Game::initStates()
     registerStateProcessor(GameState::Level, std::make_shared<LevelStateProcessor>());
     registerStateProcessor(GameState::MainMenu, std::make_shared<MenuStateProcessor>());
     registerStateProcessor(GameState::Pause, std::make_shared<PauseStateProcessor>());
+    registerStateProcessor(GameState::Score, std::make_shared<ScoreStateProcessor>());
 
     _stateProcessors[_gameState]->show();
 }

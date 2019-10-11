@@ -4,6 +4,7 @@
 #pragma once
 #include "SVE/SceneNode.h"
 #include <queue>
+#include <array>
 
 namespace Chewman
 {
