@@ -10,7 +10,9 @@
         "separateBinding": false
     },
     "uniformList": [
+        { "uniformType": "ParticleEmitter" },
         { "uniformType": "ModelMatrix" },
-        { "uniformType": "ViewMatrix" }
+        { "uniformType": "ViewMatrix" },
+        { "uniformType": "ProjectionMatrix" }
     ]
 }

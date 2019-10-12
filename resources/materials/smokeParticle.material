@@ -1,7 +1,6 @@
 {
     "name": "SmokeParticleMaterial",
     "vertexShaderName": "particlesVertexShader",
-    "geometryShaderName": "particlesGeomShader",
     "fragmentShaderName": "particlesFragmentShader",
     "cullFace": "None",
     "useAlphaBlending": true,

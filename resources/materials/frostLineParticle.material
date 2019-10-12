@@ -1,7 +1,6 @@
 {
     "name": "FrostLineParticleMaterial",
     "vertexShaderName": "particlesVertexShader",
-    "geometryShaderName": "particlesGeomShader",
     "fragmentShaderName": "frostFireLineFragmentShader",
     "cullFace": "None",
     "useAlphaBlending": true,

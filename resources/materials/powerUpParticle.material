@@ -1,7 +1,6 @@
 {
     "name": "PowerUpParticleMaterial",
     "vertexShaderName": "particlesVertexShader",
-    "geometryShaderName": "particlesScaledGeomShader",
     "fragmentShaderName": "particlesFragmentShader",
     "cullFace": "None",
     "useAlphaBlending": true,

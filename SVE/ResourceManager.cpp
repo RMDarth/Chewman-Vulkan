@@ -297,7 +297,7 @@ ParticleSystemSettings loadParticleSystem(const cppfs::FilePath& directory, cons
     particleSettings.name = document["name"].GetString();
     particleSettings.materialName = document["materialName"].GetString();
     particleSettings.computeShaderName = document["computeShaderName"].GetString();
-    particleSettings.quota = document["quota"].GetUint();
+    particleSettings.quota = document["quota"].GetUint() * 6;
     particleSettings.sort = document["sort"].GetBool();
 
     ParticleEmitter emitter {};

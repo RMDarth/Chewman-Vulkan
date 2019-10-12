@@ -2,8 +2,8 @@
 #extension GL_ARB_separate_shader_objects : enable
 #include "lighting.glsl"
 
-layout(set = 2, binding = 0) uniform sampler2D spritesheet;
-layout(set = 2, binding = 1) uniform UBO
+layout(set = 1, binding = 0) uniform sampler2D spritesheet;
+layout(set = 1, binding = 1) uniform UBO
 {
     MaterialInfo materialInfo;
     ivec2 spritesheetSize;
