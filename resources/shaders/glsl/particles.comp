@@ -43,52 +43,51 @@ void storeParticle(vec4 positionLife, vec4 color, vec4 speedSize, vec4 data, vec
     imageStore(StorageTexelBuffer, int(gl_GlobalInvocationID.x * 5 + 4), startData);
 }
 
-void recreateParticle(uint index)
+void copyParticle()
 {
-    if (index == 0)
-    {
-        float life = getRandomValue(ubo.emitter.minLife, ubo.emitter.maxLife, 0);
+    uint prevId = gl_GlobalInvocationID.x - 1;
+    vec4 p1 = imageLoad( StorageTexelBuffer, int(prevId * 5 + 0) );
+    vec4 p2 = imageLoad( StorageTexelBuffer, int(prevId * 5 + 1) );
+    vec4 p3 = imageLoad( StorageTexelBuffer, int(prevId * 5 + 2) );
+    vec4 p4 = imageLoad( StorageTexelBuffer, int(prevId * 5 + 3) );
+    vec4 p5 = imageLoad( StorageTexelBuffer, int(prevId * 5 + 4) );
+    storeParticle(p1, p2, p3, p4, p5);
+}
 
-        float xPos = getRandomValue(-ubo.emitter.originRadius, ubo.emitter.originRadius, 1);
-        float yPos = getRandomValue(-ubo.emitter.originRadius, ubo.emitter.originRadius, 2);
-        vec3 position = vec3(xPos, 0, yPos);
+void recreateParticle()
+{
+    float life = getRandomValue(ubo.emitter.minLife, ubo.emitter.maxLife, 0);
 
-        vec4 color = vec4(getRandomValue(ubo.emitter.colorRangeStart.r, ubo.emitter.colorRangeEnd.r, 3),
-                          getRandomValue(ubo.emitter.colorRangeStart.g, ubo.emitter.colorRangeEnd.g, 4),
-                          getRandomValue(ubo.emitter.colorRangeStart.b, ubo.emitter.colorRangeEnd.b, 5),
-                          getRandomValue(ubo.emitter.colorRangeStart.a, ubo.emitter.colorRangeEnd.a, 6));
+    float xPos = getRandomValue(-ubo.emitter.originRadius, ubo.emitter.originRadius, 1);
+    float yPos = getRandomValue(-ubo.emitter.originRadius, ubo.emitter.originRadius, 2);
+    vec3 position = vec3(xPos, 0, yPos);
 
-        float speedValue = getRandomValue(ubo.emitter.minSpeed, ubo.emitter.maxSpeed, 7);
-        //float r = 1.0;
-        float theta = getRandomValue(0, ubo.emitter.angle, 8);
-        float phi = getRandomValue(0, 2*PI, 9);
-        vec3 speedNormal = vec3(sin(theta) * cos(phi),
-                                sin(theta) * sin(phi),
-                                cos(theta));
-        vec3 speed = vec3(ubo.emitter.toDirection * vec4(speedNormal * speedValue, 1.0));
+    vec4 color = vec4(getRandomValue(ubo.emitter.colorRangeStart.r, ubo.emitter.colorRangeEnd.r, 3),
+                      getRandomValue(ubo.emitter.colorRangeStart.g, ubo.emitter.colorRangeEnd.g, 4),
+                      getRandomValue(ubo.emitter.colorRangeStart.b, ubo.emitter.colorRangeEnd.b, 5),
+                      getRandomValue(ubo.emitter.colorRangeStart.a, ubo.emitter.colorRangeEnd.a, 6));
 
-        float size = getRandomValue(ubo.emitter.minSize, ubo.emitter.maxSize, 9);
-        float rotation = getRandomValue(ubo.emitter.minRotate, ubo.emitter.maxRotate, 10);
+    float speedValue = getRandomValue(ubo.emitter.minSpeed, ubo.emitter.maxSpeed, 7);
+    //float r = 1.0;
+    float theta = getRandomValue(0, ubo.emitter.angle, 8);
+    float phi = getRandomValue(0, 2*PI, 9);
+    vec3 speedNormal = vec3(sin(theta) * cos(phi),
+                            sin(theta) * sin(phi),
+                            cos(theta));
+    vec3 speed = vec3(ubo.emitter.toDirection * vec4(speedNormal * speedValue, 1.0));
 
-        float acceleration = getRandomValue(ubo.affector.minAcceleration, ubo.affector.maxAcceleration, 11);
-        float rotationSpeed = getRandomValue(ubo.affector.minRotateSpeed, ubo.affector.maxRotateSpeed, 12);
-        float scaleSpeed = getRandomValue(ubo.affector.minScaleSpeed, ubo.affector.maxScaleSpeed, 13);
+    float size = getRandomValue(ubo.emitter.minSize, ubo.emitter.maxSize, 9);
+    float rotation = getRandomValue(ubo.emitter.minRotate, ubo.emitter.maxRotate, 10);
 
-        storeParticle(vec4(position, life),
-                      color,
-                      vec4(speed, size),
-                      vec4(acceleration, rotation, rotationSpeed, scaleSpeed),
-                      vec4(life, size, speedValue, rotation));
-    } else {
-        uint prevId = gl_GlobalInvocationID.x - 1;
-        vec4 p1 = imageLoad( StorageTexelBuffer, int(prevId * 5 + 0) );
-        vec4 p2 = imageLoad( StorageTexelBuffer, int(prevId * 5 + 1) );
-        vec4 p3 = imageLoad( StorageTexelBuffer, int(prevId * 5 + 2) );
-        vec4 p4 = imageLoad( StorageTexelBuffer, int(prevId * 5 + 3) );
-        vec4 p5 = imageLoad( StorageTexelBuffer, int(prevId * 5 + 4) );
-        //p5.y = index;
-        storeParticle(p1, p2, p3, p4, p5);
-    }
+    float acceleration = getRandomValue(ubo.affector.minAcceleration, ubo.affector.maxAcceleration, 11);
+    float rotationSpeed = getRandomValue(ubo.affector.minRotateSpeed, ubo.affector.maxRotateSpeed, 12);
+    float scaleSpeed = getRandomValue(ubo.affector.minScaleSpeed, ubo.affector.maxScaleSpeed, 13);
+
+    storeParticle(vec4(position, life),
+                  color,
+                  vec4(speed, size),
+                  vec4(acceleration, rotation, rotationSpeed, scaleSpeed),
+                  vec4(life, size, speedValue, rotation));
 }
 
 void main()
@@ -105,44 +104,51 @@ void main()
         uint needToEmitByTime = uint((partOfSecond + ubo.deltaTime) * ubo.emitter.emissionRate);
         uint needToEmit = needToEmitByTime - alreadyEmitted;
 
-        vec4 position = imageLoad( StorageTexelBuffer, int(gl_GlobalInvocationID.x * 5 + 0) );
-        float life = position.w;
+        // polygon vertex index
+        uint index =  gl_GlobalInvocationID.x % 6;
 
-        if (life <= 0 && emitted < needToEmit * 6)
+        if (index == 0)
         {
-            if (atomicAdd(emitted, 1) <= needToEmit * 6)
+            vec4 position = imageLoad( StorageTexelBuffer, int(gl_GlobalInvocationID.x * 5 + 0) );
+            float life = position.w;
+
+            if (life <= 0 && emitted < needToEmit)
             {
-                recreateParticle(gl_GlobalInvocationID.x % 6);
+                if (atomicAdd(emitted, 1) <= needToEmit)
+                {
+                    recreateParticle();
+                }
+            } else if (life > 0) {
+                // update particle
+                vec4 color = imageLoad( StorageTexelBuffer, int(gl_GlobalInvocationID.x * 5 + 1) );
+
+                vec4 speed = imageLoad( StorageTexelBuffer, int(gl_GlobalInvocationID.x * 5 + 2) );
+                float size = speed.w;
+
+                vec4 params = imageLoad( StorageTexelBuffer, int(gl_GlobalInvocationID.x * 5 + 3) );
+                float acceleration = params.x;
+                float rotation = params.y;
+                float rotationSpeed = params.z;
+                float scaleSpeed = params.w;
+
+                vec4 startParams = imageLoad( StorageTexelBuffer, int(gl_GlobalInvocationID.x * 5 + 4) );
+
+                position.xyz += speed.xyz * ubo.deltaTime;
+                vec3 accelerationVector = normalize(speed.xyz) * acceleration;
+                speed.xyz += accelerationVector.xyz * ubo.deltaTime;
+                rotation += rotationSpeed * ubo.deltaTime;
+                size += scaleSpeed * ubo.deltaTime;
+                color += ubo.affector.colorChanger * ubo.deltaTime;
+                life -= ubo.deltaTime + ubo.affector.lifeDrain * ubo.deltaTime;
+
+                storeParticle(vec4(position.xyz, life),
+                              color,
+                              vec4(speed.xyz, size),
+                              vec4(acceleration, rotation, rotationSpeed, scaleSpeed),
+                              startParams);
             }
         } else {
-            // update particle
-
-            vec4 color = imageLoad( StorageTexelBuffer, int(gl_GlobalInvocationID.x * 5 + 1) );
-
-            vec4 speed = imageLoad( StorageTexelBuffer, int(gl_GlobalInvocationID.x * 5 + 2) );
-            float size = speed.w;
-
-            vec4 params = imageLoad( StorageTexelBuffer, int(gl_GlobalInvocationID.x * 5 + 3) );
-            float acceleration = params.x;
-            float rotation = params.y;
-            float rotationSpeed = params.z;
-            float scaleSpeed = params.w;
-
-            vec4 startParams = imageLoad( StorageTexelBuffer, int(gl_GlobalInvocationID.x * 5 + 4) );
-
-            position.xyz += speed.xyz * ubo.deltaTime;
-            vec3 accelerationVector = normalize(speed.xyz) * acceleration;
-            speed.xyz += accelerationVector.xyz * ubo.deltaTime;
-            rotation += rotationSpeed * ubo.deltaTime;
-            size += scaleSpeed * ubo.deltaTime;
-            color += ubo.affector.colorChanger * ubo.deltaTime;
-            life -= ubo.deltaTime + ubo.affector.lifeDrain * ubo.deltaTime;
-
-            storeParticle(vec4(position.xyz, life),
-                          color,
-                          vec4(speed.xyz, size),
-                          vec4(acceleration, rotation, rotationSpeed, scaleSpeed),
-                          startParams);
+            copyParticle();
         }
     }
 }
