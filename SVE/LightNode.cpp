@@ -240,6 +240,7 @@ void LightNode::createProjectionMatrix()
                                                    distance * 2 + 30);
                 projectionMatrix[1][1] *= -1;
                 _projectionList.push_back(projectionMatrix);
+                _projectionMatrix = projectionMatrix;
             }
 
             break;

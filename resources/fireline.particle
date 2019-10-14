@@ -3,7 +3,7 @@
     "materialName": "FireParticleMaterial",
     "computeShaderName": "particlesComputeShader",
 
-    "quota": 7000,
+    "quota": 5000,
     "sort": true,
 
     "particleEmitter":
@@ -12,7 +12,7 @@
         "angle": 0.0,
         "originRadius": 0.1,
 
-        "emissionRate": 200,
+        "emissionRate": 25,
         "minLife": 6,
         "maxLife": 6,
         "minSpeed": 6.0,

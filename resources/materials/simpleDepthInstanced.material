@@ -1,7 +1,6 @@
 {
     "name": "SimpleDepthInstanced",
     "vertexShaderName": "simpleDepthInstancedVertexShader",
-    "geometryShaderName": "simpleDepthGeomShader",
     "fragmentShaderName": "simpleDepthFragmentShader",
     "useDepthBias": true,
     "useMultisampling": false,

@@ -165,7 +165,8 @@ void main()
     //outColor = vec4(vec3(depth - gl_FragCoord.z / gl_FragCoord.w) / 15, 1.0);
     vec3 finalColor = vec3(cloudColor/5.0, cloudColor / 3.5, cloudColor/4.5);
     finalColor = finalColor * 0.5;
+    //finalColor = mix(vec3(1.0), finalColor, min(depthDiff, 1.0));
     outColor = vec4(finalColor, depthDiff);
 
-    outColorBloom = vec4(outColor.rgb, 0.35);
+    outColorBloom = vec4(outColor.rgb, 0.35 * min(depthDiff, 1.0));
 }

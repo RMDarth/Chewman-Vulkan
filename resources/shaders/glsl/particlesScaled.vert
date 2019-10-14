@@ -44,32 +44,32 @@ void main()
         int index = gl_VertexIndex % 6;
         if (index == 0)
         {
-            gl_Position = ubo.projection * (position + vec4(rotateVector(-halfSize, halfSizeHoriz), 0.0, 0.0));
+            gl_Position = ubo.projection * (position + ubo.view * ubo.model * vec4(rotateVector(-halfSize, halfSizeHoriz), 0.0, 0.0));
             fragTexCoord = vec2(0.0, 1.0);
         }
         else if (index == 1)
         {
-            gl_Position = ubo.projection * (position + vec4(rotateVector(-halfSize, -halfSizeHoriz), 0.0, 0.0 ));
+            gl_Position = ubo.projection * (position + ubo.view * ubo.model * vec4(rotateVector(-halfSize, -halfSizeHoriz), 0.0, 0.0 ));
             fragTexCoord = vec2(0.0, 0.0);
         }
         else if (index == 2)
         {
-            gl_Position = ubo.projection * (position + vec4(rotateVector(halfSize, halfSizeHoriz), 0.0, 0.0 ));
+            gl_Position = ubo.projection * (position + ubo.view * ubo.model * vec4(rotateVector(halfSize, halfSizeHoriz), 0.0, 0.0 ));
             fragTexCoord = vec2(1.0, 1.0);
         }
         else if (index == 3)
         {
-            gl_Position = ubo.projection * (position + vec4(rotateVector(halfSize, halfSizeHoriz), 0.0, 0.0 ));
+            gl_Position = ubo.projection * (position + ubo.view * ubo.model * vec4(rotateVector(halfSize, halfSizeHoriz), 0.0, 0.0 ));
             fragTexCoord = vec2(1.0, 1.0);
         }
         else if (index == 4)
         {
-            gl_Position = ubo.projection * (position + vec4(rotateVector(-halfSize, -halfSizeHoriz), 0.0, 0.0 ));
+            gl_Position = ubo.projection * (position + ubo.view * ubo.model * vec4(rotateVector(-halfSize, -halfSizeHoriz), 0.0, 0.0 ));
             fragTexCoord = vec2(0.0, 0.0);
         }
         else
         {
-            gl_Position = ubo.projection * (position + vec4(rotateVector(halfSize, -halfSizeHoriz), 0.0, 0.0 ));
+            gl_Position = ubo.projection * (position + ubo.view * ubo.model * vec4(rotateVector(halfSize, -halfSizeHoriz), 0.0, 0.0 ));
             fragTexCoord = vec2(1.0, 0.0);
         }
     } else {

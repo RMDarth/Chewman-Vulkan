@@ -19,5 +19,5 @@ out gl_PerVertex {
 };
 
 void main() {
-	gl_Position = ssbo.modelList[gl_InstanceIndex] * vec4(inPosition, 1.0);
+	gl_Position = matrices.viewProjection * ssbo.modelList[gl_InstanceIndex] * vec4(inPosition, 1.0);
 }

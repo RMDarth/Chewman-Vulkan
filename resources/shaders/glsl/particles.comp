@@ -3,7 +3,7 @@
 #include "staticrandom.glsl"
 #define PI 3.14159265359
 
-layout(local_size_x = 32, local_size_y = 1) in;
+layout(local_size_x = 30, local_size_y = 1) in;
 
 layout(set = 0, binding = 0, rgba32f) uniform imageBuffer StorageTexelBuffer; // SSBO
 
@@ -45,7 +45,7 @@ void storeParticle(vec4 positionLife, vec4 color, vec4 speedSize, vec4 data, vec
 
 void copyParticle()
 {
-    uint prevId = gl_GlobalInvocationID.x - 1;
+    uint prevId = (gl_GlobalInvocationID.x / 6) * 6;
     vec4 p1 = imageLoad( StorageTexelBuffer, int(prevId * 5 + 0) );
     vec4 p2 = imageLoad( StorageTexelBuffer, int(prevId * 5 + 1) );
     vec4 p3 = imageLoad( StorageTexelBuffer, int(prevId * 5 + 2) );
@@ -96,12 +96,13 @@ void main()
     memoryBarrierBuffer();
     barrier();
 
-    if( gl_GlobalInvocationID.x < ubo.particleCount )
+    uint count = (ubo.particleCount / 6) * 6;
+    if( gl_GlobalInvocationID.x < count )
     {
         // TODO: Pass this value as uniform
         float partOfSecond = ubo.time - uint(ubo.time);
         uint alreadyEmitted = uint(partOfSecond * ubo.emitter.emissionRate);
-        uint needToEmitByTime = uint((partOfSecond + ubo.deltaTime) * ubo.emitter.emissionRate);
+        uint needToEmitByTime = uint((partOfSecond + ubo.deltaTime) * ubo.emitter.emissionRate );
         uint needToEmit = needToEmitByTime - alreadyEmitted;
 
         // polygon vertex index
@@ -114,7 +115,7 @@ void main()
 
             if (life <= 0 && emitted < needToEmit)
             {
-                if (atomicAdd(emitted, 1) <= needToEmit)
+                if (atomicAdd(emitted, 1) < needToEmit)
                 {
                     recreateParticle();
                 }
@@ -146,9 +147,15 @@ void main()
                               vec4(speed.xyz, size),
                               vec4(acceleration, rotation, rotationSpeed, scaleSpeed),
                               startParams);
+                barrier();
+            } else {
+                storeParticle(vec4(0,0,0,-1), vec4(0), vec4(0), vec4(0), vec4(0));
             }
         } else {
+            barrier();
             copyParticle();
         }
+    } else {
+        storeParticle(vec4(0,0,0,-1), vec4(0), vec4(0), vec4(0), vec4(0));
     }
 }

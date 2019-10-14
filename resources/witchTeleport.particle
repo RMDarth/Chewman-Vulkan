@@ -3,7 +3,7 @@
     "materialName": "PowerUpParticleMaterial",
     "computeShaderName": "particlesComputeShader",
 
-    "quota": 500,
+    "quota": 700,
     "sort": true,
 
     "particleEmitter":
@@ -12,7 +12,7 @@
         "angle": 0.0,
         "originRadius": 1.2,
 
-        "emissionRate": 50,
+        "emissionRate": 15,
         "minLife": 0.5,
         "maxLife": 0.6,
         "minSpeed": 4.1,

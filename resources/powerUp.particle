@@ -12,7 +12,7 @@
         "angle": 0.0,
         "originRadius": 0.7,
 
-        "emissionRate": 50,
+        "emissionRate": 20,
         "minLife": 0.5,
         "maxLife": 0.6,
         "minSpeed": 4.1,

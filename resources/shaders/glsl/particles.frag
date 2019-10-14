@@ -33,6 +33,8 @@ vec4 sampleSpritesheet()
 
 void main()
 {
+    if (fragLifePercent <= 0)
+        discard;
     vec4 result = sampleSpritesheet() * ubo.materialInfo.diffuse;
     outColor = vec4(vec4(result.rgb, result.a) + fragColor);
 }

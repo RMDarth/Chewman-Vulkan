@@ -28,5 +28,5 @@ void main() {
     boneTransform     += matrices.bones[inBoneIDs[2]] * inBoneWeights[2];
     boneTransform     += matrices.bones[inBoneIDs[3]] * inBoneWeights[3];
 
-    gl_Position = matrices.model * boneTransform * vec4(inPosition, 1.0);
+    gl_Position = matrices.viewProjection * matrices.model * boneTransform * vec4(inPosition, 1.0);
 }

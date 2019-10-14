@@ -629,7 +629,7 @@ void VulkanInstance::createDevice()
     VkPhysicalDeviceFeatures deviceFeatures {};
     deviceFeatures.samplerAnisotropy = VK_TRUE;
     deviceFeatures.shaderClipDistance = VK_TRUE;
-    deviceFeatures.geometryShader = VK_TRUE;
+    //deviceFeatures.geometryShader = VK_TRUE;
     deviceFeatures.imageCubeArray = VK_TRUE;
 
     VkDeviceCreateInfo deviceCreateInfo{};

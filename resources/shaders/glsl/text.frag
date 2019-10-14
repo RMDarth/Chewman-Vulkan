@@ -47,9 +47,10 @@ vec4 getTextColor()
     if (currentPos.y > symbolY + glyph.height * ubo.textInfo.scale)
         return vec4(0);
 
-    vec2 ub = vec2(glyph.x, glyph.y) / ubo.textInfo.fontImageSize;
-    ub += vec2(currentPos.x - symbolInfo.x + glyph.originX * ubo.textInfo.scale, currentPos.y - symbolY) / ubo.textInfo.scale / ubo.textInfo.fontImageSize ;
-    return texture(texSampler, ub).rgba * ubo.textInfo.color;
+    vec2 fontTexSize = textureSize(texSampler, 0);
+    vec2 ub = vec2(glyph.x, glyph.y) / fontTexSize;
+    ub += vec2(currentPos.x - symbolInfo.x + glyph.originX * ubo.textInfo.scale, currentPos.y - symbolY) / ubo.textInfo.scale / fontTexSize ;
+    return texture(texSampler, ub, 0).rgba * ubo.textInfo.color;
 }
 
 void main()

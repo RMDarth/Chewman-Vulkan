@@ -76,11 +76,19 @@ int runGame()
     SVE::Engine* engine = SVE::Engine::createInstance(window, "resources/main.engine");
     {
         auto camera = engine->getSceneManager()->createMainCamera();
-        std::cout << "Start loading resources..." << std::endl;
+
         // show loading screen
         engine->getResourceManager()->loadFolder("resources/loadingScreen");
         Chewman::ControlDocument loadingScreen("resources/game/GUI/loading.xml");
         engine->renderFrame(0.0f);
+        while (true)
+        {
+            SDL_Event event;
+            SDL_PollEvent(&event);
+            if (event.window.event == SDL_WINDOWEVENT_FOCUS_GAINED)
+                break;
+        }
+        std::cout << "Start loading resources..." << std::endl;
 
         // load resources
         engine->getResourceManager()->loadFolder("resources/shaders");

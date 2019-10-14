@@ -681,7 +681,7 @@ void GameMapLoader::createSmoke(GameMap& level) const
     std::shared_ptr<SVE::MeshEntity> smokeEntity = std::make_shared<SVE::MeshEntity>("SmokeFloor");
     smokeEntity->setMaterial("SmokeMaterial");
     //smokeEntity->setRenderLast();
-    //smokeEntity->setCastShadows(false);
+    smokeEntity->setCastShadows(false);
     smokeNode->attachEntity(smokeEntity);
 
     level.smokeEntity = std::move(smokeEntity);

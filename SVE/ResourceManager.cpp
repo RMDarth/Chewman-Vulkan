@@ -297,7 +297,7 @@ ParticleSystemSettings loadParticleSystem(const cppfs::FilePath& directory, cons
     particleSettings.name = document["name"].GetString();
     particleSettings.materialName = document["materialName"].GetString();
     particleSettings.computeShaderName = document["computeShaderName"].GetString();
-    particleSettings.quota = document["quota"].GetUint() * 6;
+    particleSettings.quota = document["quota"].GetUint();
     particleSettings.sort = document["sort"].GetBool();
 
     ParticleEmitter emitter {};
@@ -589,6 +589,9 @@ void ResourceManager::loadFile(const std::string& filename, LoadData& loadData)
         return;
 
     cppfs::FilePath fp (filename);
+
+    if (fp.extension().empty())
+        return;
     auto type = fp.extension().substr(1);
 
     static const std::map<std::string, ResourceType> resourceTypeMap {
@@ -605,6 +608,7 @@ void ResourceManager::loadFile(const std::string& filename, LoadData& loadData)
     {
         // TODO: Add logging system
         std::cout << "Skipping unsupported file " << filename << std::endl;
+        return;
     }
 
     std::string fileContent = file.readFile();

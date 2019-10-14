@@ -84,7 +84,7 @@ void VulkanComputeEntity::applyComputeCommands() const
             1,
             &_descriptorSets[_vulkanInstance->getCurrentImageIndex()], 0, nullptr);
 
-    vkCmdDispatch(_commandBuffer, _computeSettings.elementsCount / 32, 1, 1);
+    vkCmdDispatch(_commandBuffer, _computeSettings.elementsCount / 30, 1, 1);
 }
 
 void VulkanComputeEntity::createPipelineLayout()

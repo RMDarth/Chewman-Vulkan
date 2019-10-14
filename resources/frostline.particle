@@ -3,7 +3,7 @@
     "materialName": "FrostLineParticleMaterial",
     "computeShaderName": "particlesComputeShader",
 
-    "quota": 4000,
+    "quota": 3000,
     "sort": true,
 
     "particleEmitter":
@@ -12,7 +12,7 @@
         "angle": 0.0,
         "originRadius": 0.1,
 
-        "emissionRate": 250,
+        "emissionRate": 120,
         "minLife": 6,
         "maxLife": 6,
         "minSpeed": 6.0,
