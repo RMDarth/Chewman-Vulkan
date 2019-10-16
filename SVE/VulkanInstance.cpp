@@ -233,6 +233,11 @@ VkExtent2D VulkanInstance::getExtent() const
     return _extent;
 }
 
+SDL_Window* VulkanInstance::getWindow() const
+{
+    return _window;
+}
+
 VkSampleCountFlagBits VulkanInstance::getMSAASamples() const
 {
     return _msaaSamples;
@@ -1264,6 +1269,5 @@ size_t VulkanInstance::getGPUIndex(std::vector<VkPhysicalDevice>& deviceList)
         return static_cast<size_t>(_engineSettings.gpuIndex);
     }
 }
-
 
 } // namespace SVE

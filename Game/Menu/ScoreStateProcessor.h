@@ -4,7 +4,9 @@
 #pragma once
 #include "Game/StateProcessor.h"
 #include "Game/Controls/IEventHandler.h"
+#include "Game/ProgressManager.h"
 #include <memory>
+
 
 namespace Chewman
 {
@@ -30,6 +32,8 @@ public:
 
 private:
     std::unique_ptr<ControlDocument> _document;
+    ProgressManager& _progressManager;
+    float _time = 0;
 };
 
 } // namespace Chewman

@@ -180,7 +180,9 @@ void Engine::resizeWindow()
 
 glm::ivec2 Engine::getRenderWindowSize()
 {
-    return glm::ivec2(_vulkanInstance->getExtent().width, _vulkanInstance->getExtent().height);
+    int w, h;
+    SDL_GetWindowSize(_vulkanInstance->getWindow(), &w, &h);
+    return glm::ivec2(w, h);
 }
 
 void Engine::finishRendering()
@@ -441,7 +443,7 @@ void Engine::renderFrameImpl()
     mainUniform->clipPlane = glm::vec4(0.0, 1.0, 0.0, 100);
     mainUniform->time = getTime();
     mainUniform->deltaTime = getDeltaTime();
-    mainUniform->imageSize = glm::ivec4(_vulkanInstance->getExtent().width, _vulkanInstance->getExtent().height, 0, 0);
+    mainUniform->imageSize = glm::ivec4(getRenderWindowSize(), 0, 0);
     _sceneManager->getMainCamera()->fillUniformData(*mainUniform);
 
     for (auto i = 1; i < PassCount; i++)

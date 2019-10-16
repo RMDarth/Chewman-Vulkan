@@ -11,6 +11,7 @@ struct PlayerInfo
 {
     uint32_t lives = 2;
     uint32_t points = 0;
+    uint32_t time = 0;
 };
 
 class ProgressManager
