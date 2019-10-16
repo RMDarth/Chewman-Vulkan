@@ -47,7 +47,7 @@ private:
     std::weak_ptr<SceneNode> _parent;
     std::list<std::shared_ptr<Entity>> _entityList;
     std::list<std::shared_ptr<SceneNode>> _sceneNodeList;
-    uint64_t _currentFrame;
+    uint64_t _currentFrame = 0;
 
     std::shared_ptr<Entity> _attachment;
     std::string _attachmentName;

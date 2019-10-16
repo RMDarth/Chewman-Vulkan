@@ -49,8 +49,8 @@ private:
     void setupMaterial();
 
 private:
-    Mesh* _mesh;
-    Material* _material;
+    Mesh* _mesh = nullptr;
+    Material* _material = nullptr;
     MaterialInfo _materialInfo;
     bool _isReflected = true;
     bool _castShadows = true;
@@ -59,10 +59,10 @@ private:
     uint32_t _reflectionMaterialIndex;
     uint32_t _refractionMaterialIndex;
 
-    Material* _shadowMaterial;
+    Material* _shadowMaterial = nullptr;
     uint32_t _shadowIndex;
     uint32_t _depthIndex;
-    Material* _pointLightShadowMaterial;
+    Material* _pointLightShadowMaterial = nullptr;
     std::unique_ptr<Material> _bloomMaterial;
     //std::vector<uint32_t> _shadowMaterialIndexes;
 
