@@ -6,8 +6,8 @@
 namespace Chewman
 {
 
-PanelControl::PanelControl(std::string name, float x, float y, float width, float height, Control* parent)
-    : Control(ControlType::Panel, std::move(name), x, y, width, height, "windows/untitled.png", parent)
+PanelControl::PanelControl(const std::string& name, float x, float y, float width, float height, Control* parent)
+    : Control(ControlType::Panel, name, x, y, width, height, "windows/untitled.png", parent)
 {
 }
 

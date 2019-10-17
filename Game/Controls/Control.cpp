@@ -38,11 +38,11 @@ std::string formatMessage(Ts... values)
 
 uint32_t Control::_globalIndex = 0;
 
-Control::Control(ControlType controlType, std::string name,
+Control::Control(ControlType controlType, const std::string& name,
                  float x, float y, float width, float height,
-                 std::string textureName, Control* parent)
+                 const std::string& textureName, Control* parent)
     : _controlType(controlType)
-    , _name(std::move(name))
+    , _name(name)
     , _index(_globalIndex++)
     , _defaultMaterial(createMaterial(textureName))
     , _parent(parent)

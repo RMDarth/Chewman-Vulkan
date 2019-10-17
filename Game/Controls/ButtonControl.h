@@ -10,7 +10,7 @@ namespace Chewman
 class ButtonControl : public Control
 {
 public:
-    ButtonControl(std::string name, float x, float y, float width, float height, Control* parent = nullptr);
+    ButtonControl(const std::string& name, float x, float y, float width, float height, Control* parent = nullptr);
 
     bool onMouseMove(int x, int y) override;
     bool onMouseDown(int x, int y) override;

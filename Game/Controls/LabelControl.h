@@ -10,7 +10,7 @@ namespace Chewman
 class LabelControl : public Control
 {
 public:
-    LabelControl(std::string name, float x, float y, float width, float height, Control* parent = nullptr);
+    LabelControl(const std::string& name, float x, float y, float width, float height, Control* parent = nullptr);
 };
 
 } // namespace Chewman

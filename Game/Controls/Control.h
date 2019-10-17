@@ -28,12 +28,12 @@ class Control
 {
 public:
     Control(ControlType controlType,
-            std::string name,
+            const std::string& name,
             float x,
             float y,
             float width,
             float height,
-            std::string defaultTextureName,
+            const std::string& defaultTextureName,
             Control* parent = nullptr);
     virtual ~Control();
 
