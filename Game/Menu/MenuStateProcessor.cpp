@@ -54,7 +54,7 @@ void MenuStateProcessor::ProcessEvent(Control* control, IEventHandler::EventType
             progressManager.setVictory(false);
             progressManager.setStarted(false);
             progressManager.resetPlayerInfo();
-            Game::getInstance()->setState(GameState::Level);
+            Game::getInstance()->setState(GameState::WorldSelection);
         }
     }
 }

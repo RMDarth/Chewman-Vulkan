@@ -2,8 +2,8 @@
 
 struct OverlayInfo
 {
-    uint x;
-    uint y;
-    uint width;
-    uint height;
+    int x;
+    int y;
+    int width;
+    int height;
 };

@@ -195,7 +195,7 @@ add_executable(Chewman
         Game/ProgressManager.cpp
         Game/ProgressManager.h
         Game/StateProcessor.cpp
-        Game/StateProcessor.h)
+        Game/StateProcessor.h Game/Menu/WorldSelectionStateProcessor.cpp Game/Menu/WorldSelectionStateProcessor.h Game/Controls/SliderControl.cpp Game/Controls/SliderControl.h Game/Menu/LevelSelectionStateProcessor.cpp Game/Menu/LevelSelectionStateProcessor.h Game/Controls/LevelButtonControl.cpp Game/Controls/LevelButtonControl.h)
 
 if (WIN32)
     target_link_libraries(Chewman mingw32 SDL2main SDL2 vulkan-1.lib VkLayer_core_validation.lib libassimp libcppfsd libtinyxml2)

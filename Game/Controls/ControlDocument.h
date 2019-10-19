@@ -24,6 +24,8 @@ public:
     void show();
     void hide();
 
+    void update(float deltaTime);
+
     void setMouseDownHandler(IEventHandler* handler);
     void setMouseUpHandler(IEventHandler* handler);
     void setMouseMoveHandler(IEventHandler* handler);

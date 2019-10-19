@@ -147,6 +147,11 @@ const std::string& Control::getName() const
     return _name;
 }
 
+ControlType Control::getType() const
+{
+    return _controlType;
+}
+
 void Control::setEnabled(bool enabled)
 {
     _enabled = enabled;
@@ -262,11 +267,8 @@ bool Control::onMouseUp(int x, int y)
     {
         _overlay->setMaterial(!_hoverMaterial.empty() ? _hoverMaterial :_defaultMaterial);
 
-        if (!_mouseUpHandlerList.empty())
-        {
-            std::for_each(_mouseUpHandlerList.begin(), _mouseUpHandlerList.end(),
-                          [&](IEventHandler* handler) { handler->ProcessEvent(this, IEventHandler::MouseUp, x, y); });
-        }
+        std::for_each(_mouseUpHandlerList.begin(), _mouseUpHandlerList.end(),
+                      [&](IEventHandler* handler) { handler->ProcessEvent(this, IEventHandler::MouseUp, x, y); });
 
         if (!_mouseTransparent)
             result = true;
@@ -376,6 +378,14 @@ std::string Control::getDefaultOverlayFolder()
 void Control::setText(const std::string& text)
 {
     setText(text, _overlay->getInfo().textInfo.font->fontName, _overlay->getInfo().textInfo.scale, _overlay->getInfo().textInfo.color);
+}
+
+void Control::setPosition(glm::ivec2 pos)
+{
+    _x = pos.x;
+    _y = pos.y;
+    _overlay->getInfo().x = _x;
+    _overlay->getInfo().y = _y;
 }
 
 } // namespace Chewman

@@ -21,7 +21,9 @@ enum class ControlType
     Image,
     Label,
     Container,
-    Panel
+    Panel,
+    Slider,
+    LevelButton
 };
 
 class Control
@@ -52,6 +54,7 @@ public:
     virtual glm::vec4 getTextColor() const;
 
     virtual const std::string& getName() const;
+    virtual ControlType getType() const;
 
     virtual void setEnabled(bool enabled);
     virtual bool isEnabled() const;
@@ -64,6 +67,7 @@ public:
 
     virtual glm::ivec2 getPosition() const;
     virtual glm::ivec2 getSize() const;
+    virtual void setPosition(glm::ivec2);
 
     virtual void setCustomAttribute(const std::string& name, std::string value);
     virtual std::string getCustomAttribute(const std::string& name);
@@ -78,11 +82,11 @@ public:
     virtual bool onMouseMove(int x, int y);
     virtual bool onMouseDown(int x, int y);
     virtual bool onMouseUp(int x, int y);
+    bool isInside(int x, int y) const;
 
     static std::string getDefaultOverlayFolder();
 
 protected:
-    bool isInside(int x, int y) const;
     std::string createMaterial(const std::string& textureFile);
 
 protected:
