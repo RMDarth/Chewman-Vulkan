@@ -64,6 +64,7 @@ struct TextInfo
     uint32_t symbolCount = 0;
     std::vector<TextSymbolInfo> symbols;
     glm::ivec2 textSize;
+    glm::ivec2 shift;
     float scale = 1.0f;
     glm::vec4 color = { 1.0f, 1.0f, 1.0f, 1.0f };
 };

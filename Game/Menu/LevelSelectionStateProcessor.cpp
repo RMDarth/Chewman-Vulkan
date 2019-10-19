@@ -32,6 +32,13 @@ void LevelSelectionStateProcessor::processInput(const SDL_Event& event)
 void LevelSelectionStateProcessor::show()
 {
     _document->show();
+
+    auto worldNum = Game::getInstance()->getProgressManager().getCurrentWorld();
+    for (auto i = 0; i < 12; ++i)
+    {
+        auto control = _document->getControlByName(std::to_string(i));
+        control->setText(std::to_string((i+1) + worldNum * 12 ));
+    }
 }
 
 void LevelSelectionStateProcessor::hide()
@@ -54,7 +61,7 @@ void LevelSelectionStateProcessor::processEvent(Control* control, IEventHandler:
         }
         else if (control->getType() == ControlType::LevelButton)
         {
-            auto levelNum = std::stoul(control->getName());
+            auto levelNum = std::stoul(control->getText());
             auto& progressManager = Game::getInstance()->getProgressManager();
             progressManager.setCurrentLevel(levelNum);
             progressManager.setVictory(false);

@@ -55,6 +55,7 @@ void WorldSelectionStateProcessor::processEvent(Control* control, IEventHandler:
         else if (control->getName() == "slider")
         {
             auto worldNum = static_cast<SliderControl*>(control)->getSelectedObject();
+            Game::getInstance()->getProgressManager().setCurrentWorld(worldNum);
             Game::getInstance()->setState(GameState::LevelSelection);
         }
     }

@@ -2,6 +2,7 @@
 // Copyright (c) 2018-2019, Igor Barinov
 // Licensed under the MIT License
 #include "LevelButtonControl.h"
+#include "SVE/FontManager.h"
 
 namespace Chewman
 {
@@ -59,12 +60,19 @@ void LevelButtonControl::setStarsNum(const std::string& num)
     setDefaultMaterial("buttons/level" + num + ".png");
 }
 
+void LevelButtonControl::setText(const std::string& text, const std::string& font, float scale, glm::vec4 color)
+{
+    _overlay->setText(SVE::Engine::getInstance()->getFontManager()->generateText(text, font, scale, {0, -_height/15}, color));
+    _text = text;
+}
+
 void LevelButtonControl::setCustomAttribute(const std::string& name, std::string value)
 {
     if (name == "stars")
     {
         setStarsNum(value);
-    } else
+    }
+    else
     {
         Control::setCustomAttribute(name, value);
     }
@@ -74,6 +82,5 @@ std::string LevelButtonControl::getCustomAttribute(const std::string& name)
 {
     return Control::getCustomAttribute(name);
 }
-
 
 } // namespace Chewman

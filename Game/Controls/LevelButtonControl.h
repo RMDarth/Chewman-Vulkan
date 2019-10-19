@@ -17,6 +17,8 @@ public:
 
     void setStarsNum(const std::string& num);
 
+    void setText(const std::string& text, const std::string& font, float scale, glm::vec4 color) override;
+
     void setCustomAttribute(const std::string& name, std::string value) override;
     std::string getCustomAttribute(const std::string& name) override;
 
