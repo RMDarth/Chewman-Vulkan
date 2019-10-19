@@ -224,7 +224,7 @@ bool Control::onMouseMove(int x, int y)
         if (!_mouseMoveHandlerList.empty())
         {
             std::for_each(_mouseMoveHandlerList.begin(), _mouseMoveHandlerList.end(),
-                          [&](IEventHandler* handler) { handler->ProcessEvent(this, IEventHandler::MouseMove, x, y); });
+                          [&](IEventHandler* handler) { handler->processEvent(this, IEventHandler::MouseMove, x, y); });
         }
 
         return true;
@@ -249,7 +249,7 @@ bool Control::onMouseDown(int x, int y)
         if (!_mouseDownHandlerList.empty())
         {
             std::for_each(_mouseDownHandlerList.begin(), _mouseDownHandlerList.end(),
-                          [&](IEventHandler* handler) { handler->ProcessEvent(this, IEventHandler::MouseDown, x, y); });
+                          [&](IEventHandler* handler) { handler->processEvent(this, IEventHandler::MouseDown, x, y); });
         }
         _pressed = true;
 
@@ -268,7 +268,7 @@ bool Control::onMouseUp(int x, int y)
         _overlay->setMaterial(!_hoverMaterial.empty() ? _hoverMaterial :_defaultMaterial);
 
         std::for_each(_mouseUpHandlerList.begin(), _mouseUpHandlerList.end(),
-                      [&](IEventHandler* handler) { handler->ProcessEvent(this, IEventHandler::MouseUp, x, y); });
+                      [&](IEventHandler* handler) { handler->processEvent(this, IEventHandler::MouseUp, x, y); });
 
         if (!_mouseTransparent)
             result = true;

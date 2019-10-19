@@ -94,7 +94,7 @@ bool SliderControl::onMouseUp(int x, int y)
             if (_children[_currentObject]->isInside(x, y))
             {
                 std::for_each(_mouseUpHandlerList.begin(), _mouseUpHandlerList.end(),
-                              [&](IEventHandler* handler) { handler->ProcessEvent(this, IEventHandler::MouseUp, x, y); });
+                              [&](IEventHandler* handler) { handler->processEvent(this, IEventHandler::MouseUp, x, y); });
             }
         }
         else if (_startShift - _currentShift > _nextObjShift * 0.3f && _currentObject < _children.size() - 1)

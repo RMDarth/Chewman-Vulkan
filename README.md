@@ -23,15 +23,15 @@ particles and shaders management etc. Design of the engine is somewhat similar t
  engines like Ogre or Irrlicht, but it's still pretty simple compared to those big 
  engines. SVE will probably move to a separate repository after the game is finished.
 #### Main features of SVE
-  - Vulkan rendering
-  - Animation from loaded 3D assets
-  - Water rendering (reflection/refraction)
-  - Forward shading, point, direct and line lights
-  - Shadow maps, cascade shadow maps, point light shadows
-  - Instancing
-  - Particle system based on compute and geometry shaders
-  - Overlays and GUI rendering
-  - Post-effects (like bloom, grayscale)
+-   Vulkan rendering
+-   Animation from loaded 3D assets
+-   Water rendering (reflection/refraction)
+-   Forward shading, point, direct and line lights
+-   Shadow maps, cascade shadow maps, point light shadows
+-   Instancing
+-   Particle system based on compute and geometry shaders
+-   Overlays and GUI rendering
+-   Post-effects (like bloom, grayscale)
 
 
 ## Game description

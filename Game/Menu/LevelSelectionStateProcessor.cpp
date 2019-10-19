@@ -44,7 +44,7 @@ bool LevelSelectionStateProcessor::isOverlapping()
     return false;
 }
 
-void LevelSelectionStateProcessor::ProcessEvent(Control* control, IEventHandler::EventType type, int x, int y)
+void LevelSelectionStateProcessor::processEvent(Control* control, IEventHandler::EventType type, int x, int y)
 {
     if (type == IEventHandler::MouseUp)
     {

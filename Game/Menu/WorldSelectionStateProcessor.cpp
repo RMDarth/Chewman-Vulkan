@@ -44,7 +44,7 @@ bool WorldSelectionStateProcessor::isOverlapping()
     return false;
 }
 
-void WorldSelectionStateProcessor::ProcessEvent(Control* control, IEventHandler::EventType type, int x, int y)
+void WorldSelectionStateProcessor::processEvent(Control* control, IEventHandler::EventType type, int x, int y)
 {
     if (type == IEventHandler::MouseUp)
     {

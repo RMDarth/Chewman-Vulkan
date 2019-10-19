@@ -109,7 +109,7 @@ bool LevelStateProcessor::isOverlapping()
     return false;
 }
 
-void LevelStateProcessor::ProcessEvent(Control* control, IEventHandler::EventType type, int x, int y)
+void LevelStateProcessor::processEvent(Control* control, IEventHandler::EventType type, int x, int y)
 {
     if (type == IEventHandler::MouseUp)
     {

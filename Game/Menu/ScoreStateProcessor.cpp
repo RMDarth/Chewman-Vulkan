@@ -73,7 +73,7 @@ bool ScoreStateProcessor::isOverlapping()
     return true;
 }
 
-void ScoreStateProcessor::ProcessEvent(Control* control, IEventHandler::EventType type, int x, int y)
+void ScoreStateProcessor::processEvent(Control* control, IEventHandler::EventType type, int x, int y)
 {
     if (type == IEventHandler::MouseUp)
     {

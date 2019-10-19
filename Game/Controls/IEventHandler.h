@@ -19,7 +19,7 @@ public:
         MouseMove
     };
 
-    virtual void ProcessEvent(Control* control, EventType type, int x, int y) = 0;
+    virtual void processEvent(Control* control, EventType type, int x, int y) = 0;
 };
 
 } // namespace Chewman
