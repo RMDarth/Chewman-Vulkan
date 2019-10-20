@@ -6,12 +6,12 @@
 namespace Chewman
 {
 
-glm::vec4 ButtonControl::_defaultPressedColor = { 0.082f, 0.925f, 0.976f, 1.0f };
+glm::vec4 ButtonControl::_defaultPressedColor = { 1.0f, 1.0f, 1.0f, 1.0f };
 glm::vec4 ButtonControl::_defaultHoverColor = { 1.0f, 1.0f, 1.0f, 1.0f };
-glm::vec4 ButtonControl::_defaultNormalColor = { 0.086f, 0.925f, 0.976f, 1.0f };
+glm::vec4 ButtonControl::_defaultNormalColor = { 0.75f, 0.75f, 0.75f, 1.0f };
 
-ButtonControl::ButtonControl(std::string name, float x, float y, float width, float height, Control* parent)
-    : Control(ControlType::Button, std::move(name), x, y, width, height, "buttons/button_normal.png", parent)
+ButtonControl::ButtonControl(const std::string& name, float x, float y, float width, float height, Control* parent)
+    : Control(ControlType::Button, name, x, y, width, height, "buttons/button_normal.png", parent)
     , _normalFontColor(_defaultNormalColor)
     , _hoverFontColor(_defaultHoverColor)
     , _pressedFontColor(_defaultPressedColor)

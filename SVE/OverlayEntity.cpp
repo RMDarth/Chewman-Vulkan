@@ -132,7 +132,7 @@ void OverlayEntity::initText()
         }
 
         _overlayInfo.textInfo = Engine::getInstance()->getFontManager()->generateText(
-                textInfo.text, textInfo.font->fontName, textInfo.scale, glm::ivec2(textX, textY), textInfo.color);
+                textInfo.text, textInfo.font->fontName, textInfo.scale, glm::ivec2(textX, textY) + textInfo.shift, textInfo.color);
 
         _textMaterial = Engine::getInstance()->getMaterialManager()->getMaterial(_overlayInfo.textInfo.font->materialName);
         _textMaterialIndex = _textMaterial->getVulkanMaterial()->getInstanceForEntity(this);

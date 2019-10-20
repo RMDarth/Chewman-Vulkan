@@ -75,7 +75,7 @@ private:
     float _powerUpTime = 0.0f;
     bool _isDying = false;
 
-    MoveDirection _nextMove;
+    MoveDirection _nextMove = MoveDirection::None;
 };
 
 } // namespace Chewman

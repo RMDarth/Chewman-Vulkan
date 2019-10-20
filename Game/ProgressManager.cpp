@@ -6,11 +6,9 @@
 namespace Chewman
 {
 
-ProgressManager::ProgressManager()
-{
-}
+ProgressManager::ProgressManager() = default;
 
-uint32_t ProgressManager::getCurrentLevel()
+uint32_t ProgressManager::getCurrentLevel() const
 {
     return _currentLevel;
 }
@@ -20,7 +18,17 @@ void ProgressManager::setCurrentLevel(uint32_t level)
     _currentLevel = level;
 }
 
-bool ProgressManager::isStarted()
+uint32_t ProgressManager::getCurrentWorld() const
+{
+    return _currentWorld;
+}
+
+void ProgressManager::setCurrentWorld(uint32_t world)
+{
+    _currentWorld = world;
+}
+
+bool ProgressManager::isStarted() const
 {
     return _isStarted;
 }
@@ -30,7 +38,7 @@ void ProgressManager::setStarted(bool started)
     _isStarted = started;
 }
 
-bool ProgressManager::isVictory()
+bool ProgressManager::isVictory() const
 {
     return _isVictory;
 }

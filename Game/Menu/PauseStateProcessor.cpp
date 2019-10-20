@@ -44,7 +44,7 @@ bool PauseStateProcessor::isOverlapping()
     return true;
 }
 
-void PauseStateProcessor::ProcessEvent(Control* control, IEventHandler::EventType type, int x, int y)
+void PauseStateProcessor::processEvent(Control* control, IEventHandler::EventType type, int x, int y)
 {
     if (type == IEventHandler::MouseUp)
     {

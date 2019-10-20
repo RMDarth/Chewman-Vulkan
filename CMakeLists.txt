@@ -132,8 +132,12 @@ add_executable(Chewman
         Game/Controls/ImageControl.h
         Game/Controls/LabelControl.cpp
         Game/Controls/LabelControl.h
+        Game/Controls/LevelButtonControl.cpp
+        Game/Controls/LevelButtonControl.h
         Game/Controls/PanelControl.cpp
         Game/Controls/PanelControl.h
+        Game/Controls/SliderControl.cpp
+        Game/Controls/SliderControl.h
         Game/Game.cpp
         Game/Game.h
         Game/GameDefs.h
@@ -186,12 +190,16 @@ add_executable(Chewman
         Game/Level/StaticObject.cpp
         Game/Level/StaticObject.h
         Game/Level/Teleport.h
+        Game/Menu/LevelSelectionStateProcessor.cpp
+        Game/Menu/LevelSelectionStateProcessor.h
         Game/Menu/MenuStateProcessor.cpp
         Game/Menu/MenuStateProcessor.h
         Game/Menu/PauseStateProcessor.cpp
         Game/Menu/PauseStateProcessor.h
         Game/Menu/ScoreStateProcessor.cpp
         Game/Menu/ScoreStateProcessor.h
+        Game/Menu/WorldSelectionStateProcessor.cpp
+        Game/Menu/WorldSelectionStateProcessor.h
         Game/ProgressManager.cpp
         Game/ProgressManager.h
         Game/StateProcessor.cpp

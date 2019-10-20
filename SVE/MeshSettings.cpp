@@ -168,7 +168,7 @@ void iterateBones(
     if (animationSettings->boneMap.find(nodeName) != animationSettings->boneMap.end())
     {
         uint32_t boneIndex = animationSettings->boneMap.at(nodeName);
-        if (boneIndex < boneData.size() && boneIndex >= 0)
+        if (boneIndex < boneData.size())
         {
             auto finalTransform =
                     animationSettings->globalInverse * globalTransformation * animationSettings->boneOffset[boneIndex];

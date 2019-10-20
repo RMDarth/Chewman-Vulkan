@@ -130,6 +130,14 @@ void ControlDocument::hide()
              [](std::shared_ptr<Control>& control) {  control->setVisible(false); } );
 }
 
+void ControlDocument::update(float deltaTime)
+{
+    for (auto& control : _controlList)
+    {
+        control->update(deltaTime);
+    }
+}
+
 void ControlDocument::setMouseDownHandler(IEventHandler* handler)
 {
     for_each(_controlList.begin(), _controlList.end(),

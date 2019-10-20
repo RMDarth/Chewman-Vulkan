@@ -2,10 +2,11 @@
     "name": "NunMaterial",
     "vertexShaderName": "bonesPhongShadowVertexShader",
     "fragmentShaderName": "phongShadowFragmentShader",
+    "cullFace": "BackFace",
     "textures": [
         {
             "samplerName": "diffuseTex",
-            "filename": "textures/enemies/newNun.png"
+            "filename": "textures/enemies/nun_diffuse.png"
         },
         {
             "samplerName": "directShadowTex",

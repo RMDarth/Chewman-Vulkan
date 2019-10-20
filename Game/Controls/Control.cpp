@@ -38,11 +38,11 @@ std::string formatMessage(Ts... values)
 
 uint32_t Control::_globalIndex = 0;
 
-Control::Control(ControlType controlType, std::string name,
+Control::Control(ControlType controlType, const std::string& name,
                  float x, float y, float width, float height,
-                 std::string textureName, Control* parent)
+                 const std::string& textureName, Control* parent)
     : _controlType(controlType)
-    , _name(std::move(name))
+    , _name(name)
     , _index(_globalIndex++)
     , _defaultMaterial(createMaterial(textureName))
     , _parent(parent)
@@ -147,6 +147,11 @@ const std::string& Control::getName() const
     return _name;
 }
 
+ControlType Control::getType() const
+{
+    return _controlType;
+}
+
 void Control::setEnabled(bool enabled)
 {
     _enabled = enabled;
@@ -219,7 +224,7 @@ bool Control::onMouseMove(int x, int y)
         if (!_mouseMoveHandlerList.empty())
         {
             std::for_each(_mouseMoveHandlerList.begin(), _mouseMoveHandlerList.end(),
-                          [&](IEventHandler* handler) { handler->ProcessEvent(this, IEventHandler::MouseMove, x, y); });
+                          [&](IEventHandler* handler) { handler->processEvent(this, IEventHandler::MouseMove, x, y); });
         }
 
         return true;
@@ -244,7 +249,7 @@ bool Control::onMouseDown(int x, int y)
         if (!_mouseDownHandlerList.empty())
         {
             std::for_each(_mouseDownHandlerList.begin(), _mouseDownHandlerList.end(),
-                          [&](IEventHandler* handler) { handler->ProcessEvent(this, IEventHandler::MouseDown, x, y); });
+                          [&](IEventHandler* handler) { handler->processEvent(this, IEventHandler::MouseDown, x, y); });
         }
         _pressed = true;
 
@@ -262,11 +267,8 @@ bool Control::onMouseUp(int x, int y)
     {
         _overlay->setMaterial(!_hoverMaterial.empty() ? _hoverMaterial :_defaultMaterial);
 
-        if (!_mouseUpHandlerList.empty())
-        {
-            std::for_each(_mouseUpHandlerList.begin(), _mouseUpHandlerList.end(),
-                          [&](IEventHandler* handler) { handler->ProcessEvent(this, IEventHandler::MouseUp, x, y); });
-        }
+        std::for_each(_mouseUpHandlerList.begin(), _mouseUpHandlerList.end(),
+                      [&](IEventHandler* handler) { handler->processEvent(this, IEventHandler::MouseUp, x, y); });
 
         if (!_mouseTransparent)
             result = true;
@@ -376,6 +378,14 @@ std::string Control::getDefaultOverlayFolder()
 void Control::setText(const std::string& text)
 {
     setText(text, _overlay->getInfo().textInfo.font->fontName, _overlay->getInfo().textInfo.scale, _overlay->getInfo().textInfo.color);
+}
+
+void Control::setPosition(glm::ivec2 pos)
+{
+    _x = pos.x;
+    _y = pos.y;
+    _overlay->getInfo().x = _x;
+    _overlay->getInfo().y = _y;
 }
 
 } // namespace Chewman

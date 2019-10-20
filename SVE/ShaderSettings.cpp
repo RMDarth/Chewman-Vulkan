@@ -254,7 +254,6 @@ std::vector<char> getUniformDataByType(const UniformData& data, UniformType type
 
 void updateStorageDataByUniforms(const UniformData& data, StorageData& storageData, BufferType type)
 {
-    const auto& sizeMap = getUniformSizeMap();
     switch (type)
     {
         case BufferType::AtomicCounter:

@@ -4,7 +4,9 @@
 #pragma once
 #include "Game/StateProcessor.h"
 #include "Game/Controls/IEventHandler.h"
+#include "Game/ProgressManager.h"
 #include <memory>
+
 
 namespace Chewman
 {
@@ -26,10 +28,12 @@ public:
     bool isOverlapping() override;
 
     // IEventHandler
-    void ProcessEvent(Control* control, EventType type, int x, int y) override;
+    void processEvent(Control* control, EventType type, int x, int y) override;
 
 private:
     std::unique_ptr<ControlDocument> _document;
+    ProgressManager& _progressManager;
+    float _time = 0;
 };
 
 } // namespace Chewman

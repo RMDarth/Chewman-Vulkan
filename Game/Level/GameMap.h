@@ -81,7 +81,7 @@ private:
     GameRulesProcessor _gameRulesProcessor;
     GameMapState _state = GameMapState::Game;
     std::shared_ptr<GameMap> _gameMap;
-    float _totalTime;
+    float _totalTime = 0;
     float _deltaTime = 0;
 
     bool _isVisible = true;

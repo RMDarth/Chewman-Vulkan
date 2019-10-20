@@ -40,7 +40,7 @@ protected:
 
 protected:
     bool _isEaten = false;
-    PowerUpType _type;
+    PowerUpType _type = {};
     std::shared_ptr<SVE::SceneNode> _rootNode;
     std::shared_ptr<SVE::SceneNode> _rotateNode;
 };

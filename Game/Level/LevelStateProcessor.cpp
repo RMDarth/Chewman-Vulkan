@@ -57,11 +57,13 @@ GameState LevelStateProcessor::update(float deltaTime)
             _progressManager.setCurrentLevel(_progressManager.getCurrentLevel() + 1);
             _progressManager.setVictory(true);
             _progressManager.setStarted(false);
+            _progressManager.getPlayerInfo().time = (int)_time;
             return GameState::Score;
         case GameMapState::GameOver:
             _progressManager.setCurrentLevel(1);
             _progressManager.setVictory(false);
             _progressManager.setStarted(false);
+            _progressManager.getPlayerInfo().time = (int)_time;
             return GameState::Score;
     }
 
@@ -107,7 +109,7 @@ bool LevelStateProcessor::isOverlapping()
     return false;
 }
 
-void LevelStateProcessor::ProcessEvent(Control* control, IEventHandler::EventType type, int x, int y)
+void LevelStateProcessor::processEvent(Control* control, IEventHandler::EventType type, int x, int y)
 {
     if (type == IEventHandler::MouseUp)
     {

@@ -52,6 +52,7 @@ public:
     VkCommandPool getCommandPool(PoolID index) const;
     VkRenderPass getRenderPass() const;
     VkExtent2D getExtent() const;
+    SDL_Window* getWindow() const;
     VkSampleCountFlagBits getMSAASamples() const;
     VkQueue getGraphicsQueue() const;
     size_t getSwapchainSize() const;

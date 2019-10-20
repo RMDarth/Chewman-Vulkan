@@ -43,7 +43,7 @@ bool MenuStateProcessor::isOverlapping()
     return false;
 }
 
-void MenuStateProcessor::ProcessEvent(Control* control, IEventHandler::EventType type, int x, int y)
+void MenuStateProcessor::processEvent(Control* control, IEventHandler::EventType type, int x, int y)
 {
     if (type == IEventHandler::MouseUp)
     {
@@ -54,7 +54,7 @@ void MenuStateProcessor::ProcessEvent(Control* control, IEventHandler::EventType
             progressManager.setVictory(false);
             progressManager.setStarted(false);
             progressManager.resetPlayerInfo();
-            Game::getInstance()->setState(GameState::Level);
+            Game::getInstance()->setState(GameState::WorldSelection);
         }
     }
 }

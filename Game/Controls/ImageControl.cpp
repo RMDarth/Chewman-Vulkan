@@ -6,8 +6,8 @@
 namespace Chewman
 {
 
-ImageControl::ImageControl(std::string name, float x, float y, float width, float height, Control* parent)
-    : Control(ControlType::Image, std::move(name), x, y, width, height, "empty.png", parent)
+ImageControl::ImageControl(const std::string& name, float x, float y, float width, float height, Control* parent)
+    : Control(ControlType::Image, name, x, y, width, height, "empty.png", parent)
 {
 }
 

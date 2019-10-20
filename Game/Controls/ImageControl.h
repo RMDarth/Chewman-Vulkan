@@ -10,7 +10,7 @@ namespace Chewman
 class ImageControl : public Control
 {
 public:
-    ImageControl(std::string name, float x, float y, float width, float height, Control* parent = nullptr);
+    ImageControl(const std::string& name, float x, float y, float width, float height, Control* parent = nullptr);
 };
 
 } // namespace Chewman

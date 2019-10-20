@@ -57,7 +57,7 @@ private:
     bool isFreePosition(glm::ivec2 position);
 
 private:
-    GameMap* _map;
+    GameMap* _map = nullptr;
 
     float _moveSpeed = 0.0f;
 

@@ -4,6 +4,7 @@
 #pragma once
 #include "Game/StateProcessor.h"
 #include "Game/Controls/IEventHandler.h"
+#include "Game/ProgressManager.h"
 #include <memory>
 
 namespace Chewman
@@ -11,11 +12,11 @@ namespace Chewman
 
 class ControlDocument;
 
-class PauseStateProcessor : public StateProcessor, public IEventHandler
+class LevelSelectionStateProcessor : public StateProcessor, public IEventHandler
 {
 public:
-    PauseStateProcessor();
-    ~PauseStateProcessor() override;
+    LevelSelectionStateProcessor();
+    ~LevelSelectionStateProcessor() override;
 
     GameState update(float deltaTime) override;
     void processInput(const SDL_Event& event) override;

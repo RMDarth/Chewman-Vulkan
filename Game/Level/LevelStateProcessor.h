@@ -31,7 +31,7 @@ public:
     bool isOverlapping() override;
 
     // IEventHandler
-    void ProcessEvent(Control* control, EventType type, int x, int y) override;
+    void processEvent(Control* control, EventType type, int x, int y) override;
 
 private:
     void updateHUD();

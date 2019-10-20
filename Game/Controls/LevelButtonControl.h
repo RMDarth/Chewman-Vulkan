@@ -7,13 +7,20 @@
 namespace Chewman
 {
 
-class ButtonControl : public Control
+class LevelButtonControl : public Control
 {
 public:
-    ButtonControl(const std::string& name, float x, float y, float width, float height, Control* parent = nullptr);
+    LevelButtonControl(const std::string& name, float x, float y, float width, float height, Control* parent = nullptr);
 
     bool onMouseMove(int x, int y) override;
     bool onMouseDown(int x, int y) override;
+
+    void setStarsNum(const std::string& num);
+
+    void setText(const std::string& text, const std::string& font, float scale, glm::vec4 color) override;
+
+    void setCustomAttribute(const std::string& name, std::string value) override;
+    std::string getCustomAttribute(const std::string& name) override;
 
 private:
     static glm::vec4 _defaultPressedColor;

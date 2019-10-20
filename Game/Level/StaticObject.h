@@ -32,7 +32,7 @@ public:
     static std::pair<size_t, size_t> getSize(char type, char rotation);
 
 private:
-    StaticObjectType _type;
+    StaticObjectType _type = {};
     std::shared_ptr<SVE::SceneNode> _rootNode;
 };
 

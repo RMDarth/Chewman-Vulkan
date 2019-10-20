@@ -35,6 +35,7 @@ TextInfo FontManager::generateText(const std::string& text, const std::string& f
     info.textSize.y = info.font->size * scale;
     info.scale = scale;
     info.color = color;
+    info.shift = shift;
 
     return info;
 };

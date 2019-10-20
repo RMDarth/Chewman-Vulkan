@@ -49,7 +49,7 @@ private:
     void setupMaterial();
 
 private:
-    Mesh* _mesh;
+    Mesh* _mesh = nullptr;
     Material* _material = nullptr;
     MaterialInfo _materialInfo;
     bool _isReflected = true;

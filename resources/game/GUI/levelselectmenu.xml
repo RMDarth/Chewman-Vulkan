@@ -1,0 +1,21 @@
+<document>
+    <Panel name="panel" x="0.2" y="0.10" width="0.6" height="0.65" image="windows/window.png">
+        <Label name="worldname" text="Levels" alignment="center" y = "0.035" width="0.5" height="0.06" />
+
+        <LevelButton name="0" text="5" x="0.0769" y="0.2" width="0.1538" height="-1" stars="2" />
+        <LevelButton name="1" text="6" x="0.3076" y="0.2" width="0.1538" height="-1" stars="2" />
+        <LevelButton name="2" text="7" x="0.5383" y="0.2" width="0.1538" height="-1" stars="2" />
+        <LevelButton name="3" text="8" x="0.769" y="0.2" width="0.1538" height="-1" stars="2" />
+
+        <LevelButton name="4" text="9" x="0.0769" y="0.45" width="0.1538" height="-1" stars="2" />
+        <LevelButton name="5" text="10" x="0.3076" y="0.45" width="0.1538" height="-1" stars="2" />
+        <LevelButton name="6" text="11" x="0.5383" y="0.45" width="0.1538" height="-1" stars="2" />
+        <LevelButton name="7" text="12" x="0.769" y="0.45" width="0.1538" height="-1" stars="2" />
+
+        <LevelButton name="8" text="13" x="0.0769" y="0.7" width="0.1538" height="-1" stars="2" />
+        <LevelButton name="9" text="14" x="0.3076" y="0.7" width="0.1538" height="-1" stars="2" />
+        <LevelButton name="10" text="15" x="0.5383" y="0.7" width="0.1538" height="-1" stars="2" />
+        <LevelButton name="11" text="16" x="0.769" y="0.7" width="0.1538" height="-1" stars="2" />
+    </Panel>
+    <Button name="back"  x="0.05" y="0.85" width="0.08" height="-1" image="buttons/back.png" hoverimage="buttons/back_hover.png" pressedimage="buttons/back_pressed.png" />
+</document>
