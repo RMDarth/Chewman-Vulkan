@@ -50,27 +50,27 @@ Engine* Engine::getInstance()
     return _engineInstance;
 }
 
-Engine* Engine::createInstance(SDL_Window* window, EngineSettings settings)
+Engine* Engine::createInstance(SDL_Window* window, EngineSettings settings, std::shared_ptr<FileSystem> fileSystem)
 {
     if (_engineInstance == nullptr)
     {
-        _engineInstance = new Engine(window, std::move(settings));
+        _engineInstance = new Engine(window, std::move(settings), std::move(fileSystem));
     }
     return _engineInstance;
 }
 
-Engine* Engine::createInstance(SDL_Window* window, const std::string& settingsPath)
+Engine* Engine::createInstance(SDL_Window* window, const std::string& settingsPath, std::shared_ptr<FileSystem> fileSystem)
 {
     if (_engineInstance == nullptr)
     {
-        auto data = ResourceManager::getLoadDataFromFolder(settingsPath);
+        auto data = ResourceManager::getLoadDataFromFolder(settingsPath, fileSystem);
         if (data.engine.empty())
         {
             throw VulkanException("Can't find SVE configuration file");
         }
 
         auto settings = data.engine.front();
-        _engineInstance = new Engine(window, settings);
+        _engineInstance = new Engine(window, settings, std::move(fileSystem));
 
         //if (settings.initShadows)
         _engineInstance->getSceneManager()->getLightManager();
@@ -90,18 +90,18 @@ VulkanInstance* Engine::getVulkanInstance()
     return _vulkanInstance.get();
 }
 
-Engine::Engine(SDL_Window* window)
-    : Engine(window, EngineSettings())
+Engine::Engine(SDL_Window* window, std::shared_ptr<FileSystem> fileSystem)
+    : Engine(window, EngineSettings(), std::move(fileSystem))
 {
 }
 
-Engine::Engine(SDL_Window* window, EngineSettings settings)
+Engine::Engine(SDL_Window* window, EngineSettings settings, std::shared_ptr<FileSystem> fileSystem)
     : _vulkanInstance(std::make_unique<VulkanInstance>(window, std::move(settings)))
     , _materialManager(std::make_unique<MaterialManager>())
     , _shaderManager(std::make_unique<ShaderManager>())
     , _sceneManager(std::make_unique<SceneManager>())
     , _meshManager(std::make_unique<MeshManager>())
-    , _resourceManager(std::make_unique<ResourceManager>())
+    , _resourceManager(std::make_unique<ResourceManager>(fileSystem))
     , _particleSystemManager(std::make_unique<ParticleSystemManager>())
     , _postEffectManager(std::make_unique<PostEffectManager>())
     , _fontManager(std::make_unique<FontManager>())
