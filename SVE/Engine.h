@@ -9,6 +9,7 @@
 #include <SDL2/SDL.h>
 #include "EngineSettings.h"
 #include "SceneNode.h"
+#include "FileSystem.h"
 
 namespace SVE
 {
@@ -44,8 +45,8 @@ static const uint8_t PassCount = 9;
 class Engine
 {
 public:
-    static Engine* createInstance(SDL_Window* window, const std::string& settingsPath);
-    static Engine* createInstance(SDL_Window* window, EngineSettings settings);
+    static Engine* createInstance(SDL_Window* window, const std::string& settingsPath, std::shared_ptr<FileSystem> fileSystem);
+    static Engine* createInstance(SDL_Window* window, EngineSettings settings, std::shared_ptr<FileSystem> fileSystem);
     static void destroyInstance(); // debug only
     static Engine* getInstance();
     ~Engine();
@@ -77,8 +78,8 @@ public:
     void renderFrame(float deltaTime);
 
 private:
-    Engine(SDL_Window* window, EngineSettings settings);
-    explicit Engine(SDL_Window* window);
+    Engine(SDL_Window* window, EngineSettings settings, std::shared_ptr<FileSystem> fileSystem);
+    Engine(SDL_Window* window, std::shared_ptr<FileSystem> fileSystem);
 
     void updateTime();
     void renderFrameImpl();

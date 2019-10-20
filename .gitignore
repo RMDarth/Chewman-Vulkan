@@ -4,3 +4,4 @@ cmake-build-release
 /ChewmanAndroid/
 /deps/
 /.idea
+/android/

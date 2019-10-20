@@ -19,10 +19,6 @@
 #include "Libs.h"
 
 #include <map>
-#include <cppfs/fs.h>
-#include <cppfs/FileHandle.h>
-#include <cppfs/FileIterator.h>
-#include <cppfs/FilePath.h>
 
 #define GLM_ENABLE_EXPERIMENTAL
 #include <rapidjson/document.h>
@@ -202,7 +198,7 @@ std::vector<std::string> getStringList(rj::Document& document, const std::string
     return stringList;
 }
 
-ShaderSettings loadShader(const cppfs::FilePath& directory, const std::string& data)
+ShaderSettings loadShader(FSEntityPtr directory, const std::string& data)
 {
     static const std::map<std::string, ShaderType> shaderTypeMap{
             {"VertexShader",   ShaderType::VertexShader},
@@ -227,14 +223,14 @@ ShaderSettings loadShader(const cppfs::FilePath& directory, const std::string& d
     setOptional(shaderSettings.vertexInfo = getVertexInfo(document));
     setOptional(shaderSettings.maxGlyphCount = document["maxGlyphCount"].GetUint());
     setOptional(shaderSettings.samplerNamesList = getStringList(document, "samplerNamesList"));
-    shaderSettings.filename = directory.resolve(document["filename"].GetString()).fullPath();
+    shaderSettings.filename = directory->resolveFilePath(document["filename"].GetString());
     shaderSettings.shaderType = shaderTypeMap.at(document["shaderType"].GetString());
     setOptional(shaderSettings.entryPoint = document["entryPoint"].GetString());
 
     return shaderSettings;
 }
 
-std::vector<TextureInfo> getTextureInfos(const cppfs::FilePath& directory, rj::Document& document)
+std::vector<TextureInfo> getTextureInfos(FSEntityPtr directory, rj::Document& document)
 {
     static const std::map<std::string, TextureType> textureTypeMap{
             {"ImageFile",       TextureType::ImageFile},
@@ -278,7 +274,7 @@ std::vector<TextureInfo> getTextureInfos(const cppfs::FilePath& directory, rj::D
 
         if (textureInfo.textureType == TextureType::ImageFile)
         {
-            textureInfo.filename = directory.resolve(item["filename"].GetString()).fullPath();
+            textureInfo.filename = directory->resolveFilePath(item["filename"].GetString());
         }
         textureInfo.samplerName = item["samplerName"].GetString();
 
@@ -288,7 +284,7 @@ std::vector<TextureInfo> getTextureInfos(const cppfs::FilePath& directory, rj::D
     return textureInfosList;
 }
 
-ParticleSystemSettings loadParticleSystem(const cppfs::FilePath& directory, const std::string& data)
+ParticleSystemSettings loadParticleSystem(FSEntityPtr directory, const std::string& data)
 {
     rj::Document document;
     document.Parse(data.c_str());
@@ -337,7 +333,7 @@ ParticleSystemSettings loadParticleSystem(const cppfs::FilePath& directory, cons
     return particleSettings;
 }
 
-Font loadFont(const cppfs::FilePath& directory, const std::string& data)
+Font loadFont(FSEntityPtr directory, const std::string& data)
 {
     rj::Document document;
     document.Parse(data.c_str());
@@ -372,7 +368,7 @@ Font loadFont(const cppfs::FilePath& directory, const std::string& data)
     return font;
 }
 
-MaterialSettings loadMaterial(const cppfs::FilePath& directory, const std::string& data)
+MaterialSettings loadMaterial(FSEntityPtr directory, const std::string& data)
 {
     static const std::map<std::string, MaterialCullFace> cullFaceMap {
             { "BackFace",   MaterialCullFace::BackFace },
@@ -425,14 +421,14 @@ MaterialSettings loadMaterial(const cppfs::FilePath& directory, const std::strin
     return materialSettings;
 }
 
-MeshLoadSettings loadMesh(const cppfs::FilePath& directory, const std::string& data)
+MeshLoadSettings loadMesh(FSEntityPtr directory, const std::string& data)
 {
     rj::Document document;
     document.Parse(data.c_str());
 
     MeshLoadSettings meshLoadSettings {};
 
-    meshLoadSettings.filename = directory.resolve(document["filename"].GetString()).fullPath();
+    meshLoadSettings.filename = directory->resolveFilePath(document["filename"].GetString());
     meshLoadSettings.name = document["name"].GetString();
     setOptional(meshLoadSettings.switchYZ = document["switchYZ"].GetBool());
     setOptional(meshLoadSettings.scale = loadVector<3>(document, "scale"));
@@ -475,13 +471,8 @@ LightSettings loadLight(const std::string& data)
 
 } // anon namespace
 
-ResourceManager::ResourceManager(std::vector<std::string> folderList)
-    : _folderList(std::move(folderList))
-{
-    loadResources();
-}
-
-ResourceManager::ResourceManager()
+ResourceManager::ResourceManager(std::shared_ptr<FileSystem> fileSystem)
+    : _fileSystem(std::move(fileSystem))
 {
 }
 
@@ -490,17 +481,15 @@ void ResourceManager::loadResources()
     LoadData data {};
     for (const auto& folder : _folderList)
     {
-        cppfs::FileHandle fh = cppfs::fs::open(folder);
+        FSEntityPtr fh = _fileSystem->getEntity(folder);
 
-        if (fh.isDirectory())
+        if (fh->isDirectory())
         {
-            loadDirectory(folder, data);
-        } else if (fh.isFile())
+            loadDirectory(folder, data, _fileSystem);
+        }
+        else
         {
-            loadFile(folder, data);
-        } else if (!fh.exists())
-        {
-            throw VulkanException("Folder doesn't exist");
+            loadFile(fh, data, _fileSystem);
         }
     }
 
@@ -544,24 +533,26 @@ void ResourceManager::loadFolder(const std::string& folder)
     _folderList.push_back(folder);
 
     LoadData loadData {};
-    loadDirectory(folder, loadData);
+    loadDirectory(folder, loadData, _fileSystem);
     initializeResources(loadData);
 }
 
-ResourceManager::LoadData ResourceManager::getLoadDataFromFolder(const std::string& folder)
+ResourceManager::LoadData ResourceManager::getLoadDataFromFolder(const std::string& folder, const std::shared_ptr<FileSystem>& fileSystem)
 {
     LoadData data {};
-    cppfs::FileHandle fh = cppfs::fs::open(folder);
+    FSEntityPtr fh = fileSystem->getEntity(folder);
 
-    if (fh.isDirectory())
+    if (fh->isDirectory())
     {
-        loadDirectory(folder, data);
-    } else if (fh.isFile())
+        loadDirectory(folder, data, fileSystem);
+    }
+    else if (fh->exist())
     {
-        loadFile(folder, data);
-    } else if (!fh.exists())
+        loadFile(fh, data, fileSystem);
+    }
+    else
     {
-        throw VulkanException("Folder doesn't exist");
+        throw VulkanException("Folder or file doesn't exist");
     }
 
     return data;
@@ -572,24 +563,28 @@ const std::vector<std::string> ResourceManager::getFolderList() const
     return _folderList;
 }
 
-void ResourceManager::loadDirectory(const std::string& directory, LoadData& loadData)
+void ResourceManager::loadDirectory(const std::string& directory, LoadData& loadData, const std::shared_ptr<FileSystem>& fileSystem)
 {
-    cppfs::FileHandle dir = cppfs::fs::open(directory);
-    cppfs::FilePath fp(directory);
-    for (cppfs::FileIterator it = dir.begin(); it != dir.end(); ++it)
+    auto dir = fileSystem->getEntity(directory);
+    auto fileList = fileSystem->getFileList(dir);
+    for (auto& file : fileList)
     {
-        loadFile(fp.resolve(*it).fullPath(), loadData);
+        loadFile(file, loadData, fileSystem);
     }
 }
 
-void ResourceManager::loadFile(const std::string& filename, LoadData& loadData)
+void ResourceManager::loadFile(FSEntityPtr file, LoadData& loadData, const std::shared_ptr<FileSystem>& fileSystem)
 {
-    cppfs::FileHandle file = cppfs::fs::open(filename);
-    if (file.isDirectory())
+    if (file->isDirectory() || !file->exist())
         return;
 
-    cppfs::FilePath fp (filename);
-    auto type = fp.extension().substr(1);
+    auto extension = fileSystem->getExtension(file);
+    if (extension.empty())
+    {
+        std::cout << "Skipping unsupported file " << file->getPath() << std::endl;
+        return;
+    }
+    auto type = fileSystem->getExtension(file).substr(1);
 
     static const std::map<std::string, ResourceType> resourceTypeMap {
         {"engine", ResourceType::Engine},
@@ -604,11 +599,11 @@ void ResourceManager::loadFile(const std::string& filename, LoadData& loadData)
     if (resourceTypeMap.find(type) == resourceTypeMap.end())
     {
         // TODO: Add logging system
-        std::cout << "Skipping unsupported file " << filename << std::endl;
+        std::cout << "Skipping unsupported file " << file->getPath() << std::endl;
     }
 
-    std::string fileContent = file.readFile();
-    auto directory = cppfs::FilePath(fp.directoryPath());
+    std::string fileContent = fileSystem->getFileContent(file);
+    auto directory = fileSystem->getContainingDirectory(file);
 
     try
     {
@@ -640,7 +635,7 @@ void ResourceManager::loadFile(const std::string& filename, LoadData& loadData)
         }
     } catch (const std::exception& ex)
     {
-        throw VulkanException(std::string("Can't load resource file ") + filename + ": " + ex.what());
+        throw VulkanException(std::string("Can't load resource file ") + file->getPath() + ": " + ex.what());
     }
 }
 

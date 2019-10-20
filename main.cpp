@@ -9,6 +9,7 @@
 
 #include "Game/Game.h"
 #include "Game/Controls/ControlDocument.h"
+#include "DesktopFS.h"
 
 #include <SDL2/SDL.h>
 #include <vulkan/vulkan.h>
@@ -73,7 +74,7 @@ int runGame()
         return 1;
     }
 
-    SVE::Engine* engine = SVE::Engine::createInstance(window, "resources/main.engine");
+    SVE::Engine* engine = SVE::Engine::createInstance(window, "resources/main.engine", std::make_shared<SVE::DesktopFS>());
     {
         auto camera = engine->getSceneManager()->createMainCamera();
         std::cout << "Start loading resources..." << std::endl;
