@@ -63,7 +63,7 @@ Engine* Engine::createInstance(SDL_Window* window, const std::string& settingsPa
 {
     if (_engineInstance == nullptr)
     {
-        auto data = ResourceManager::getLoadDataFromFolder(settingsPath, fileSystem);
+        auto data = ResourceManager::getLoadDataFromFolder(settingsPath, false, fileSystem);
         if (data.engine.empty())
         {
             throw VulkanException("Can't find SVE configuration file");

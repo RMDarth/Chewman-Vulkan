@@ -9,6 +9,7 @@
 #include "VulkanSamplerHolder.h"
 #include "VulkanPassInfo.h"
 #include "ShaderManager.h"
+#include "ResourceManager.h"
 #include "PostEffectManager.h"
 #include "ShaderInfo.h"
 #include "SceneManager.h"
@@ -542,7 +543,8 @@ void VulkanMaterial::createTextureImages()
         // Load image pixel data
         int texWidth, texHeight, texChannels;
         //stbi_set_flip_vertically_on_load(true);
-        stbi_uc* pixels = stbi_load(_materialSettings.textures[i].filename.c_str(), &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
+        auto fileContent = Engine::getInstance()->getResourceManager()->loadFileContent(_materialSettings.textures[i].filename);
+        stbi_uc* pixels = stbi_load_from_memory(reinterpret_cast<const unsigned char*>(fileContent.data()), fileContent.size(), &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
         VkDeviceSize imageSize = static_cast<VkDeviceSize>(texWidth * texHeight * 4);
 
         _mipLevels[i] = static_cast<uint32_t>(std::floor(std::log2(std::max(texWidth, texHeight)))) + 1;
@@ -623,7 +625,9 @@ void VulkanMaterial::createCubemapTextureImages()
     {
         // Load image pixel data
         //stbi_set_flip_vertically_on_load(true);
-        stbi_uc* pixels = stbi_load(_materialSettings.textures[i].filename.c_str(), &texWidth, &texHeight, &texChannels,
+
+        auto fileContent = Engine::getInstance()->getResourceManager()->loadFileContent(_materialSettings.textures[i].filename);
+        stbi_uc* pixels = stbi_load_from_memory(reinterpret_cast<const uint8_t*>(fileContent.data()), fileContent.size(), &texWidth, &texHeight, &texChannels,
                                     STBI_rgb_alpha);
         stbi_set_flip_vertically_on_load(false);
         imageSize += static_cast<VkDeviceSize>(texWidth * texHeight * 4);

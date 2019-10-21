@@ -206,7 +206,8 @@ add_executable(Chewman
         Game/StateProcessor.h
         SVE/FileSystem.h
         DesktopFS.cpp
-        DesktopFS.h)
+        DesktopFS.h
+        VulkanHeaders.h)
 
 if (WIN32)
     target_link_libraries(Chewman mingw32 SDL2main SDL2 vulkan-1.lib VkLayer_core_validation.lib libassimp libcppfsd libtinyxml2)

@@ -5,6 +5,8 @@
 #include "VulkanMesh.h"
 #include "VulkanException.h"
 #include "ShaderSettings.h"
+#include "Engine.h"
+#include "ResourceManager.h"
 
 #include <stack>
 #include <set>
@@ -57,8 +59,9 @@ Mesh::Mesh(MeshLoadSettings meshLoadSettings)
 
     std::map<std::string, uint32_t> boneMap;
 
-    const aiScene* scene = importer.ReadFile(
-            meshLoadSettings.filename,
+    auto fileContent = Engine::getInstance()->getResourceManager()->loadFileContent(meshLoadSettings.filename);
+    const aiScene* scene = importer.ReadFileFromMemory(
+            fileContent.data(), fileContent.size(),
             aiProcess_CalcTangentSpace       |
             aiProcess_Triangulate            |
             aiProcess_JoinIdenticalVertices  |

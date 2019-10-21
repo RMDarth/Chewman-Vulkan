@@ -3,7 +3,7 @@
 // Licensed under the MIT License
 #pragma once
 #include "VulkanCommandsManager.h"
-#include <vulkan/vulkan.h>
+#include "VulkanHeaders.h"
 #include <memory>
 #include <vector>
 

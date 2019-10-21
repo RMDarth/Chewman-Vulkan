@@ -2,11 +2,10 @@
 // Copyright (c) 2018-2019, Igor Barinov
 // Licensed under the MIT License
 #pragma once
-#include <vulkan/vulkan.h>
+#include "VulkanHeaders.h"
+#include "ParticleSystemSettings.h"
 #include <memory>
 #include <vector>
-
-#include "ParticleSystemSettings.h"
 
 namespace SVE
 {

@@ -3,6 +3,8 @@
 // Licensed under the MIT License
 #include <tinyxml2.h>
 #include "ControlDocument.h"
+#include "SVE/Engine.h"
+#include "SVE/ResourceManager.h"
 
 namespace Chewman
 {
@@ -19,7 +21,8 @@ void ControlDocument::loadDocument(const std::string& filename)
     using namespace tinyxml2;
     XMLDocument doc;
 
-    if (doc.LoadFile(filename.c_str()) == XML_SUCCESS)
+    auto fileContent = SVE::Engine::getInstance()->getResourceManager()->loadFileContent(filename);
+    if (doc.Parse(fileContent.data(), fileContent.size()) == XML_SUCCESS)
     {
         XMLElement* element = doc.FirstChildElement("document");
 

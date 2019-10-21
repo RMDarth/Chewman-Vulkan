@@ -2,11 +2,11 @@
 // Copyright (c) 2018-2019, Igor Barinov
 // Licensed under the MIT License
 #pragma once
-#include <vulkan/vulkan.h>
-#include <vector>
-#include <map>
+#include "VulkanHeaders.h"
 #include "VulkanUtils.h"
 #include "ShaderSettings.h"
+#include <vector>
+#include <map>
 
 namespace SVE
 {
@@ -32,7 +32,7 @@ private:
     void createDescriptorSetLayout();
     void deleteDescriptorSetLayout();
 
-    VkShaderModule createShaderModule(const std::vector<char> &code) const;
+    VkShaderModule createShaderModule(const std::string& code) const;
     uint32_t getVertexDataSize(VertexInfo::VertexDataType vertexDataType) const;
 
 private:

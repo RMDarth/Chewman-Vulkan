@@ -35,8 +35,9 @@ public:
     explicit ResourceManager(std::shared_ptr<FileSystem> fileSystem);
 
     void loadFolder(const std::string& folder);
-    static LoadData getLoadDataFromFolder(const std::string& folder, const std::shared_ptr<FileSystem>& fileSystem);
+    static LoadData getLoadDataFromFolder(const std::string& folder, bool isFolder, const std::shared_ptr<FileSystem>& fileSystem);
     const std::vector<std::string> getFolderList() const;
+    std::string loadFileContent(const std::string& file) const;
 
 private:
     enum class ResourceType : uint8_t
