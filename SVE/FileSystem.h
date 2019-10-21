@@ -13,6 +13,8 @@ namespace SVE
 class FileSystemEntity
 {
 public:
+    virtual ~FileSystemEntity() = default;
+
     virtual bool isDirectory() const = 0;
     virtual bool exist() const = 0;
     virtual std::string getPath() const = 0;
@@ -25,6 +27,8 @@ using FSEntityPtr = std::shared_ptr<FileSystemEntity>;
 class FileSystem
 {
 public:
+    virtual ~FileSystem() = default;
+
     virtual std::string getExtension(FSEntityPtr file) = 0;
     virtual FSEntityPtr getContainingDirectory(FSEntityPtr file) = 0;
     virtual FSEntityList getFileList(FSEntityPtr dir) = 0;
