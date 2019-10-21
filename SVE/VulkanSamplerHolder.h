@@ -3,12 +3,11 @@
 // Licensed under the MIT License
 #pragma once
 #include "MaterialSettings.h"
+#include "VulkanHeaders.h"
 
-#include <vulkan/vulkan.h>
 #include <string>
 #include <vector>
 #include <map>
-
 
 namespace SVE
 {

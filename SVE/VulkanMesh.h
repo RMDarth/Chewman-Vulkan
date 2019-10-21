@@ -3,7 +3,7 @@
 // Licensed under the MIT License
 #pragma once
 #include "MeshSettings.h"
-#include <vulkan/vulkan.h>
+#include "VulkanHeaders.h"
 #include <memory>
 
 namespace SVE

@@ -3,8 +3,8 @@
 // Licensed under the MIT License
 #pragma once
 #include "ComputeSettings.h"
+#include "VulkanHeaders.h"
 
-#include <vulkan/vulkan.h>
 #include <vector>
 
 namespace SVE

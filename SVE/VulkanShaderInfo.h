@@ -2,11 +2,11 @@
 // Copyright (c) 2018-2019, Igor Barinov
 // Licensed under the MIT License
 #pragma once
-#include <vulkan/vulkan.h>
-#include <vector>
-#include <map>
+#include "VulkanHeaders.h"
 #include "VulkanUtils.h"
 #include "ShaderSettings.h"
+#include <vector>
+#include <map>
 
 namespace SVE
 {
