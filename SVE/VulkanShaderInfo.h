@@ -32,7 +32,7 @@ private:
     void createDescriptorSetLayout();
     void deleteDescriptorSetLayout();
 
-    VkShaderModule createShaderModule(const std::vector<char> &code) const;
+    VkShaderModule createShaderModule(const std::string& code) const;
     uint32_t getVertexDataSize(VertexInfo::VertexDataType vertexDataType) const;
 
 private:

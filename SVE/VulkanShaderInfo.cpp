@@ -6,30 +6,13 @@
 #include "VulkanInstance.h"
 #include "Engine.h"
 #include "LightManager.h"
+#include "ResourceManager.h"
 #include <fstream>
 
 namespace SVE
 {
 namespace
 {
-
-std::vector<char> readFile(const std::string &filename)
-{
-    std::ifstream file(filename, std::ios::ate | std::ios::binary);
-
-    if (!file)
-    {
-        throw VulkanException("Can't open file " + filename);
-    }
-
-    size_t fileSize = (size_t) file.tellg();
-    std::vector<char> buffer(fileSize);
-    file.seekg(0);
-    file.read(buffer.data(), fileSize);
-    file.close();
-
-    return buffer;
-}
 
 VkShaderStageFlagBits getVulkanShaderStage(const ShaderSettings& shaderSettings)
 {
@@ -62,7 +45,7 @@ VulkanShaderInfo::~VulkanShaderInfo()
 
 VkPipelineShaderStageCreateInfo VulkanShaderInfo::createShaderStage()
 {
-    auto shaderCode = readFile(_shaderSettings.filename);
+    auto shaderCode = Engine::getInstance()->getResourceManager()->loadFileContent(_shaderSettings.filename);
     _shaderModule = createShaderModule(shaderCode);
 
     VkPipelineShaderStageCreateInfo shaderStageInfo{};
@@ -465,7 +448,7 @@ void VulkanShaderInfo::deleteDescriptorSetLayout()
     _descriptorSetLayout = VK_NULL_HANDLE;
 }
 
-VkShaderModule VulkanShaderInfo::createShaderModule(const std::vector<char> &code) const
+VkShaderModule VulkanShaderInfo::createShaderModule(const std::string& code) const
 {
     VkShaderModuleCreateInfo createInfo{};
     createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;

@@ -25,11 +25,11 @@ public:
 class DesktopFS : public FileSystem
 {
 public:
-    std::string getExtension(FSEntityPtr file) override;
-    FSEntityPtr getContainingDirectory(FSEntityPtr file) override;
-    FSEntityList getFileList(FSEntityPtr dir) override;
-    std::string getFileContent(FSEntityPtr file) override;
-    FSEntityPtr getEntity(const std::string& localPath, bool isWritable = false) override;
+    std::string getExtension(FSEntityPtr file) const override;
+    FSEntityPtr getContainingDirectory(FSEntityPtr file) const override;
+    FSEntityList getFileList(FSEntityPtr dir) const override;
+    std::string getFileContent(FSEntityPtr file) const override;
+    FSEntityPtr getEntity(const std::string& localPath, bool isDirectory = false) const override;
 };
 
 } // namespace SVE

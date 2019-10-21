@@ -35,19 +35,19 @@ bool DesktopFSEntity::exist() const
     return Handle.exists();
 }
 
-std::string DesktopFS::getExtension(std::shared_ptr<FileSystemEntity> file)
+std::string DesktopFS::getExtension(std::shared_ptr<FileSystemEntity> file) const
 {
     cppfs::FilePath fp(file->getPath());
     return fp.extension();
 }
 
-FSEntityPtr DesktopFS::getContainingDirectory(std::shared_ptr<FileSystemEntity> file)
+FSEntityPtr DesktopFS::getContainingDirectory(std::shared_ptr<FileSystemEntity> file) const
 {
     cppfs::FilePath fp(file->getPath());
     return getEntity(fp.directoryPath());
 }
 
-FSEntityList DesktopFS::getFileList(std::shared_ptr<FileSystemEntity> dir)
+FSEntityList DesktopFS::getFileList(std::shared_ptr<FileSystemEntity> dir) const
 {
     FSEntityList fileList;
     if (!dir->isDirectory())
@@ -64,12 +64,12 @@ FSEntityList DesktopFS::getFileList(std::shared_ptr<FileSystemEntity> dir)
     return fileList;
 }
 
-std::string DesktopFS::getFileContent(std::shared_ptr<FileSystemEntity> file)
+std::string DesktopFS::getFileContent(std::shared_ptr<FileSystemEntity> file) const
 {
     return std::static_pointer_cast<DesktopFSEntity>(file)->Handle.readFile();
 }
 
-std::shared_ptr<FileSystemEntity> DesktopFS::getEntity(const std::string& localPath, bool /*isWritable*/)
+std::shared_ptr<FileSystemEntity> DesktopFS::getEntity(const std::string& localPath, bool /*isDirectory*/) const
 {
     return std::make_shared<DesktopFSEntity>(cppfs::fs::open(localPath));
 }

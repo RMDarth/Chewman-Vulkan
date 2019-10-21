@@ -481,7 +481,7 @@ void ResourceManager::loadResources()
     LoadData data {};
     for (const auto& folder : _folderList)
     {
-        FSEntityPtr fh = _fileSystem->getEntity(folder);
+        FSEntityPtr fh = _fileSystem->getEntity(folder, true);
 
         if (fh->isDirectory())
         {
@@ -537,10 +537,10 @@ void ResourceManager::loadFolder(const std::string& folder)
     initializeResources(loadData);
 }
 
-ResourceManager::LoadData ResourceManager::getLoadDataFromFolder(const std::string& folder, const std::shared_ptr<FileSystem>& fileSystem)
+ResourceManager::LoadData ResourceManager::getLoadDataFromFolder(const std::string& folder, bool isFolder, const std::shared_ptr<FileSystem>& fileSystem)
 {
     LoadData data {};
-    FSEntityPtr fh = fileSystem->getEntity(folder);
+    FSEntityPtr fh = fileSystem->getEntity(folder, isFolder);
 
     if (fh->isDirectory())
     {
@@ -563,9 +563,14 @@ const std::vector<std::string> ResourceManager::getFolderList() const
     return _folderList;
 }
 
+std::string ResourceManager::loadFileContent(const std::string& file) const
+{
+    return _fileSystem->getFileContent(_fileSystem->getEntity(file));
+}
+
 void ResourceManager::loadDirectory(const std::string& directory, LoadData& loadData, const std::shared_ptr<FileSystem>& fileSystem)
 {
-    auto dir = fileSystem->getEntity(directory);
+    auto dir = fileSystem->getEntity(directory, true);
     auto fileList = fileSystem->getFileList(dir);
     for (auto& file : fileList)
     {
