@@ -29,12 +29,12 @@ class FileSystem
 public:
     virtual ~FileSystem() = default;
 
-    virtual std::string getExtension(FSEntityPtr file) = 0;
-    virtual FSEntityPtr getContainingDirectory(FSEntityPtr file) = 0;
-    virtual FSEntityList getFileList(FSEntityPtr dir) = 0;
-    virtual std::string getFileContent(FSEntityPtr file) = 0;
+    virtual std::string getExtension(FSEntityPtr file) const = 0;
+    virtual FSEntityPtr getContainingDirectory(FSEntityPtr file) const = 0;
+    virtual FSEntityList getFileList(FSEntityPtr dir) const = 0;
+    virtual std::string getFileContent(FSEntityPtr file) const = 0;
 
-    virtual FSEntityPtr getEntity(const std::string& localPath, bool isWritable = false) = 0;
+    virtual FSEntityPtr getEntity(const std::string& localPath, bool isDirectory = false) const = 0;
 };
 
 } // namespace SVE
