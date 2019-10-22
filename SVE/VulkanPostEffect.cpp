@@ -25,7 +25,7 @@ VulkanPostEffect::VulkanPostEffect(int index, int width, int height)
     createFramebuffers();
 
     VulkanSamplerHolder::SamplerInfo samplerInfo { _resolveImageView, _colorSampler };
-    VulkanSamplerInfoList list(3, samplerInfo);
+    VulkanSamplerInfoList list(_vulkanInstance->getSwapchainSize(), samplerInfo);
     _vulkanInstance->getSamplerHolder()->setSamplerInfo(TextureType::ScreenQuad, list, index);
 }
 

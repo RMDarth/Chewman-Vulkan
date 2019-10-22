@@ -23,16 +23,17 @@ VulkanScreenQuad::VulkanScreenQuad()
     createImages();
     createFramebuffers();
 
+    auto scSize = _vulkanInstance->getSwapchainSize();
     VulkanSamplerHolder::SamplerInfo samplerInfo { _resolveImageView[0], _colorSampler[0] };
-    VulkanSamplerInfoList list(3, samplerInfo);
+    VulkanSamplerInfoList list(scSize, samplerInfo);
     _vulkanInstance->getSamplerHolder()->setSamplerInfo(TextureType::ScreenQuad, list);
 
     VulkanSamplerHolder::SamplerInfo samplerInfoLate {_resolveImageView[1], _colorSampler[1] };
-    VulkanSamplerInfoList listLate(3, samplerInfoLate);
+    VulkanSamplerInfoList listLate(scSize, samplerInfoLate);
     _vulkanInstance->getSamplerHolder()->setSamplerInfo(TextureType::ScreenQuadSecond, listLate);
 
     VulkanSamplerHolder::SamplerInfo samplerInfoDepth {_depthImageView[1], _depthSampler };
-    VulkanSamplerInfoList listDepth(3, samplerInfoDepth);
+    VulkanSamplerInfoList listDepth(scSize, samplerInfoDepth);
     _vulkanInstance->getSamplerHolder()->setSamplerInfo(TextureType::ScreenQuadDepth, listDepth);
 }
 
