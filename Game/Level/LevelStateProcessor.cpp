@@ -3,6 +3,7 @@
 // Licensed under the MIT License
 #include <sstream>
 #include <iomanip>
+#include <future>
 #include "LevelStateProcessor.h"
 #include "Game/Game.h"
 #include "Game/Controls/ControlDocument.h"
@@ -16,6 +17,8 @@ LevelStateProcessor::LevelStateProcessor()
     _document = std::make_unique<ControlDocument>("resources/game/GUI/HUD.xml");
     _document->setMouseUpHandler(this);
     _document->hide();
+
+    _loadingFinished = false;
 }
 
 LevelStateProcessor::~LevelStateProcessor()
@@ -35,11 +38,18 @@ void LevelStateProcessor::initMap()
 
     std::stringstream ss;
     ss << "resources/game/levels/level" << levelNum << ".map";
-    _gameMapProcessor = std::make_unique<Chewman::GameMapProcessor>(_mapLoader.loadMap(ss.str()));
+    auto future = std::async(std::launch::async, [&]
+    {
+        _gameMapProcessor = std::make_unique<Chewman::GameMapProcessor>(_mapLoader.loadMap(ss.str()));
+        _loadingFinished = true;
+    });
 }
 
 GameState LevelStateProcessor::update(float deltaTime)
 {
+    if (_loadingFinished == false)
+        return GameState::Level;
+
     _gameMapProcessor->update(deltaTime);
     _time += deltaTime;
     updateHUD();
@@ -71,7 +81,12 @@ GameState LevelStateProcessor::update(float deltaTime)
     {
         --_countToRemove;
         if (!_countToRemove)
-            _oldGameMap.reset();
+        {
+            auto future = std::async(std::launch::async, [&]
+            {
+                _oldGameMap.reset();
+            });
+        }
     }
 
     return GameState::Level;
@@ -89,6 +104,7 @@ void LevelStateProcessor::show()
     {
         _progressManager.setStarted(true);
         _progressManager.setVictory(false);
+        _loadingFinished = false;
         initMap();
         _time = 0.0f;
     } else {

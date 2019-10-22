@@ -632,8 +632,8 @@ void VulkanInstance::createDevice()
 
     // TODO: move filtering method to EngineSettings
     VkPhysicalDeviceFeatures deviceFeatures {};
-    deviceFeatures.samplerAnisotropy = VK_TRUE;
-    deviceFeatures.shaderClipDistance = VK_TRUE;
+    //deviceFeatures.samplerAnisotropy = VK_TRUE;
+    //deviceFeatures.shaderClipDistance = VK_TRUE;
     //deviceFeatures.geometryShader = VK_TRUE;
     deviceFeatures.imageCubeArray = VK_TRUE;
 
@@ -823,7 +823,7 @@ void VulkanInstance::createSwapchain()
     // TODO: if we have different queues for presenting and drawing, we should specify them and set correct sharing
     swapchainCreateInfo.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE;
 
-    swapchainCreateInfo.preTransform = _surfaceCapabilities.currentTransform;
+    swapchainCreateInfo.preTransform = VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR;//_surfaceCapabilities.currentTransform;
     swapchainCreateInfo.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR; // this is how alpha color should affect other windows
     swapchainCreateInfo.presentMode = _presentMode;
     swapchainCreateInfo.clipped = VK_TRUE;

@@ -414,7 +414,7 @@ MaterialSettings loadMaterial(FSEntityPtr directory, const std::string& data)
     setOptional(materialSettings.isCubemap = document["isCubemap"].GetBool());
     setOptional(materialSettings.passType = passTypeMap.at(document["passType"].GetString()));
     setOptional(materialSettings.fragmentShaderName = document["fragmentShaderName"].GetString());
-    setOptional(materialSettings.geometryShaderName = document["geometryShaderName"].GetString());
+    //setOptional(materialSettings.geometryShaderName = document["geometryShaderName"].GetString());
     setOptional(materialSettings.vertexShaderName = document["vertexShaderName"].GetString());
     setOptional(materialSettings.textures = getTextureInfos(directory, document));
 

@@ -15,6 +15,9 @@
 #include "VulkanHeaders.h"
 #include <glm/gtc/matrix_transform.hpp>
 #include <memory>
+#include <thread>
+#include <future>
+#include <chrono>
 
 
 // Thanks to:
@@ -76,28 +79,38 @@ int runGame()
 
     SVE::Engine* engine = SVE::Engine::createInstance(window, "resources/main.engine", std::make_shared<SVE::DesktopFS>());
     {
+        using namespace std::chrono_literals;
         auto camera = engine->getSceneManager()->createMainCamera();
 
         // show loading screen
         engine->getResourceManager()->loadFolder("resources/loadingScreen");
         Chewman::ControlDocument loadingScreen("resources/game/GUI/loading.xml");
+
         engine->renderFrame(0.0f);
-        while (true)
+
+        auto future = std::async(std::launch::async, [&] {
+            std::cout << "Start loading resources..." << std::endl;
+
+            // load resources
+            engine->getResourceManager()->loadFolder("resources/shaders");
+            engine->getResourceManager()->loadFolder("resources/materials");
+            engine->getResourceManager()->loadFolder("resources/models");
+            engine->getResourceManager()->loadFolder("resources/fonts");
+            engine->getResourceManager()->loadFolder("resources");
+            std::cout << "Resources loading finished." << std::endl;
+
+            return 0;
+        });
+
+        auto status = future.wait_for(0ms);
+        while (status != std::future_status::ready)
         {
+            //engine->renderFrame(0.0f);
             SDL_Event event;
             SDL_PollEvent(&event);
-            if (event.window.event == SDL_WINDOWEVENT_FOCUS_GAINED)
-                break;
+            status = future.wait_for(0ms);
         }
-        std::cout << "Start loading resources..." << std::endl;
 
-        // load resources
-        engine->getResourceManager()->loadFolder("resources/shaders");
-        engine->getResourceManager()->loadFolder("resources/materials");
-        engine->getResourceManager()->loadFolder("resources/models");
-        engine->getResourceManager()->loadFolder("resources/fonts");
-        engine->getResourceManager()->loadFolder("resources");
-        std::cout << "Resources loading finished." << std::endl;
         loadingScreen.hide();
 
         auto windowSize = engine->getRenderWindowSize();

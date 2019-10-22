@@ -6,6 +6,7 @@
 #include "Game/Controls/IEventHandler.h"
 #include "GameMap.h"
 #include "GameMapLoader.h"
+#include <atomic>
 
 namespace Chewman
 {
@@ -43,6 +44,7 @@ private:
 
     std::unique_ptr<ControlDocument> _document;
     float _time = 0.0f;
+    std::atomic_bool _loadingFinished;
 
     // As prev game map could be still in some commands, we need to finish rendering them all before release
     // TODO: Fix this in Engine so it won't destroy until all commands are finished

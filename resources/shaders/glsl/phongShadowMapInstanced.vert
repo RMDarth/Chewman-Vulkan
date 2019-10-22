@@ -31,7 +31,6 @@ layout(location = 0) out OutData
 out gl_PerVertex
 {
     vec4 gl_Position;
-    float gl_ClipDistance[];
 };
 
 void main()
@@ -40,7 +39,6 @@ void main()
     vec4 camPos = uniforms.view * worldPos;
 
     gl_Position = uniforms.projection * camPos;
-    gl_ClipDistance[0] = dot(worldPos, uniforms.clipPlane);
     fragColor = inColor;
     fragTexCoord = inTexCoord;
 

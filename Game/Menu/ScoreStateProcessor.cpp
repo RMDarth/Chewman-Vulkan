@@ -6,6 +6,7 @@
 
 #include <Game/Game.h>
 #include <iomanip>
+#include <sstream>
 
 namespace Chewman
 {

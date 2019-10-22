@@ -231,5 +231,5 @@ if (UNIX)
         include_directories(${TinyXML2_INCLUDE_DIRS})
     endif(APPLE)
 
-    target_link_libraries(Chewman ${SDL2_LIBRARIES} assimp cppfs vulkan tinyxml2)
+    target_link_libraries(Chewman ${SDL2_LIBRARIES} assimp cppfs vulkan tinyxml2 pthread)
 endif(UNIX)
