@@ -111,10 +111,13 @@ void VulkanUtils::createOptimizedBuffer(const void *bufferData, VkDeviceSize buf
                  stagingBufferMemory);
 
     // Fill temporary buffer with vertex/index data
-    void* data;
-    vkMapMemory(_vulkanInstance->getLogicalDevice(), stagingBufferMemory, 0, bufferSize, 0, &data);
-    memcpy(data, bufferData, (size_t) bufferSize);
-    vkUnmapMemory(_vulkanInstance->getLogicalDevice(), stagingBufferMemory);
+    if (bufferData != nullptr)
+    {
+        void* data;
+        vkMapMemory(_vulkanInstance->getLogicalDevice(), stagingBufferMemory, 0, bufferSize, 0, &data);
+        memcpy(data, bufferData, (size_t) bufferSize);
+        vkUnmapMemory(_vulkanInstance->getLogicalDevice(), stagingBufferMemory);
+    }
 
     // create fast GPU-local buffer for data
     createBuffer(bufferSize,

@@ -44,7 +44,7 @@ VulkanComputeEntity::~VulkanComputeEntity()
 
 VkBuffer VulkanComputeEntity::getComputeBuffer() const
 {
-    return _buffer;
+    return _buffer[1];
 }
 
 void VulkanComputeEntity::setUniformData(const UniformData &uniformData) const
@@ -84,7 +84,7 @@ void VulkanComputeEntity::applyComputeCommands() const
             1,
             &_descriptorSets[_vulkanInstance->getCurrentImageIndex()], 0, nullptr);
 
-    vkCmdDispatch(_commandBuffer, _computeSettings.elementsCount / 30, 1, 1);
+    vkCmdDispatch(_commandBuffer, _computeSettings.elementsCount / 32, 1, 1);
 }
 
 void VulkanComputeEntity::createPipelineLayout()
@@ -144,27 +144,34 @@ void VulkanComputeEntity::createBufferResources()
 {
     VkBufferUsageFlags flags = VK_BUFFER_USAGE_STORAGE_TEXEL_BUFFER_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
 
-    _vulkanUtils.createOptimizedBuffer(_computeSettings.data.data(), _computeSettings.data.size(), _buffer, _bufferMemory, flags);
+    _vulkanUtils.createOptimizedBuffer(_computeSettings.data.data(), _computeSettings.data.size(), _buffer[0], _bufferMemory[0], VK_BUFFER_USAGE_STORAGE_TEXEL_BUFFER_BIT);
+    _vulkanUtils.createOptimizedBuffer(nullptr, _computeSettings.data.size() * 6, _buffer[1], _bufferMemory[1], flags);
 
-    VkBufferViewCreateInfo bufferViewCreateInfo{};
-    bufferViewCreateInfo.sType = VK_STRUCTURE_TYPE_BUFFER_VIEW_CREATE_INFO;
-    bufferViewCreateInfo.buffer = _buffer;
-    bufferViewCreateInfo.format = VK_FORMAT_R32G32B32A32_SFLOAT;
-    bufferViewCreateInfo.offset = 0;
-    bufferViewCreateInfo.range = VK_WHOLE_SIZE;
-
-    VkResult result = vkCreateBufferView(_device, &bufferViewCreateInfo, nullptr, &_bufferView);
-    if( result != VK_SUCCESS )
+    for (auto i = 0; i < 2; ++i)
     {
-        throw VulkanException("Can't create Vulkan buffer view");
+        VkBufferViewCreateInfo bufferViewCreateInfo{};
+        bufferViewCreateInfo.sType = VK_STRUCTURE_TYPE_BUFFER_VIEW_CREATE_INFO;
+        bufferViewCreateInfo.buffer = _buffer[i];
+        bufferViewCreateInfo.format = VK_FORMAT_R32G32B32A32_SFLOAT;
+        bufferViewCreateInfo.offset = 0;
+        bufferViewCreateInfo.range = VK_WHOLE_SIZE;
+
+        VkResult result = vkCreateBufferView(_device, &bufferViewCreateInfo, nullptr, &_bufferView[i]);
+        if (result != VK_SUCCESS)
+        {
+            throw VulkanException("Can't create Vulkan buffer view");
+        }
     }
 }
 
 void VulkanComputeEntity::deleteBufferResources()
 {
-    vkDestroyBuffer(_device, _buffer, nullptr);
-    vkDestroyBufferView(_device, _bufferView, nullptr);
-    vkFreeMemory(_device, _bufferMemory, nullptr);
+    for (auto i = 0; i < 2; ++i)
+    {
+        vkDestroyBuffer(_device, _buffer[i], nullptr);
+        vkDestroyBufferView(_device, _bufferView[i], nullptr);
+        vkFreeMemory(_device, _bufferMemory[i], nullptr);
+    }
 }
 
 void VulkanComputeEntity::createUniformAndStorageBuffers()
@@ -195,8 +202,6 @@ void VulkanComputeEntity::createUniformAndStorageBuffers()
                 _storageBuffers[i],
                 _storageBuffersMemory[i]);
     }
-
-
 }
 
 void VulkanComputeEntity::deleteUniformAndStorageBuffers()
@@ -230,7 +235,7 @@ void VulkanComputeEntity::createDescriptorPool()
     poolSizes[1].type = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
     poolSizes[1].descriptorCount = _storageBuffers.size();
     poolSizes[2].type = VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER;
-    poolSizes[2].descriptorCount = swapchainSize;
+    poolSizes[2].descriptorCount = swapchainSize * 2;
     for (auto& poolSize : poolSizes)
         if (poolSize.descriptorCount == 0)
             poolSize.descriptorCount = 1;
@@ -297,18 +302,21 @@ void VulkanComputeEntity::createDescriptorSets()
         std::vector<VkWriteDescriptorSet> descriptorWrites;
         auto bindingIndex = 0u;
         // Add texture samplers
-        if (_buffer != VK_NULL_HANDLE)
+        for (auto j = 0; j < 2; ++j)
         {
-            VkWriteDescriptorSet dataBuffer {};
-            dataBuffer.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-            dataBuffer.dstSet = _descriptorSets[i];
-            dataBuffer.dstBinding = bindingIndex;
-            dataBuffer.dstArrayElement = 0;
-            dataBuffer.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER;
-            dataBuffer.descriptorCount = 1;
-            dataBuffer.pTexelBufferView = &_bufferView;
-            descriptorWrites.push_back(dataBuffer);
-            bindingIndex ++;
+            if (_buffer[j] != VK_NULL_HANDLE)
+            {
+                VkWriteDescriptorSet dataBuffer{};
+                dataBuffer.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+                dataBuffer.dstSet = _descriptorSets[i];
+                dataBuffer.dstBinding = bindingIndex;
+                dataBuffer.dstArrayElement = 0;
+                dataBuffer.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER;
+                dataBuffer.descriptorCount = 1;
+                dataBuffer.pTexelBufferView = &_bufferView[j];
+                descriptorWrites.push_back(dataBuffer);
+                bindingIndex++;
+            }
         }
         // Add uniforms
         if (!_uniformBuffers.empty())
