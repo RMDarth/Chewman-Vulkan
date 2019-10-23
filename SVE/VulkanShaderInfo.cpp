@@ -369,15 +369,18 @@ void VulkanShaderInfo::createDescriptorSetLayout()
 
     if (_shaderSettings.shaderType == ShaderType::ComputeShader)
     {
-        VkDescriptorSetLayoutBinding texelStorageLayoutBinding {};
-        texelStorageLayoutBinding.binding = bindingNum;
-        texelStorageLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER;
-        texelStorageLayoutBinding.descriptorCount = 1;
-        texelStorageLayoutBinding.stageFlags = _shaderStage;
-        texelStorageLayoutBinding.pImmutableSamplers = nullptr;
+        for (auto j = 0; j < 2; ++j)
+        {
+            VkDescriptorSetLayoutBinding texelStorageLayoutBinding{};
+            texelStorageLayoutBinding.binding = bindingNum;
+            texelStorageLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER;
+            texelStorageLayoutBinding.descriptorCount = 1;
+            texelStorageLayoutBinding.stageFlags = _shaderStage;
+            texelStorageLayoutBinding.pImmutableSamplers = nullptr;
 
-        descriptorList.push_back(texelStorageLayoutBinding);
-        bindingNum++;
+            descriptorList.push_back(texelStorageLayoutBinding);
+            bindingNum++;
+        }
     }
 
     for (auto i = 0u; i < _shaderSettings.samplerNamesList.size(); i++)

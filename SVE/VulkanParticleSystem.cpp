@@ -31,7 +31,7 @@ void VulkanParticleSystem::applyDrawingCommands(uint32_t bufferIndex)
     VkDeviceSize offset = 0;
     vkCmdBindVertexBuffers(commandBuffer, 0, 1, &_buffer, &offset);
 
-    vkCmdDraw(commandBuffer, _particleSettings.quota, 1, 0, 0);
+    vkCmdDraw(commandBuffer, _particleSettings.quota * 6, 1, 0, 0);
 }
 
 

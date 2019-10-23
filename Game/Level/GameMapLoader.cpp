@@ -7,6 +7,7 @@
 #include <SVE/Engine.h>
 #include <SVE/MeshManager.h>
 #include <SVE/SceneManager.h>
+#include <SVE/ResourceManager.h>
 
 #include "Bomb.h"
 #include "Game/Level/Enemies/Nun.h"
@@ -15,7 +16,7 @@
 #include "Game/Level/Enemies/Witch.h"
 #include "Game/Level/Enemies/Knight.h"
 
-#include <fstream>
+#include <sstream>
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/quaternion.hpp>
@@ -125,7 +126,7 @@ std::shared_ptr<GameMap> GameMapLoader::loadMap(const std::string& filename)
 {
     auto gameMap = std::make_shared<GameMap>();
 
-    std::ifstream fin(filename);
+    std::stringstream fin(SVE::Engine::getInstance()->getResourceManager()->loadFileContent(filename));
     fin >> gameMap->width >> gameMap->height;
 
     uint8_t style, waterStyle;
@@ -298,8 +299,6 @@ std::shared_ptr<GameMap> GameMapLoader::loadMap(const std::string& filename)
 
     createSmoke(*gameMap);
     createLava(*gameMap);
-
-    fin.close();
 
     return gameMap;
 }

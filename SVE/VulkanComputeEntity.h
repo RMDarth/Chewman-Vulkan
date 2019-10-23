@@ -60,9 +60,10 @@ private:
     VkPipelineLayout _pipelineLayout;
     VkPipeline _pipeline;
 
-    VkDeviceMemory _bufferMemory;
-    VkBuffer _buffer;
-    VkBufferView _bufferView;
+    // One for particles configuration, second for final vertices
+    VkDeviceMemory _bufferMemory[2];
+    VkBuffer _buffer[2];
+    VkBufferView _bufferView[2];
 
     std::vector<VkDeviceMemory> _uniformBuffersMemory;
     std::vector<VkBuffer> _uniformBuffers;
