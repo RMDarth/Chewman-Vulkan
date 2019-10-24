@@ -119,7 +119,7 @@ int runGame()
         engine->getPostEffectManager()->addPostEffect("VBlurEffect", "VBlurEffect",windowSize.x / 8, windowSize.y / 8);
         engine->getPostEffectManager()->addPostEffect("HBlurEffect", "HBlurEffect",windowSize.x / 8, windowSize.y / 8);
         engine->getPostEffectManager()->addPostEffect("BloomEffect", "BloomEffect");
-        //engine->getPostEffectManager()->addPostEffect("GrayscaleEffect", "GrayscaleEffect");
+        //engine->getPostEffectManager()->addPostEffect("GrayscaleEffect", "GrayscaleEffect", 1024, 1024);
         // engine->getPostEffectManager()->addPostEffect("PencilEffect", "PencilEffect");
 
         // configure light

@@ -10,6 +10,10 @@
     "useDepthWrite": false,
     "textures": [
         {
+            "samplerName": "smokeSampler",
+            "filename": "textures/smoke.png"
+        },
+        {
             "samplerName": "depthSampler",
             "textureType": "ScreenQuadDepth"
         }

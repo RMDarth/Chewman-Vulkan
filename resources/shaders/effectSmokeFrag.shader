@@ -1,13 +1,9 @@
 {
     "name": "smokeFragmentShader",
-    "filename": "glsl/effectSmoke.frag.spv",
+    "filename": "glsl/effectSmoke2.frag.spv",
     "shaderType": "FragmentShader",
     "samplerNamesList": [
+        "smokeSampler",
         "depthSampler"
-    ],
-    "uniformList": [
-        { "uniformType": "CameraPosition" },
-        { "uniformType": "MaterialInfo" },
-        { "uniformType": "Time" }
     ]
 }

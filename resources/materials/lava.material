@@ -5,8 +5,8 @@
     "passType": "ScreenQuadMRTPass",
     "textures": [
         {
-            "samplerName": "noiseSampler",
-            "filename": "textures/noise.png"
+            "samplerName": "lavaSampler",
+            "filename": "textures/lava1.png"
         }
     ]
 }
