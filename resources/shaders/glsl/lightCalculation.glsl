@@ -38,6 +38,19 @@ float PCFShadowSunLight()
     return shadowFactor / count;
 }
 
+float SimpleShadowSunLight()
+{
+    // Translate from NDC to shadow map space (Vulkan's Z is already in [0..1])
+    vec2 shadowMapCoord = fragDirectLightSpacePos.xy * 0.5 + 0.5;
+
+    // Check if the sample is in the light or in the shadow
+    if (fragDirectLightSpacePos.z > texture(directShadowTex, shadowMapCoord.xy).x)
+        return 0.4; // In the shadow
+
+    // In the light
+    return 1.0;
+}
+
 /////// Light and shadow calculation ////////////
 vec3 calculateLight(vec3 normal, vec3 viewDir)
 {
@@ -48,7 +61,7 @@ vec3 calculateLight(vec3 normal, vec3 viewDir)
     if ((ubo.lightInfo.lightFlags & LI_DirectionalLight) != 0)
     {
         vec3 curLight = CalcDirLight(ubo.dirLight, normal, viewDir, ubo.materialInfo);
-        shadow = PCFShadowSunLight();
+        shadow = SimpleShadowSunLight();
         lightEffect += curLight * (shadow);
         count++;
     }

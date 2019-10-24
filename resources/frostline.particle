@@ -3,7 +3,7 @@
     "materialName": "FrostLineParticleMaterial",
     "computeShaderName": "particlesComputeShader",
 
-    "quota": 3000,
+    "quota": 750,
     "sort": true,
 
     "particleEmitter":

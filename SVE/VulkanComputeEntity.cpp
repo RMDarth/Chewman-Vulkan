@@ -144,8 +144,9 @@ void VulkanComputeEntity::createBufferResources()
 {
     VkBufferUsageFlags flags = VK_BUFFER_USAGE_STORAGE_TEXEL_BUFFER_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
 
+    std::vector<uint8_t> verticesData(_computeSettings.data.size() * 6, 0);
     _vulkanUtils.createOptimizedBuffer(_computeSettings.data.data(), _computeSettings.data.size(), _buffer[0], _bufferMemory[0], VK_BUFFER_USAGE_STORAGE_TEXEL_BUFFER_BIT);
-    _vulkanUtils.createOptimizedBuffer(nullptr, _computeSettings.data.size() * 6, _buffer[1], _bufferMemory[1], flags);
+    _vulkanUtils.createOptimizedBuffer(verticesData.data(), _computeSettings.data.size() * 6, _buffer[1], _bufferMemory[1], flags);
 
     for (auto i = 0; i < 2; ++i)
     {

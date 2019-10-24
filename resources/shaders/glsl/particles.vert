@@ -33,7 +33,7 @@ vec2 rotateVector(float x, float y)
 
 void main()
 {
-    if (inPositionLife.w > 0 )
+    //if (inPositionLife.w > 0 )
     {
         float halfSize = inSpeedSize.w * 0.5;
         float halfSizeHoriz = halfSize * ubo.emitter.sizeScale;
@@ -49,33 +49,34 @@ void main()
         }
         else if (index == 1)
         {
-            gl_Position = ubo.projection * (position + vec4(rotateVector(-halfSize, -halfSizeHoriz), 0.0, 0.0 ));
+            gl_Position = ubo.projection * (position + vec4(rotateVector(-halfSize, -halfSizeHoriz), 0.0, 0.0));
             fragTexCoord = vec2(0.0, 0.0);
         }
         else if (index == 2)
         {
-            gl_Position = ubo.projection * (position + vec4(rotateVector(halfSize, halfSizeHoriz), 0.0, 0.0 ));
+            gl_Position = ubo.projection * (position + vec4(rotateVector(halfSize, halfSizeHoriz), 0.0, 0.0));
             fragTexCoord = vec2(1.0, 1.0);
         }
         else if (index == 3)
         {
-            gl_Position = ubo.projection * (position + vec4(rotateVector(halfSize, halfSizeHoriz), 0.0, 0.0 ));
+            gl_Position = ubo.projection * (position + vec4(rotateVector(halfSize, halfSizeHoriz), 0.0, 0.0));
             fragTexCoord = vec2(1.0, 1.0);
         }
         else if (index == 4)
         {
-            gl_Position = ubo.projection * (position + vec4(rotateVector(-halfSize, -halfSizeHoriz), 0.0, 0.0 ));
+            gl_Position = ubo.projection * (position + vec4(rotateVector(-halfSize, -halfSizeHoriz), 0.0, 0.0));
             fragTexCoord = vec2(0.0, 0.0);
         }
         else
         {
-            gl_Position = ubo.projection * (position + vec4(rotateVector(halfSize, -halfSizeHoriz), 0.0, 0.0 ));
+            gl_Position = ubo.projection * (position + vec4(rotateVector(halfSize, -halfSizeHoriz), 0.0, 0.0));
             fragTexCoord = vec2(1.0, 0.0);
         }
-    } else {
-        fragColor = vec4(1,0,0,1);
-        fragLifePercent = -1;
-        fragTexCoord = vec2(0, 0);
-        gl_Position = vec4(0);
     }
+//   else {
+//        fragColor = vec4(1,0,0,1);
+//        fragLifePercent = -1;
+//        fragTexCoord = vec2(0, 0);
+//        gl_Position = vec4(0);
+//    }
 }

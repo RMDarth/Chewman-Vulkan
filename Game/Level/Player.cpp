@@ -148,6 +148,34 @@ void Player::processInput(const SDL_Event& event)
             _nextMove = MoveDirection::Right;
         if (keystates[SDL_SCANCODE_S])
             _nextMove = MoveDirection::Left;
+
+        if (event.type == SDL_MOUSEBUTTONDOWN)
+        {
+            _startSlideX = event.button.x;
+            _startSlideY = event.button.y;
+        }
+        if (event.type == SDL_MOUSEBUTTONUP)
+        {
+            auto windowSize = SVE::Engine::getInstance()->getRenderWindowSize();
+            if (abs(_startSlideX - event.button.x) < windowSize.x * 0.002
+                || abs(_startSlideY - event.button.y) < windowSize.y * 0.002)
+            {
+                return;
+            }
+
+            if (abs(event.button.x - _startSlideX) > abs(event.button.y - _startSlideY))
+            {
+                if (_startSlideX > event.button.x)
+                    _nextMove = MoveDirection::Down;
+                else
+                    _nextMove = MoveDirection::Up;
+            } else {
+                if (_startSlideY > event.button.y)
+                    _nextMove = MoveDirection::Right;
+                else
+                    _nextMove = MoveDirection::Left;
+            }
+        }
     }
 }
 

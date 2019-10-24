@@ -53,6 +53,8 @@ private:
     bool _followMode = true;
 
     bool _isCameraFollow = true;
+    int _startSlideX;
+    int _startSlideY;
 
     float _appearTime = 0.0f;
     bool _appearing = false;

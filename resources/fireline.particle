@@ -3,7 +3,7 @@
     "materialName": "FireParticleMaterial",
     "computeShaderName": "particlesComputeShader",
 
-    "quota": 5000,
+    "quota": 500,
     "sort": true,
 
     "particleEmitter":

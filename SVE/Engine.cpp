@@ -332,7 +332,8 @@ void Engine::renderFrameImpl()
                     sunLightShadowMap->getVulkanShadowMap()->startRenderCommandBufferCreation(
                             _vulkanInstance->getCurrentFrameIndex(),
                             _vulkanInstance->getCurrentImageIndex());
-            createNodeDrawCommands(_sceneManager->getRootNode(), bufferIndex, currentImage);
+            // TODO: Temporary remove shadows for android build. Later should make it configurable.
+            //createNodeDrawCommands(_sceneManager->getRootNode(), bufferIndex, currentImage);
             sunLightShadowMap->getVulkanShadowMap()->endRenderCommandBufferCreation(
                     _vulkanInstance->getCurrentFrameIndex());
         }

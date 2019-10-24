@@ -167,7 +167,7 @@ private:
     VkDeviceMemory _depthImageMemory;
     VkImageView _depthImageView;
 
-    const uint32_t MAX_FRAMES_IN_FLIGHT = 2; // max parallel processing frame
+    const uint32_t MAX_FRAMES_IN_FLIGHT = 3; // max parallel processing frame
     std::vector<VkSemaphore> _computeParticlesReadySemaphore;
     std::vector<VkSemaphore> _shadowMapDirectReadySemaphores;
     std::vector<VkSemaphore> _shadowMapPointReadySemaphores;

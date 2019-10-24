@@ -564,7 +564,9 @@ void VulkanInstance::createInstance()
         instanceInfo.ppEnabledLayerNames = validationLayers.data();
     }
 
-    if (vkCreateInstance(&instanceInfo, nullptr, &_instance) != VK_SUCCESS)
+    auto result = vkCreateInstance(&instanceInfo, nullptr, &_instance);
+
+    if (result != VK_SUCCESS)
     {
         throw VulkanException("Vulkan Instance not created");
     }
@@ -771,7 +773,7 @@ void VulkanInstance::createSurfaceParameters()
                 VK_PRESENT_MODE_FIFO_KHR,
                 VK_PRESENT_MODE_MAILBOX_KHR,
                 VK_PRESENT_MODE_IMMEDIATE_KHR,
-                VK_PRESENT_MODE_MAILBOX_KHR
+                VK_PRESENT_MODE_FIFO_KHR
         };
         auto expectedPresentMode = presentModesMap[static_cast<uint8_t>(_engineSettings.presentMode)];
         if (std::find(presentModesList.begin(), presentModesList.end(), expectedPresentMode) != presentModesList.end())
@@ -868,7 +870,7 @@ void VulkanInstance::createRenderPass()
     VkAttachmentDescription colorAttachment {}; // color buffer attachment to render pass
     colorAttachment.format = _surfaceFormat.format;
     colorAttachment.samples = _msaaSamples; // for multisampling
-    colorAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR; // clear every frame
+    colorAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE; // clear every frame
     colorAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE; // should be STORE for rendering
     colorAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
     colorAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;

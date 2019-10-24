@@ -141,6 +141,12 @@ void main()
             size += scaleSpeed * ubo.deltaTime;
             color += ubo.affector.colorChanger * ubo.deltaTime;
             life -= ubo.deltaTime + ubo.affector.lifeDrain * ubo.deltaTime;
+            if (life < 0.01)
+            {
+                size = 0;
+                life = -1;
+                position.xyz = vec3(0);
+            }
 
             storeParticle(vec4(position.xyz, life),
                           color,

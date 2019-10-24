@@ -6,5 +6,6 @@
     "initShadows": true,
     "initWater": false,
     "useCascadeShadowMap": false,
-    "useScreenQuad": true
+    "useScreenQuad": true,
+    "MSAALevel": 1
 }

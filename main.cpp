@@ -111,6 +111,7 @@ int runGame()
             status = future.wait_for(0ms);
         }
 
+        future.get();
         loadingScreen.hide();
 
         auto windowSize = engine->getRenderWindowSize();
@@ -127,7 +128,7 @@ int runGame()
                 glm::translate(glm::mat4(1), glm::vec3(80, 80, -80)));
 
         // create camera
-        camera->setNearFarPlane(0.1f, 500.0f);
+        camera->setNearFarPlane(0.1f, 50.0f);
         camera->setPosition(glm::vec3(5.0f, 5.0f, 5.0f));
 
         // create skybox

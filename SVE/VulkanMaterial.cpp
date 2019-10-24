@@ -801,7 +801,7 @@ void VulkanMaterial::createTextureSampler()
         samplerCreateInfo.addressModeV = addressMode;
         samplerCreateInfo.addressModeW = addressMode;
         samplerCreateInfo.borderColor = getBorderColor(_materialSettings.textures[i].textureBorderColor);
-        samplerCreateInfo.anisotropyEnable = VK_TRUE;
+        //samplerCreateInfo.anisotropyEnable = VK_TRUE;
         samplerCreateInfo.maxAnisotropy = 16;
         //samplerCreateInfo.borderColor = VK_BORDER_COLOR_INT_OPAQUE_BLACK;
         samplerCreateInfo.unnormalizedCoordinates = VK_FALSE;

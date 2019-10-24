@@ -162,7 +162,7 @@ void VulkanScreenQuad::createRenderPass()
     {
         colorAttachment[i].format = _vulkanInstance->getSurfaceColorFormat();
         colorAttachment[i].samples = sampleCount;
-        colorAttachment[i].loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR; // clear every frame
+        colorAttachment[i].loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE; // clear every frame
         colorAttachment[i].storeOp = VK_ATTACHMENT_STORE_OP_STORE; // should be STORE for rendering
         colorAttachment[i].stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
         colorAttachment[i].stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
@@ -178,6 +178,7 @@ void VulkanScreenQuad::createRenderPass()
         colorAttachmentResolve[i].initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
         colorAttachmentResolve[i].finalLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
     }
+    colorAttachment[2].loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
     colorAttachment[1].loadOp = VK_ATTACHMENT_LOAD_OP_LOAD; // reuse data from previous pass
     colorAttachment[1].initialLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 
@@ -444,7 +445,7 @@ void VulkanScreenQuad::createImages()
     samplerCreateInfo.addressModeU = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
     samplerCreateInfo.addressModeV = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
     samplerCreateInfo.addressModeW = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
-    samplerCreateInfo.anisotropyEnable = VK_TRUE;
+    //samplerCreateInfo.anisotropyEnable = VK_TRUE;
     samplerCreateInfo.maxAnisotropy = 16;
     samplerCreateInfo.borderColor = VK_BORDER_COLOR_INT_OPAQUE_BLACK;
     samplerCreateInfo.compareEnable = VK_FALSE;

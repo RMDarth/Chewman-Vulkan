@@ -7,6 +7,8 @@
 #include "LevelStateProcessor.h"
 #include "Game/Game.h"
 #include "Game/Controls/ControlDocument.h"
+#include "SVE/SceneManager.h"
+#include "SVE/LightManager.h"
 
 namespace Chewman
 {
@@ -38,10 +40,12 @@ void LevelStateProcessor::initMap()
 
     std::stringstream ss;
     ss << "resources/game/levels/level" << levelNum << ".map";
+    // TODO: Display some "Loading" message box while level is loading
     auto future = std::async(std::launch::async, [&]
     {
         _gameMapProcessor = std::make_unique<Chewman::GameMapProcessor>(_mapLoader.loadMap(ss.str()));
         _loadingFinished = true;
+        _gameMapProcessor->setVisible(true);
     });
 }
 
@@ -94,6 +98,9 @@ GameState LevelStateProcessor::update(float deltaTime)
 
 void LevelStateProcessor::processInput(const SDL_Event& event)
 {
+    if (!_loadingFinished)
+        return;
+
     _gameMapProcessor->processInput(event);
     processDocument(event, _document.get());
 }
@@ -109,8 +116,9 @@ void LevelStateProcessor::show()
         _time = 0.0f;
     } else {
         _gameMapProcessor->setState(GameMapState::Game);
+        _gameMapProcessor->setVisible(true);
     }
-    _gameMapProcessor->setVisible(true);
+
     _document->show();
 }
 
@@ -133,6 +141,23 @@ void LevelStateProcessor::processEvent(Control* control, IEventHandler::EventTyp
         {
             _gameMapProcessor->setState(GameMapState::Pause);
             Game::getInstance()->setState(GameState::Pause);
+        }
+        if (control->getName() == "lifeimg")
+        {
+            static bool isNight = false;
+            auto sunLight = SVE::Engine::getInstance()->getSceneManager()->getLightManager()->getDirectionLight();
+            if (isNight)
+            {
+                sunLight->getLightSettings().ambientStrength = {0.2f, 0.2f, 0.2f, 1.0f};
+                sunLight->getLightSettings().diffuseStrength = {1.0f, 1.0f, 1.0f, 1.0f};
+                sunLight->getLightSettings().specularStrength = {0.5f, 0.5f, 0.5f, 1.0f};
+                isNight = false;
+            } else {
+                isNight = true;
+                sunLight->getLightSettings().ambientStrength = {0.05f, 0.05f, 0.05f, 1.0f};
+                sunLight->getLightSettings().diffuseStrength = {0.1f, 0.1f, 0.1f, 1.0f};
+                sunLight->getLightSettings().specularStrength = {0.05f, 0.05f, 0.05f, 1.0f};
+            }
         }
     }
 }
