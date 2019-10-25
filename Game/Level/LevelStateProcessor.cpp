@@ -4,6 +4,7 @@
 #include <sstream>
 #include <iomanip>
 #include <future>
+#include <glm/gtc/matrix_transform.hpp>
 #include "LevelStateProcessor.h"
 #include "Game/Game.h"
 #include "Game/Controls/ControlDocument.h"
@@ -151,12 +152,16 @@ void LevelStateProcessor::processEvent(Control* control, IEventHandler::EventTyp
                 sunLight->getLightSettings().ambientStrength = {0.2f, 0.2f, 0.2f, 1.0f};
                 sunLight->getLightSettings().diffuseStrength = {1.0f, 1.0f, 1.0f, 1.0f};
                 sunLight->getLightSettings().specularStrength = {0.5f, 0.5f, 0.5f, 1.0f};
+                sunLight->setNodeTransformation(
+                        glm::translate(glm::mat4(1), glm::vec3(80, 80, -80)));
                 isNight = false;
             } else {
                 isNight = true;
-                sunLight->getLightSettings().ambientStrength = {0.05f, 0.05f, 0.05f, 1.0f};
-                sunLight->getLightSettings().diffuseStrength = {0.1f, 0.1f, 0.1f, 1.0f};
-                sunLight->getLightSettings().specularStrength = {0.05f, 0.05f, 0.05f, 1.0f};
+                sunLight->getLightSettings().ambientStrength = {0.08f, 0.08f, 0.08f, 1.0f};
+                sunLight->getLightSettings().diffuseStrength = {0.15f, 0.15f, 0.15f, 1.0f};
+                sunLight->getLightSettings().specularStrength = {0.08f, 0.08f, 0.08f, 1.0f};
+                sunLight->setNodeTransformation(
+                        glm::translate(glm::mat4(1), glm::vec3(-20, 80, 80)));
             }
         }
     }

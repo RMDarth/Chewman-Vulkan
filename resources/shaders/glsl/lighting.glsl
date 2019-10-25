@@ -96,6 +96,11 @@ struct MaterialInfo
     // float[3] padding
 };
 
+float sqLen(vec3 v)
+{
+    return v.x*v.x + v.y*v.y + v.z*v.z;
+}
+
 // calculates the color when using a directional light.
 vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir, MaterialInfo material)
 {
@@ -115,7 +120,13 @@ vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir, MaterialInfo materi
 // calculates the color when using a point light.
 vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir, MaterialInfo material)
 {
-    vec3 lightDir = normalize(vec3(light.position) - fragPos);
+    vec3 lightDir = vec3(light.position) - fragPos;
+    float dist = sqLen(lightDir);
+    if (dist > 5 * 5)
+        return vec3(0,0,0);
+    float koef = smoothstep(5*5, 0.0, dist);
+
+    lightDir = normalize(lightDir);
     // diffuse shading
     float diff = max(dot(normal, lightDir), 0.0);
     // specular shading
@@ -131,7 +142,7 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir, M
     ambient *= attenuation;
     diffuse *= attenuation;
     specular *= attenuation;
-    return (ambient + diffuse + specular);
+    return (ambient + diffuse + specular) * koef;
 }
 
 vec3 CalcLineLight(LineLight light, vec3 normal, vec3 fragPos, vec3 viewDir, MaterialInfo material)
