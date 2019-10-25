@@ -35,6 +35,7 @@ Knight::Knight(GameMap* map, glm::ivec2 startPos)
 
     _attackMesh = std::make_shared<SVE::MeshEntity>("knightAttack");
     _attackMesh->setMaterial(_normalMaterial);
+    _attackMesh->getMaterialInfo()->ambient = {0.3, 0.3, 0.3, 1.0 };
 }
 
 void Knight::updatePathMap(GameMap* map)

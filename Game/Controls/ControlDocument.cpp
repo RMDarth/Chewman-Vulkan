@@ -75,6 +75,13 @@ void ControlDocument::addChildren(std::shared_ptr<Control> parent, tinyxml2::XML
         float width = xmlControl->FloatAttribute("width");
         float height = xmlControl->FloatAttribute("height");
 
+        if (width < 0)
+        {
+            auto parentSize = parent->getSize();
+            auto realWidth = -height * parentSize.y * width;
+            width = realWidth / parentSize.x;
+        }
+
         nextX += width + padding;
 
         if (xmlControl->Attribute("alignment") != nullptr)

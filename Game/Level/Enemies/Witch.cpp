@@ -27,9 +27,11 @@ Witch::Witch(GameMap* map, glm::ivec2 startPos)
 
     _castMesh = std::make_shared<SVE::MeshEntity>("witchCast");
     _castMesh->setMaterial(_normalMaterial);
+    _castMesh->getMaterialInfo()->ambient = {0.3, 0.3, 0.3, 1.0 };
 
     _teleportMesh = std::make_shared<SVE::MeshEntity>("witchCastTeleport");
     _teleportMesh->setMaterial(_normalMaterial);
+    _teleportMesh->getMaterialInfo()->ambient = {0.3, 0.3, 0.3, 1.0 };
 
     _teleportPS = std::make_shared<SVE::ParticleSystemEntity>("WitchTeleport");
     _teleportPS->getMaterialInfo()->diffuse = glm::vec4(0.7, 0.3, 1.0, 1.5f);

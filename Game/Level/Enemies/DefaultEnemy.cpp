@@ -42,6 +42,7 @@ DefaultEnemy::DefaultEnemy(GameMap* map, glm::ivec2 startPos, EnemyType enemyTyp
     _rotateNode->attachSceneNode(_meshNode);
     _enemyMesh = std::make_shared<SVE::MeshEntity>(meshName);
     _enemyMesh->setMaterial(_normalMaterial);
+    _enemyMesh->getMaterialInfo()->ambient = {0.3, 0.3, 0.3, 1.0 };
     _meshNode->attachEntity(_enemyMesh);
 
     _debuffNode = engine->getSceneManager()->createSceneNode();

@@ -10,5 +10,7 @@
 	<Label name="CoinsText" text="C:" x="0.6" y="0.02" width="0.1" height="0.05" mousetransparent="true" />
 	<Label name="Coins" text="0" x="0.68" y="0.02" width="0.1" height="0.05" mousetransparent="true" />
 
+	<Label name="FPS" text="0" x="0.6" y="0.10" width="0.1" height="0.05" mousetransparent="true" />
+
 	<Button name="pause" text="" x="0.87" y="0.01" width="0.1" height="-1" image="buttons/pause.png" hoverimage="buttons/pause_hover.png" pressedimage="buttons/pause_pressed.png"/>
 </document>
