@@ -39,6 +39,9 @@ public:
     void deleteInstancesForEntity(const Entity* entity);
     bool isSkeletal() const;
     bool isMainInstance(uint32_t materialIndex) const;
+    void setMainInstance(uint32_t materialIndex);
+    bool isInstancesRendered() const;
+    void setInstancedRendered();
     uint32_t getInstanceCount() const;
     glm::ivec2 getSpritesheetSize() const;
 
@@ -139,6 +142,7 @@ private:
     std::vector<VkDeviceMemory> _storageBuffersMemory;
     uint32_t _mainInstance = 0;
     uint32_t _currentInstanceCount = 0;
+    bool _instancesRendered = false;
 
     std::map<const Entity*, std::vector<uint32_t>> _entityInstanceMap;
     std::vector<PerInstanceData> _instanceData;

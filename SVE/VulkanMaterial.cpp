@@ -135,7 +135,7 @@ VkPipelineLayout VulkanMaterial::getPipelineLayout() const
 
 void VulkanMaterial::applyDrawingCommands(uint32_t bufferIndex, uint32_t imageIndex, uint32_t materialIndex)
 {
-    if (_materialSettings.useInstancing && !isMainInstance(materialIndex))
+    if (_materialSettings.useInstancing && isInstancesRendered() && !isMainInstance(materialIndex))
         return;
 
     auto commandBuffer = _vulkanInstance->getCommandBuffer(bufferIndex);
@@ -262,6 +262,7 @@ void VulkanMaterial::setUniformData(uint32_t materialIndex, const UniformData& u
     ++_currentInstanceCount;
     _storageUpdated = false;
     _mainInstance = materialIndex;
+    _instancesRendered = false;
 }
 
 void VulkanMaterial::updateInstancedData()
@@ -1291,9 +1292,25 @@ bool VulkanMaterial::isMainInstance(uint32_t materialIndex) const
     return _materialSettings.useInstancing && materialIndex == _mainInstance;
 }
 
+void VulkanMaterial::setMainInstance(uint32_t materialIndex)
+{
+    _mainInstance = materialIndex;
+}
+
+bool VulkanMaterial::isInstancesRendered() const
+{
+    return _instancesRendered;
+}
+
+void VulkanMaterial::setInstancedRendered()
+{
+    _instancesRendered = true;
+}
+
 uint32_t VulkanMaterial::getInstanceCount() const
 {
     return _currentInstanceCount;//_instanceData.size() - 1;
 }
+
 
 } // namespace SVE

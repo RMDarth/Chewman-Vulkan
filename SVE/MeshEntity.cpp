@@ -172,8 +172,15 @@ void MeshEntity::applyDrawingCommands(uint32_t bufferIndex, uint32_t imageIndex)
         _material->getVulkanMaterial()->applyDrawingCommands(bufferIndex, imageIndex, _materialIndex);
     }
 
-    if (!isInstanceRendering() || _material->getVulkanMaterial()->isMainInstance(_materialIndex))
+    if (!isInstanceRendering() ||
+        !_material->getVulkanMaterial()->isInstancesRendered() || _material->getVulkanMaterial()->isMainInstance(_materialIndex))
+    {
         _mesh->getVulkanMesh()->applyDrawingCommands(bufferIndex, _material->getVulkanMaterial()->getInstanceCount());
+        _material->getVulkanMaterial()->setInstancedRendered();
+        _material->getVulkanMaterial()->setMainInstance(_materialIndex);
+        if (_shadowMaterial)
+            _shadowMaterial->getVulkanMaterial()->setMainInstance(_materialIndex);
+    }
 }
 
 void MeshEntity::setupMaterial()
