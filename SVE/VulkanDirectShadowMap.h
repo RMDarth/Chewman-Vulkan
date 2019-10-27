@@ -46,6 +46,9 @@ private:
     std::vector<VkImage> _shadowImage;
     std::vector<VkImageView> _shadowImageView;
     std::vector<VkDeviceMemory> _shadowImageMemory;
+    VkImage _colorImage;
+    VkImageView _colorImageView;
+    VkDeviceMemory _colorImageMemory;
 
     std::vector<VkSampler> _shadowSampler;
     VkRenderPass _renderPass;

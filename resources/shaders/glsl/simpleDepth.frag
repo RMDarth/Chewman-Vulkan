@@ -4,6 +4,6 @@
 layout(location = 0) in vec4 fragPos;
 layout(location = 1) in flat int fragProjectionNum;
 
-void main() {
-
+void main()
+{
 }
