@@ -56,6 +56,10 @@ void MenuStateProcessor::processEvent(Control* control, IEventHandler::EventType
             progressManager.resetPlayerInfo();
             Game::getInstance()->setState(GameState::WorldSelection);
         }
+        if (control->getName() == "config")
+        {
+            Game::getInstance()->setState(GameState::Graphics);
+        }
     }
 }
 

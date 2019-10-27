@@ -33,6 +33,7 @@ public:
     virtual FSEntityPtr getContainingDirectory(FSEntityPtr file) const = 0;
     virtual FSEntityList getFileList(FSEntityPtr dir) const = 0;
     virtual std::string getFileContent(FSEntityPtr file) const = 0;
+    virtual std::string getSavePath() const = 0;
 
     virtual FSEntityPtr getEntity(const std::string& localPath, bool isDirectory = false) const = 0;
 };

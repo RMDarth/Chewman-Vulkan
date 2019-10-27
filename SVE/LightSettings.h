@@ -104,7 +104,7 @@ struct LightInfo
     };
 
     uint32_t lightFlags = 0;
-    uint32_t lightShadowFlags = 0;
+    uint32_t enableShadows = 0;
     uint32_t lightLineNum = 0;
     uint32_t pointLightNum = 0;
 };

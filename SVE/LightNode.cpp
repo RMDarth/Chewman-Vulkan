@@ -73,7 +73,7 @@ void LightNode::fillUniformData(UniformData& data, uint32_t lightNum, bool asVie
                 data.shadowPointLightList.push_back(pointLight);
                 data.lightInfo.lightFlags |= (LightInfo::PointLight1 << (data.shadowPointLightList.size() - 1));
                 if (_lightSettings.castShadows)
-                    data.lightInfo.lightShadowFlags |= (LightInfo::PointLight1 << (data.shadowPointLightList.size() - 1));
+                    data.lightInfo.enableShadows |= (LightInfo::PointLight1 << (data.shadowPointLightList.size() - 1));
 
                 break;
             }
@@ -107,7 +107,7 @@ void LightNode::fillUniformData(UniformData& data, uint32_t lightNum, bool asVie
 
                 data.lightInfo.lightFlags |= LightInfo::DirectionalLight;
                 if (_lightSettings.castShadows)
-                    data.lightInfo.lightShadowFlags |= LightInfo::DirectionalLight;
+                    data.lightInfo.enableShadows |= LightInfo::DirectionalLight;
                 break;
             }
             case LightType::SpotLight:
@@ -120,7 +120,7 @@ void LightNode::fillUniformData(UniformData& data, uint32_t lightNum, bool asVie
 
                 data.lightInfo.lightFlags |= LightInfo::SpotLight;
                 if (_lightSettings.castShadows)
-                    data.lightInfo.lightShadowFlags |= LightInfo::SpotLight;
+                    data.lightInfo.enableShadows |= LightInfo::SpotLight;
                 break;
             case LightType::LineLight:
             {

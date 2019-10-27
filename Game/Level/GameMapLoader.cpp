@@ -10,6 +10,7 @@
 #include <SVE/ResourceManager.h>
 
 #include "Bomb.h"
+#include "Game/Game.h"
 #include "Game/Level/Enemies/Nun.h"
 #include "Game/Level/Enemies/Angel.h"
 #include "Game/Level/Enemies/ChewmanEnemy.h"
@@ -20,6 +21,7 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/quaternion.hpp>
+
 
 namespace Chewman
 {
@@ -442,10 +444,13 @@ void GameMapLoader::createGargoyle(GameMap& level, int row, int column, char map
     lightSettings.constAtten = 1.0f * 0.8f;
     lightSettings.linearAtten = 0.35f * 0.15f;
     lightSettings.quadAtten = 0.44f * 0.15f;
-    auto lightNode = std::make_shared<SVE::LightNode>(lightSettings);
-    rootGargoyleNode->attachSceneNode(lightNode);
+    if (Game::getInstance()->getGraphicsManager().getSettings().useDynamicLights)
+    {
+        auto lightNode = std::make_shared<SVE::LightNode>(lightSettings);
+        rootGargoyleNode->attachSceneNode(lightNode);
+        gargoyle.lightNode = lightNode;
+    }
     gargoyle.startPoint = rootPos;
-    gargoyle.lightNode = lightNode;
 
     level.gargoyles.push_back(std::move(gargoyle));
 }
@@ -601,8 +606,11 @@ void GameMapLoader::createTeleport(GameMap& level, int row, int column, char map
         lightSettings.constAtten = 1.0f * 1.8f;
         lightSettings.linearAtten = 0.35f * 0.25f;
         lightSettings.quadAtten = 0.44f * 0.25f;
-        auto lightNode = std::make_shared<SVE::LightNode>(lightSettings);
-        teleportLightNode->attachSceneNode(lightNode);
+        if (Game::getInstance()->getGraphicsManager().getSettings().useDynamicLights)
+        {
+            auto lightNode = std::make_shared<SVE::LightNode>(lightSettings);
+            teleportLightNode->attachSceneNode(lightNode);
+        }
     }
 
     teleport.circleNode = std::move(teleportCircleNode);

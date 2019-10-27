@@ -6,6 +6,8 @@
 #include <cppfs/FileHandle.h>
 #include <cppfs/FileIterator.h>
 #include <cppfs/FilePath.h>
+#include <SDL2/SDL_filesystem.h>
+#include <SVE/VulkanException.h>
 
 namespace SVE
 {
@@ -73,4 +75,15 @@ std::shared_ptr<FileSystemEntity> DesktopFS::getEntity(const std::string& localP
 {
     return std::make_shared<DesktopFSEntity>(cppfs::fs::open(localPath));
 }
+
+std::string DesktopFS::getSavePath() const
+{
+    char *path = SDL_GetPrefPath("TurbulentSoftware", "Chewman");
+    if (!path)
+    {
+        throw VulkanException("Can't get folder for saving data");
+    }
+    return std::string(path);
+}
+
 } // namespace SVE

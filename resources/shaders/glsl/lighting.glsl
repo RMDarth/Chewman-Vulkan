@@ -82,7 +82,7 @@ const uint LI_SpotLight =          1 << 5;
 struct LightInfo
 {
     uint lightFlags;
-    uint lightShadowFlags;
+    uint enableShadows;
     uint lightLineNum;
     uint lightPointsNum;
 };

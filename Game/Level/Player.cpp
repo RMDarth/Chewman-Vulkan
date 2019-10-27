@@ -8,6 +8,7 @@
 #include <SVE/MeshEntity.h>
 #include <glm/gtc/matrix_transform.hpp>
 
+#include "Game/Game.h"
 #include "GameMap.h"
 #include "GameUtils.h"
 
@@ -64,7 +65,8 @@ Player::Player(GameMap* gameMap, glm::ivec2 startPos)
     _trashmanEntity->setMaterial("Yellow");
     _rotateNode->attachEntity(_trashmanEntity);
 
-    _rootNode->attachSceneNode(addLightEffect(engine));
+    if (Game::getInstance()->getGraphicsManager().getSettings().useDynamicLights)
+        _rootNode->attachSceneNode(addLightEffect(engine));
 
     createAppearEffect();
     createDisappearEffect();

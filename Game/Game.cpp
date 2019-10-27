@@ -4,12 +4,14 @@
 #include "Game.h"
 
 #include <utility>
+#include <Game/Menu/GraphicsStateProcessor.h>
 #include "Game/Level/LevelStateProcessor.h"
 #include "Game/Menu/MenuStateProcessor.h"
 #include "Game/Menu/PauseStateProcessor.h"
 #include "Game/Menu/ScoreStateProcessor.h"
 #include "Game/Menu/WorldSelectionStateProcessor.h"
 #include "Game/Menu/LevelSelectionStateProcessor.h"
+#include "Game/Menu/GraphicsStateProcessor.h"
 
 namespace Chewman
 {
@@ -69,8 +71,9 @@ ProgressManager& Game::getProgressManager()
     return _progressManager;
 }
 
-Game::Game()
+GraphicsManager& Game::getGraphicsManager()
 {
+    return _graphicsManager;
 }
 
 void Game::initStates()
@@ -81,6 +84,7 @@ void Game::initStates()
     registerStateProcessor(GameState::Score, std::make_shared<ScoreStateProcessor>());
     registerStateProcessor(GameState::WorldSelection, std::make_shared<WorldSelectionStateProcessor>());
     registerStateProcessor(GameState::LevelSelection, std::make_shared<LevelSelectionStateProcessor>());
+    registerStateProcessor(GameState::Graphics, std::make_shared<GraphicsStateProcessor>());
 
     _stateProcessors[_gameState]->show();
 }
