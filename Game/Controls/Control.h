@@ -23,7 +23,8 @@ enum class ControlType
     Container,
     Panel,
     Slider,
-    LevelButton
+    LevelButton,
+    DropDown
 };
 
 class Control
@@ -49,6 +50,8 @@ public:
     virtual uint32_t getRenderOrder() const;
     virtual void setText(const std::string& text, const std::string& font, float scale = 1.0f, glm::vec4 color = {1,1,1,1});
     virtual void setText(const std::string& text);
+    virtual void setTextShift(glm::ivec2 shift);
+    virtual void setTextAlignment(SVE::TextAlignment alignment);
     virtual const std::string& getText() const;
     virtual void setTextColor(glm::vec4 color);
     virtual glm::vec4 getTextColor() const;
@@ -64,10 +67,12 @@ public:
 
     virtual void setMouseTransparent(bool mouseTransparent);
     virtual bool isMouseTransparent() const;
+    virtual bool isClickProcessed();
 
     virtual glm::ivec2 getPosition() const;
     virtual glm::ivec2 getSize() const;
-    virtual void setPosition(glm::ivec2);
+    virtual void setPosition(glm::ivec2 pos);
+    virtual void setSize(glm::ivec2 size);
 
     virtual void setCustomAttribute(const std::string& name, std::string value);
     virtual std::string getCustomAttribute(const std::string& name);
@@ -101,6 +106,7 @@ protected:
     int32_t _height;
 
     std::string _text;
+    glm::ivec2 _textShift = {0, 0};
 
     bool _visible = true;
     bool _enabled = true;

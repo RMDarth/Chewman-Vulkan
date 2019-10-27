@@ -105,6 +105,17 @@ void ControlDocument::addChildren(std::shared_ptr<Control> parent, tinyxml2::XML
 
         if (gameControl)
         {
+            if (xmlControl->Attribute("textAlignment") != nullptr)
+            {
+                alignment = xmlControl->Attribute("textAlignment");
+                if (alignment == "Left")
+                    gameControl->setTextAlignment(SVE::TextAlignment::Left);
+                if (alignment == "Right")
+                    gameControl->setTextAlignment(SVE::TextAlignment::Right);
+                if (alignment == "Center")
+                    gameControl->setTextAlignment(SVE::TextAlignment::Center);
+            }
+
             if (xmlControl->Attribute("text") != nullptr)
             {
                 gameControl->setText(xmlControl->Attribute("text"), "NordBold", 0.5f, gameControl->getTextColor());
@@ -212,6 +223,8 @@ bool ControlDocument::onMouseUp(int x, int y)
     for (auto& control : _controlList)
     {
         result = result | control->onMouseUp(x, y);
+        if (control->isClickProcessed())
+            break;
     }
 
     return result;

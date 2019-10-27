@@ -9,6 +9,7 @@
 #include "PanelControl.h"
 #include "SliderControl.h"
 #include "LevelButtonControl.h"
+#include "DropDownControl.h"
 
 namespace Chewman
 {
@@ -48,6 +49,10 @@ std::shared_ptr<Control> ControlFactory::createControl(
     if (type == "LevelButton")
     {
         return std::make_shared<LevelButtonControl>(name, x, y, width, height, parent.get());
+    }
+    if (type == "DropDown")
+    {
+        return std::make_shared<DropDownControl>(name, x, y, width, height, parent.get());
     }
 
     return nullptr;

@@ -127,6 +127,8 @@ add_executable(Chewman
         Game/Controls/ControlDocument.h
         Game/Controls/ControlFactory.cpp
         Game/Controls/ControlFactory.h
+        Game/Controls/DropDownControl.cpp
+        Game/Controls/DropDownControl.h
         Game/Controls/IEventHandler.h
         Game/Controls/ImageControl.cpp
         Game/Controls/ImageControl.h
