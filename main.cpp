@@ -115,12 +115,19 @@ int runGame()
         loadingScreen.hide();
 
         auto windowSize = engine->getRenderWindowSize();
-        engine->getPostEffectManager()->addPostEffect("OnlyBrightEffect", "OnlyBrightEffect",windowSize.x / 4, windowSize.y / 4);
-        engine->getPostEffectManager()->addPostEffect("VBlurEffect", "VBlurEffect",windowSize.x / 8, windowSize.y / 8);
-        engine->getPostEffectManager()->addPostEffect("HBlurEffect", "HBlurEffect",windowSize.x / 8, windowSize.y / 8);
-        engine->getPostEffectManager()->addPostEffect("BloomEffect", "BloomEffect");
-        //engine->getPostEffectManager()->addPostEffect("GrayscaleEffect", "GrayscaleEffect", 1024, 1024);
-        // engine->getPostEffectManager()->addPostEffect("PencilEffect", "PencilEffect");
+
+        // Create game controller
+        auto* game = Chewman::Game::getInstance();
+
+        if (game->getGraphicsManager().getSettings().effectSettings == Chewman::EffectSettings::High)
+        {
+            engine->getPostEffectManager()->addPostEffect("OnlyBrightEffect", "OnlyBrightEffect",windowSize.x / 4, windowSize.y / 4);
+            engine->getPostEffectManager()->addPostEffect("VBlurEffect", "VBlurEffect",windowSize.x / 8, windowSize.y / 8);
+            engine->getPostEffectManager()->addPostEffect("HBlurEffect", "HBlurEffect",windowSize.x / 8, windowSize.y / 8);
+            engine->getPostEffectManager()->addPostEffect("BloomEffect", "BloomEffect");
+            //engine->getPostEffectManager()->addPostEffect("GrayscaleEffect", "GrayscaleEffect", 1024, 1024);
+            // engine->getPostEffectManager()->addPostEffect("PencilEffect", "PencilEffect");
+        }
 
         // configure light
         auto sunLight = engine->getSceneManager()->getLightManager()->getDirectionLight();
@@ -133,9 +140,6 @@ int runGame()
 
         // create skybox
         engine->getSceneManager()->setSkybox("Skybox4");
-
-        // Create game controller
-        auto* game = Chewman::Game::getInstance();
 
         // Add text
         auto textEntity = std::make_shared<SVE::TextEntity>(

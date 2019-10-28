@@ -55,18 +55,17 @@ float SimpleShadowSunLight()
 vec3 calculateLight(vec3 normal, vec3 viewDir)
 {
     vec3 lightEffect = vec3(0);
-    float shadow = 0;
-    uint count = 0;
+    float shadow = 1;
 
     if ((ubo.lightInfo.lightFlags & LI_DirectionalLight) != 0)
     {
         vec3 curLight = CalcDirLight(ubo.dirLight, normal, viewDir, ubo.materialInfo);
-        shadow = SimpleShadowSunLight();
+        if (ubo.lightInfo.enableShadows != 0)
+        {
+            shadow = SimpleShadowSunLight();
+        }
         lightEffect += curLight * (shadow);
-        count++;
     }
-
-    uint shadowCount = 0;
 
     for (uint i = 0; i < ubo.lightInfo.lightLineNum; i++)
     {

@@ -12,7 +12,7 @@
 namespace SVE
 {
 static const uint32_t MAX_LIGHTS = 3;
-static const uint32_t DirectShadowSize = 4096;
+static const uint32_t DirectShadowSize = 2048;
 static const uint32_t PointShadowSize = 512;
 
 LightManager::LightManager(bool useCascadeShadowMap)
