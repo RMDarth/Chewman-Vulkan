@@ -229,5 +229,5 @@ if (UNIX)
     find_package(TinyXML2 REQUIRED)
     include_directories(${TinyXML2_INCLUDE_DIRS})
 
-    target_link_libraries(Chewman ${SDL2_LIBRARIES} assimp cppfs vulkan tinyxml2)
+    target_link_libraries(Chewman ${SDL2_LIBRARIES} assimp cppfs vulkan tinyxml2 pthread)
 endif(UNIX)

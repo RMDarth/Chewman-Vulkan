@@ -6,9 +6,11 @@
 namespace SVE
 {
 
-void MeshManager::registerMesh(std::shared_ptr<Mesh> mesh)
+std::shared_ptr<Mesh> MeshManager::registerMesh(std::shared_ptr<Mesh> mesh)
 {
+    auto oldMesh = _meshMap[mesh->getName()];
     _meshMap[mesh->getName()] = std::move(mesh);
+    return oldMesh;
 }
 
 Mesh* MeshManager::getMesh(const std::string& name) const

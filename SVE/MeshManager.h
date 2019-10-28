@@ -12,7 +12,7 @@ namespace SVE
 class MeshManager
 {
 public:
-    void registerMesh(std::shared_ptr<Mesh> mesh);
+    std::shared_ptr<Mesh> registerMesh(std::shared_ptr<Mesh> mesh);
     Mesh* getMesh(const std::string& name) const;
 
 private:

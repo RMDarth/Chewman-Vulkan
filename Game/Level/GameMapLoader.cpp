@@ -320,7 +320,7 @@ void GameMapLoader::initMeshes(GameMap& level)
     level.upperLevelMeshNode->attachEntity(level.mapEntity[2]);
 }
 
-void buildLevelMeshes(const GameMap& level, BlockMeshGenerator& meshGenerator)
+std::array<std::shared_ptr<SVE::Mesh>, 3> prepareLevelMeshes(const GameMap& level, BlockMeshGenerator& meshGenerator)
 {
     std::vector<Submesh> top;
     std::vector<Submesh> bottom;
@@ -363,14 +363,21 @@ void buildLevelMeshes(const GameMap& level, BlockMeshGenerator& meshGenerator)
     auto meshSettingsV = meshGenerator.CombineMeshes("MapV", vertical);
     meshSettingsV.materialName = "WallParallax";
 
-    auto* engine = SVE::Engine::getInstance();
-
-    std::shared_ptr<SVE::Mesh> mapMesh[3];
+    std::array<std::shared_ptr<SVE::Mesh>, 3> mapMesh;
     mapMesh[0] = std::make_shared<SVE::Mesh>(meshSettingsT);
-    engine->getMeshManager()->registerMesh(mapMesh[0]);
     mapMesh[1] = std::make_shared<SVE::Mesh>(meshSettingsB);
-    engine->getMeshManager()->registerMesh(mapMesh[1]);
     mapMesh[2] = std::make_shared<SVE::Mesh>(meshSettingsV);
+
+    return mapMesh;
+}
+
+void buildLevelMeshes(const GameMap& level, BlockMeshGenerator& meshGenerator)
+{
+    auto mapMesh = prepareLevelMeshes(level, meshGenerator);
+
+    auto* engine = SVE::Engine::getInstance();
+    engine->getMeshManager()->registerMesh(mapMesh[0]);
+    engine->getMeshManager()->registerMesh(mapMesh[1]);
     engine->getMeshManager()->registerMesh(mapMesh[2]);
 }
 
