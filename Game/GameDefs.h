@@ -13,7 +13,8 @@ enum class GameState
     Pause,
     Score,
     WorldSelection,
-    LevelSelection
+    LevelSelection,
+    Graphics
 };
 
 } // namespace Chewman

@@ -34,6 +34,8 @@ enum
 using PoolID = uint32_t;
 using BufferIndex = uint32_t;
 
+constexpr PoolID ServicePoolIndex = 100;
+
 class VulkanInstance
 {
 public:
@@ -154,6 +156,7 @@ private:
 
     PoolID _currentPool;
     std::vector<VkCommandPool> _commandPools;
+    VkCommandPool _servicePool; // pool for service allocations
     std::vector<VkCommandBuffer> _commandBuffers;
     std::map<uint32_t, VkCommandBuffer> _externalBufferMap;
     std::map<std::pair<PoolID, BufferIndex>, VkCommandBuffer> _poolBufferMap;

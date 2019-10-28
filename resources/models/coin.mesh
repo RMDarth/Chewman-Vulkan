@@ -2,5 +2,5 @@
     "name": "coin",
     "filename": "assets/coin.DAE",
     "switchYZ": true,
-    "scale": [ 0.03, 0.03, 0.03 ]
+    "scale": [ 0.02, 0.02, 0.02 ]
 }

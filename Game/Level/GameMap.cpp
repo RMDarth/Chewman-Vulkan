@@ -130,8 +130,12 @@ void GameMapProcessor::updateGargoyle(float time, Gargoyle& gargoyle)
                 float finishPercent = gargoyle.currentTime / gargoyle.fireTime;
                 gargoyle.currentLength = (float)gargoyle.lengthInCells * finishPercent;
 
-                gargoyle.lightNode->getLightSettings().lightType = SVE::LightType::LineLight;
-                gargoyle.lightNode->getLightSettings().secondPoint = gargoyle.startPoint + gargoyle.direction * gargoyle.totalLength * finishPercent;
+                if (gargoyle.lightNode)
+                {
+                    gargoyle.lightNode->getLightSettings().lightType = SVE::LightType::LineLight;
+                    gargoyle.lightNode->getLightSettings().secondPoint =
+                            gargoyle.startPoint + gargoyle.direction * gargoyle.totalLength * finishPercent;
+                }
             }
             break;
         }
@@ -139,8 +143,11 @@ void GameMapProcessor::updateGargoyle(float time, Gargoyle& gargoyle)
         {
             if (gargoyle.currentTime > 0.2f)
             {
-                gargoyle.lightNode->getLightSettings().lightType = SVE::LightType::None;
-                gargoyle.lightNode->getLightSettings().secondPoint = gargoyle.startPoint;
+                if (gargoyle.lightNode)
+                {
+                    gargoyle.lightNode->getLightSettings().lightType = SVE::LightType::None;
+                    gargoyle.lightNode->getLightSettings().secondPoint = gargoyle.startPoint;
+                }
             }
             if (gargoyle.currentTime > gargoyle.restTime + 0.2f)
             {

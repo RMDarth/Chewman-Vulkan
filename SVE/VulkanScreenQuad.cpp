@@ -97,7 +97,7 @@ void VulkanScreenQuad::startRenderCommandBufferCreation(ScreenQuadPass screenQua
         clearValues[4].color = {0.0f, 0.0f, 0.0f, 0.0f};
     }
     if (screenQuadPass == ScreenQuadPass::Depth)
-        clearValues.resize(1);
+        clearValues.resize(2);
 
     VkRenderPassBeginInfo renderPassBeginInfo{};
     renderPassBeginInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
@@ -154,15 +154,15 @@ void VulkanScreenQuad::createRenderPass()
 
     // TODO: Refactor this code, move to separate functions
 
-    VkAttachmentDescription colorAttachment[3] = {}; // color buffer attachment to render pass
+    VkAttachmentDescription colorAttachment[4] = {}; // color buffer attachment to render pass
     // resolve color attachment (after MSAA applied)
-    VkAttachmentDescription colorAttachmentResolve[3] = {};
+    VkAttachmentDescription colorAttachmentResolve[4] = {};
 
-    for (auto i = 0; i < 3; ++i)
+    for (auto i = 0; i < 4; ++i)
     {
         colorAttachment[i].format = _vulkanInstance->getSurfaceColorFormat();
-        colorAttachment[i].samples = sampleCount;
-        colorAttachment[i].loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE; // clear every frame
+        colorAttachment[i].samples = i < 3 ? sampleCount : VK_SAMPLE_COUNT_1_BIT;
+        colorAttachment[i].loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR; // clear every frame
         colorAttachment[i].storeOp = VK_ATTACHMENT_STORE_OP_STORE; // should be STORE for rendering
         colorAttachment[i].stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
         colorAttachment[i].stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
@@ -178,9 +178,10 @@ void VulkanScreenQuad::createRenderPass()
         colorAttachmentResolve[i].initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
         colorAttachmentResolve[i].finalLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
     }
-    colorAttachment[2].loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
     colorAttachment[1].loadOp = VK_ATTACHMENT_LOAD_OP_LOAD; // reuse data from previous pass
     colorAttachment[1].initialLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+    colorAttachment[3].loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+    colorAttachment[3].storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
 
     VkAttachmentDescription depthAttachment[4] = {};
     for (auto i = 0; i < 4; ++i)
@@ -223,8 +224,9 @@ void VulkanScreenQuad::createRenderPass()
         subpass[i].pResolveAttachments = colorAttachmentResolveRef; // MSAA attachment
     }
     subpass[2].pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
-    subpass[2].colorAttachmentCount = 0;
-    subpass[2].pDepthStencilAttachment = &depthAttachmentRef[1];
+    subpass[2].colorAttachmentCount = 1;
+    subpass[2].pColorAttachments = colorAttachmentRef;
+    subpass[2].pDepthStencilAttachment = &depthAttachmentRef[0];
 
     std::vector<VkSubpassDependency> dependencies(2);
     dependencies[0].srcSubpass = VK_SUBPASS_EXTERNAL;
@@ -319,7 +321,7 @@ void VulkanScreenQuad::createRenderPass()
     }
 
     {
-        std::vector<VkAttachmentDescription> attachments{ depthAttachment[3] };
+        std::vector<VkAttachmentDescription> attachments{ colorAttachment[3], depthAttachment[3] };
 
         VkRenderPassCreateInfo renderPassCreateInfo{};
         renderPassCreateInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
@@ -445,7 +447,7 @@ void VulkanScreenQuad::createImages()
     samplerCreateInfo.addressModeU = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
     samplerCreateInfo.addressModeV = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
     samplerCreateInfo.addressModeW = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
-    //samplerCreateInfo.anisotropyEnable = VK_TRUE;
+    samplerCreateInfo.anisotropyEnable = VK_TRUE;
     samplerCreateInfo.maxAnisotropy = 16;
     samplerCreateInfo.borderColor = VK_BORDER_COLOR_INT_OPAQUE_BLACK;
     samplerCreateInfo.compareEnable = VK_FALSE;
@@ -534,6 +536,7 @@ void VulkanScreenQuad::createFramebuffers()
     }
 
     attachments.clear();
+    attachments.push_back(_resolveImageView[0]);
     attachments.push_back(_depthImageView[1]);
     framebufferCreateInfo.renderPass = _renderPass[Depth];
     framebufferCreateInfo.attachmentCount = attachments.size();

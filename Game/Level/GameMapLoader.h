@@ -3,6 +3,7 @@
 // Licensed under the MIT License
 #pragma once
 #include "GameMap.h"
+#include <array>
 
 namespace Chewman
 {
@@ -28,6 +29,7 @@ private:
     BlockMeshGenerator _meshGenerator;
 };
 
+std::array<std::shared_ptr<SVE::Mesh>, 3>  prepareLevelMeshes(const GameMap& level, BlockMeshGenerator& meshGenerator);
 void buildLevelMeshes(const GameMap& level, BlockMeshGenerator& meshGenerator);
 
 

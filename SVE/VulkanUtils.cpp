@@ -365,7 +365,7 @@ VkCommandBuffer VulkanUtils::beginRecordingCommands() const
     VkCommandBufferAllocateInfo allocInfo {};
     allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
     allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-    allocInfo.commandPool = _vulkanInstance->getCommandPool(0);
+    allocInfo.commandPool = _vulkanInstance->getCommandPool(ServicePoolIndex);
     allocInfo.commandBufferCount = 1;
 
     VkCommandBuffer commandBuffer;
@@ -397,7 +397,7 @@ void VulkanUtils::endRecordingAndSubmitCommands(VkCommandBuffer commandBuffer) c
     vkQueueWaitIdle(_vulkanInstance->getGraphicsQueue());
 
     // Free command buffer
-    vkFreeCommandBuffers(_vulkanInstance->getLogicalDevice(), _vulkanInstance->getCommandPool(0), 1, &commandBuffer);
+    vkFreeCommandBuffers(_vulkanInstance->getLogicalDevice(), _vulkanInstance->getCommandPool(ServicePoolIndex), 1, &commandBuffer);
 }
 
 void VulkanUtils::transitionImageLayout(VkImage image,

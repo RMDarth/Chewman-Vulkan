@@ -9,6 +9,7 @@
 #include "Game/Level/Enemies/Knight.h"
 #include "SVE/Engine.h"
 #include "SVE/SceneManager.h"
+#include "SVE/MeshManager.h"
 #include "SVE/CameraNode.h"
 
 #include <glm/gtc/matrix_transform.hpp>
@@ -30,6 +31,7 @@ inline float smoothStep(float data)
 GameRulesProcessor::GameRulesProcessor(GameMapProcessor& gameMapProcessor)
     : _gameMapProcessor(gameMapProcessor)
 {
+    _regenerationFinished = false;
 }
 
 std::shared_ptr<Player>& GameRulesProcessor::getPlayer()
@@ -88,6 +90,8 @@ void GameRulesProcessor::update(float deltaTime)
 
         if (_wallsDownTime > 0.0f)
             updateWallsDown(deltaTime);
+
+
 
         // Eat coins and powerUps
         if (mapTraveller->isCloseToAffect(MapTraveller::toRealPos(mapTraveller->getMapPosition())))
@@ -177,6 +181,7 @@ void GameRulesProcessor::update(float deltaTime)
             }
         }
 
+        updateRegeneration(mapTraveller->isTargetReached());
 
         // Check death
         bool isPlayerDead = [&]() {
@@ -467,31 +472,63 @@ void GameRulesProcessor::updateWallsDown(float deltaTime)
 
 void GameRulesProcessor::regenerateMap()
 {
-    auto gameMap = _gameMapProcessor.getGameMap();
+    if (_mapChangesFuture.valid() || _regenerationFinished)
+        updateRegeneration(true);
 
-    BlockMeshGenerator blockMeshGenerator(CellSize);
-    buildLevelMeshes(*gameMap, blockMeshGenerator);
-
-    std::string meshNames[] = { "MapT", "MapB", "MapV" };
-    std::shared_ptr<SVE::SceneNode> nodes[] = {
-            gameMap->upperLevelMeshNode,
-            gameMap->mapNode,
-            gameMap->upperLevelMeshNode
-    };
-    for (auto i = 0; i < 3; ++i)
+    _mapChangesFuture = std::async(std::launch::async, [&]
     {
-        nodes[i]->detachEntity(gameMap->mapEntity[i]);
-        gameMap->mapEntity[i] = std::make_shared<SVE::MeshEntity>(meshNames[i]);
-        gameMap->mapEntity[i]->setRenderToDepth(true);
-        nodes[i]->attachEntity(gameMap->mapEntity[i]);
-    }
-
-    if (std::any_of(gameMap->enemies.begin(), gameMap->enemies.end(),
-                    [](std::unique_ptr<Enemy>& enemy) { return enemy->getEnemyType() == EnemyType::Knight; }))
-    {
-        Knight::updatePathMap(gameMap.get());
-    }
+        BlockMeshGenerator blockMeshGenerator(CellSize);
+        _preparedMeshes = prepareLevelMeshes(*_gameMapProcessor.getGameMap().get(), blockMeshGenerator);
+        _regenerationFinished = true;
+    });
 }
 
+void GameRulesProcessor::updateRegeneration(bool forceFinish)
+{
+    bool finished = _regenerationFinished;
+    if (forceFinish || finished)
+    {
+        if (_mapChangesFuture.valid())
+        {
+            _mapChangesFuture.wait();
+            _mapChangesFuture.get();
+            finished = true;
+        }
+    }
+
+    if (finished)
+    {
+        auto gameMap = _gameMapProcessor.getGameMap();
+        std::shared_ptr<SVE::SceneNode> nodes[] = {
+                gameMap->upperLevelMeshNode,
+                gameMap->mapNode,
+                gameMap->upperLevelMeshNode
+        };
+        std::string meshNames[] = {"MapT", "MapB", "MapV"};
+
+        for (auto i = 0; i < 3; ++i)
+        {
+            auto oldMesh = SVE::Engine::getInstance()->getMeshManager()->registerMesh(_preparedMeshes[i]);
+            _oldMeshes.push_back(oldMesh);
+            while (_oldMeshes.size() > 15)
+                _oldMeshes.pop_front();
+            nodes[i]->detachEntity(gameMap->mapEntity[i]);
+            _oldEntities.push_back(gameMap->mapEntity[i]);
+            while(_oldEntities.size() > 15)
+                _oldEntities.pop_front();
+            gameMap->mapEntity[i] = std::make_shared<SVE::MeshEntity>(meshNames[i]);
+            gameMap->mapEntity[i]->setRenderToDepth(true);
+            nodes[i]->attachEntity(gameMap->mapEntity[i]);
+        }
+
+        if (std::any_of(gameMap->enemies.begin(), gameMap->enemies.end(),
+                        [](std::unique_ptr<Enemy>& enemy) { return enemy->getEnemyType() == EnemyType::Knight; }))
+        {
+            Knight::updatePathMap(gameMap.get());
+        }
+        _regenerationFinished = false;
+        _useSuffix = !_useSuffix;
+    }
+}
 
 } // namespace Chewman

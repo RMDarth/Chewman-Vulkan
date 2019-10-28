@@ -86,7 +86,8 @@ Control::~Control()
 
 void Control::update(float deltaTime)
 {
-
+    for (auto& child : _children)
+        child->update(deltaTime);
 }
 
 void Control::setDefaultMaterial(const std::string& textureName)
@@ -112,6 +113,7 @@ void Control::setDisabledMaterial(const std::string& textureName)
 
 void Control::setRenderOrder(uint32_t order)
 {
+    SVE::Engine::getInstance()->getOverlayManager()->changeOverlayOrder(_overlay->getInfo().name, order);
     _overlay->getInfo().zOrder = order;
 }
 
@@ -122,8 +124,18 @@ uint32_t Control::getRenderOrder() const
 
 void Control::setText(const std::string& text, const std::string& font, float scale, glm::vec4 color)
 {
-    _overlay->setText(SVE::Engine::getInstance()->getFontManager()->generateText(text, font, scale, {0, 0}, color));
+    _overlay->setText(SVE::Engine::getInstance()->getFontManager()->generateText(text, font, scale, _textShift, color));
     _text = text;
+}
+
+void Control::setText(const std::string& text)
+{
+    setText(text, _overlay->getInfo().textInfo.font->fontName, _overlay->getInfo().textInfo.scale, _overlay->getInfo().textInfo.color);
+}
+
+void Control::setTextShift(glm::ivec2 shift)
+{
+    _textShift = shift;
 }
 
 const std::string& Control::getText() const
@@ -375,17 +387,36 @@ std::string Control::getDefaultOverlayFolder()
     return "resources/materials/textures/overlay/";
 }
 
-void Control::setText(const std::string& text)
-{
-    setText(text, _overlay->getInfo().textInfo.font->fontName, _overlay->getInfo().textInfo.scale, _overlay->getInfo().textInfo.color);
-}
-
 void Control::setPosition(glm::ivec2 pos)
 {
     _x = pos.x;
     _y = pos.y;
     _overlay->getInfo().x = _x;
     _overlay->getInfo().y = _y;
+    if (!_overlay->getInfo().textInfo.text.empty())
+        setText(_overlay->getInfo().textInfo.text);
+}
+
+void Control::setSize(glm::ivec2 size)
+{
+    _width = size.x;
+    _height = size.y;
+    _overlay->getInfo().width = _width;
+    _overlay->getInfo().height = _height;
+    if (!_overlay->getInfo().textInfo.text.empty())
+        setText(_overlay->getInfo().textInfo.text);
+}
+
+void Control::setTextAlignment(SVE::TextAlignment alignment)
+{
+    _overlay->getInfo().textHAlignment = alignment;
+    if (!_overlay->getInfo().textInfo.text.empty())
+        setText(_overlay->getInfo().textInfo.text);
+}
+
+bool Control::isClickProcessed()
+{
+    return false;
 }
 
 } // namespace Chewman

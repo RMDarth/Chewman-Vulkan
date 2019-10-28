@@ -220,6 +220,8 @@ VkDevice VulkanInstance::getLogicalDevice() const
 
 VkCommandPool VulkanInstance::getCommandPool(PoolID index) const
 {
+    if (index == ServicePoolIndex)
+        return _servicePool;
     return _commandPools[index];
 }
 
@@ -955,7 +957,7 @@ void VulkanInstance::deleteRenderPass()
 
 void VulkanInstance::createCommandPool()
 {
-    _commandPools.resize(_swapchainImages.size());
+    _commandPools.resize(_swapchainImages.size() + 1);
 
     for (auto& commandPool : _commandPools)
     {
@@ -970,6 +972,9 @@ void VulkanInstance::createCommandPool()
         }
     }
 
+    _servicePool = _commandPools.back();
+    _commandPools.resize(_swapchainImages.size());
+
     _commandBuffers.resize(getInFlightSize());
 }
 
@@ -979,6 +984,7 @@ void VulkanInstance::deleteCommandPool()
     {
         vkDestroyCommandPool(_device, commandPool, nullptr);
     }
+    vkDestroyCommandPool(_device, _servicePool, nullptr);
     _poolBufferMap.clear();
 }
 

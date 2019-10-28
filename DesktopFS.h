@@ -30,6 +30,7 @@ public:
     FSEntityList getFileList(FSEntityPtr dir) const override;
     std::string getFileContent(FSEntityPtr file) const override;
     FSEntityPtr getEntity(const std::string& localPath, bool isDirectory = false) const override;
+    std::string getSavePath() const override;
 };
 
 } // namespace SVE

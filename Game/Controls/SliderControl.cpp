@@ -35,9 +35,10 @@ SliderControl::SliderControl(const std::string& name, float x, float y, float wi
 
 void SliderControl::update(float deltaTime)
 {
+    _nextObjShift = _children.front()->getSize().x + _halfWidth / 8;
     for (auto i = 0; i < _children.size(); ++i)
     {
-        int slideShift = _halfWidth + i * _nextObjShift - _children[i]->getSize().x / 2; // base shift
+        int slideShift = _width/2 + i * _nextObjShift - _children[i]->getSize().x / 2; // base shift
         slideShift -= _currentObject * _nextObjShift;
 
         if (_isMoving)
@@ -48,7 +49,7 @@ void SliderControl::update(float deltaTime)
             alignToZero(_remainShift, deltaTime, _width);
         }
 
-        _children[i]->setPosition(glm::ivec2(slideShift, 100));
+        _children[i]->setPosition(glm::ivec2(slideShift, (_height - _children[i]->getSize().y) / 2));
     }
     Control::update(deltaTime);
 }

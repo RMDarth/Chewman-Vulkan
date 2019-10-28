@@ -10,6 +10,7 @@
 #include "SVE/MeshEntity.h"
 #include <glm/gtc/matrix_transform.hpp>
 
+#include "Game/Game.h"
 #include "Game/Level/GameMap.h"
 #include "Game/Level/GameUtils.h"
 #include "RandomWalkerAI.h"
@@ -42,6 +43,7 @@ DefaultEnemy::DefaultEnemy(GameMap* map, glm::ivec2 startPos, EnemyType enemyTyp
     _rotateNode->attachSceneNode(_meshNode);
     _enemyMesh = std::make_shared<SVE::MeshEntity>(meshName);
     _enemyMesh->setMaterial(_normalMaterial);
+    _enemyMesh->getMaterialInfo()->ambient = {0.3, 0.3, 0.3, 1.0 };
     _meshNode->attachEntity(_enemyMesh);
 
     _debuffNode = engine->getSceneManager()->createSceneNode();
@@ -52,7 +54,8 @@ DefaultEnemy::DefaultEnemy(GameMap* map, glm::ivec2 startPos, EnemyType enemyTyp
     debuffEntity->getMaterialInfo()->diffuse = {1.0, 1.0, 1.0, 1.0 };
     _debuffNode->attachEntity(debuffEntity);
 
-    _rootNode->attachSceneNode(addEnemyLightEffect(engine, lightHeight));
+    if (Game::getInstance()->getGraphicsManager().getSettings().useDynamicLights)
+        _rootNode->attachSceneNode(addEnemyLightEffect(engine, lightHeight));
 }
 
 void DefaultEnemy::update(float deltaTime)

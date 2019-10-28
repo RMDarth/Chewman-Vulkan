@@ -6,13 +6,13 @@ layout(set = 1, binding = 0) uniform sampler2D diffuseTex;
 layout(set = 1, binding = 1) uniform sampler2D directShadowTex;
 layout(set = 1, binding = 2) uniform UBO
 {
-	vec4 cameraPos;
-	DirLight dirLight;
-	SpotLight spotLight;
+    vec4 cameraPos;
+    DirLight dirLight;
+    SpotLight spotLight;
     LineLight lineLight[15];
     PointLight pointLight[20];
-	LightInfo lightInfo;
-	MaterialInfo materialInfo;
+    LightInfo lightInfo;
+    MaterialInfo materialInfo;
 } ubo;
 
 layout(location = 0) in InData

@@ -644,4 +644,9 @@ void ResourceManager::loadFile(FSEntityPtr file, LoadData& loadData, const std::
     }
 }
 
+std::string ResourceManager::getSavePath() const
+{
+    return _fileSystem->getSavePath();
+}
+
 } // namespace SVE

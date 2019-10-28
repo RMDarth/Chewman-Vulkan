@@ -3,6 +3,6 @@
 
 layout(location = 0) in vec4 fragPos;
 
-void main() {
-
+void main()
+{
 }

@@ -10,6 +10,7 @@
 #include <SVE/ResourceManager.h>
 
 #include "Bomb.h"
+#include "Game/Game.h"
 #include "Game/Level/Enemies/Nun.h"
 #include "Game/Level/Enemies/Angel.h"
 #include "Game/Level/Enemies/ChewmanEnemy.h"
@@ -20,6 +21,7 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/quaternion.hpp>
+
 
 namespace Chewman
 {
@@ -318,7 +320,7 @@ void GameMapLoader::initMeshes(GameMap& level)
     level.upperLevelMeshNode->attachEntity(level.mapEntity[2]);
 }
 
-void buildLevelMeshes(const GameMap& level, BlockMeshGenerator& meshGenerator)
+std::array<std::shared_ptr<SVE::Mesh>, 3> prepareLevelMeshes(const GameMap& level, BlockMeshGenerator& meshGenerator)
 {
     std::vector<Submesh> top;
     std::vector<Submesh> bottom;
@@ -361,14 +363,21 @@ void buildLevelMeshes(const GameMap& level, BlockMeshGenerator& meshGenerator)
     auto meshSettingsV = meshGenerator.CombineMeshes("MapV", vertical);
     meshSettingsV.materialName = "WallNormals";
 
-    auto* engine = SVE::Engine::getInstance();
-
-    std::shared_ptr<SVE::Mesh> mapMesh[3];
+    std::array<std::shared_ptr<SVE::Mesh>, 3> mapMesh;
     mapMesh[0] = std::make_shared<SVE::Mesh>(meshSettingsT);
-    engine->getMeshManager()->registerMesh(mapMesh[0]);
     mapMesh[1] = std::make_shared<SVE::Mesh>(meshSettingsB);
-    engine->getMeshManager()->registerMesh(mapMesh[1]);
     mapMesh[2] = std::make_shared<SVE::Mesh>(meshSettingsV);
+
+    return mapMesh;
+}
+
+void buildLevelMeshes(const GameMap& level, BlockMeshGenerator& meshGenerator)
+{
+    auto mapMesh = prepareLevelMeshes(level, meshGenerator);
+
+    auto* engine = SVE::Engine::getInstance();
+    engine->getMeshManager()->registerMesh(mapMesh[0]);
+    engine->getMeshManager()->registerMesh(mapMesh[1]);
     engine->getMeshManager()->registerMesh(mapMesh[2]);
 }
 
@@ -442,10 +451,13 @@ void GameMapLoader::createGargoyle(GameMap& level, int row, int column, char map
     lightSettings.constAtten = 1.0f * 0.8f;
     lightSettings.linearAtten = 0.35f * 0.15f;
     lightSettings.quadAtten = 0.44f * 0.15f;
-    auto lightNode = std::make_shared<SVE::LightNode>(lightSettings);
-    rootGargoyleNode->attachSceneNode(lightNode);
+    if (Game::getInstance()->getGraphicsManager().getSettings().useDynamicLights)
+    {
+        auto lightNode = std::make_shared<SVE::LightNode>(lightSettings);
+        rootGargoyleNode->attachSceneNode(lightNode);
+        gargoyle.lightNode = lightNode;
+    }
     gargoyle.startPoint = rootPos;
-    gargoyle.lightNode = lightNode;
 
     level.gargoyles.push_back(std::move(gargoyle));
 }
@@ -601,8 +613,11 @@ void GameMapLoader::createTeleport(GameMap& level, int row, int column, char map
         lightSettings.constAtten = 1.0f * 1.8f;
         lightSettings.linearAtten = 0.35f * 0.25f;
         lightSettings.quadAtten = 0.44f * 0.25f;
-        auto lightNode = std::make_shared<SVE::LightNode>(lightSettings);
-        teleportLightNode->attachSceneNode(lightNode);
+        if (Game::getInstance()->getGraphicsManager().getSettings().useDynamicLights)
+        {
+            auto lightNode = std::make_shared<SVE::LightNode>(lightSettings);
+            teleportLightNode->attachSceneNode(lightNode);
+        }
     }
 
     teleport.circleNode = std::move(teleportCircleNode);
@@ -655,7 +670,7 @@ void GameMapLoader::createLava(GameMap& level) const
     auto liquidMeshSettings = constructPlane(
             "LiquidMesh",
             glm::vec3(0.0f),
-            level.width * CellSize * 0.5, level.height * CellSize * 0.5,
+            level.width * CellSize * 0.5, level.height * CellSize  * 0.5,
             glm::vec3(0.0f, 1.0f, 0.0f));
     liquidMeshSettings.materialName = "LavaMaterial";
     auto liquidMesh = std::make_shared<SVE::Mesh>(liquidMeshSettings);
@@ -667,6 +682,7 @@ void GameMapLoader::createLava(GameMap& level) const
     level.mapNode->attachSceneNode(lavaNode);
     std::shared_ptr<SVE::MeshEntity> lavaEntity = std::make_shared<SVE::MeshEntity>("LiquidMesh");
     lavaEntity->setMaterial("LavaMaterial");
+    lavaEntity->setCastShadows(false);
     lavaNode->attachEntity(lavaEntity);
 
     level.lavaEntity = std::move(lavaEntity);
