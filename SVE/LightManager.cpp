@@ -18,7 +18,7 @@ static const uint32_t PointShadowSize = 512;
 LightManager::LightManager(bool useCascadeShadowMap)
     : _useCascadeShadowMap(useCascadeShadowMap)
     , _directLightShadowMap(std::make_shared<ShadowMap>(LightType::SunLight, useCascadeShadowMap ? MAX_CASCADES : 1, DirectShadowSize))
-    , _pointLightShadowMap(std::make_shared<ShadowMap>(LightType::ShadowPointLight, MAX_LIGHTS * 6, PointShadowSize))
+    //, _pointLightShadowMap(std::make_shared<ShadowMap>(LightType::ShadowPointLight, MAX_LIGHTS * 6, PointShadowSize))
 {
 }
 

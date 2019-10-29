@@ -86,8 +86,7 @@ void VulkanScreenQuad::startRenderCommandBufferCreation(ScreenQuadPass screenQua
     }
 
     std::vector<VkClearValue> clearValues(3);
-    clearValues[0].color = {0.0f, 0.0f, 0.0f, 1.0f};
-    clearValues[0].depthStencil = {1.0f, 0};
+    clearValues[0].color = {0.0f, 0.0f, 0.0f, 0.0f};
     clearValues[1].depthStencil = {1.0f, 0};
     clearValues[2].color = {0.0f, 0.0f, 0.0f, 0.0f};
     if (screenQuadPass == ScreenQuadPass::MRT)

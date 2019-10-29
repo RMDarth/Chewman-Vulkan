@@ -199,6 +199,7 @@ void MeshEntity::setupMaterial()
         if (_material->getVulkanMaterial()->isSkeletal())
         {
             _shadowMaterial = Engine::getInstance()->getMaterialManager()->getMaterial("SimpleSkeletalDepth");
+            // TODO: Add configuration to enable/disable point lights shadows
             //_pointLightShadowMaterial = Engine::getInstance()->getMaterialManager()->getMaterial("FullSkeletalDepth");
         }
         else

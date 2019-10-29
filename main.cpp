@@ -68,7 +68,7 @@ int runGame()
             "Chewman Vulkan",
             SDL_WINDOWPOS_CENTERED,
             SDL_WINDOWPOS_CENTERED,
-            1024, 768,
+            1324, 768,
             SDL_WINDOW_SHOWN | SDL_WINDOW_VULKAN | SDL_WINDOW_ALLOW_HIGHDPI);
 
     if(!window)
@@ -125,7 +125,7 @@ int runGame()
             engine->getPostEffectManager()->addPostEffect("VBlurEffect", "VBlurEffect",windowSize.x / 8, windowSize.y / 8);
             engine->getPostEffectManager()->addPostEffect("HBlurEffect", "HBlurEffect",windowSize.x / 8, windowSize.y / 8);
             engine->getPostEffectManager()->addPostEffect("BloomEffect", "BloomEffect");
-            //engine->getPostEffectManager()->addPostEffect("GrayscaleEffect", "GrayscaleEffect", 1024, 1024);
+            // engine->getPostEffectManager()->addPostEffect("GrayscaleEffect", "GrayscaleEffect");
             // engine->getPostEffectManager()->addPostEffect("PencilEffect", "PencilEffect");
         }
 
