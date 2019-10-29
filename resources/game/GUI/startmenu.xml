@@ -2,9 +2,9 @@
     <!--Panel name="panel" x="0.25" y="0.3" width="0.5" height="0.6" /-->
     <Image name="title" x="0.2"  y="0.2" width="0.6" height="-0.205" image="logo.png"  />
 
-    <Button name="start" text="Play" alignment="center" y="0.75" width="0.4" height="0.12" />
-    <Button name="story" text="Scoreboard" alignment="center" y="0.85" width="0.4" height="0.12"  />
+    <Button name="start" text="Play" alignment="center" y="0.75" width="-3.873" height="0.12" />
+    <Button name="story" text="Scoreboard" alignment="center" y="0.85" width="-3.873" height="0.12"  />
 
-    <Button name="config" text="" x="0.05" y="0.85" width="0.08" height="-1"
+    <Button name="config" text="" x="0.04" y="0.82" width="0.1" height="-1"
             image="buttons/config.png" hoverimage="buttons/config_hover.png" pressedimage="buttons/config_pressed.png" />
 </document>

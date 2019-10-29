@@ -103,7 +103,7 @@ int runGame()
             engine->getPostEffectManager()->addPostEffect("VBlurEffect", "VBlurEffect",windowSize.x / 8, windowSize.y / 8);
             engine->getPostEffectManager()->addPostEffect("HBlurEffect", "HBlurEffect",windowSize.x / 8, windowSize.y / 8);
             engine->getPostEffectManager()->addPostEffect("BloomEffect", "BloomEffect");
-            //engine->getPostEffectManager()->addPostEffect("GrayscaleEffect", "GrayscaleEffect");
+            // engine->getPostEffectManager()->addPostEffect("GrayscaleEffect", "GrayscaleEffect");
             // engine->getPostEffectManager()->addPostEffect("PencilEffect", "PencilEffect");
         }
 
@@ -113,7 +113,7 @@ int runGame()
                 glm::translate(glm::mat4(1), glm::vec3(80, 80, -80)));
 
         // create camera
-        camera->setNearFarPlane(0.1f, 500.0f);
+        camera->setNearFarPlane(0.1f, 100.0f);
         camera->setPosition(glm::vec3(5.0f, 5.0f, 5.0f));
 
         // create skybox

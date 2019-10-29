@@ -96,6 +96,14 @@ void ControlDocument::addChildren(std::shared_ptr<Control> parent, tinyxml2::XML
                 nextX = 0;
                 nextY += height + padding;
             }
+            if (alignment == "right")
+            {
+                auto parentSize = parent->getSize();
+                x = ((float)parentSize.x - (width * parentSize.x)) / (float)parentSize.x;
+
+                nextX = 0;
+                nextY += height + padding;
+            }
         }
 
         auto gameControl = _controlFactory.createControl(

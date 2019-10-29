@@ -1,18 +1,18 @@
 <document>
-    <Label name="scoreimg" x="0.01" y="0.01" width="0.23" height="-0.364" image="scorebar.png" mousetransparent="true"/>
-    <Label name="timeimg" x="0.27" y="0.01" width="0.23" height="-0.364" image="timebar.png" mousetransparent="true"/>
-    <Label name="score" text="0" x="0.01" y="0.012" width="0.28" height="-0.283" mousetransparent="true"/>
-    <Label name="time" text="0:00" x="0.27" y="0.012" width="0.28" height="-0.283" mousetransparent="true"/>
+    <Label name="scoreimg" x="0.01" y="0.01" width="0.15" height="-0.364" image="scorebar.png" mousetransparent="true"/>
+    <Label name="timeimg" x="0.20" y="0.01" width="0.15" height="-0.364" image="timebar.png" mousetransparent="true"/>
+    <Label name="score" text="0" x="0.01" y="0.012" width="0.19" height="-0.283" font-size="60" mousetransparent="true"/>
+    <Label name="time" text="0:00" x="0.2" y="0.012" width="0.19" height="-0.283" font-size="60" mousetransparent="true"/>
 
-    <Image name="lifeimg" x="0.02" y="0.85" height="0.1" width="-1" image="trashlife.png" mousetransparent="true"/>
-    <Label name="lifecount" text="02" x="0.07" y="0.85" height="0.1" width="-1"  mousetransparent="true"/>
+    <Image name="lifeimg" x="0.015" y="0.14" height="0.07" width="-1" image="trashlife.png" mousetransparent="true"/>
+    <Label name="lifecount" text="02" x="0.05" y="0.14" height="0.09" width="-1"  mousetransparent="true"/>
 
     <!--Label name="CoinsText" text="C:" x="0.06" y="0.1" width="0.1" height="0.05" font-size="45"  mousetransparent="true"/-->
-    <Image name="coinimg" x="0.09" y="0.105" height="0.035" width="-1" image="coin.png" mousetransparent="true"/>
-    <Label name="Coins" text="0" x="0.1" y="0.1" width="0.1" height="0.05" font-size="45" mousetransparent="true"/>
+    <Image name="coinimg" x="0.025" y="0.105" height="0.035" width="-1" image="coin.png" mousetransparent="true"/>
+    <Label name="Coins" text="0" x="0.05" y="0.1" width="0.1" height="0.05" font-size="45" mousetransparent="true"/>
 
     <Label name="FPS" text="0" x="0.6" y="0.10" width="0.1" height="0.05" mousetransparent="true"/>
 
-    <Button name="pause" text="" x="0.87" y="0.01" width="0.1" height="-1" image="buttons/pause.png"
+    <Button name="pause" text="" x="0.87" y="0.01" width="0.08" height="-1" image="buttons/pause.png"
             hoverimage="buttons/pause_hover.png" pressedimage="buttons/pause_pressed.png"/>
 </document>
