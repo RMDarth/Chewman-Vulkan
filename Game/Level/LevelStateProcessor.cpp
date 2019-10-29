@@ -42,7 +42,7 @@ GameState LevelStateProcessor::update(float deltaTime)
 {
     _gameMapProcessor->update(deltaTime);
     _time += deltaTime;
-    updateHUD();
+    updateHUD(deltaTime);
 
     switch (_gameMapProcessor->getState())
     {
@@ -121,7 +121,7 @@ void LevelStateProcessor::processEvent(Control* control, IEventHandler::EventTyp
     }
 }
 
-void LevelStateProcessor::updateHUD()
+void LevelStateProcessor::updateHUD(float deltaTime)
 {
     std::stringstream stream;
     stream << (int)_time / 60 << ":" << std::setfill('0') << std::setw(2) << (int)_time % 60;
@@ -140,9 +140,12 @@ void LevelStateProcessor::updateHUD()
     coins->setText(stream.str());
 
     static auto fps = _document->getControlByName("FPS");
-    static uint32_t frames = 0;
-    frames++;
-    fps->setText(std::to_string((int)(frames/_time)));
+    static std::list<float> fpsList;
+    fpsList.push_back(1.0f/deltaTime);
+    if (fpsList.size() > 100)
+        fpsList.pop_front();
+    auto fpsValue = std::accumulate(fpsList.begin(), fpsList.end(), 0) / fpsList.size();
+    fps->setText(std::to_string((int) fpsValue));
 
 }
 

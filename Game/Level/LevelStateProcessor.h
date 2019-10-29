@@ -34,7 +34,7 @@ public:
     void processEvent(Control* control, EventType type, int x, int y) override;
 
 private:
-    void updateHUD();
+    void updateHUD(float deltaTime);
 
 private:
     GameMapLoader _mapLoader;

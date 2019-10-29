@@ -22,7 +22,8 @@ std::unique_ptr<VulkanCommandsManager> createVulkanShadowMap(
     switch (lightType)
     {
         case LightType::ShadowPointLight:
-            return std::make_unique<VulkanPointShadowMap>(layersCount, shadowMapSize);
+            throw VulkanException("Point light shadows currently unsupported");
+            // return std::make_unique<VulkanPointShadowMap>(layersCount, shadowMapSize);
         case LightType::SunLight:
             return std::make_unique<VulkanDirectShadowMap>(layersCount, shadowMapSize);
         case LightType::SpotLight:

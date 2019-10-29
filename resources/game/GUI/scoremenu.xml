@@ -1,13 +1,13 @@
 <document>
-	<Panel name="panel" x="0.3" y="0.1" width="-0.8214" height="0.8" image="windows/gameover_0.png">
-		<Label name="resultLabel" text="Score" alignment="center" y="0.015" width="0.6" height="0.1" />
-		<Label name="result" text="Victory!" alignment="center" y="0.45" width="0.6" height="0.1" />
-		<Label name="levelname" text="Level 1-1" alignment="center" y="0.75" width="0.6" height="0.1" />
-		<Label name="score" text="Score: " alignment="center" y="0.55" width="0.6" height="0.1" />
-		<Label name="time" text="Time: " alignment="center" y="0.65" width="0.6" height="0.1" />
-		<Image name="highscore" x="0.75" y="0.4" width="0.4" height="0.3" source="buttons/highscore.png" />
-	</Panel>
-	<Button name="continue" x="0.35" y="0.80" width="-1" height="0.15"  image="buttons/play.png" hoverimage="buttons/play_hover.png" pressedimage="buttons/play_pressed.png" />
-	<Button name="restart"  x="0.45" y="0.80" width="-1" height="0.15" image="buttons/restart.png" hoverimage="buttons/restart_hover.png" pressedimage="buttons/restart_pressed.png" />
-	<Button name="tomenu" x="0.55" y="0.80" width="-1" height="0.15"  image="buttons/menu.png" hoverimage="buttons/menu_hover.png" pressedimage="buttons/menu_pressed.png" />
+    <Panel name="panel" x="0.3" y="0.1" alignment="center" width="-0.8214" height="0.8" image="windows/gameover_0.png">
+        <Label name="resultLabel" text="Score" alignment="center" y="0.015" width="0.6" height="0.1"/>
+        <Label name="result" text="Victory!" alignment="center" y="0.45" width="0.6" height="0.1"/>
+        <Label name="levelname" text="Level 1-1" alignment="center" y="0.75" width="0.6" height="0.1"/>
+        <Label name="score" text="Score: " alignment="center" y="0.55" width="0.6" height="0.1"/>
+        <Label name="time" text="Time: " alignment="center" y="0.65" width="0.6" height="0.1"/>
+        <Image name="highscore" x="0.75" y="0.4" width="0.4" height="0.3" source="buttons/highscore.png"/>
+    </Panel>
+    <Button name="continue" x="0.35" y="0.80" width="-1" height="0.15" image="buttons/play.png" hoverimage="buttons/play_hover.png" pressedimage="buttons/play_pressed.png"/>
+    <Button name="restart" x="0.45" y="0.80" width="-1" height="0.15" image="buttons/restart.png" hoverimage="buttons/restart_hover.png" pressedimage="buttons/restart_pressed.png"/>
+    <Button name="tomenu" x="0.55" y="0.80" width="-1" height="0.15" image="buttons/menu.png" hoverimage="buttons/menu_hover.png" pressedimage="buttons/menu_pressed.png"/>
 </document>

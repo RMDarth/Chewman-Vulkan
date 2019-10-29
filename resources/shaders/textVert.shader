@@ -9,6 +9,8 @@
     "uniformList": [
         { "uniformType": "ModelMatrix" },
         { "uniformType": "ViewProjectionMatrix" },
-        { "uniformType": "TextInfo" }
+        { "uniformType": "TextInfo" },
+        { "uniformType": "GlyphInfoList" },
+        { "uniformType": "TextSymbolList" }
     ]
 }
