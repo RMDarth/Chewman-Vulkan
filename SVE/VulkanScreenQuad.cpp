@@ -13,10 +13,10 @@
 namespace SVE
 {
 
-VulkanScreenQuad::VulkanScreenQuad()
+VulkanScreenQuad::VulkanScreenQuad(glm::ivec2 resolution)
     : _vulkanInstance(Engine::getInstance()->getVulkanInstance())
-    , _width(_vulkanInstance->getExtent().width)
-    , _height(_vulkanInstance->getExtent().height)
+    , _width(resolution.x > 0 ? resolution.x : _vulkanInstance->getExtent().width)
+    , _height(resolution.y > 0 ? resolution.y : _vulkanInstance->getExtent().height)
     , _vulkanUtils(_vulkanInstance->getVulkanUtils())
 {
     createRenderPass();

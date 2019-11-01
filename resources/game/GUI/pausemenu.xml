@@ -1,5 +1,5 @@
 <document>
-	<Panel name="panel" x="0.2" y="0.2" width="0.6" height="-0.565" image="windows/pause.png" >
+	<Panel name="panel" x="0.25" y="0.2" width="0.5" height="-0.565" image="windows/pause.png" >
 		<Label name="PauseLabel" text="Pause" alignment="center" y="0.10" width="0.6" height="0.05" />
 
         <Button name="continue" text="" x="0.1" y="0.4" width="0.2" height="-1" image="buttons/play.png" hoverimage="buttons/play_hover.png" pressedimage="buttons/play_pressed.png" />

@@ -45,7 +45,7 @@ static const uint8_t PassCount = 9;
 class Engine
 {
 public:
-    static Engine* createInstance(SDL_Window* window, const std::string& settingsPath, std::shared_ptr<FileSystem> fileSystem);
+    static Engine* createInstance(SDL_Window* window, const std::string& settingsPath, std::shared_ptr<FileSystem> fileSystem, glm::ivec2 frameBufferResolution = {0, 0});
     static Engine* createInstance(SDL_Window* window, EngineSettings settings, std::shared_ptr<FileSystem> fileSystem);
     static void destroyInstance(); // debug only
     static Engine* getInstance();

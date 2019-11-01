@@ -59,7 +59,7 @@ Engine* Engine::createInstance(SDL_Window* window, EngineSettings settings, std:
     return _engineInstance;
 }
 
-Engine* Engine::createInstance(SDL_Window* window, const std::string& settingsPath, std::shared_ptr<FileSystem> fileSystem)
+Engine* Engine::createInstance(SDL_Window* window, const std::string& settingsPath, std::shared_ptr<FileSystem> fileSystem, glm::ivec2 framebufferResolution)
 {
     if (_engineInstance == nullptr)
     {
@@ -79,7 +79,7 @@ Engine* Engine::createInstance(SDL_Window* window, const std::string& settingsPa
             _engineInstance->getSceneManager()->createWater(0);
         if (settings.useScreenQuad)
         {
-            _engineInstance->getVulkanInstance()->initScreenQuad();
+            _engineInstance->getVulkanInstance()->initScreenQuad(framebufferResolution);
         }
     }
     return _engineInstance;
