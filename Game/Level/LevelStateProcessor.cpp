@@ -154,6 +154,8 @@ void LevelStateProcessor::processEvent(Control* control, IEventHandler::EventTyp
                 sunLight->getLightSettings().specularStrength = {0.5f, 0.5f, 0.5f, 1.0f};
                 sunLight->setNodeTransformation(
                         glm::translate(glm::mat4(1), glm::vec3(80, 80, -80)));
+
+                sunLight->getLightSettings().castShadows = Game::getInstance()->getGraphicsManager().getSettings().useShadows;
                 isNight = false;
             } else {
                 isNight = true;
@@ -162,6 +164,8 @@ void LevelStateProcessor::processEvent(Control* control, IEventHandler::EventTyp
                 sunLight->getLightSettings().specularStrength = {0.08f, 0.08f, 0.08f, 1.0f};
                 sunLight->setNodeTransformation(
                         glm::translate(glm::mat4(1), glm::vec3(-20, 80, 80)));
+
+                sunLight->getLightSettings().castShadows = false;
             }
         }
     }

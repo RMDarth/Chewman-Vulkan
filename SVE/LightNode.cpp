@@ -37,7 +37,7 @@ void LightNode::updateViewMatrix(glm::vec3 cameraPos, glm::vec3 cameraDir)
 {
     if (_lightSettings.lightType == LightType::SunLight)
     {
-        auto cosA = glm::dot(glm::normalize(cameraDir), glm::vec3(0, -1, 0));
+        auto cosA = glm::dot(glm::normalize(cameraDir), glm::vec3(0, 1, 0));
         _distanceFromCamera = std::min(250.0f, fabsf(cameraPos.y / cosA));
         createProjectionMatrix();
 
@@ -233,11 +233,12 @@ void LightNode::createProjectionMatrix()
                     _projectionList.push_back(projectionMatrix);
                 }
             } else {
-                far = _distanceFromCamera + 100;
+                far = _distanceFromCamera + 50;
 
                 float distance = near * powf(far / near, 1.0f);
-                auto projectionMatrix = glm::ortho(-distance, distance, -distance, distance, 0.01f,
-                                                   distance * 2 + 30);
+                // TODO: This values are only for current game, they should be set from outside or calculated
+                auto projectionMatrix = glm::ortho(-10.0f, 70.0f, -18.0f, 30.0f, 5.0f,
+                                                   200.0f);
                 projectionMatrix[1][1] *= -1;
                 _projectionList.push_back(projectionMatrix);
                 _projectionMatrix = projectionMatrix;

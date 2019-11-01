@@ -4,6 +4,7 @@
 #pragma once
 #include <glm/glm.hpp>
 #include <future>
+#include <array>
 #include "PowerUp.h"
 
 namespace SVE
