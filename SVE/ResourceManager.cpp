@@ -368,6 +368,12 @@ Font loadFont(FSEntityPtr directory, const std::string& data)
         ++symbolIndex;
     }
 
+    for (auto i = 0; i < symbolIndex; ++i)
+    {
+        font.maxGlyphHeight = std::max(font.maxGlyphHeight, font.symbols[i].height + font.maxHeight - font.symbols[i].originY);
+    }
+
+
     return font;
 }
 

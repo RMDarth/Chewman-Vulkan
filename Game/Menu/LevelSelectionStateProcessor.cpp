@@ -33,11 +33,14 @@ void LevelSelectionStateProcessor::show()
 {
     _document->show();
 
+    auto& scoresManager= Game::getInstance()->getScoresManager();
     auto worldNum = Game::getInstance()->getProgressManager().getCurrentWorld();
     for (auto i = 0; i < 12; ++i)
     {
         auto control = _document->getControlByName(std::to_string(i));
-        control->setText(std::to_string((i+1) + worldNum * 12 ));
+        auto levelNumber = (i+1) + worldNum * 12;
+        control->setText(std::to_string(levelNumber));
+        control->setCustomAttribute("stars", std::to_string(scoresManager.getStars(levelNumber)));
     }
 }
 

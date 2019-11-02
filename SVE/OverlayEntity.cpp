@@ -56,6 +56,7 @@ void OverlayEntity::updateUniforms(UniformDataList uniformDataList) const
         uniformData.textInfo.fontImageSize = glm::vec2(_overlayInfo.textInfo.font->width, _overlayInfo.textInfo.font->height);
         uniformData.textInfo.imageSize = Engine::getInstance()->getRenderWindowSize();
         uniformData.textInfo.maxHeight = _overlayInfo.textInfo.font->maxHeight;
+        uniformData.textInfo.maxGlyphHeight = _overlayInfo.textInfo.font->maxGlyphHeight;
         uniformData.textInfo.scale = _overlayInfo.textInfo.scale;
         uniformData.textInfo.color = _overlayInfo.textInfo.color;
         uniformData.glyphList.clear();

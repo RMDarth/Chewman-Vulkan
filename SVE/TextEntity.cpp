@@ -41,6 +41,7 @@ void TextEntity::updateUniforms(UniformDataList uniformDataList) const
     uniformData.textInfo.fontImageSize = glm::vec2(_textInfo.font->width, _textInfo.font->height);
     uniformData.textInfo.imageSize = Engine::getInstance()->getRenderWindowSize();
     uniformData.textInfo.maxHeight = _textInfo.font->maxHeight;
+    uniformData.textInfo.maxGlyphHeight = _textInfo.font->maxGlyphHeight;
     uniformData.textInfo.scale = _textInfo.scale;
     uniformData.textInfo.color = _textInfo.color;
     uniformData.glyphList.reserve(300);

@@ -210,7 +210,7 @@ add_executable(Chewman
         DesktopFS.cpp
         DesktopFS.h
         VulkanHeaders.h
-        Game/Menu/GraphicsStateProcessor.cpp Game/Menu/GraphicsStateProcessor.h Game/GraphicsSettings.cpp Game/GraphicsSettings.h)
+        Game/Menu/GraphicsStateProcessor.cpp Game/Menu/GraphicsStateProcessor.h Game/GraphicsSettings.cpp Game/GraphicsSettings.h Game/ScoresManager.cpp Game/ScoresManager.h)
 
 if (WIN32)
     target_link_libraries(Chewman mingw32 SDL2main SDL2 vulkan-1.lib VkLayer_core_validation.lib libassimp libcppfsd libtinyxml2)
