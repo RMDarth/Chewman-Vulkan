@@ -38,6 +38,10 @@ public:
     void pauseTime();
     void unpauseTime();
 
+    virtual void setCustomData(float data);
+    virtual void setCustomData(glm::vec4 data);
+    virtual void setCustomData(glm::mat4 data);
+
     virtual bool isComputeEntity() const;
     virtual bool isInstanceRendering() const;
 
@@ -56,6 +60,10 @@ public:
 protected:
     bool _isTimePaused = false;
     float _pauseTime = 0;
+
+    float _customFloat = 0;
+    glm::vec4 _customVec4 = {};
+    glm::mat4 _customMat4 = {};
 
     bool _renderLast = false;
     bool _renderToDepth = false;

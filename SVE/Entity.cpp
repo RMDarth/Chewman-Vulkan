@@ -58,6 +58,21 @@ bool Entity::isInstanceRendering() const
     return false;
 }
 
+void Entity::setCustomData(glm::vec4 data)
+{
+    _customVec4 = data;
+}
+
+void Entity::setCustomData(float data)
+{
+    _customFloat = data;
+}
+
+void Entity::setCustomData(glm::mat4 data)
+{
+    _customMat4 = data;
+}
+
 bool Entity::isComputeEntity() const
 {
     return false;
@@ -113,7 +128,5 @@ glm::mat4 Entity::getAttachment(const std::string& name)
 {
     return glm::mat4();
 }
-
-
 
 } // namespace SVE

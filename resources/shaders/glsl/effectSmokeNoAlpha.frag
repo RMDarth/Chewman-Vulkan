@@ -6,9 +6,7 @@
 
 layout(set = 1, binding = 0) uniform UBO
 {
-    vec4 cameraPos;
     MaterialInfo materialInfo;
-    float width;
     float time;
 } ubo;
 
@@ -154,22 +152,9 @@ float linearDepth(float z_b)
 
 void main() 
 {
-    float cloudColor = clouds(fragTexCoord * 10.0);
+    float cloudColor = clouds(fragTexCoord * 5.0);
     vec3 finalColor = vec3(cloudColor/5.0, cloudColor / 3.5, cloudColor/4.5);
     finalColor = finalColor * 0.5;
-
-    vec3 cameraDir = fragPos - ubo.cameraPos.xyz;
-    float len1 = length(cameraDir);
-    cameraDir = normalize(cameraDir);
-    vec3 toWall = vec3(0, 0, 1);
-    float len2 = (-ubo.cameraPos.z + 1.5) / dot(toWall, cameraDir);
-
-    float depthDiff = (len2 - len1) * 0.5;
-    //depthDiff = fragPos.x > -1.5 ? depthDiff;
-    depthDiff = mix(depthDiff, 1.0, smoothstep(-1.5, -2, fragPos.x));
-    depthDiff = mix(depthDiff, 1.0, smoothstep(ubo.width - 1.5, ubo.width-1.0, fragPos.x));
-
-    outColor = vec4(finalColor, abs(depthDiff));
-
+    outColor = vec4(finalColor, 1.0);
     outColorBloom = vec4(outColor.rgb, 0.35);
 }

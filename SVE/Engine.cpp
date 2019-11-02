@@ -372,12 +372,12 @@ void Engine::renderFrameImpl()
 
     if (auto* screenQuad = _vulkanInstance->getScreenQuad())
     {
-        _commandsType = CommandsType::ScreenQuadDepthPass;
+        /*_commandsType = CommandsType::ScreenQuadDepthPass;
         screenQuad->reallocateCommandBuffers(VulkanScreenQuad::Depth);
         screenQuad->startRenderCommandBufferCreation(VulkanScreenQuad::Depth);
         createNodeStageDrawCommands(_sceneManager->getRootNode(), BUFFER_INDEX_SCREEN_QUAD_DEPTH, currentImage, PassStage::Start);
         createNodeStageDrawCommands(_sceneManager->getRootNode(), BUFFER_INDEX_SCREEN_QUAD_DEPTH, currentImage, PassStage::Instanced);
-        screenQuad->endRenderCommandBufferCreation(VulkanScreenQuad::Depth);
+        screenQuad->endRenderCommandBufferCreation(VulkanScreenQuad::Depth);*/
 
         _commandsType = CommandsType::ScreenQuadPass;
         screenQuad->reallocateCommandBuffers(VulkanScreenQuad::Normal);
@@ -507,7 +507,7 @@ void Engine::renderFrameImpl()
 
     if (_vulkanInstance->getScreenQuad())
     {
-        _vulkanInstance->submitCommands(CommandsType::ScreenQuadDepthPass, BUFFER_INDEX_SCREEN_QUAD_DEPTH);
+        //_vulkanInstance->submitCommands(CommandsType::ScreenQuadDepthPass, BUFFER_INDEX_SCREEN_QUAD_DEPTH);
         _vulkanInstance->submitCommands(CommandsType::ScreenQuadPass, BUFFER_INDEX_SCREEN_QUAD);
         _vulkanInstance->submitCommands(CommandsType::ScreenQuadMRTPass, BUFFER_INDEX_SCREEN_QUAD_MRT);
         _vulkanInstance->submitCommands(CommandsType::ScreenQuadLatePass, BUFFER_INDEX_SCREEN_QUAD_LATE);

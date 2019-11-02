@@ -76,6 +76,9 @@ void MeshEntity::updateUniforms(UniformDataList uniformDataList) const
     if (!_isTimePaused)
         _time += Engine::getInstance()->getDeltaTime();
     newData.time = _time;
+    newData.customFloat = _customFloat;
+    newData.customVec4 = _customVec4;
+    newData.customMat4 = _customMat4;
 
     if (_animationState == AnimationState::Play && !_isTimePaused)
         _animationTime += Engine::getInstance()->getDeltaTime();

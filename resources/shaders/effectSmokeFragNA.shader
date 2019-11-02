@@ -1,11 +1,10 @@
 {
-    "name": "smokeFragmentShader",
-    "filename": "glsl/effectSmoke.frag.spv",
+    "name": "smokeFragmentShaderNA",
+    "filename": "glsl/effectSmokeNoAlpha.frag.spv",
     "shaderType": "FragmentShader",
     "uniformList": [
         { "uniformType": "CameraPosition" },
         { "uniformType": "MaterialInfo" },
-        { "uniformType": "CustomFloat" },
         { "uniformType": "Time" }
     ]
 }
