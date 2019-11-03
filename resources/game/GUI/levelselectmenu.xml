@@ -2,20 +2,56 @@
     <Panel name="panel" alignment="center" y="0.07" width="-1" height="0.85" image="windows/window_square.png">
         <Label name="worldname" text="Levels" alignment="center" y = "0.04" width="0.5" height="0.06" />
 
-        <LevelButton name="0" text="5" x="0.0769" y="0.2" width="0.1538" height="-1" stars="2" />
-        <LevelButton name="1" text="6" x="0.3076" y="0.2" width="0.1538" height="-1" stars="1" />
-        <LevelButton name="2" text="7" x="0.5383" y="0.2" width="0.1538" height="-1" stars="3" />
-        <LevelButton name="3" text="8" x="0.769" y="0.2" width="0.1538" height="-1" stars="3" />
+        <Container name="level0" x="0.0769" y="0.2" width="0.1538" height="-1.25">
+            <LevelButton name="0" text="5" x="0" y="0" width="1" height="0.8" stars="2" />
+            <Label name="time0" text="00:00" x="0" y="0.8" width="1" height="0.2"  font-size="45" />
+        </Container>
+        <Container name="level1" x="0.3076" y="0.2" width="0.1538"  height="-1.25">
+            <LevelButton name="1" text="6" x="0" y="0" width="1" height="0.8" stars="1" />
+            <Label name="time1" text="00:00" x="0" y="0.8" width="1" height="0.2"  font-size="45" />
+        </Container>
+        <Container name="level2" x="0.5383" y="0.2" width="0.1538"  height="-1.25">
+            <LevelButton name="2" text="7" x="0" y="0" width="1" height="0.8" stars="3" />
+            <Label name="time2" text="00:00" x="0" y="0.8" width="1" height="0.2"  font-size="45" />
+        </Container>
+        <Container name="level3" x="0.769" y="0.2" width="0.1538" height="-1.25">
+            <LevelButton name="3" text="8" x="0" y="0" width="1" height="0.8" stars="3" />
+            <Label name="time3" text="00:00" x="0" y="0.8" width="1" height="0.2"  font-size="45" />
+        </Container>
 
-        <LevelButton name="4" text="9" x="0.0769" y="0.45" width="0.1538" height="-1" stars="0" />
-        <LevelButton name="5" text="10" x="0.3076" y="0.45" width="0.1538" height="-1" stars="2" />
-        <LevelButton name="6" text="11" x="0.5383" y="0.45" width="0.1538" height="-1" stars="2" />
-        <LevelButton name="7" text="12" x="0.769" y="0.45" width="0.1538" height="-1" stars="1" />
+        <Container name="level4" x="0.0769" y="0.45" width="0.1538" height="-1.25">
+            <LevelButton name="4" text="9" x="0" y="0" width="1" height="0.8" stars="0" />
+            <Label name="time4" text="00:00" x="0" y="0.8" width="1" height="0.2"  font-size="45" />
+        </Container>
+        <Container name="level5" x="0.3076" y="0.45" width="0.1538" height="-1.25">
+            <LevelButton name="5" text="10" x="0" y="0" width="1" height="0.8" stars="2" />
+            <Label name="time5" text="00:00" x="0" y="0.8" width="1" height="0.2"  font-size="45" />
+        </Container>
+        <Container name="level6" x="0.5383" y="0.45" width="0.1538" height="-1.25">
+            <LevelButton name="6" text="11" x="0" y="0" width="1" height="0.8" stars="2" />
+            <Label name="time6" text="00:00" x="0" y="0.8" width="1" height="0.2"  font-size="45" />
+        </Container>
+        <Container name="level7" x="0.769" y="0.45" width="0.1538" height="-1.25">
+            <LevelButton name="7" text="12" x="0" y="0" width="1" height="0.8" stars="1" />
+            <Label name="time7" text="00:00" x="0" y="0.8" width="1" height="0.2"  font-size="45" />
+        </Container>
 
-        <LevelButton name="8" text="13" x="0.0769" y="0.7" width="0.1538" height="-1" stars="0" />
-        <LevelButton name="9" text="14" x="0.3076" y="0.7" width="0.1538" height="-1" stars="0" />
-        <LevelButton name="10" text="15" x="0.5383" y="0.7" width="0.1538" height="-1" stars="0" />
-        <LevelButton name="11" text="16" x="0.769" y="0.7" width="0.1538" height="-1" stars="0" />
+        <Container name="level8" x="0.0769" y="0.7" width="0.1538" height="-1.25">
+            <LevelButton name="8" text="13" x="0" y="0" width="1" height="0.8" stars="0" />
+            <Label name="time8" text="00:00" x="0" y="0.8" width="1" height="0.2"  font-size="45" />
+        </Container>
+        <Container name="level9" x="0.3076" y="0.7" width="0.1538" height="-1.25">
+            <LevelButton name="9" text="14" x="0" y="0" width="1" height="0.8" stars="0" />
+            <Label name="time9" text="00:00" x="0" y="0.8" width="1" height="0.2"  font-size="45" />
+        </Container>
+        <Container name="level10" x="0.5383" y="0.7" width="0.1538" height="-1.25">
+            <LevelButton name="10" text="15" x="0" y="0" width="1" height="0.8" stars="0" />
+            <Label name="time10" text="00:00" x="0" y="0.8" width="1" height="0.2"  font-size="45" />
+        </Container>
+        <Container name="level11" x="0.769" y="0.7" width="0.1538" height="-1.25">
+            <LevelButton name="11" text="16" x="0" y="0" width="1" height="0.8" stars="0" />
+            <Label name="time11" text="00:00" x="0" y="0.8" width="1" height="0.2"  font-size="45" />
+        </Container>
     </Panel>
     <Button name="back"  x="0.05" y="0.85" width="0.08" height="-1" image="buttons/back.png" hoverimage="buttons/back_hover.png" pressedimage="buttons/back_pressed.png" />
 </document>

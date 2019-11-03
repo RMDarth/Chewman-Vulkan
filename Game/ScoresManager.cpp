@@ -33,7 +33,7 @@ ScoresManager::ScoresManager()
 void ScoresManager::load()
 {
     // TODO: Replace it with some encrypted save/load
-    _timeScores = std::vector<float>(LevelsCount, -1);
+    _timeScores = std::vector<uint32_t>(LevelsCount, 0);
     _stars = std::vector<uint8_t>(LevelsCount, 0);
     std::ifstream fin(getScoresPath());
     if (!fin)
@@ -88,7 +88,7 @@ uint16_t ScoresManager::getStars(uint16_t level) const
     return _stars[level - 1];
 }
 
-float ScoresManager::getTime(uint16_t level) const
+uint32_t ScoresManager::getTime(uint16_t level) const
 {
     assert(level <= _timeScores.size());
     return _timeScores[level - 1];
@@ -105,7 +105,7 @@ void ScoresManager::setStars(uint16_t level, uint16_t stars)
     _stars[level - 1] = static_cast<uint8_t>(stars);
 }
 
-void ScoresManager::setTime(uint16_t level, float time)
+void ScoresManager::setTime(uint16_t level, uint32_t time)
 {
     assert(level <= _timeScores.size());
     _timeScores[level - 1] = time;

@@ -65,7 +65,7 @@ int runGame()
             "Chewman Vulkan",
             SDL_WINDOWPOS_CENTERED,
             SDL_WINDOWPOS_CENTERED,
-            1324, 768,
+            1440, 720,
             SDL_WINDOW_SHOWN | SDL_WINDOW_VULKAN | SDL_WINDOW_ALLOW_HIGHDPI);
 
     if(!window)
@@ -76,11 +76,18 @@ int runGame()
 
     SVE::Engine* engine = SVE::Engine::createInstance(window, "resources/main.engine", std::make_shared<SVE::DesktopFS>());
     {
+        auto windowSize = engine->getRenderWindowSize();
         auto camera = engine->getSceneManager()->createMainCamera();
         std::cout << "Start loading resources..." << std::endl;
         // show loading screen
         engine->getResourceManager()->loadFolder("resources/loadingScreen");
-        Chewman::ControlDocument loadingScreen("resources/game/GUI/loading.xml");
+        std::unique_ptr<Chewman::ControlDocument> loadingScreen;
+        if ((float)windowSize.x / windowSize.y < 1.4)
+        {
+            loadingScreen = std::make_unique<Chewman::ControlDocument>("resources/game/GUI/loading.xml");
+        } else {
+            loadingScreen = std::make_unique<Chewman::ControlDocument>("resources/game/GUI/loadingWide.xml");
+        }
         engine->renderFrame(0.0f);
 
         // load resources
@@ -90,9 +97,7 @@ int runGame()
         engine->getResourceManager()->loadFolder("resources/fonts");
         engine->getResourceManager()->loadFolder("resources");
         std::cout << "Resources loading finished." << std::endl;
-        loadingScreen.hide();
-
-        auto windowSize = engine->getRenderWindowSize();
+        loadingScreen->hide();
 
         // Create game controller
         auto* game = Chewman::Game::getInstance();

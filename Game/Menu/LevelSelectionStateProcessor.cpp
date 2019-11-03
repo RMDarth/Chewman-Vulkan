@@ -41,6 +41,16 @@ void LevelSelectionStateProcessor::show()
         auto levelNumber = (i+1) + worldNum * 12;
         control->setText(std::to_string(levelNumber));
         control->setCustomAttribute("stars", std::to_string(scoresManager.getStars(levelNumber)));
+
+        auto timeControl = _document->getControlByName("time" + std::to_string(i));
+        if (scoresManager.getTime(levelNumber) == 0)
+        {
+            timeControl->setText("-:--");
+            timeControl->setTextColor(glm::vec4(0.5, 0.5, 0.5, 1.0));
+        } else {
+            timeControl->setText(timeToString(scoresManager.getTime(levelNumber)));
+            timeControl->setTextColor(glm::vec4(1.0, 1.0, 1.0, 1.0));
+        }
     }
 }
 

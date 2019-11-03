@@ -7,7 +7,7 @@ namespace Chewman
 {
 
 LabelControl::LabelControl(const std::string& name, float x, float y, float width, float height, Control* parent)
-    : Control(ControlType::Label, name, x, y, width, height, "empty.png", parent)
+    : Control(ControlType::Label, name, x, y, width, height, std::string(), parent)
 {
 
 }

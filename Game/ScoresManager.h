@@ -18,15 +18,15 @@ public:
     void store();
 
     uint16_t getStars(uint16_t level) const;
-    float getTime(uint16_t level) const;
+    uint32_t getTime(uint16_t level) const;
     uint32_t getBestScore() const;
 
     void setStars(uint16_t level, uint16_t stars);
-    void setTime(uint16_t level, float time);
+    void setTime(uint16_t level, uint32_t time);
     void setBestScore(uint32_t score);
 
 private:
-    std::vector<float> _timeScores;
+    std::vector<uint32_t> _timeScores;
     std::vector<uint8_t> _stars;
     uint32_t _bestScore = 0;
 };

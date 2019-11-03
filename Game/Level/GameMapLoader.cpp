@@ -138,8 +138,7 @@ std::shared_ptr<GameMap> GameMapLoader::loadMap(const std::string& filename)
     fin >> gameMap->width >> gameMap->height;
 
     uint8_t style, waterStyle;
-    std::string levelName;
-    fin >> style >> waterStyle >> levelName;
+    fin >> style >> waterStyle;
 
     gameMap->mapNode = SVE::Engine::getInstance()->getSceneManager()->createSceneNode();
     gameMap->upperLevelMeshNode = SVE::Engine::getInstance()->getSceneManager()->createSceneNode();
@@ -147,7 +146,13 @@ std::shared_ptr<GameMap> GameMapLoader::loadMap(const std::string& filename)
 
     gameMap->mapData.resize(gameMap->height);
     char ch;
-    char line[100];
+    char line[100] = {};
+
+    fin.getline(line, 90);
+    gameMap->name = line;
+    gameMap->name.erase(std::find_if(gameMap->name.rbegin(), gameMap->name.rend(), [](char ch) {
+        return !std::isspace(ch);
+    }).base(), gameMap->name.end());
 
     // Static object help
     int nextIsRotation = 0;
@@ -166,7 +171,6 @@ std::shared_ptr<GameMap> GameMapLoader::loadMap(const std::string& filename)
     gameMap->teleports.reserve(gameMap->width * gameMap->height);
     for (auto row = 0u; row < gameMap->height; ++row)
     {
-        fin.getline(line, 100);
         auto curRow = gameMap->height - row - 1;
         gameMap->mapData[curRow].resize(gameMap->width);
         for (auto column = 0u; column < gameMap->width; ++column)
@@ -282,11 +286,12 @@ std::shared_ptr<GameMap> GameMapLoader::loadMap(const std::string& filename)
                     break;
             }
         }
+        fin.getline(line, 100);
     }
     gameMap->activeCoins = gameMap->coins.size();
     gameMap->totalCoins = gameMap->coins.size();
 
-    fin.getline(line, 100);
+    //fin.getline(line, 100);
     initMeshes(*gameMap);
     for (auto& gargoyle : gameMap->gargoyles)
     {

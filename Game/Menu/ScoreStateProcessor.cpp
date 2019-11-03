@@ -3,24 +3,11 @@
 // Licensed under the MIT License
 #include "ScoreStateProcessor.h"
 #include "Game/Controls/ControlDocument.h"
-
-#include <Game/Game.h>
-#include <iomanip>
+#include "Game/Game.h"
+#include <sstream>
 
 namespace Chewman
 {
-
-namespace
-{
-
-std::string timeToString(uint32_t time)
-{
-    std::stringstream stream;
-    stream << time / 60 << ":" << std::setfill('0') << std::setw(2) << time % 60;
-    return stream.str();
-}
-
-} // anon namespace
 
 ScoreStateProcessor::ScoreStateProcessor()
     : _progressManager(Game::getInstance()->getProgressManager())
@@ -107,7 +94,7 @@ void ScoreStateProcessor::show()
 
         if (_stars > bestStars)
             scoresManager.setStars(currentLevel, _stars);
-        if (bestTime > _progressManager.getPlayerInfo().time)
+        if (bestTime == 0 || bestTime > _progressManager.getPlayerInfo().time)
             scoresManager.setTime(currentLevel, _progressManager.getPlayerInfo().time);
     }
 

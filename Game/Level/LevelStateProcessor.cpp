@@ -94,6 +94,10 @@ void LevelStateProcessor::show()
     }
     _gameMapProcessor->setVisible(true);
     _document->show();
+
+    std::stringstream ss;
+    ss << "Level " << _progressManager.getCurrentLevel() << ": " << _gameMapProcessor->getGameMap()->name;
+    _document->getControlByName("level")->setText(ss.str());
 }
 
 void LevelStateProcessor::hide()
