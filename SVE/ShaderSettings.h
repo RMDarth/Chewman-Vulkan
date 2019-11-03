@@ -46,9 +46,11 @@ enum class UniformType : uint8_t
     GlyphInfoList,
     TextSymbolList, // move to Buffer
     OverlayInfo,
+    CustomFloat,
+    CustomVec4,
+    CustomMat4,
     Time,
     DeltaTime
-    // TODO: Add material properties, other matrices types etc.
 };
 
 enum class BufferType : uint8_t
@@ -111,6 +113,10 @@ struct UniformData
     UniformOverlayInfo overlayInfo {};
     std::vector<GlyphInfo> glyphList;
     std::vector<TextSymbolInfo> textSymbolList;
+
+    float customFloat;
+    glm::vec4 customVec4;
+    glm::mat4 customMat4;
 };
 
 struct UniformInfo

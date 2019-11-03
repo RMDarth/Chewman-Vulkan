@@ -7,7 +7,7 @@ namespace Chewman
 {
 
 ContainerControl::ContainerControl(const std::string& name, float x, float y, float width, float height, Control* parent)
-    : Control(ControlType::Container, name, x, y, width, height, "empty.png", parent)
+    : Control(ControlType::Container, name, x, y, width, height, std::string(), parent)
 {
     setRenderOrder(50);
 }

@@ -36,6 +36,7 @@ class GraphicsManager
 {
 public:
     GraphicsManager();
+    GraphicsManager(const GraphicsManager&) = delete;
 
     void setSettings(GraphicsSettings settings);
     const GraphicsSettings& getSettings() const;

@@ -29,5 +29,6 @@ struct TextInfo
     vec4 color;
     uint symbolCount;
     uint maxHeight;
+    uint maxGlyphHeight;
     float scale;
 };

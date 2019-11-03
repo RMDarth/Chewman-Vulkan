@@ -354,7 +354,10 @@ std::string Control::getCustomAttribute(const std::string& name)
 
 std::string Control::createMaterial(const std::string& textureFile)
 {
-    std::string name = formatMessage("Texture_", _index, "_", textureFile);
+    if (textureFile.empty())
+        return std::string();
+
+    std::string name = std::string("ControlTexture_") + textureFile;
     auto* materialManager = SVE::Engine::getInstance()->getMaterialManager();
     auto* material = materialManager->getMaterial(name, true);
     if (!material)

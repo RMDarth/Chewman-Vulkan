@@ -26,7 +26,7 @@ void alignToZero(float& value, float deltaTime, float alignSpeed)
 } // anon namespace
 
 SliderControl::SliderControl(const std::string& name, float x, float y, float width, float height, Control* parent)
-        : Control(ControlType::Slider, name, x, y, width, height, "empty.png", parent)
+        : Control(ControlType::Slider, name, x, y, width, height, std::string(), parent)
         , _halfWidth(_width / 2)
         , _nextObjShift(_halfWidth + _halfWidth / 2)
 {

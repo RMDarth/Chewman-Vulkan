@@ -19,9 +19,9 @@ class GameMapProcessor;
 class Player;
 
 constexpr float JackhammerTotalTime = 10.0f;
-constexpr float FreezeTotalTime = 10.0f;
-constexpr float PentagrammTotalTime = 10.0f;
-constexpr float AccelerationTotalTime = 10.0f;
+constexpr float FreezeTotalTime = 16.0f;
+constexpr float PentagrammTotalTime = 16.0f;
+constexpr float AccelerationTotalTime = 13.0f;
 constexpr float TeethTotalTime = 10.0f;
 constexpr float SlowTotalTime = 10.0f;
 

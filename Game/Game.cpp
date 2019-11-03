@@ -76,6 +76,11 @@ GraphicsManager& Game::getGraphicsManager()
     return _graphicsManager;
 }
 
+ScoresManager& Game::getScoresManager()
+{
+    return _scoresManager;
+}
+
 void Game::initStates()
 {
     registerStateProcessor(GameState::Level, std::make_shared<LevelStateProcessor>());

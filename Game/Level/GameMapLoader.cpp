@@ -109,10 +109,16 @@ void initTeleportMesh()
 void initSmokeMesh()
 {
     auto meshSettings = constructPlane("SmokeFloor",
-                                       glm::vec3(0, 0, 0), 1000.0f, 1000.0f, glm::vec3(0.0f, 1.0f, 0.0f));
+                                       glm::vec3(0, 0, 0), 200.0f, 200.0f, glm::vec3(0.0f, 1.0f, 0.0f));
     meshSettings.materialName = "SmokeMaterial";
-    auto teleportBaseMesh = std::make_shared<SVE::Mesh>(meshSettings);
-    SVE::Engine::getInstance()->getMeshManager()->registerMesh(teleportBaseMesh);
+    auto smokeMeshTop = std::make_shared<SVE::Mesh>(meshSettings);
+    SVE::Engine::getInstance()->getMeshManager()->registerMesh(smokeMeshTop);
+
+    /*meshSettings = constructPlane("SmokeFloor",
+            glm::vec3(0, 0, 100 - CellSize * 0.5), 100.0f, 100.0f, glm::vec3(0.0f, 1.0f, 0.0f));
+    meshSettings.materialName = "SmokeMaterial";
+    auto smokeMeshBottom = std::make_shared<SVE::Mesh>(meshSettings);
+    SVE::Engine::getInstance()->getMeshManager()->registerMesh(smokeMeshBottom);*/
 }
 
 } // anon namespace
@@ -132,8 +138,7 @@ std::shared_ptr<GameMap> GameMapLoader::loadMap(const std::string& filename)
     fin >> gameMap->width >> gameMap->height;
 
     uint8_t style, waterStyle;
-    std::string levelName;
-    fin >> style >> waterStyle >> levelName;
+    fin >> style >> waterStyle;
 
     gameMap->mapNode = SVE::Engine::getInstance()->getSceneManager()->createSceneNode();
     gameMap->upperLevelMeshNode = SVE::Engine::getInstance()->getSceneManager()->createSceneNode();
@@ -141,7 +146,13 @@ std::shared_ptr<GameMap> GameMapLoader::loadMap(const std::string& filename)
 
     gameMap->mapData.resize(gameMap->height);
     char ch;
-    char line[100];
+    char line[100] = {};
+
+    fin.getline(line, 90);
+    gameMap->name = line;
+    gameMap->name.erase(std::find_if(gameMap->name.rbegin(), gameMap->name.rend(), [](char ch) {
+        return !std::isspace(ch);
+    }).base(), gameMap->name.end());
 
     // Static object help
     int nextIsRotation = 0;
@@ -160,7 +171,6 @@ std::shared_ptr<GameMap> GameMapLoader::loadMap(const std::string& filename)
     gameMap->teleports.reserve(gameMap->width * gameMap->height);
     for (auto row = 0u; row < gameMap->height; ++row)
     {
-        fin.getline(line, 100);
         auto curRow = gameMap->height - row - 1;
         gameMap->mapData[curRow].resize(gameMap->width);
         for (auto column = 0u; column < gameMap->width; ++column)
@@ -276,11 +286,12 @@ std::shared_ptr<GameMap> GameMapLoader::loadMap(const std::string& filename)
                     break;
             }
         }
+        fin.getline(line, 100);
     }
     gameMap->activeCoins = gameMap->coins.size();
     gameMap->totalCoins = gameMap->coins.size();
 
-    fin.getline(line, 100);
+    //fin.getline(line, 100);
     initMeshes(*gameMap);
     for (auto& gargoyle : gameMap->gargoyles)
     {
@@ -695,11 +706,21 @@ void GameMapLoader::createSmoke(GameMap& level) const
     level.mapNode->attachSceneNode(smokeNode);
     std::shared_ptr<SVE::MeshEntity> smokeEntity = std::make_shared<SVE::MeshEntity>("SmokeFloor");
     smokeEntity->setMaterial("SmokeMaterial");
+    smokeEntity->setCustomData(level.width * CellSize);
     //smokeEntity->setRenderLast();
     smokeEntity->setCastShadows(false);
     smokeNode->attachEntity(smokeEntity);
 
-    level.smokeEntity = std::move(smokeEntity);
+    /*auto smokeNode2 = SVE::Engine::getInstance()->getSceneManager()->createSceneNode();
+    smokeNode2->setNodeTransformation(glm::translate(glm::mat4(1), glm::vec3(0, -0.52, 0)));
+    level.mapNode->attachSceneNode(smokeNode2);
+    std::shared_ptr<SVE::MeshEntity> smokeEntity2 = std::make_shared<SVE::MeshEntity>("SmokeFloor");
+    smokeEntity2->setMaterial("SmokeMaterial");
+    //smokeEntity->setRenderLast();
+    smokeEntity2->setCastShadows(false);
+    smokeNode2->attachEntity(smokeEntity2);
+
+    level.smokeNAEntity = std::move(smokeEntity2);*/
 }
 
 } // namespace Chewman

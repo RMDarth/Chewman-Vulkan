@@ -117,6 +117,9 @@ std::vector<UniformInfo> getUniformInfoList(rj::Document& document)
             {"GlyphInfoList",                   UniformType::GlyphInfoList},
             {"TextSymbolList",                  UniformType::TextSymbolList},
             {"OverlayInfo",                     UniformType::OverlayInfo},
+            {"CustomFloat",                     UniformType::CustomFloat},
+            {"CustomVec4",                      UniformType::CustomVec4},
+            {"CustomMat4",                      UniformType::CustomMat4},
             {"Time",                            UniformType::Time},
             {"DeltaTime",                       UniformType::DeltaTime},
     };
@@ -364,6 +367,12 @@ Font loadFont(FSEntityPtr directory, const std::string& data)
         font.maxHeight = std::max(font.maxHeight, glyphInfo.originY);
         ++symbolIndex;
     }
+
+    for (auto i = 0; i < symbolIndex; ++i)
+    {
+        font.maxGlyphHeight = std::max(font.maxGlyphHeight, font.symbols[i].height + font.maxHeight - font.symbols[i].originY);
+    }
+
 
     return font;
 }

@@ -69,13 +69,11 @@ GameState LevelStateProcessor::update(float deltaTime)
             break;
         case GameMapState::Victory:
             // TODO: Display victory menu
-            _progressManager.setCurrentLevel(_progressManager.getCurrentLevel() + 1);
             _progressManager.setVictory(true);
             _progressManager.setStarted(false);
             _progressManager.getPlayerInfo().time = (int)_time;
             return GameState::Score;
         case GameMapState::GameOver:
-            _progressManager.setCurrentLevel(1);
             _progressManager.setVictory(false);
             _progressManager.setStarted(false);
             _progressManager.getPlayerInfo().time = (int)_time;
@@ -121,6 +119,10 @@ void LevelStateProcessor::show()
     }
 
     _document->show();
+
+    std::stringstream ss;
+    ss << "Level " << _progressManager.getCurrentLevel() << ": " << _gameMapProcessor->getGameMap()->name;
+    _document->getControlByName("level")->setText(ss.str());
 }
 
 void LevelStateProcessor::hide()

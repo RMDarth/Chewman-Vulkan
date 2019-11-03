@@ -1,8 +1,9 @@
 #version 450
 #extension GL_ARB_separate_shader_objects : enable
+precision highp float;
 #include "text.glsl"
 
-layout (set = 0, binding = 0) uniform UBO
+layout (std140, set = 0, binding = 0) uniform UBO
 {
     mat4 model;
     mat4 viewProjection;
@@ -33,18 +34,17 @@ vec2 texCoord[6] = vec2[](
 
 float getSymbolUpperBound(uint index)
 {
-    return ubo.textSymbolInfo[index].y + (ubo.textInfo.maxHeight - ubo.font[ubo.textSymbolInfo[index].symbolInfoIndex].originY) * ubo.textInfo.scale;
+    return ubo.textSymbolInfo[index].y;
 }
 
 void main() {
     uint last = ubo.textInfo.symbolCount - 1;
 
-
     float left = ubo.textSymbolInfo[0].x - ubo.font[ubo.textSymbolInfo[0].symbolInfoIndex].originX * ubo.textInfo.scale;
     float right = ubo.textSymbolInfo[last].x + (ubo.font[ubo.textSymbolInfo[last].symbolInfoIndex].width - ubo.font[ubo.textSymbolInfo[last].symbolInfoIndex].originX) * ubo.textInfo.scale;
 
     float up = getSymbolUpperBound(0);
-    float down = getSymbolUpperBound(last) + ubo.font[ubo.textSymbolInfo[last].symbolInfoIndex].height * ubo.textInfo.scale;
+    float down = getSymbolUpperBound(0) + ubo.textInfo.maxGlyphHeight * ubo.textInfo.scale;
 
     // ubo.textInfo.imageSize
     float leftT = left / ubo.textInfo.imageSize.x;

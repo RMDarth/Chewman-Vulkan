@@ -9,6 +9,7 @@
 #include "StateProcessor.h"
 #include "ProgressManager.h"
 #include "GraphicsSettings.h"
+#include "ScoresManager.h"
 
 union SDL_Event;
 
@@ -30,6 +31,7 @@ public:
 
     ProgressManager& getProgressManager();
     GraphicsManager& getGraphicsManager();
+    ScoresManager& getScoresManager();
 
 private:
     Game() = default;
@@ -41,6 +43,7 @@ private:
     GameState _gameState = GameState::MainMenu;
     ProgressManager _progressManager;
     GraphicsManager _graphicsManager;
+    ScoresManager _scoresManager;
     std::map<GameState, std::shared_ptr<StateProcessor>> _stateProcessors;
 
     std::vector<GameState> _overlappedStateList;

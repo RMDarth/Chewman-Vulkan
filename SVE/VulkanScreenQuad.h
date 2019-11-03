@@ -4,6 +4,7 @@
 #pragma once
 #include "VulkanHeaders.h"
 #include <memory>
+#include <glm/glm.hpp>
 
 namespace SVE
 {
@@ -24,7 +25,7 @@ public:
         Depth
     };
 
-    VulkanScreenQuad();
+    VulkanScreenQuad(glm::ivec2 resolution);
     ~VulkanScreenQuad();
 
     VkSampler getSampler();

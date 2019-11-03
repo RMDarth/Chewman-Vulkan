@@ -58,6 +58,7 @@ void PauseStateProcessor::processEvent(Control* control, IEventHandler::EventTyp
             auto& progressManager = Game::getInstance()->getProgressManager();
             progressManager.setVictory(false);
             progressManager.setStarted(false);
+            progressManager.resetPlayerInfo();
             Game::getInstance()->setState(GameState::Level);
         }
 
