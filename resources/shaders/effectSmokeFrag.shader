@@ -6,6 +6,7 @@
         "smokeSampler"
     ],
     "uniformList": [
+        { "uniformType": "CameraPosition" },
         { "uniformType": "CustomFloat" }
     ]
 }

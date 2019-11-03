@@ -2,7 +2,12 @@
 #extension GL_ARB_separate_shader_objects : enable
 
 layout(set = 1, binding = 0) uniform sampler2D smokeSampler;
-layout(set = 1, binding = 1) uniform sampler2D depthSampler;
+
+layout(set = 1, binding = 1) uniform UBO
+{
+    vec4 cameraPos;
+    float width;
+} ubo;
 
 layout(location = 0) in vec3 fragColor;
 layout(location = 1) in vec2 fragTexCoord;
@@ -22,12 +27,20 @@ float linearDepth(float z_b)
 
 void main() 
 {
-    vec2 texCoord = fragTexCoord * 100;
+    vec2 texCoord = fragTexCoord * 10;
     vec3 color = texture(smokeSampler, texCoord, 0).rgb;
 
-    float depth = textureLod(depthSampler, gl_FragCoord.xy / textureSize(depthSampler, 0), 0).r;
-    depth = linearDepth(depth);
-    float depthDiff = (depth - gl_FragCoord.z / gl_FragCoord.w) / 3.0;
+    vec3 cameraDir = fragPos - ubo.cameraPos.xyz;
+    float len1 = length(cameraDir);
+    cameraDir = normalize(cameraDir);
+    vec3 toWall = vec3(0, 0, 1);
+    float len2 = (-ubo.cameraPos.z + 1.5) / dot(toWall, cameraDir);
+
+    float depthDiff = (len2 - len1) * 0.5;
+    depthDiff = mix(depthDiff, 1.0, smoothstep(-1.5, -2, fragPos.x));
+    depthDiff = mix(depthDiff, 1.0, smoothstep(ubo.width - 1.5, ubo.width-1.0, fragPos.x));
+    depthDiff = mix(depthDiff, 1.0, smoothstep(0, -10, fragPos.z));
+
     outColor = vec4(color, depthDiff);
     outColorBloom = vec4(outColor.rgb, 0.35 * min(depthDiff, 1.0));
 }
