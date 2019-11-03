@@ -97,7 +97,10 @@ void recreateParticle()
 
 void main()
 {
-    emitted = 0;
+    if (gl_GlobalInvocationID.x == 0)
+    {
+        emitted = 0;
+    }
     memoryBarrierBuffer();
     barrier();
 
