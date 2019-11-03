@@ -23,7 +23,9 @@ MeshEntity::MeshEntity(std::string name)
 MeshEntity::MeshEntity(Mesh* mesh)
     : _mesh(mesh)
     , _material(Engine::getInstance()->getMaterialManager()->getMaterial(mesh->getDefaultMaterialName(), true))
-    , _materialInfo { glm::vec4(0), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), 16 }
+    , _materialInfo { glm::vec4(0), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f),
+                      glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), 16,
+                      (_material ? (uint32_t)_material->getVulkanMaterial()->getSettings().ignoreShadow : 0) }
 {
     if (_material)
     {
@@ -50,6 +52,7 @@ MeshEntity::~MeshEntity()
 void MeshEntity::setMaterial(const std::string& materialName)
 {
     _material = Engine::getInstance()->getMaterialManager()->getMaterial(materialName);
+    _materialInfo.ignoreShadow = static_cast<uint32_t>(_material->getVulkanMaterial()->getSettings().ignoreShadow);
     setupMaterial();
 }
 

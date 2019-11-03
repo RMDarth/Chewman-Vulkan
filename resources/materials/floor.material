@@ -2,6 +2,7 @@
     "name": "Floor",
     "vertexShaderName": "phongShadowVertexShader",
     "fragmentShaderName": "phongShadowFragmentShader",
+    "ignoreShadow": false,
     "textures": [
         {
             "samplerName": "diffuseTex",

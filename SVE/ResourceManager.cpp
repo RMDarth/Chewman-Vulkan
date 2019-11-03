@@ -417,6 +417,7 @@ MaterialSettings loadMaterial(FSEntityPtr directory, const std::string& data)
     setOptional(materialSettings.useAlphaBlending = document["useAlphaBlending"].GetBool());
     setOptional(materialSettings.useMRT = document["useMRT"].GetBool());
     setOptional(materialSettings.useInstancing = document["useInstancing"].GetBool());
+    setOptional(materialSettings.ignoreShadow = document["ignoreShadow"].GetBool());
     setOptional(materialSettings.instanceMaxCount = document["instanceMaxCount"].GetUint());
     setOptional(materialSettings.srcBlendFactor = blendFactor.at(document["srcBlendFactor"].GetString()));
     setOptional(materialSettings.dstBlendFactor = blendFactor.at(document["dstBlendFactor"].GetString()));

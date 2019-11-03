@@ -44,15 +44,15 @@ vec3 calculateLight(vec3 normal, vec3 viewDir)
     vec3 lightEffect = vec3(ubo.materialInfo.ambient);
     float shadow = 1;
 
-    if ((ubo.lightInfo.lightFlags & LI_DirectionalLight) != 0)
-    {
+    //if ((ubo.lightInfo.lightFlags & LI_DirectionalLight) != 0)
+    //{
         vec3 curLight = CalcDirLight(ubo.dirLight, normal, viewDir, ubo.materialInfo);
-        if (ubo.lightInfo.enableShadows != 0)
+        if (ubo.lightInfo.enableShadows != 0 && ubo.materialInfo.ignoreShadow == 0)
         {
             shadow = PCFShadowSunLight();
         }
         lightEffect += curLight * (shadow);
-    }
+    //}
 
     for (uint i = 0; i < ubo.lightInfo.lightLineNum; i++)
     {
@@ -64,8 +64,8 @@ vec3 calculateLight(vec3 normal, vec3 viewDir)
         lightEffect += CalcPointLight(ubo.pointLight[i], normal, fragPos, viewDir, ubo.materialInfo);
     }
 
-    if ((ubo.lightInfo.lightFlags & LI_SpotLight) != 0)
-    lightEffect += CalcSpotLight(ubo.spotLight, normal, fragPos, viewDir, ubo.materialInfo);
+    //if ((ubo.lightInfo.lightFlags & LI_SpotLight) != 0)
+    //    lightEffect += CalcSpotLight(ubo.spotLight, normal, fragPos, viewDir, ubo.materialInfo);
 
     return lightEffect;
 }
