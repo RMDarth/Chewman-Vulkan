@@ -382,9 +382,9 @@ std::array<std::shared_ptr<SVE::Mesh>, 3> prepareLevelMeshes(const GameMap& leve
     return mapMesh;
 }
 
-void buildLevelMeshes(const GameMap& level, BlockMeshGenerator& meshGenerator)
+void buildLevelMeshes(const GameMap& level, BlockMeshGenerator& meshGenerator, std::string suffix)
 {
-    auto mapMesh = prepareLevelMeshes(level, meshGenerator);
+    auto mapMesh = prepareLevelMeshes(level, meshGenerator, suffix);
 
     auto* engine = SVE::Engine::getInstance();
     engine->getMeshManager()->registerMesh(mapMesh[0]);

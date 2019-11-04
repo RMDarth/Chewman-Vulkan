@@ -43,7 +43,7 @@ void LevelStateProcessor::initMap()
     // TODO: Display some "Loading" message box while level is loading
     auto future = std::async(std::launch::async, [&]
     {
-        _gameMapProcessor = std::make_unique<GameMapProcessor>(_mapLoader.loadMap(ss.str()));
+        _gameMapProcessor = std::make_unique<GameMapProcessor>(Game::getInstance()->getGameMapLoader().loadMap(ss.str()));
         _loadingFinished = true;
         _gameMapProcessor->setVisible(true);
     });
@@ -146,7 +146,7 @@ void LevelStateProcessor::processEvent(Control* control, IEventHandler::EventTyp
         }
         if (control->getName() == "lifeimg")
         {
-            static bool isNight = false;
+            static bool isNight = true;
             auto sunLight = SVE::Engine::getInstance()->getSceneManager()->getLightManager()->getDirectionLight();
             if (isNight)
             {

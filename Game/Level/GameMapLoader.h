@@ -31,7 +31,7 @@ private:
 };
 
 std::array<std::shared_ptr<SVE::Mesh>, 3>  prepareLevelMeshes(const GameMap& level, BlockMeshGenerator& meshGenerator, std::string suffix = "");
-void buildLevelMeshes(const GameMap& level, BlockMeshGenerator& meshGenerator);
+void buildLevelMeshes(const GameMap& level, BlockMeshGenerator& meshGenerator, std::string suffix = "");
 
 
 } // namespace Chewman

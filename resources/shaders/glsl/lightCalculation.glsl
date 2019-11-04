@@ -54,7 +54,7 @@ float SimpleShadowSunLight()
 /////// Light and shadow calculation ////////////
 vec3 calculateLight(vec3 normal, vec3 viewDir)
 {
-    vec3 lightEffect = vec3(0);
+    vec3 lightEffect = vec3(ubo.materialInfo.ambient);
     float shadow = 1;
 
     //if ((ubo.lightInfo.lightFlags & LI_DirectionalLight) != 0)

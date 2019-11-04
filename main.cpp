@@ -135,8 +135,14 @@ int runGame()
 
         // configure light
         auto sunLight = engine->getSceneManager()->getLightManager()->getDirectionLight();
+        //sunLight->setNodeTransformation(
+        //        glm::translate(glm::mat4(1), glm::vec3(80, 80, -80)));
+        sunLight->getLightSettings().ambientStrength = {0.08f, 0.08f, 0.08f, 1.0f};
+        sunLight->getLightSettings().diffuseStrength = {0.15f, 0.15f, 0.15f, 1.0f};
+        sunLight->getLightSettings().specularStrength = {0.08f, 0.08f, 0.08f, 1.0f};
         sunLight->setNodeTransformation(
-                glm::translate(glm::mat4(1), glm::vec3(80, 80, -80)));
+                glm::translate(glm::mat4(1), glm::vec3(-20, 80, 80)));
+        sunLight->getLightSettings().castShadows = false;
 
         // create camera
         camera->setNearFarPlane(0.1f, 50.0f);
