@@ -38,7 +38,6 @@ private:
     void updateHUD(float deltaTime);
 
 private:
-    GameMapLoader _mapLoader;
     ProgressManager& _progressManager;
     std::unique_ptr<GameMapProcessor> _gameMapProcessor;
 

@@ -57,15 +57,15 @@ vec3 calculateLight(vec3 normal, vec3 viewDir)
     vec3 lightEffect = vec3(0);
     float shadow = 1;
 
-    if ((ubo.lightInfo.lightFlags & LI_DirectionalLight) != 0)
-    {
+    //if ((ubo.lightInfo.lightFlags & LI_DirectionalLight) != 0)
+    //{
         vec3 curLight = CalcDirLight(ubo.dirLight, normal, viewDir, ubo.materialInfo);
-        if (ubo.lightInfo.enableShadows != 0)
+        if (ubo.lightInfo.enableShadows != 0 && ubo.materialInfo.ignoreShadow == 0)
         {
             shadow = SimpleShadowSunLight();
         }
         lightEffect += curLight * (shadow);
-    }
+    //}
 
     for (uint i = 0; i < ubo.lightInfo.lightLineNum; i++)
     {

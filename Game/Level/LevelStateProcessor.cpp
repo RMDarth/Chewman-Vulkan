@@ -7,6 +7,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include "LevelStateProcessor.h"
 #include "Game/Game.h"
+#include "Game/Level/GameMapLoader.h"
 #include "Game/Controls/ControlDocument.h"
 #include "SVE/SceneManager.h"
 #include "SVE/LightManager.h"
@@ -24,9 +25,7 @@ LevelStateProcessor::LevelStateProcessor()
     _loadingFinished = false;
 }
 
-LevelStateProcessor::~LevelStateProcessor()
-{
-}
+LevelStateProcessor::~LevelStateProcessor() = default;
 
 void LevelStateProcessor::initMap()
 {
@@ -44,7 +43,7 @@ void LevelStateProcessor::initMap()
     // TODO: Display some "Loading" message box while level is loading
     auto future = std::async(std::launch::async, [&]
     {
-        _gameMapProcessor = std::make_unique<Chewman::GameMapProcessor>(_mapLoader.loadMap(ss.str()));
+        _gameMapProcessor = std::make_unique<GameMapProcessor>(_mapLoader.loadMap(ss.str()));
         _loadingFinished = true;
         _gameMapProcessor->setVisible(true);
     });

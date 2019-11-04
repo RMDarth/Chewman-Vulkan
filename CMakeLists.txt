@@ -15,6 +15,8 @@ set(CMAKE_CXX_STANDARD 14)
 
 add_executable(Chewman
         main.cpp
+        DesktopFS.cpp
+        DesktopFS.h
         SVE/CameraNode.cpp
         SVE/CameraNode.h
         SVE/CameraSettings.cpp
@@ -29,6 +31,7 @@ add_executable(Chewman
         SVE/EngineSettings.h
         SVE/Entity.cpp
         SVE/Entity.h
+        SVE/FileSystem.h
         SVE/FontManager.cpp
         SVE/FontManager.h
         SVE/Libs.h
@@ -143,6 +146,8 @@ add_executable(Chewman
         Game/Game.cpp
         Game/Game.h
         Game/GameDefs.h
+        Game/GraphicsSettings.cpp
+        Game/GraphicsSettings.h
         Game/Level/BlockMeshGenerator.cpp
         Game/Level/BlockMeshGenerator.h
         Game/Level/Bomb.cpp
@@ -192,6 +197,8 @@ add_executable(Chewman
         Game/Level/StaticObject.cpp
         Game/Level/StaticObject.h
         Game/Level/Teleport.h
+        Game/Menu/GraphicsStateProcessor.cpp
+        Game/Menu/GraphicsStateProcessor.h
         Game/Menu/LevelSelectionStateProcessor.cpp
         Game/Menu/LevelSelectionStateProcessor.h
         Game/Menu/MenuStateProcessor.cpp
@@ -204,13 +211,11 @@ add_executable(Chewman
         Game/Menu/WorldSelectionStateProcessor.h
         Game/ProgressManager.cpp
         Game/ProgressManager.h
+        Game/ScoresManager.cpp
+        Game/ScoresManager.h
         Game/StateProcessor.cpp
         Game/StateProcessor.h
-        SVE/FileSystem.h
-        DesktopFS.cpp
-        DesktopFS.h
-        VulkanHeaders.h
-        Game/Menu/GraphicsStateProcessor.cpp Game/Menu/GraphicsStateProcessor.h Game/GraphicsSettings.cpp Game/GraphicsSettings.h Game/ScoresManager.cpp Game/ScoresManager.h)
+        VulkanHeaders.h)
 
 if (WIN32)
     target_link_libraries(Chewman mingw32 SDL2main SDL2 vulkan-1.lib VkLayer_core_validation.lib libassimp libcppfsd libtinyxml2)

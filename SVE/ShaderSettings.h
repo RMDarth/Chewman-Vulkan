@@ -74,7 +74,8 @@ struct MaterialInfo
     glm::vec4 diffuse;
     glm::vec4 specular;
     float shininess;
-    float _padding[3];
+    uint32_t ignoreShadow;
+    float _padding[2];
 };
 
 struct StorageData

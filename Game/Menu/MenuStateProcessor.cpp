@@ -3,8 +3,9 @@
 // Licensed under the MIT License
 #include "MenuStateProcessor.h"
 #include "Game/Controls/ControlDocument.h"
-
-#include <Game/Game.h>
+#include "Game/Level/GameMapLoader.h"
+#include "Game/Game.h"
+#include "SVE/SceneManager.h"
 
 namespace Chewman
 {
@@ -14,12 +15,16 @@ MenuStateProcessor::MenuStateProcessor()
     _document = std::make_unique<ControlDocument>("resources/game/GUI/startmenu.xml");
     _document->setMouseUpHandler(this);
     _document->hide();
+
+    _gameMapProcessor = std::make_unique<GameMapProcessor>(Game::getInstance()->getGameMapLoader().loadMap("resources/game/levels/load.map", "load"));
+    _gameMapProcessor->getGameMap()->player->setCameraFollow(false);
 }
 
 MenuStateProcessor::~MenuStateProcessor() = default;
 
 GameState MenuStateProcessor::update(float deltaTime)
 {
+    _gameMapProcessor->update(deltaTime);
     return GameState::MainMenu;
 }
 
@@ -30,12 +35,20 @@ void MenuStateProcessor::processInput(const SDL_Event& event)
 
 void MenuStateProcessor::show()
 {
+    _gameMapProcessor->setVisible(true);
+    auto camera = SVE::Engine::getInstance()->getSceneManager()->getMainCamera();
+    camera->setPosition({5.48245, 8.69662, 4.26211});
+    camera->setYawPitchRoll({-0.411897, -0.614356, 0});
+
+    // -1.36845 20.7681 19.9432
+
     _document->show();
 }
 
 void MenuStateProcessor::hide()
 {
     _document->hide();
+    _gameMapProcessor->setVisible(false);
 }
 
 bool MenuStateProcessor::isOverlapping()

@@ -2,6 +2,7 @@
     "name": "CeilingNormals",
     "vertexShaderName": "phongNormalShadowVertexShader",
     "fragmentShaderName": "phongNormalShadowFragmentShader",
+    "ignoreShadow": false,
     "textures": [
         {
             "samplerName": "diffuseTex",
