@@ -130,7 +130,7 @@ GameMapLoader::GameMapLoader()
     initSmokeMesh();
 }
 
-std::shared_ptr<GameMap> GameMapLoader::loadMap(const std::string& filename)
+std::shared_ptr<GameMap> GameMapLoader::loadMap(const std::string& filename, std::string suffix)
 {
     auto gameMap = std::make_shared<GameMap>();
 
@@ -292,7 +292,7 @@ std::shared_ptr<GameMap> GameMapLoader::loadMap(const std::string& filename)
     gameMap->totalCoins = gameMap->coins.size();
 
     //fin.getline(line, 100);
-    initMeshes(*gameMap);
+    initMeshes(*gameMap, suffix);
     for (auto& gargoyle : gameMap->gargoyles)
     {
         uint32_t startTime, finishTime;
@@ -311,18 +311,18 @@ std::shared_ptr<GameMap> GameMapLoader::loadMap(const std::string& filename)
     gameMap->eatEffectManager = std::make_unique<EatEffectManager>(gameMap.get());
 
     createSmoke(*gameMap);
-    createLava(*gameMap);
+    createLava(*gameMap, suffix);
 
     return gameMap;
 }
 
-void GameMapLoader::initMeshes(GameMap& level)
+void GameMapLoader::initMeshes(GameMap& level,  std::string suffix)
 {
-    buildLevelMeshes(level, _meshGenerator);
+    buildLevelMeshes(level, _meshGenerator, suffix);
 
-    level.mapEntity[0] = std::make_shared<SVE::MeshEntity>("MapT");
-    level.mapEntity[1] = std::make_shared<SVE::MeshEntity>("MapB");
-    level.mapEntity[2] = std::make_shared<SVE::MeshEntity>("MapV");
+    level.mapEntity[0] = std::make_shared<SVE::MeshEntity>("MapT" + suffix);
+    level.mapEntity[1] = std::make_shared<SVE::MeshEntity>("MapB" + suffix);
+    level.mapEntity[2] = std::make_shared<SVE::MeshEntity>("MapV" + suffix);
     for (auto i = 0; i < 3; ++i)
         level.mapEntity[i]->setRenderToDepth(true);
 
@@ -331,7 +331,7 @@ void GameMapLoader::initMeshes(GameMap& level)
     level.upperLevelMeshNode->attachEntity(level.mapEntity[2]);
 }
 
-void buildLevelMeshes(const GameMap& level, BlockMeshGenerator& meshGenerator)
+void buildLevelMeshes(const GameMap& level, BlockMeshGenerator& meshGenerator, std::string suffix)
 {
     std::vector<Submesh> top;
     std::vector<Submesh> bottom;
@@ -367,11 +367,11 @@ void buildLevelMeshes(const GameMap& level, BlockMeshGenerator& meshGenerator)
         }
     }
 
-    auto meshSettingsT = meshGenerator.CombineMeshes("MapT", top);
+    auto meshSettingsT = meshGenerator.CombineMeshes("MapT" + suffix, top);
     meshSettingsT.materialName = "CeilingNormals";
-    auto meshSettingsB = meshGenerator.CombineMeshes("MapB", bottom);
+    auto meshSettingsB = meshGenerator.CombineMeshes("MapB" + suffix, bottom);
     meshSettingsB.materialName = "FloorParallax";
-    auto meshSettingsV = meshGenerator.CombineMeshes("MapV", vertical);
+    auto meshSettingsV = meshGenerator.CombineMeshes("MapV" + suffix, vertical);
     meshSettingsV.materialName = "WallParallax";
 
     auto* engine = SVE::Engine::getInstance();
@@ -495,7 +495,7 @@ void GameMapLoader::finalizeGargoyle(GameMap& level, Gargoyle &gargoyle)
         y += speedY;
         ++length;
 
-        if (x >= level.width || x < 0 || y >= level.height || y < 0)
+        if (x >= level.height || x < 0 || y >= level.width || y < 0)
             stop = true;
         else
         {
@@ -668,11 +668,11 @@ Coin* GameMapLoader::createCoin(GameMap& level, int row, int column)
     return &level.coins.back();
 }
 
-void GameMapLoader::createLava(GameMap& level) const
+void GameMapLoader::createLava(GameMap& level, std::string suffix) const
 {
     auto* engine = SVE::Engine::getInstance();
     auto liquidMeshSettings = constructPlane(
-            "LiquidMesh",
+            "LiquidMesh" + suffix,
             glm::vec3(0.0f),
             level.width * CellSize * 0.5, level.height * CellSize  * 0.5,
             glm::vec3(0.0f, 1.0f, 0.0f));
@@ -684,7 +684,7 @@ void GameMapLoader::createLava(GameMap& level) const
     lavaNode->setNodeTransformation(
             glm::translate(glm::mat4(1), glm::vec3((level.width - 1) * CellSize * 0.5f, -0.5f, -((level.height - 1) * CellSize * 0.5f))));
     level.mapNode->attachSceneNode(lavaNode);
-    std::shared_ptr<SVE::MeshEntity> lavaEntity = std::make_shared<SVE::MeshEntity>("LiquidMesh");
+    std::shared_ptr<SVE::MeshEntity> lavaEntity = std::make_shared<SVE::MeshEntity>("LiquidMesh" + suffix);
     lavaEntity->setMaterial("LavaMaterial");
     lavaEntity->setCastShadows(false);
     lavaNode->attachEntity(lavaEntity);

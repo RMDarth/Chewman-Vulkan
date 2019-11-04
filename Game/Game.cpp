@@ -6,12 +6,14 @@
 #include <utility>
 #include <Game/Menu/GraphicsStateProcessor.h>
 #include "Game/Level/LevelStateProcessor.h"
+#include "Game/Level/GameMapLoader.h"
 #include "Game/Menu/MenuStateProcessor.h"
 #include "Game/Menu/PauseStateProcessor.h"
 #include "Game/Menu/ScoreStateProcessor.h"
 #include "Game/Menu/WorldSelectionStateProcessor.h"
 #include "Game/Menu/LevelSelectionStateProcessor.h"
 #include "Game/Menu/GraphicsStateProcessor.h"
+
 
 namespace Chewman
 {
@@ -79,6 +81,16 @@ GraphicsManager& Game::getGraphicsManager()
 ScoresManager& Game::getScoresManager()
 {
     return _scoresManager;
+}
+
+GameMapLoader& Game::getGameMapLoader()
+{
+    return *_mapLoader;
+}
+
+Game::Game()
+    : _mapLoader(std::make_unique<GameMapLoader>())
+{
 }
 
 void Game::initStates()

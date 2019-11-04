@@ -119,7 +119,7 @@ int runGame()
 
         // create camera
         camera->setNearFarPlane(0.1f, 100.0f);
-        camera->setPosition(glm::vec3(5.0f, 5.0f, 5.0f));
+        //camera->setPosition(glm::vec3(5.0f, 5.0f, 5.0f));
 
         // create skybox
         engine->getSceneManager()->setSkybox("Skybox4");
@@ -188,6 +188,11 @@ int runGame()
                             sunLight->getLightSettings().diffuseStrength = {0.1f, 0.1f, 0.1f, 1.0f};
                             sunLight->getLightSettings().specularStrength = {0.05f, 0.05f, 0.05f, 1.0f};
                         }
+
+                        auto pos = camera->getPosition();
+                        auto ypr = camera->getYawPitchRoll();
+                        std::cout << pos.x << " " << pos.y << " " << pos.z << std::endl;
+                        std::cout << ypr.x << " " << ypr.y << " " << ypr.z << std::endl;
                     }
                 }
                 if (event.type == SDL_MOUSEMOTION && !lockControl)

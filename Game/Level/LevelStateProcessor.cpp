@@ -5,6 +5,7 @@
 #include <iomanip>
 #include "LevelStateProcessor.h"
 #include "Game/Game.h"
+#include "Game/Level/GameMapLoader.h"
 #include "Game/Controls/ControlDocument.h"
 
 namespace Chewman
@@ -18,9 +19,7 @@ LevelStateProcessor::LevelStateProcessor()
     _document->hide();
 }
 
-LevelStateProcessor::~LevelStateProcessor()
-{
-}
+LevelStateProcessor::~LevelStateProcessor() = default;
 
 void LevelStateProcessor::initMap()
 {
@@ -35,7 +34,7 @@ void LevelStateProcessor::initMap()
 
     std::stringstream ss;
     ss << "resources/game/levels/level" << levelNum << ".map";
-    _gameMapProcessor = std::make_unique<Chewman::GameMapProcessor>(_mapLoader.loadMap(ss.str()));
+    _gameMapProcessor = std::make_unique<GameMapProcessor>(Game::getInstance()->getGameMapLoader().loadMap(ss.str()));
 }
 
 GameState LevelStateProcessor::update(float deltaTime)
