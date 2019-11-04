@@ -82,7 +82,7 @@ public:
     VulkanScreenQuad* getScreenQuad();
     VulkanSamplerHolder* getSamplerHolder();
     VulkanPassInfo* getPassInfo();
-    void initScreenQuad();
+    void initScreenQuad(glm::ivec2 resolution);
 
 private:
     // Vulkan objects creators and destroyers

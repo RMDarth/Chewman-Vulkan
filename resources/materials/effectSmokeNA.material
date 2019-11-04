@@ -1,7 +1,7 @@
 {
-    "name": "SmokeMaterial",
+    "name": "SmokeNAMaterial",
     "vertexShaderName": "phongVertexShader",
-    "fragmentShaderName": "smokeFragmentShader",
+    "fragmentShaderName": "smokeFragmentShaderNA",
     "passType": "ScreenQuadMRTPass",
     "cullFace": "None",
     "useAlphaBlending": true,

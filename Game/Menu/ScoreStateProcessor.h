@@ -33,7 +33,11 @@ public:
 private:
     std::unique_ptr<ControlDocument> _document;
     ProgressManager& _progressManager;
+    int _restartX;
     float _time = 0;
+    uint16_t _stars = 0;
+    uint16_t _countStars = 0;
+    bool _countingFinished = false;
 };
 
 } // namespace Chewman

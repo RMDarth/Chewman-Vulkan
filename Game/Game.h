@@ -9,11 +9,13 @@
 #include "StateProcessor.h"
 #include "ProgressManager.h"
 #include "GraphicsSettings.h"
+#include "ScoresManager.h"
 
 union SDL_Event;
 
 namespace Chewman
 {
+class GameMapLoader;
 
 class Game
 {
@@ -30,9 +32,11 @@ public:
 
     ProgressManager& getProgressManager();
     GraphicsManager& getGraphicsManager();
+    ScoresManager& getScoresManager();
+    GameMapLoader& getGameMapLoader();
 
 private:
-    Game() = default;
+    Game();
     void initStates();
 
 private:
@@ -41,6 +45,8 @@ private:
     GameState _gameState = GameState::MainMenu;
     ProgressManager _progressManager;
     GraphicsManager _graphicsManager;
+    ScoresManager _scoresManager;
+    std::unique_ptr<GameMapLoader> _mapLoader;
     std::map<GameState, std::shared_ptr<StateProcessor>> _stateProcessors;
 
     std::vector<GameState> _overlappedStateList;

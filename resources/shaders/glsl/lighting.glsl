@@ -93,7 +93,8 @@ struct MaterialInfo
     vec4 diffuse;
     vec4 specular;
     float shininess;
-    // float[3] padding
+    uint ignoreShadow;
+    // float[2] padding
 };
 
 // calculates the color when using a directional light.

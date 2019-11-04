@@ -507,9 +507,9 @@ void VulkanInstance::endRenderCommandBufferCreation()
     }
 }
 
-void VulkanInstance::initScreenQuad()
+void VulkanInstance::initScreenQuad(glm::ivec2 resolution)
 {
-    _screenQuad = std::make_unique<VulkanScreenQuad>();
+    _screenQuad = std::make_unique<VulkanScreenQuad>(resolution);
 }
 
 VulkanScreenQuad* VulkanInstance::getScreenQuad()

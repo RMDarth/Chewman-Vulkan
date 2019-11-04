@@ -33,6 +33,7 @@ struct Font
     uint32_t height;
     uint32_t size;
     int32_t maxHeight;
+    uint32_t maxGlyphHeight;
 };
 
 struct TextSymbolInfo
@@ -76,8 +77,8 @@ struct UniformTextInfo
     glm::vec4 color;
     uint32_t symbolCount;
     uint32_t maxHeight;
+    uint32_t maxGlyphHeight;
     float scale;
-    uint32_t _padding[1];
 };
 
 } // namespace SVE

@@ -23,7 +23,9 @@ MeshEntity::MeshEntity(std::string name)
 MeshEntity::MeshEntity(Mesh* mesh)
     : _mesh(mesh)
     , _material(Engine::getInstance()->getMaterialManager()->getMaterial(mesh->getDefaultMaterialName(), true))
-    , _materialInfo { glm::vec4(0), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), 16 }
+    , _materialInfo { glm::vec4(0), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f),
+                      glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), 16,
+                      (_material ? (uint32_t)_material->getVulkanMaterial()->getSettings().ignoreShadow : 0) }
 {
     if (_material)
     {
@@ -50,6 +52,7 @@ MeshEntity::~MeshEntity()
 void MeshEntity::setMaterial(const std::string& materialName)
 {
     _material = Engine::getInstance()->getMaterialManager()->getMaterial(materialName);
+    _materialInfo.ignoreShadow = static_cast<uint32_t>(_material->getVulkanMaterial()->getSettings().ignoreShadow);
     setupMaterial();
 }
 
@@ -76,6 +79,9 @@ void MeshEntity::updateUniforms(UniformDataList uniformDataList) const
     if (!_isTimePaused)
         _time += Engine::getInstance()->getDeltaTime();
     newData.time = _time;
+    newData.customFloat = _customFloat;
+    newData.customVec4 = _customVec4;
+    newData.customMat4 = _customMat4;
 
     if (_animationState == AnimationState::Play && !_isTimePaused)
         _animationTime += Engine::getInstance()->getDeltaTime();
@@ -199,13 +205,14 @@ void MeshEntity::setupMaterial()
         if (_material->getVulkanMaterial()->isSkeletal())
         {
             _shadowMaterial = Engine::getInstance()->getMaterialManager()->getMaterial("SimpleSkeletalDepth");
-            _pointLightShadowMaterial = Engine::getInstance()->getMaterialManager()->getMaterial("FullSkeletalDepth");
+            // TODO: Add configuration to enable/disable point lights shadows
+            //_pointLightShadowMaterial = Engine::getInstance()->getMaterialManager()->getMaterial("FullSkeletalDepth");
         }
         else
         {
             _shadowMaterial = Engine::getInstance()->getMaterialManager()->getMaterial(
                     _material->getVulkanMaterial()->getSettings().useInstancing ? "SimpleDepthInstanced" : "SimpleDepth");
-            _pointLightShadowMaterial = Engine::getInstance()->getMaterialManager()->getMaterial("FullDepth");
+            //_pointLightShadowMaterial = Engine::getInstance()->getMaterialManager()->getMaterial("FullDepth");
         }
 
         _shadowIndex = _shadowMaterial->getVulkanMaterial()->getInstanceForEntity(this, 0);

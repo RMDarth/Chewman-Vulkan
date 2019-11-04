@@ -24,10 +24,12 @@ namespace Chewman
 
 struct GameMap
 {
+    std::string name;
     std::shared_ptr<SVE::SceneNode> mapNode;
     std::shared_ptr<SVE::SceneNode> upperLevelMeshNode;
     std::shared_ptr<SVE::MeshEntity> mapEntity[3];
     std::shared_ptr<SVE::MeshEntity> smokeEntity;
+    std::shared_ptr<SVE::MeshEntity> smokeNAEntity;
     std::shared_ptr<SVE::MeshEntity> lavaEntity;
 
     std::shared_ptr<Player> player;

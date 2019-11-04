@@ -13,10 +13,13 @@ namespace SVE
 
 OverlayEntity::OverlayEntity(OverlayInfo overlayInfo)
     : _overlayInfo(std::move(overlayInfo))
-    , _material(Engine::getInstance()->getMaterialManager()->getMaterial(_overlayInfo.materialName))
+    , _material(_overlayInfo.materialName.empty() ? nullptr : Engine::getInstance()->getMaterialManager()->getMaterial(_overlayInfo.materialName))
 {
-    _materialIndex = _material->getVulkanMaterial()->getInstanceForEntity(this);
-    _materialList.insert(_material);
+    if (_material)
+    {
+        _materialIndex = _material->getVulkanMaterial()->getInstanceForEntity(this);
+        _materialList.insert(_material);
+    }
     _renderLast = true;
     initText();
 }
@@ -48,7 +51,8 @@ void OverlayEntity::updateUniforms(UniformDataList uniformDataList) const
     uniformData.overlayInfo.y = _overlayInfo.y;
     uniformData.overlayInfo.width = _overlayInfo.width;
     uniformData.overlayInfo.height = _overlayInfo.height;
-    _material->getVulkanMaterial()->setUniformData(_materialIndex, uniformData);
+    if (_material)
+        _material->getVulkanMaterial()->setUniformData(_materialIndex, uniformData);
 
     if (_overlayInfo.textInfo.symbolCount)
     {
@@ -56,6 +60,7 @@ void OverlayEntity::updateUniforms(UniformDataList uniformDataList) const
         uniformData.textInfo.fontImageSize = glm::vec2(_overlayInfo.textInfo.font->width, _overlayInfo.textInfo.font->height);
         uniformData.textInfo.imageSize = Engine::getInstance()->getRenderWindowSize();
         uniformData.textInfo.maxHeight = _overlayInfo.textInfo.font->maxHeight;
+        uniformData.textInfo.maxGlyphHeight = _overlayInfo.textInfo.font->maxGlyphHeight;
         uniformData.textInfo.scale = _overlayInfo.textInfo.scale;
         uniformData.textInfo.color = _overlayInfo.textInfo.color;
         uniformData.glyphList.clear();
@@ -80,9 +85,11 @@ void OverlayEntity::applyDrawingCommands(uint32_t bufferIndex, uint32_t imageInd
     {
         auto commandBuffer = Engine::getInstance()->getVulkanInstance()->getCommandBuffer(bufferIndex);
 
-        _material->getVulkanMaterial()->applyDrawingCommands(bufferIndex, imageIndex, _materialIndex);
-        vkCmdDraw(commandBuffer, 6, 1, 0, 0);
-
+        if (_material)
+        {
+            _material->getVulkanMaterial()->applyDrawingCommands(bufferIndex, imageIndex, _materialIndex);
+            vkCmdDraw(commandBuffer, 6, 1, 0, 0);
+        }
         if (_textMaterial)
         {
             _textMaterial->getVulkanMaterial()->applyDrawingCommands(bufferIndex, imageIndex, _textMaterialIndex);
@@ -141,6 +148,12 @@ void OverlayEntity::initText()
 
 void OverlayEntity::setMaterial(const std::string& materialName)
 {
+    if (materialName.empty())
+    {
+        _material = nullptr;
+        _overlayInfo.materialName = materialName;
+        return;
+    }
     auto* material = Engine::getInstance()->getMaterialManager()->getMaterial(materialName);
     if (material != _material)
     {

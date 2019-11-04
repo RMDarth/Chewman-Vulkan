@@ -2,6 +2,7 @@
     "name": "WallParallax",
     "vertexShaderName": "parallaxShadowVertexShader",
     "fragmentShaderName": "parallaxShadowFragmentShader",
+    "ignoreShadow": false,
     "textures": [
         {
             "samplerName": "diffuseTex",

@@ -5,7 +5,6 @@
 #include "Game/StateProcessor.h"
 #include "Game/Controls/IEventHandler.h"
 #include "GameMap.h"
-#include "GameMapLoader.h"
 
 namespace Chewman
 {
@@ -34,10 +33,9 @@ public:
     void processEvent(Control* control, EventType type, int x, int y) override;
 
 private:
-    void updateHUD();
+    void updateHUD(float deltaTime);
 
 private:
-    GameMapLoader _mapLoader;
     ProgressManager& _progressManager;
     std::unique_ptr<GameMapProcessor> _gameMapProcessor;
 

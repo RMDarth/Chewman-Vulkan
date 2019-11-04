@@ -22,6 +22,8 @@ public:
 
     void increaseState(EnemyState state) override;
 
+    void resetAll() override;
+
 private:
     enum class MagicType
     {

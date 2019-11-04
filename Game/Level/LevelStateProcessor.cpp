@@ -5,6 +5,7 @@
 #include <iomanip>
 #include "LevelStateProcessor.h"
 #include "Game/Game.h"
+#include "Game/Level/GameMapLoader.h"
 #include "Game/Controls/ControlDocument.h"
 
 namespace Chewman
@@ -18,9 +19,7 @@ LevelStateProcessor::LevelStateProcessor()
     _document->hide();
 }
 
-LevelStateProcessor::~LevelStateProcessor()
-{
-}
+LevelStateProcessor::~LevelStateProcessor() = default;
 
 void LevelStateProcessor::initMap()
 {
@@ -35,14 +34,14 @@ void LevelStateProcessor::initMap()
 
     std::stringstream ss;
     ss << "resources/game/levels/level" << levelNum << ".map";
-    _gameMapProcessor = std::make_unique<Chewman::GameMapProcessor>(_mapLoader.loadMap(ss.str()));
+    _gameMapProcessor = std::make_unique<GameMapProcessor>(Game::getInstance()->getGameMapLoader().loadMap(ss.str()));
 }
 
 GameState LevelStateProcessor::update(float deltaTime)
 {
     _gameMapProcessor->update(deltaTime);
     _time += deltaTime;
-    updateHUD();
+    updateHUD(deltaTime);
 
     switch (_gameMapProcessor->getState())
     {
@@ -54,13 +53,11 @@ GameState LevelStateProcessor::update(float deltaTime)
             break;
         case GameMapState::Victory:
             // TODO: Display victory menu
-            _progressManager.setCurrentLevel(_progressManager.getCurrentLevel() + 1);
             _progressManager.setVictory(true);
             _progressManager.setStarted(false);
             _progressManager.getPlayerInfo().time = (int)_time;
             return GameState::Score;
         case GameMapState::GameOver:
-            _progressManager.setCurrentLevel(1);
             _progressManager.setVictory(false);
             _progressManager.setStarted(false);
             _progressManager.getPlayerInfo().time = (int)_time;
@@ -96,6 +93,10 @@ void LevelStateProcessor::show()
     }
     _gameMapProcessor->setVisible(true);
     _document->show();
+
+    std::stringstream ss;
+    ss << "Level " << _progressManager.getCurrentLevel() << ": " << _gameMapProcessor->getGameMap()->name;
+    _document->getControlByName("level")->setText(ss.str());
 }
 
 void LevelStateProcessor::hide()
@@ -121,7 +122,7 @@ void LevelStateProcessor::processEvent(Control* control, IEventHandler::EventTyp
     }
 }
 
-void LevelStateProcessor::updateHUD()
+void LevelStateProcessor::updateHUD(float deltaTime)
 {
     std::stringstream stream;
     stream << (int)_time / 60 << ":" << std::setfill('0') << std::setw(2) << (int)_time % 60;
@@ -140,9 +141,12 @@ void LevelStateProcessor::updateHUD()
     coins->setText(stream.str());
 
     static auto fps = _document->getControlByName("FPS");
-    static uint32_t frames = 0;
-    frames++;
-    fps->setText(std::to_string((int)(frames/_time)));
+    static std::list<float> fpsList;
+    fpsList.push_back(1.0f/deltaTime);
+    if (fpsList.size() > 100)
+        fpsList.pop_front();
+    auto fpsValue = std::accumulate(fpsList.begin(), fpsList.end(), 0) / fpsList.size();
+    fps->setText(std::to_string((int) fpsValue));
 
 }
 

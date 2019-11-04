@@ -2,6 +2,7 @@
     "name": "FloorNormals",
     "vertexShaderName": "phongNormalShadowVertexShader",
     "fragmentShaderName": "phongNormalShadowFragmentShader",
+    "ignoreShadow": false,
     "textures": [
         {
             "samplerName": "diffuseTex",

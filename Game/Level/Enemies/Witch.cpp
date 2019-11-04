@@ -130,6 +130,9 @@ bool Witch::isPlayerOnLine()
 
 void Witch::startMagic(MagicType magicType)
 {
+    if (_castingTime > 0)
+        return;
+
     _meshNode->detachEntity(_enemyMesh);
     _magicType = magicType;
 
@@ -254,6 +257,16 @@ void Witch::applyMagic()
             break;
         }
     }
+}
+
+void Witch::resetAll()
+{
+    Enemy::resetAll();
+    if (_castingTime > 0)
+        stopCasting();
+    _castingTime = -1;
+    _fireMagicRestore = -1;
+    _teleportMagicRestore = std::uniform_real_distribution<float>(6.0f, 14.0f)(getRandomEngine());
 }
 
 } // namespace Chewman

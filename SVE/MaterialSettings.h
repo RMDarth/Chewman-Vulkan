@@ -85,6 +85,7 @@ struct MaterialSettings
     bool useAlphaBlending = false;
     bool useMRT = false;
     bool useInstancing = false;
+    bool ignoreShadow = true;
     uint32_t instanceMaxCount = 0;
     BlendFactor srcBlendFactor = BlendFactor::SrcAlpha;
     BlendFactor dstBlendFactor = BlendFactor::OneMinusSrcAlpha;

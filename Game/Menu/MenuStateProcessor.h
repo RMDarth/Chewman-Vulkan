@@ -9,6 +9,7 @@
 namespace Chewman
 {
 class ControlDocument;
+class GameMapProcessor;
 
 class MenuStateProcessor : public StateProcessor, public IEventHandler
 {
@@ -29,6 +30,7 @@ public:
 
 private:
     std::unique_ptr<ControlDocument> _document;
+    std::unique_ptr<GameMapProcessor> _gameMapProcessor;
 };
 
 } // namespace Chewman
