@@ -446,7 +446,7 @@ void VulkanInstance::renderCommands() const
     {
         //resizeWindow();
     } else if (result != VK_SUCCESS) {
-        throw VulkanException("Can't present swapchain image");
+        throw VulkanException("Can't present swapchain image", result);
     }
 
     _currentFrame = (_currentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
