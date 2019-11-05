@@ -48,6 +48,9 @@ public:
     void resizeWindow();
     void finishRendering() const;
 
+    void onPause();
+    void onResume();
+
     VkInstance getInstance() const;
     VkPhysicalDevice getGPU() const;
     VkDevice getLogicalDevice() const;
@@ -147,7 +150,7 @@ private:
 
     VkPresentModeKHR _presentMode;
     VkExtent2D _extent;
-    VkSwapchainKHR _swapchain;
+    VkSwapchainKHR _swapchain = VK_NULL_HANDLE;
     VkRenderPass _renderPass;
 
     std::vector<VkImage> _swapchainImages;

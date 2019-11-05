@@ -66,6 +66,9 @@ public:
     glm::ivec2 getRenderWindowSize();
     void finishRendering();
 
+    void onPause();
+    void onResume();
+
     const EngineSettings& getEngineSettings() const;
     bool isShadowMappingEnabled() const;
     bool isWaterEnabled() const;

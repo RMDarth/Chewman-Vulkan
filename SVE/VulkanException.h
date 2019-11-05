@@ -4,6 +4,7 @@
 
 #pragma once
 #include <stdexcept>
+#include "VulkanHeaders.h"
 
 namespace SVE
 {
@@ -11,8 +12,9 @@ namespace SVE
 class VulkanException : public std::runtime_error
 {
 public:
-    explicit VulkanException(const char* error);
-    explicit VulkanException(const std::string& error);
+    explicit VulkanException(const char* error, VkResult result = VK_RESULT_MAX_ENUM );
+    explicit VulkanException(const std::string& error, VkResult result = VK_RESULT_MAX_ENUM);
+
 };
 
 class RapidJsonException : public VulkanException

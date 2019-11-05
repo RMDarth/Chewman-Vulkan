@@ -189,7 +189,37 @@ void VulkanInstance::resizeWindow()
 
 void VulkanInstance::finishRendering() const
 {
-    vkDeviceWaitIdle(_device);
+    vkQueueWaitIdle(_queue);
+}
+
+void VulkanInstance::onPause()
+{
+    finishRendering();
+
+    deleteFramebuffers();
+    deleteDepthBuffer();
+    deleteMSAABuffer();
+    deleteCommandPool();
+    deleteRenderPass();
+    deleteImageViews();
+    deleteSwapchain();
+    deleteSurfaceParameters();
+    deleteSurface();
+}
+
+void VulkanInstance::onResume()
+{
+    finishRendering();
+
+    createSurface();
+    createSurfaceParameters();
+    createSwapchain();
+    createImageViews();
+    createRenderPass();
+    createCommandPool();
+    createMSAABuffer();
+    createDepthBuffer();
+    createFramebuffers();
 }
 
 
@@ -354,7 +384,7 @@ void VulkanInstance::waitAvailableFramebuffer()
         return;
     } else if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR)
     {
-        throw VulkanException("Can't acquire Vulkan Swapchain image");
+        throw VulkanException("Can't acquire Vulkan Swapchain image", result);
     }
 }
 
@@ -394,7 +424,7 @@ void VulkanInstance::submitCommands(CommandsType commandsType, BufferIndex buffe
 
     if (result != VK_SUCCESS)
     {
-        throw VulkanException("Can't submit Vulkan command buffers to queue (shadow pass)");
+        throw VulkanException("Can't submit Vulkan command buffers to queue", result);
     }
 
     _currentWaitSemaphore = semaphore;
@@ -570,7 +600,7 @@ void VulkanInstance::createInstance()
 
     if (result != VK_SUCCESS)
     {
-        throw VulkanException("Vulkan Instance not created");
+        throw VulkanException("Vulkan Instance not created", result);
     }
 }
 
@@ -655,10 +685,10 @@ void VulkanInstance::createDevice()
         deviceCreateInfo.ppEnabledLayerNames = validationLayers.data();
     }
 
-
-    if (vkCreateDevice(_gpu, &deviceCreateInfo, nullptr, &_device) != VK_SUCCESS)
+    auto result = vkCreateDevice(_gpu, &deviceCreateInfo, nullptr, &_device);
+    if (result != VK_SUCCESS)
     {
-        throw VulkanException("Cannot create Vulkan device");
+        throw VulkanException("Cannot create Vulkan device", result);
     }
 
     vkGetDeviceQueue(_device, _queueIndex, 0, &_queue);
@@ -813,6 +843,8 @@ void VulkanInstance::createSwapchain()
         imageCount = std::min(_surfaceCapabilities.maxImageCount, imageCount);
     }
 
+    auto oldSwapchain = _swapchain;
+
     // Create swapchain
     VkSwapchainCreateInfoKHR swapchainCreateInfo{};
     swapchainCreateInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
@@ -831,11 +863,12 @@ void VulkanInstance::createSwapchain()
     swapchainCreateInfo.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR; // this is how alpha color should affect other windows
     swapchainCreateInfo.presentMode = _presentMode;
     swapchainCreateInfo.clipped = VK_TRUE;
-    swapchainCreateInfo.oldSwapchain = VK_NULL_HANDLE; // used when recreating (when resizing)
+    swapchainCreateInfo.oldSwapchain = VK_NULL_HANDLE;
 
-    if (vkCreateSwapchainKHR(_device, &swapchainCreateInfo, nullptr, &_swapchain) != VK_SUCCESS)
+    auto result = vkCreateSwapchainKHR(_device, &swapchainCreateInfo, nullptr, &_swapchain);
+    if (result != VK_SUCCESS)
     {
-        throw VulkanException("Failed to create Vulkan swapchain");
+        throw VulkanException("Failed to create Vulkan swapchain", result);
     }
 
     uint32_t realImagesCount;
@@ -938,9 +971,10 @@ void VulkanInstance::createRenderPass()
     renderPassCreateInfo.dependencyCount = 1;
     renderPassCreateInfo.pDependencies = &subpassDependency;
 
-    if (vkCreateRenderPass(_device, &renderPassCreateInfo, nullptr, &_renderPass) != VK_SUCCESS)
+    auto result = vkCreateRenderPass(_device, &renderPassCreateInfo, nullptr, &_renderPass);
+    if (result != VK_SUCCESS)
     {
-        throw VulkanException("Can't create Vulkan render pass");
+        throw VulkanException("Can't create Vulkan render pass", result);
     }
 
     VulkanPassInfo::PassData data {
@@ -1078,9 +1112,10 @@ void VulkanInstance::createFramebuffers()
         framebufferCreateInfo.height = _extent.height;
         framebufferCreateInfo.layers = 1;
 
-        if (vkCreateFramebuffer(_device, &framebufferCreateInfo, nullptr, &_swapchainFramebuffers[i]) != VK_SUCCESS)
+        auto result = vkCreateFramebuffer(_device, &framebufferCreateInfo, nullptr, &_swapchainFramebuffers[i]);
+        if (result != VK_SUCCESS)
         {
-            throw VulkanException("Can't create Vulkan Framebuffer");
+            throw VulkanException("Can't create Vulkan Framebuffer", result);
         }
     }
 }

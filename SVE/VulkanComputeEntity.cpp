@@ -126,10 +126,10 @@ void VulkanComputeEntity::createPipeline()
     pipelineCreateInfo.basePipelineHandle = VK_NULL_HANDLE; // no deriving from other pipeline
     pipelineCreateInfo.basePipelineIndex = -1;
 
-    if (vkCreateComputePipelines(_device, VK_NULL_HANDLE, 1, &pipelineCreateInfo, nullptr, &_pipeline) !=
-        VK_SUCCESS)
+    auto result = vkCreateComputePipelines(_device, VK_NULL_HANDLE, 1, &pipelineCreateInfo, nullptr, &_pipeline);
+    if (result != VK_SUCCESS)
     {
-        throw VulkanException("Can't create Vulkan Compute Pipeline");
+        throw VulkanException("Can't create Vulkan Compute Pipeline", result);
     }
 
     _computeShader->freeShaderModule();

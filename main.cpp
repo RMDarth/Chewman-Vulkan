@@ -186,10 +186,12 @@ int runGame()
                     if (event.window.event == SDL_WINDOWEVENT_MINIMIZED)
                     {
                         skipRendering = true;
+                        engine->onPause();
                         std::cout << "skip rendering" << std::endl;
                     }
                     if (event.window.event == SDL_WINDOWEVENT_RESTORED)
                     {
+                        engine->onResume();
                         skipRendering = false;
                     }
                 }
