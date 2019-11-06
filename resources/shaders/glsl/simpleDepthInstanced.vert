@@ -7,7 +7,7 @@ layout (set = 0, binding = 0) uniform UBO
 	mat4 viewProjection;
 } matrices;
 
-layout(set = 0, binding = 1) buffer SSBO
+layout(set = 0, binding = 1) readonly buffer SSBO
 {
 	mat4 modelList[];
 } ssbo;

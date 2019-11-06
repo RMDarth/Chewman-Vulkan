@@ -14,6 +14,7 @@ class MaterialManager
 public:
     void registerMaterial(std::shared_ptr<Material> material);
     Material* getMaterial(const std::string& name, bool emptyAllowed = false) const;
+    void duplicateMaterial(const std::string& name, const std::string& newName);
 
     void resetPipelines();
     void resetDescriptors();

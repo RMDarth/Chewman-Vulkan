@@ -136,7 +136,7 @@ VkPipelineLayout VulkanMaterial::getPipelineLayout() const
 
 void VulkanMaterial::applyDrawingCommands(uint32_t bufferIndex, uint32_t imageIndex, uint32_t materialIndex)
 {
-    if (_materialSettings.useInstancing && isInstancesRendered() && !isMainInstance(materialIndex))
+    if (_materialSettings.useInstancing && !isMainInstance(materialIndex))
         return;
 
     auto commandBuffer = _vulkanInstance->getCommandBuffer(bufferIndex);
@@ -234,22 +234,27 @@ void VulkanMaterial::setUniformData(uint32_t materialIndex, const UniformData& u
 {
     auto swapchainSize = _vulkanInstance->getSwapchainSize();
     auto imageIndex = _vulkanInstance->getCurrentImageIndex();
-    for (auto i = 0u; i < _shaderList.size(); i++)
+
+    if (_storageUpdated || !_materialSettings.useInstancing)
     {
-        size_t uniformSize = _shaderList[i]->getShaderUniformsSize();
-        if (uniformSize == 0)
-            continue;
-        const auto& shaderSettings = _shaderList[i]->getShaderSettings();
-        void* data = nullptr;
-        vkMapMemory(_device,  _instanceData[materialIndex].uniformBuffersMemory[swapchainSize * i + imageIndex], 0, uniformSize, 0, &data);
-        char* mappedUniformData = reinterpret_cast<char*>(data);
-        for (const auto& r : shaderSettings.uniformList)
+        for (auto i = 0u; i < _shaderList.size(); i++)
         {
-            auto uniformBytes = getUniformDataByType(uniformData, r.uniformType);
-            memcpy(mappedUniformData, uniformBytes.data(), uniformBytes.size());
-            mappedUniformData += uniformBytes.size();
+            size_t uniformSize = _shaderList[i]->getShaderUniformsSize();
+            if (uniformSize == 0)
+                continue;
+            const auto& shaderSettings = _shaderList[i]->getShaderSettings();
+            void* data = nullptr;
+            vkMapMemory(_device, _instanceData[materialIndex].uniformBuffersMemory[swapchainSize * i + imageIndex], 0,
+                        uniformSize, 0, &data);
+            char* mappedUniformData = reinterpret_cast<char*>(data);
+            for (const auto& r : shaderSettings.uniformList)
+            {
+                auto uniformBytes = getUniformDataByType(uniformData, r.uniformType);
+                memcpy(mappedUniformData, uniformBytes.data(), uniformBytes.size());
+                mappedUniformData += uniformBytes.size();
+            }
+            vkUnmapMemory(_device, _instanceData[materialIndex].uniformBuffersMemory[swapchainSize * i + imageIndex]);
         }
-        vkUnmapMemory(_device, _instanceData[materialIndex].uniformBuffersMemory[swapchainSize * i + imageIndex]);
     }
 
     for (const auto& b : _vertexShader->getShaderSettings().bufferList)
@@ -258,12 +263,14 @@ void VulkanMaterial::setUniformData(uint32_t materialIndex, const UniformData& u
     }
 
     if (_storageUpdated || !_materialSettings.useInstancing)
+    {
         _currentInstanceCount = 0;
+        _storageUpdated = false;
+        _mainInstance = materialIndex;
+        _instancesRendered = false;
+    }
 
     ++_currentInstanceCount;
-    _storageUpdated = false;
-    _mainInstance = materialIndex;
-    _instancesRendered = false;
 }
 
 void VulkanMaterial::updateInstancedData()
@@ -289,7 +296,7 @@ void VulkanMaterial::updateInstancedData()
         }
     }
     vkUnmapMemory(_device, _storageBuffersMemory[imageIndex]);
-    _storageData = {};
+    _storageData.modelList.clear();
     _storageUpdated = true;
 }
 

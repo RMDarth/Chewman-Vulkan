@@ -58,6 +58,13 @@ void SceneNode::detachEntity(std::shared_ptr<Entity> entity)
     }
 }
 
+void SceneNode::detachAllEntities()
+{
+    for (auto& entity : _entityList)
+        entity->clearParent();
+    _entityList.clear();
+}
+
 const std::list<std::shared_ptr<Entity>>& SceneNode::getAttachedEntities() const
 {
     if (_entitiesHidden)

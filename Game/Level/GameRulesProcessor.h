@@ -51,8 +51,7 @@ private:
     void updateCameraAnimation(float deltaTime);
     void destroyWalls(glm::ivec2 pos);
     void updateWallsDown(float deltaTime);
-    void regenerateMap();
-    void updateRegeneration(bool forceFinish);
+    void updateKnightPath();
 
 private:
     GameMapProcessor& _gameMapProcessor;
@@ -76,14 +75,6 @@ private:
     float _cameraSpeed = 1.0f;
     glm::vec3 _cameraStart[2] = {}; // pos + angles
     glm::vec3 _cameraEnd[2] = {};
-
-    // async map changes
-    std::future<void> _mapChangesFuture;
-    std::array<std::shared_ptr<SVE::Mesh>, 3> _preparedMeshes;
-    std::list<std::shared_ptr<SVE::Mesh>> _oldMeshes;
-    std::list<std::shared_ptr<SVE::Entity>> _oldEntities;
-    std::atomic_bool _regenerationFinished;
-    bool _useSuffix = true;
 };
 
 } // namespace Chewman

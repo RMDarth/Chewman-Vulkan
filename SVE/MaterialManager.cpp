@@ -4,6 +4,8 @@
 
 #include "MaterialManager.h"
 #include "VulkanException.h"
+#include "VulkanMaterial.h"
+
 namespace SVE
 {
 
@@ -38,6 +40,14 @@ void MaterialManager::resetDescriptors()
     {
         material.second->resetDescriptorSets();
     }
+}
+
+void MaterialManager::duplicateMaterial(const std::string& name, const std::string& newName)
+{
+    auto* mat = getMaterial(name);
+    auto settings = mat->getVulkanMaterial()->getSettings();
+    settings.name = newName;
+    registerMaterial(std::make_shared<Material>(settings));
 }
 
 
