@@ -3,6 +3,12 @@
 // Licensed under the MIT License
 #pragma once
 #include <vector>
+#include <memory>
+
+namespace SVE
+{
+class SceneNode;
+}
 
 namespace Chewman
 {
@@ -30,6 +36,7 @@ struct CellInfo
     Coin* coin = nullptr;
     PowerUp* powerUp = nullptr;
     Teleport* teleport = nullptr;
+    std::shared_ptr<SVE::SceneNode> cellBlock;
 };
 
 using CellInfoMap = std::vector<std::vector<CellInfo>>;

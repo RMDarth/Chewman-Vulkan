@@ -8,6 +8,7 @@
 #include <SVE/MeshManager.h>
 #include <SVE/SceneManager.h>
 #include <SVE/ResourceManager.h>
+#include <SVE/MaterialManager.h>
 
 #include "Bomb.h"
 #include "Game/Game.h"
@@ -121,6 +122,39 @@ void initSmokeMesh()
     SVE::Engine::getInstance()->getMeshManager()->registerMesh(smokeMeshBottom);*/
 }
 
+void initLevelBlocks(BlockMeshGenerator& meshGenerator)
+{
+    auto floorTop = meshGenerator.GenerateFloor(glm::vec3(0,0,0), Bottom);
+    auto floorVert = meshGenerator.GenerateFloor(glm::vec3(0,0,0), Vertical);
+    auto wallTop = meshGenerator.GenerateWall(glm::vec3(0,0,0), Top);
+    auto wallVert = meshGenerator.GenerateWall(glm::vec3(0,0,0), Vertical);
+    //auto lavaTop = meshGenerator.GenerateLiquid(glm::vec3(0,0,0), Top);
+
+    SVE::Engine::getInstance()->getMaterialManager()->duplicateMaterial("WallNormals", "FloorWallNormals");
+
+    auto meshSettingsFloorT = meshGenerator.CombineMeshes("FloorTop", floorTop);
+    meshSettingsFloorT.materialName = "FloorNormals";
+    auto meshSettingsFloorV = meshGenerator.CombineMeshes("FloorVert", floorVert);
+    meshSettingsFloorV.materialName = "FloorWallNormals";
+
+    auto meshSettingsWallT = meshGenerator.CombineMeshes("WallTop", wallTop);
+    meshSettingsWallT.materialName = "CeilingNormals";
+    auto meshSettingsWallV = meshGenerator.CombineMeshes("WallVert", wallVert);
+    meshSettingsWallV.materialName = "WallNormals";
+
+    auto floorMeshT = std::make_shared<SVE::Mesh>(meshSettingsFloorT);
+    auto floorMeshV = std::make_shared<SVE::Mesh>(meshSettingsFloorV);
+    auto wallMeshT = std::make_shared<SVE::Mesh>(meshSettingsWallT);
+    auto wallMeshV = std::make_shared<SVE::Mesh>(meshSettingsWallV);
+
+    auto* engine = SVE::Engine::getInstance();
+    engine->getMeshManager()->registerMesh(floorMeshT);
+    engine->getMeshManager()->registerMesh(floorMeshV);
+    engine->getMeshManager()->registerMesh(wallMeshT);
+    engine->getMeshManager()->registerMesh(wallMeshV);
+}
+
+
 } // anon namespace
 
 GameMapLoader::GameMapLoader()
@@ -128,6 +162,7 @@ GameMapLoader::GameMapLoader()
 {
     initTeleportMesh();
     initSmokeMesh();
+    initLevelBlocks(_meshGenerator);
 }
 
 std::shared_ptr<GameMap> GameMapLoader::loadMap(const std::string& filename, std::string suffix)
@@ -318,78 +353,43 @@ std::shared_ptr<GameMap> GameMapLoader::loadMap(const std::string& filename, std
 
 void GameMapLoader::initMeshes(GameMap& level,  std::string suffix)
 {
-    buildLevelMeshes(level, _meshGenerator, suffix);
-
-    level.mapEntity[0] = std::make_shared<SVE::MeshEntity>("MapT" + suffix);
-    level.mapEntity[1] = std::make_shared<SVE::MeshEntity>("MapB" + suffix);
-    level.mapEntity[2] = std::make_shared<SVE::MeshEntity>("MapV" + suffix);
-    for (auto i = 0; i < 3; ++i)
-        level.mapEntity[i]->setRenderToDepth(true);
-
-    level.upperLevelMeshNode->attachEntity(level.mapEntity[0]);
-    level.mapNode->attachEntity(level.mapEntity[1]);
-    level.upperLevelMeshNode->attachEntity(level.mapEntity[2]);
-}
-
-std::array<std::shared_ptr<SVE::Mesh>, 3> prepareLevelMeshes(const GameMap& level, BlockMeshGenerator& meshGenerator, std::string suffix)
-{
-    std::vector<Submesh> top;
-    std::vector<Submesh> bottom;
-    std::vector<Submesh> vertical;
     for (auto x = 0; x < level.height; ++x)
     {
         for (auto y = 0; y < level.width; ++y)
         {
-            std::vector<Submesh> cellT;
-            std::vector<Submesh> cellB;
-            std::vector<Submesh> cellV;
             glm::vec3 position(y * CellSize, 0, -x * CellSize);
             switch (level.mapData[x][y].cellType)
             {
                 case CellType::Wall:
-                    cellT = meshGenerator.GenerateWall(position, Top);
-                    cellB = meshGenerator.GenerateWall(position, Bottom);
-                    cellV = meshGenerator.GenerateWall(position, Vertical);
+                {
+                    auto node = SVE::Engine::getInstance()->getSceneManager()->createSceneNode();
+                    level.upperLevelMeshNode->attachSceneNode(node);
+                    node->setNodeTransformation(glm::translate(glm::mat4(1), position));
+
+                    node->attachEntity(std::make_shared<SVE::MeshEntity>("WallTop"));
+                    node->attachEntity(std::make_shared<SVE::MeshEntity>("WallVert"));
+
+                    level.mapData[x][y].cellBlock = std::move(node);
                     break;
+                }
                 case CellType::Floor:
                 case CellType::InvisibleWallWithFloor:
-                    cellT = meshGenerator.GenerateFloor(position, Top);
-                    cellB = meshGenerator.GenerateFloor(position, Bottom);
-                    cellV = meshGenerator.GenerateFloor(position, Vertical);
+                {
+                    auto node = SVE::Engine::getInstance()->getSceneManager()->createSceneNode();
+                    level.mapNode->attachSceneNode(node);
+                    node->setNodeTransformation(glm::translate(glm::mat4(1), position));
+
+                    node->attachEntity(std::make_shared<SVE::MeshEntity>("FloorTop"));
+                    node->attachEntity(std::make_shared<SVE::MeshEntity>("FloorVert"));
+
+                    level.mapData[x][y].cellBlock = std::move(node);
                     break;
+                }
                 case CellType::Liquid:
-                    cellV = meshGenerator.GenerateLiquid(position, Vertical, x, y, level.height - 1, level.width - 1);
                     break;
             }
-            top.insert(top.end(), cellT.begin(), cellT.end());
-            bottom.insert(bottom.end(), cellB.begin(), cellB.end());
-            vertical.insert(vertical.end(), cellV.begin(), cellV.end());
         }
     }
-
-    auto meshSettingsT = meshGenerator.CombineMeshes("MapT" + suffix, top);
-    meshSettingsT.materialName = "CeilingNormals";
-    auto meshSettingsB = meshGenerator.CombineMeshes("MapB" + suffix, bottom);
-    meshSettingsB.materialName = "FloorParallax";
-    auto meshSettingsV = meshGenerator.CombineMeshes("MapV" + suffix, vertical);
-    meshSettingsV.materialName = "WallParallax";
-
-    std::array<std::shared_ptr<SVE::Mesh>, 3> mapMesh;
-    mapMesh[0] = std::make_shared<SVE::Mesh>(meshSettingsT);
-    mapMesh[1] = std::make_shared<SVE::Mesh>(meshSettingsB);
-    mapMesh[2] = std::make_shared<SVE::Mesh>(meshSettingsV);
-
-    return mapMesh;
-}
-
-void buildLevelMeshes(const GameMap& level, BlockMeshGenerator& meshGenerator, std::string suffix)
-{
-    auto mapMesh = prepareLevelMeshes(level, meshGenerator, suffix);
-
-    auto* engine = SVE::Engine::getInstance();
-    engine->getMeshManager()->registerMesh(mapMesh[0]);
-    engine->getMeshManager()->registerMesh(mapMesh[1]);
-    engine->getMeshManager()->registerMesh(mapMesh[2]);
 }
 
 void GameMapLoader::createGargoyle(GameMap& level, int row, int column, char mapType)

@@ -214,7 +214,7 @@ BlockMeshGenerator::BlockMeshGenerator(float size)
 std::vector<Submesh> BlockMeshGenerator::GenerateFloor(glm::vec3 position, ModelType type)
 {
     std::vector<Submesh> floorMeshes;
-    float height = _size;
+    float height = _size / 5;
     if (type == ModelType::Bottom)
     {
         floorMeshes.push_back(constructPlane(position, _size, _size, glm::vec3(0, 1, 0), 1.0, 1.0, 0.0, 0.0));
@@ -222,14 +222,15 @@ std::vector<Submesh> BlockMeshGenerator::GenerateFloor(glm::vec3 position, Model
     else if (type == ModelType::Vertical)
     {
         floorMeshes.push_back(constructVerticalPlane(position + glm::vec3(_size / 2, -height / 2, 0),
-                                                     height, _size, VerticalPlaneType::Right, 1.0f, 2.0,  0.0f,  0.0f));
+                                                     height, _size, VerticalPlaneType::Right, 1.0f, 0.4,  0.0f,  0.0f));
         floorMeshes.push_back(constructVerticalPlane(position + glm::vec3(-_size / 2, -height / 2, 0),
-                                                     height, _size, VerticalPlaneType::Left, 1.0f, 2.0,  0.0f,  0.0f));
+                                                     height, _size, VerticalPlaneType::Left, 1.0f, 0.4,  0.0f,  0.0f));
         floorMeshes.push_back(constructVerticalPlane(position + glm::vec3(0, -height / 2, _size / 2),
-                                                     height, _size, VerticalPlaneType::Top, 1.0f, 2.0,  0.0f,  0.0f));
-        // This is small optimization - back wall is never seen
+                                                     height, _size, VerticalPlaneType::Top, 1.0f, 0.4,  0.0f,  0.0f));
+
+        // Small optimization - back wall is never seen
         //floorMeshes.push_back(constructVerticalPlane(position + glm::vec3(0, -height / 2, -_size / 2),
-        //                                             height, _size, VerticalPlaneType::Bottom, 1.0f, 2.0,  0.0f,  0.0f));
+        //                                             height, _size, VerticalPlaneType::Bottom, 1.0f, 0.4,  0.0f,  0.0f));
     }
     return floorMeshes;
 }
@@ -237,7 +238,7 @@ std::vector<Submesh> BlockMeshGenerator::GenerateFloor(glm::vec3 position, Model
 std::vector<Submesh> BlockMeshGenerator::GenerateWall(glm::vec3 position, ModelType type)
 {
     std::vector<Submesh> floorMeshes;
-    float subheight = _size; // / 5
+    float subheight = _size / 5;
     float mainheight = _size / 2;
     float height = mainheight + subheight;
     if (type == ModelType::Top)
@@ -245,13 +246,13 @@ std::vector<Submesh> BlockMeshGenerator::GenerateWall(glm::vec3 position, ModelT
         floorMeshes.push_back(constructPlane(position + glm::vec3(0, mainheight, 0), _size, _size, glm::vec3(0, 1, 0)));
     } else if (type == ModelType::Vertical) {
         floorMeshes.push_back(constructVerticalPlane(position + glm::vec3(_size / 2, mainheight/2 - subheight / 2, 0),
-                              height, _size, VerticalPlaneType::Right, 1.0f, 3.0,  0.0f,  0.0f));
+                                                     height, _size, VerticalPlaneType::Right, 1.0f, 1.4,  0.0f,  0.0f));
         floorMeshes.push_back(constructVerticalPlane(position + glm::vec3(-_size / 2, mainheight/2 - subheight / 2, 0),
-                              height, _size, VerticalPlaneType::Left, 1.0f, 3.0,  0.0f,  0.0f));
+                                                     height, _size, VerticalPlaneType::Left, 1.0f, 1.4,  0.0f,  0.0f));
         floorMeshes.push_back(constructVerticalPlane(position + glm::vec3(0,          mainheight/2 - subheight / 2,  _size / 2),
-                              height, _size, VerticalPlaneType::Top, 1.0f, 3.0,  0.0f,  0.0f));
+                                                     height, _size, VerticalPlaneType::Top, 1.0f, 1.4,  0.0f,  0.0f));
         //floorMeshes.push_back(constructVerticalPlane(position + glm::vec3(0,          mainheight/2 - subheight / 2,  -_size / 2),
-        //                      height, _size, VerticalPlaneType::Bottom, 1.0f, 3.0,  0.0f,  0.0f));
+        //                                             height, _size, VerticalPlaneType::Bottom, 1.0f, 1.4,  0.0f,  0.0f));
     }
 
     return floorMeshes;

@@ -210,8 +210,14 @@ void MeshEntity::setupMaterial()
         }
         else
         {
-            _shadowMaterial = Engine::getInstance()->getMaterialManager()->getMaterial(
-                    _material->getVulkanMaterial()->getSettings().useInstancing ? "SimpleDepthInstanced" : "SimpleDepth");
+            if (_material->getVulkanMaterial()->getSettings().useInstancing)
+            {
+                auto instMaterialName = std::string("SimpleDepthInstanced") +_material->getName();
+                Engine::getInstance()->getMaterialManager()->duplicateMaterial("SimpleDepthInstanced", instMaterialName);
+                _shadowMaterial = Engine::getInstance()->getMaterialManager()->getMaterial(instMaterialName);
+            } else {
+                _shadowMaterial = Engine::getInstance()->getMaterialManager()->getMaterial("SimpleDepth");
+            }
             //_pointLightShadowMaterial = Engine::getInstance()->getMaterialManager()->getMaterial("FullDepth");
         }
 

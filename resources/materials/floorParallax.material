@@ -1,7 +1,9 @@
 {
     "name": "FloorParallax",
-    "vertexShaderName": "parallaxShadowVertexShader",
+    "vertexShaderName": "parallaxShadowInstancedVertexShader",
     "fragmentShaderName": "parallaxShadowFragmentShader",
+    "useInstancing": true,
+    "instanceMaxCount": 20000,
     "ignoreShadow": false,
     "textures": [
         {

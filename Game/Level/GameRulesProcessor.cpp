@@ -31,7 +31,6 @@ inline float smoothStep(float data)
 GameRulesProcessor::GameRulesProcessor(GameMapProcessor& gameMapProcessor)
     : _gameMapProcessor(gameMapProcessor)
 {
-    _regenerationFinished = false;
 }
 
 std::shared_ptr<Player>& GameRulesProcessor::getPlayer()
@@ -145,7 +144,13 @@ void GameRulesProcessor::update(float deltaTime)
             {
                 gameMap->mapData[mapPos.x][mapPos.y].cellType = CellType::Floor;
                 gameMap->eatEffectManager->addEffect(EatEffectType::Walls, mapPos);
-                regenerateMap();
+
+                auto& node = gameMap->mapData[mapPos.x][mapPos.y].cellBlock;
+                node->detachAllEntities();
+                node->attachEntity(std::make_shared<SVE::MeshEntity>("FloorTop"));
+                node->attachEntity(std::make_shared<SVE::MeshEntity>("FloorVert"));
+
+                updateKnightPath();
             }
         } else {
             _insideTeleport = false;
@@ -180,8 +185,6 @@ void GameRulesProcessor::update(float deltaTime)
                 }
             }
         }
-
-        updateRegeneration(mapTraveller->isTargetReached());
 
         // Check death
         bool isPlayerDead = [&]() {
@@ -445,11 +448,16 @@ void GameRulesProcessor::destroyWalls(glm::ivec2 pos)
             if (gameMap->mapData[x][y].cellType == CellType::Wall)
             {
                 gameMap->mapData[x][y].cellType = CellType::Floor;
+
+                auto& node = gameMap->mapData[x][y].cellBlock;
+                node->detachAllEntities();
+                node->attachEntity(std::make_shared<SVE::MeshEntity>("FloorTop"));
+                node->attachEntity(std::make_shared<SVE::MeshEntity>("FloorVert"));
             }
         }
     }
 
-    regenerateMap();
+    updateKnightPath();
 }
 
 void GameRulesProcessor::updateWallsDown(float deltaTime)
@@ -470,64 +478,13 @@ void GameRulesProcessor::updateWallsDown(float deltaTime)
     gameMap->upperLevelMeshNode->setNodeTransformation(glm::scale(glm::mat4(1), glm::vec3(1.0f, scale, 1.0)));
 }
 
-void GameRulesProcessor::regenerateMap()
+void GameRulesProcessor::updateKnightPath()
 {
-    if (_mapChangesFuture.valid() || _regenerationFinished)
-        updateRegeneration(true);
-
-    _mapChangesFuture = std::async(std::launch::async, [&]
+    auto gameMap = _gameMapProcessor.getGameMap();
+    if (std::any_of(gameMap->enemies.begin(), gameMap->enemies.end(),
+                    [](std::unique_ptr<Enemy>& enemy) { return enemy->getEnemyType() == EnemyType::Knight; }))
     {
-        BlockMeshGenerator blockMeshGenerator(CellSize);
-        _preparedMeshes = prepareLevelMeshes(*_gameMapProcessor.getGameMap().get(), blockMeshGenerator);
-        _regenerationFinished = true;
-    });
-}
-
-void GameRulesProcessor::updateRegeneration(bool forceFinish)
-{
-    bool finished = _regenerationFinished;
-    if (forceFinish || finished)
-    {
-        if (_mapChangesFuture.valid())
-        {
-            _mapChangesFuture.wait();
-            _mapChangesFuture.get();
-            finished = true;
-        }
-    }
-
-    if (finished)
-    {
-        auto gameMap = _gameMapProcessor.getGameMap();
-        std::shared_ptr<SVE::SceneNode> nodes[] = {
-                gameMap->upperLevelMeshNode,
-                gameMap->mapNode,
-                gameMap->upperLevelMeshNode
-        };
-        std::string meshNames[] = {"MapT", "MapB", "MapV"};
-
-        for (auto i = 0; i < 3; ++i)
-        {
-            auto oldMesh = SVE::Engine::getInstance()->getMeshManager()->registerMesh(_preparedMeshes[i]);
-            _oldMeshes.push_back(oldMesh);
-            while (_oldMeshes.size() > 15)
-                _oldMeshes.pop_front();
-            nodes[i]->detachEntity(gameMap->mapEntity[i]);
-            _oldEntities.push_back(gameMap->mapEntity[i]);
-            while(_oldEntities.size() > 15)
-                _oldEntities.pop_front();
-            gameMap->mapEntity[i] = std::make_shared<SVE::MeshEntity>(meshNames[i]);
-            gameMap->mapEntity[i]->setRenderToDepth(true);
-            nodes[i]->attachEntity(gameMap->mapEntity[i]);
-        }
-
-        if (std::any_of(gameMap->enemies.begin(), gameMap->enemies.end(),
-                        [](std::unique_ptr<Enemy>& enemy) { return enemy->getEnemyType() == EnemyType::Knight; }))
-        {
-            Knight::updatePathMap(gameMap.get());
-        }
-        _regenerationFinished = false;
-        _useSuffix = !_useSuffix;
+        Knight::updatePathMap(gameMap.get());
     }
 }
 

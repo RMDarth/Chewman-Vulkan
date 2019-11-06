@@ -29,6 +29,7 @@ public:
 
     void attachEntity(std::shared_ptr<Entity> entity);
     void detachEntity(std::shared_ptr<Entity> entity);
+    void detachAllEntities();
     const std::list<std::shared_ptr<Entity>>& getAttachedEntities() const;
 
     void setHideEntities(bool value);
