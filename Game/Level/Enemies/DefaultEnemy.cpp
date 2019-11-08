@@ -51,7 +51,7 @@ DefaultEnemy::DefaultEnemy(GameMap* map, glm::ivec2 startPos, EnemyType enemyTyp
     debuffEntity->setMaterial("DebuffMaterial");
     debuffEntity->setRenderLast();
     debuffEntity->setCastShadows(false);
-    debuffEntity->getMaterialInfo()->diffuse = {1.0, 1.0, 1.0, 1.0 };
+    debuffEntity->getMaterialInfo()->diffuse = {1.0, 1.0, 1.0, 0.5 };
     _debuffNode->attachEntity(debuffEntity);
 
     if (Game::getInstance()->getGraphicsManager().getSettings().useDynamicLights)
@@ -82,6 +82,7 @@ void DefaultEnemy::increaseState(EnemyState state)
     {
         case EnemyState::Frozen:
             _enemyMesh->setMaterial(isStateActive(EnemyState::Vulnerable) ? _frostVulnerableMaterial : _frostMaterial);
+            _enemyMesh->setAnimationState(SVE::AnimationState::Pause);
             _enemyMesh->resetTime();
             break;
         case EnemyState::Vulnerable:
@@ -104,6 +105,7 @@ void DefaultEnemy::decreaseState(EnemyState state)
         {
             case EnemyState::Frozen:
                 _enemyMesh->setMaterial(isStateActive(EnemyState::Vulnerable) ? _vulnerableMaterial : _normalMaterial);
+                _enemyMesh->setAnimationState(SVE::AnimationState::Play);
                 break;
             case EnemyState::Vulnerable:
                 _enemyMesh->setMaterial(isStateActive(EnemyState::Frozen) ? _frostMaterial : _normalMaterial);

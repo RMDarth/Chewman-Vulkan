@@ -36,6 +36,8 @@ public:
     static float getRotateAngle(MoveDirection direction);
     ProjectileType getProjectileType() const;
 
+    void resetAll() override;
+
 protected:
     std::shared_ptr<SVE::SceneNode> _rootNode;
     std::shared_ptr<SVE::SceneNode> _rotateNode;

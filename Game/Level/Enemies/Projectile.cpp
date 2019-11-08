@@ -133,4 +133,10 @@ ProjectileType Projectile::getProjectileType() const
     return _type;
 }
 
+void Projectile::resetAll()
+{
+    Enemy::resetAll();
+    increaseState(EnemyState::Dead);
+}
+
 } // namespace Chewman
