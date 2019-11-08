@@ -4,6 +4,7 @@
 #pragma once
 #include "Entity.h"
 #include "ShaderSettings.h"
+#include "MeshDefs.h"
 #include <memory>
 
 namespace SVE
@@ -70,6 +71,8 @@ private:
     AnimationState _animationState = AnimationState::Play;
     mutable float _animationTime = 0.0f;
     mutable float _time = 0.0f;
+
+    mutable BonesAttachments _attachments;
 };
 
 } // namespace SVE

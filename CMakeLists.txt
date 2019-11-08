@@ -215,7 +215,7 @@ add_executable(Chewman
         Game/ScoresManager.h
         Game/StateProcessor.cpp
         Game/StateProcessor.h
-        VulkanHeaders.h)
+        VulkanHeaders.h SVE/MeshDefs.h)
 
 if (WIN32)
     target_link_libraries(Chewman mingw32 SDL2main SDL2 vulkan-1.lib VkLayer_core_validation.lib libassimp libcppfsd libtinyxml2)

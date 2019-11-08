@@ -193,26 +193,10 @@ void Mesh::updateMesh(MeshSettings meshSettings)
     _vulkanMesh->updateMesh(std::move(meshSettings));
 }
 
-void Mesh::updateUniformDataBones(UniformData& data, float time)
+void Mesh::updateUniformDataBones(UniformData& data, float time, BonesAttachments& bonesAttachments)
 {
     if (_isAnimated)
-        data.bones = getAnimationTransforms(_vulkanMesh->getMeshSettings(), 0, time, _attachments);
-}
-
-void Mesh::subscribeToAttachment(const std::string& name)
-{
-    _attachments[name] = glm::mat4(1);
-}
-
-void Mesh::unsubscribeFromAttachment(const std::string& name)
-{
-    _attachments.erase(name);
-}
-
-glm::mat4 Mesh::getAttachment(const std::string& name)
-{
-    assert(_attachments.find(name) != _attachments.end());
-    return _attachments.at(name);
+        data.bones = getAnimationTransforms(_vulkanMesh->getMeshSettings(), 0, time, bonesAttachments);
 }
 
 } // namespace SVE

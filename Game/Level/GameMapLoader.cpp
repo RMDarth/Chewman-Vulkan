@@ -130,7 +130,7 @@ GameMapLoader::GameMapLoader()
     initSmokeMesh();
 }
 
-std::shared_ptr<GameMap> GameMapLoader::loadMap(const std::string& filename, std::string suffix)
+std::shared_ptr<GameMap> GameMapLoader::loadMap(const std::string& filename, const std::string& suffix)
 {
     auto gameMap = std::make_shared<GameMap>();
 
@@ -316,7 +316,7 @@ std::shared_ptr<GameMap> GameMapLoader::loadMap(const std::string& filename, std
     return gameMap;
 }
 
-void GameMapLoader::initMeshes(GameMap& level,  std::string suffix)
+void GameMapLoader::initMeshes(GameMap& level, const std::string& suffix)
 {
     buildLevelMeshes(level, _meshGenerator, suffix);
 
@@ -331,7 +331,7 @@ void GameMapLoader::initMeshes(GameMap& level,  std::string suffix)
     level.upperLevelMeshNode->attachEntity(level.mapEntity[2]);
 }
 
-void buildLevelMeshes(const GameMap& level, BlockMeshGenerator& meshGenerator, std::string suffix)
+void buildLevelMeshes(const GameMap& level, BlockMeshGenerator& meshGenerator, const std::string& suffix)
 {
     std::vector<Submesh> top;
     std::vector<Submesh> bottom;
@@ -668,7 +668,7 @@ Coin* GameMapLoader::createCoin(GameMap& level, int row, int column)
     return &level.coins.back();
 }
 
-void GameMapLoader::createLava(GameMap& level, std::string suffix) const
+void GameMapLoader::createLava(GameMap& level, const std::string& suffix) const
 {
     auto* engine = SVE::Engine::getInstance();
     auto liquidMeshSettings = constructPlane(
