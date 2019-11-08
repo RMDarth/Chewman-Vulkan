@@ -1,9 +1,7 @@
 {
     "name": "WallNormals",
-    "vertexShaderName": "phongNormalShadowInstancedVertexShader",
+    "vertexShaderName": "phongNormalShadowVertexShader",
     "fragmentShaderName": "phongNormalShadowFragmentShader",
-    "useInstancing": true,
-    "instanceMaxCount": 20000,
     "ignoreShadow": false,
     "textures": [
         {

@@ -44,6 +44,8 @@ void MaterialManager::resetDescriptors()
 
 void MaterialManager::duplicateMaterial(const std::string& name, const std::string& newName)
 {
+    if (getMaterial(newName, true))
+        return;
     auto* mat = getMaterial(name);
     auto settings = mat->getVulkanMaterial()->getSettings();
     settings.name = newName;
