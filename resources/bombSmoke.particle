@@ -3,7 +3,7 @@
     "materialName": "SmokeParticleMaterial",
     "computeShaderName": "particlesComputeShader",
 
-    "quota": 4000,
+    "quota": 1500,
     "sort": true,
 
     "particleEmitter":
@@ -12,7 +12,7 @@
         "angle": 0.0,
         "originRadius": 8.5,
 
-        "emissionRate": 500,
+        "emissionRate": 300,
         "minLife": 1.0,
         "maxLife": 1.0,
         "minSpeed": 1.0,

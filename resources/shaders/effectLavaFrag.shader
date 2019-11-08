@@ -1,11 +1,13 @@
 {
     "name": "lavaFragmentShader",
-    "filename": "glsl/effectLava4.frag.spv",
+    "filename": "glsl/effectLava3.frag.spv",
     "shaderType": "FragmentShader",
     "samplerNamesList": [
-        "lavaSampler"
+        "noiseSampler"
     ],
     "uniformList": [
+        { "uniformType": "CameraPosition" },
+        { "uniformType": "MaterialInfo" },
         { "uniformType": "Time" }
     ]
 }

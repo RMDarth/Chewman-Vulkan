@@ -1,0 +1,12 @@
+{
+    "name": "LavaSimpleMaterial",
+    "vertexShaderName": "lavaVertexShader",
+    "fragmentShaderName": "lavaSimpleFragmentShader",
+    "passType": "ScreenQuadMRTPass",
+    "textures": [
+        {
+            "samplerName": "lavaSampler",
+            "filename": "textures/lava1.png"
+        }
+    ]
+}

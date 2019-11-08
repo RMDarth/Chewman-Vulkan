@@ -205,6 +205,8 @@ void VulkanInstance::onPause()
     deleteSwapchain();
     deleteSurfaceParameters();
     deleteSurface();
+
+    finishRendering();
 }
 
 void VulkanInstance::onResume()
@@ -220,6 +222,8 @@ void VulkanInstance::onResume()
     createMSAABuffer();
     createDepthBuffer();
     createFramebuffers();
+
+    finishRendering();
 }
 
 

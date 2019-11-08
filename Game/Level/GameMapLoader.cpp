@@ -714,7 +714,10 @@ void GameMapLoader::createLava(GameMap& level, const std::string& suffix) const
             glm::translate(glm::mat4(1), glm::vec3((level.width - 1) * CellSize * 0.5f, -0.5f, -((level.height - 1) * CellSize * 0.5f))));
     level.mapNode->attachSceneNode(lavaNode);
     std::shared_ptr<SVE::MeshEntity> lavaEntity = std::make_shared<SVE::MeshEntity>("LiquidMesh" + suffix);
-    lavaEntity->setMaterial("LavaMaterial");
+    if (Game::getInstance()->getGraphicsManager().getSettings().effectSettings == EffectSettings::Low)
+        lavaEntity->setMaterial("LavaSimpleMaterial");
+    else
+        lavaEntity->setMaterial("LavaMaterial");
     lavaEntity->setCastShadows(false);
     lavaNode->attachEntity(lavaEntity);
 
