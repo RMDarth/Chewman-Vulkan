@@ -124,36 +124,61 @@ void initSmokeMesh()
 
 void initLevelBlocks(BlockMeshGenerator& meshGenerator)
 {
-    auto floorTop = meshGenerator.GenerateFloor(glm::vec3(0,0,0), Bottom);
-    auto floorVert = meshGenerator.GenerateFloor(glm::vec3(0,0,0), Vertical);
     auto wallTop = meshGenerator.GenerateWall(glm::vec3(0,0,0), Top);
     auto wallVert = meshGenerator.GenerateWall(glm::vec3(0,0,0), Vertical);
     //auto lavaTop = meshGenerator.GenerateLiquid(glm::vec3(0,0,0), Top);
 
-    SVE::Engine::getInstance()->getMaterialManager()->duplicateMaterial("WallNormals", "FloorWallNormals");
-
-    auto meshSettingsFloorT = meshGenerator.CombineMeshes("FloorTop", floorTop);
-    meshSettingsFloorT.materialName = "FloorNormals";
-    auto meshSettingsFloorV = meshGenerator.CombineMeshes("FloorVert", floorVert);
-    meshSettingsFloorV.materialName = "FloorWallNormals";
-
     auto meshSettingsWallT = meshGenerator.CombineMeshes("WallTop", wallTop);
     meshSettingsWallT.materialName = "CeilingNormals";
     auto meshSettingsWallV = meshGenerator.CombineMeshes("WallVert", wallVert);
-    meshSettingsWallV.materialName = "WallNormals";
+    meshSettingsWallV.materialName = "WallNormalsInstanced";
 
-    auto floorMeshT = std::make_shared<SVE::Mesh>(meshSettingsFloorT);
-    auto floorMeshV = std::make_shared<SVE::Mesh>(meshSettingsFloorV);
     auto wallMeshT = std::make_shared<SVE::Mesh>(meshSettingsWallT);
     auto wallMeshV = std::make_shared<SVE::Mesh>(meshSettingsWallV);
 
     auto* engine = SVE::Engine::getInstance();
-    engine->getMeshManager()->registerMesh(floorMeshT);
-    engine->getMeshManager()->registerMesh(floorMeshV);
     engine->getMeshManager()->registerMesh(wallMeshT);
     engine->getMeshManager()->registerMesh(wallMeshV);
 }
 
+
+void buildFloorMesh(const GameMap& level, BlockMeshGenerator& meshGenerator, std::string suffix)
+{
+    std::vector<Submesh> top;
+    std::vector<Submesh> vertical;
+    for (auto x = 0; x < level.height; ++x)
+    {
+        for (auto y = 0; y < level.width; ++y)
+        {
+            std::vector<Submesh> cellT;
+            std::vector<Submesh> cellV;
+            glm::vec3 position(y * CellSize, 0, -x * CellSize);
+            switch (level.mapData[x][y].cellType)
+            {
+                case CellType::Wall:
+                case CellType::Floor:
+                case CellType::InvisibleWallWithFloor:
+                    cellT = meshGenerator.GenerateFloor(position, Bottom);
+                    cellV = meshGenerator.GenerateFloor(position, Vertical);
+                    break;
+            }
+            top.insert(top.end(), cellT.begin(), cellT.end());
+            vertical.insert(vertical.end(), cellV.begin(), cellV.end());
+        }
+    }
+
+    auto liquid = meshGenerator.GenerateLiquidBorder(level.width, level.height);
+    vertical.insert(vertical.end(), liquid.begin(), liquid.end());
+
+    auto meshSettingsB = meshGenerator.CombineMeshes("AllFloorTop" + suffix, top);
+    meshSettingsB.materialName = "FloorNormals";
+    auto meshSettingsV = meshGenerator.CombineMeshes("AllFloorVert" + suffix, vertical);
+    meshSettingsV.materialName = "WallNormals";
+
+    auto* engine = SVE::Engine::getInstance();
+    engine->getMeshManager()->registerMesh(std::make_shared<SVE::Mesh>(meshSettingsB));
+    engine->getMeshManager()->registerMesh(std::make_shared<SVE::Mesh>(meshSettingsV));
+}
 
 } // anon namespace
 
@@ -165,7 +190,7 @@ GameMapLoader::GameMapLoader()
     initLevelBlocks(_meshGenerator);
 }
 
-std::shared_ptr<GameMap> GameMapLoader::loadMap(const std::string& filename, std::string suffix)
+std::shared_ptr<GameMap> GameMapLoader::loadMap(const std::string& filename, const std::string& suffix)
 {
     auto gameMap = std::make_shared<GameMap>();
 
@@ -178,6 +203,7 @@ std::shared_ptr<GameMap> GameMapLoader::loadMap(const std::string& filename, std
     gameMap->mapNode = SVE::Engine::getInstance()->getSceneManager()->createSceneNode();
     gameMap->upperLevelMeshNode = SVE::Engine::getInstance()->getSceneManager()->createSceneNode();
     gameMap->mapNode->attachSceneNode(gameMap->upperLevelMeshNode);
+    gameMap->unusedEntitiesNode = SVE::Engine::getInstance()->getSceneManager()->createSceneNode();
 
     gameMap->mapData.resize(gameMap->height);
     char ch;
@@ -351,8 +377,10 @@ std::shared_ptr<GameMap> GameMapLoader::loadMap(const std::string& filename, std
     return gameMap;
 }
 
-void GameMapLoader::initMeshes(GameMap& level,  std::string suffix)
+void GameMapLoader::initMeshes(GameMap& level, const std::string& suffix)
 {
+    buildFloorMesh(level, _meshGenerator, suffix);
+
     for (auto x = 0; x < level.height; ++x)
     {
         for (auto y = 0; y < level.width; ++y)
@@ -374,22 +402,16 @@ void GameMapLoader::initMeshes(GameMap& level,  std::string suffix)
                 }
                 case CellType::Floor:
                 case CellType::InvisibleWallWithFloor:
-                {
-                    auto node = SVE::Engine::getInstance()->getSceneManager()->createSceneNode();
-                    level.mapNode->attachSceneNode(node);
-                    node->setNodeTransformation(glm::translate(glm::mat4(1), position));
-
-                    node->attachEntity(std::make_shared<SVE::MeshEntity>("FloorTop"));
-                    node->attachEntity(std::make_shared<SVE::MeshEntity>("FloorVert"));
-
-                    level.mapData[x][y].cellBlock = std::move(node);
-                    break;
-                }
                 case CellType::Liquid:
                     break;
             }
         }
     }
+
+    level.floor[0] = std::make_shared<SVE::MeshEntity>("AllFloorTop" + suffix);
+    level.floor[1] = std::make_shared<SVE::MeshEntity>("AllFloorVert" + suffix);
+    level.mapNode->attachEntity(level.floor[0]);
+    level.mapNode->attachEntity(level.floor[1]);
 }
 
 void GameMapLoader::createGargoyle(GameMap& level, int row, int column, char mapType)
@@ -675,7 +697,7 @@ Coin* GameMapLoader::createCoin(GameMap& level, int row, int column)
     return &level.coins.back();
 }
 
-void GameMapLoader::createLava(GameMap& level, std::string suffix) const
+void GameMapLoader::createLava(GameMap& level, const std::string& suffix) const
 {
     auto* engine = SVE::Engine::getInstance();
     auto liquidMeshSettings = constructPlane(

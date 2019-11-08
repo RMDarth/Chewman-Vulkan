@@ -27,7 +27,10 @@ struct GameMap
     std::string name;
     std::shared_ptr<SVE::SceneNode> mapNode;
     std::shared_ptr<SVE::SceneNode> upperLevelMeshNode;
-    std::shared_ptr<SVE::MeshEntity> lavaBorder;
+    std::shared_ptr<SVE::SceneNode> unusedEntitiesNode;
+
+    std::shared_ptr<SVE::MeshEntity> floor[2];
+
     std::shared_ptr<SVE::MeshEntity> smokeEntity;
     std::shared_ptr<SVE::MeshEntity> smokeNAEntity;
     std::shared_ptr<SVE::MeshEntity> lavaEntity;

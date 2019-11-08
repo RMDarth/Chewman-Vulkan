@@ -85,7 +85,7 @@ void MeshEntity::updateUniforms(UniformDataList uniformDataList) const
 
     if (_animationState == AnimationState::Play && !_isTimePaused)
         _animationTime += Engine::getInstance()->getDeltaTime();
-    _mesh->updateUniformDataBones(newData, _animationTime);
+    _mesh->updateUniformDataBones(newData, _animationTime, _attachments);
     _material->getVulkanMaterial()->setUniformData(_materialIndex, newData);
 
     if (_shadowMaterial)
@@ -264,17 +264,18 @@ void MeshEntity::resetTime(float time, bool resetAnimation)
 
 void MeshEntity::subscribeToAttachment(const std::string& name)
 {
-    _mesh->subscribeToAttachment(name);
+    _attachments[name] = glm::mat4(1);
 }
 
 glm::mat4 MeshEntity::getAttachment(const std::string& name)
 {
-    return _mesh->getAttachment(name);
+    assert(_attachments.find(name) != _attachments.end());
+    return _attachments.at(name);
 }
 
 void MeshEntity::unsubscribeFromAttachment(const std::string& name)
 {
-    _mesh->unsubscribeFromAttachment(name);
+    _attachments.erase(name);
 }
 
 } // namespace SVE

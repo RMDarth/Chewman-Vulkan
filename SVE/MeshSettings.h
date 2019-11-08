@@ -3,6 +3,7 @@
 // Licensed under the MIT License
 #pragma once
 #include "Libs.h"
+#include "MeshDefs.h"
 #include <string>
 #include <vector>
 #include <glm/gtc/quaternion.hpp>
@@ -15,8 +16,6 @@
 
 namespace SVE
 {
-
-using BonesAttachments = std::unordered_map<std::string, glm::mat4>;
 
 struct AnimationSettings
 {

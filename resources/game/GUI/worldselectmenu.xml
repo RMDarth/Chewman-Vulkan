@@ -3,9 +3,9 @@
     <Image name="star" image="Star.png" x="0.42" y="0.775" width="-1" height="0.08" />
     <Label name="unlockmoney" text="or 0.99$" x="0.55" y="0.8" width="0.1" height="0.05" /-->
     <Slider name="slider" x="0" y="0" width="1.0" height="0.9">
-        <Image name="world1" width="-1.33" height="0.7" image="loading43.jpg" />
-        <Image name="world2" width="-1.33" height="0.7" image="loading43.jpg" />
-        <Image name="world3" width="-1.33" height="0.7" image="loading43.jpg" />
+        <Image name="world1" width="-1.33" height="0.7" image="worlds/world1.jpg" />
+        <Image name="world2" width="-1.33" height="0.7" image="worlds/world2.jpg" />
+        <Image name="world3" width="-1.33" height="0.7" image="worlds/world3.jpg" />
     </Slider>
     <Button name="back"  x="0.05" y="0.85" width="0.08" height="-1" image="buttons/back.png" hoverimage="buttons/back_hover.png" pressedimage="buttons/back_pressed.png" />
 </document>

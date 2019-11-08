@@ -1,18 +1,20 @@
 {
-    "name": "FloorNormals",
-    "vertexShaderName": "phongNormalShadowVertexShader",
+    "name": "WallNormalsInstanced",
+    "vertexShaderName": "phongNormalShadowInstancedVertexShader",
     "fragmentShaderName": "phongNormalShadowFragmentShader",
+    "useInstancing": true,
+    "instanceMaxCount": 20000,
     "ignoreShadow": false,
     "textures": [
         {
             "samplerName": "diffuseTex",
             "textureType": "ImageFile",
-            "filename": "textures/floor1.png"
+            "filename": "textures/wall1.png"
         },
         {
             "samplerName": "normalTex",
             "textureType": "ImageFile",
-            "filename": "textures/floorNormal1.png"
+            "filename": "textures/wallNormal1.png"
         },
         {
             "samplerName": "directShadowTex",

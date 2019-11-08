@@ -256,7 +256,20 @@ std::vector<Submesh> BlockMeshGenerator::GenerateWall(glm::vec3 position, ModelT
     }
 
     return floorMeshes;
+}
 
+std::vector<Submesh> BlockMeshGenerator::GenerateLiquidBorder(int levelWidth, int levelHeight)
+{
+    std::vector<Submesh> floorMeshes;
+    float height = _size;
+    float wallY = -height/2 - height/6;
+
+    float realWidth = levelWidth * _size;
+
+    floorMeshes.push_back(constructVerticalPlane(glm::vec3(realWidth / 2 - _size / 2, wallY, _size / 2),
+                                                 height, realWidth, VerticalPlaneType::Top, levelWidth, 1.33333f,  0.0f,  1.33333f - 2.0f));
+
+    return floorMeshes;
 }
 
 std::vector<Submesh> BlockMeshGenerator::GenerateLiquid(glm::vec3 position, ModelType type, int x, int y, int xMax, int yMax)

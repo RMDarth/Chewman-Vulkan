@@ -136,7 +136,7 @@ VkPipelineLayout VulkanMaterial::getPipelineLayout() const
 
 void VulkanMaterial::applyDrawingCommands(uint32_t bufferIndex, uint32_t imageIndex, uint32_t materialIndex)
 {
-    if (_materialSettings.useInstancing && !isMainInstance(materialIndex))
+    if (_materialSettings.useInstancing && !isMainInstance(materialIndex) && isInstancesRendered())
         return;
 
     auto commandBuffer = _vulkanInstance->getCommandBuffer(bufferIndex);
@@ -277,10 +277,10 @@ void VulkanMaterial::updateInstancedData()
 {
     auto imageIndex = _vulkanInstance->getCurrentImageIndex();
 
-    if (_storageBufferSize == 0 || _mainInstance == 0 || _storageUpdated)
+    if (!_materialSettings.useInstancing)
         return;
 
-    if (!_materialSettings.useInstancing)
+    if (_storageBufferSize == 0 || _mainInstance == 0 || _storageUpdated)
         return;
 
     void* data = nullptr;

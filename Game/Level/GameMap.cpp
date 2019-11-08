@@ -187,7 +187,7 @@ std::shared_ptr<GameMap> GameMapProcessor::getGameMap()
 
 void GameMapProcessor::setState(GameMapState gameState)
 {
-    if (gameState == GameMapState::Pause)
+    if (gameState == GameMapState::Pause || gameState == GameMapState::GameOver || gameState == GameMapState::Victory)
     {
         for (auto& gargoyle : _gameMap->gargoyles)
         {

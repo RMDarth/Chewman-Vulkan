@@ -35,6 +35,7 @@ public:
 
     std::vector<Submesh> GenerateFloor(glm::vec3 position, ModelType type);
     std::vector<Submesh> GenerateWall(glm::vec3 position, ModelType type);
+    std::vector<Submesh> GenerateLiquidBorder(int xMax, int yMax);
     std::vector<Submesh> GenerateLiquid(glm::vec3 position, ModelType type, int x, int y, int xMax, int yMax);
 
     SVE::MeshSettings CombineMeshes(std::string name, std::vector<Submesh> meshes);

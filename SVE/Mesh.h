@@ -24,17 +24,11 @@ public:
     void updateMesh(MeshSettings meshSettings);
 
     // TODO: this should be moved to something like Animation class
-    void updateUniformDataBones(UniformData& data, float time);
-
-    void subscribeToAttachment(const std::string& name);
-    void unsubscribeFromAttachment(const std::string& name);
-    glm::mat4 getAttachment(const std::string& name);
+    void updateUniformDataBones(UniformData& data, float time, BonesAttachments& bonesAttachments);
 
 private:
     std::string _name;
     std::string _materialName;
-
-    BonesAttachments _attachments;
 
     bool _isAnimated;
 

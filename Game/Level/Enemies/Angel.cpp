@@ -29,10 +29,11 @@ Angel::Angel(GameMap* map, glm::ivec2 startPos)
     transform = glm::translate(glm::mat4(1), glm::vec3(0, 3.75f, 0.31f));
     transform = glm::rotate(transform, glm::radians(180.0f), glm::vec3(0, 1, 0));
     wingsNode->setNodeTransformation(transform);
-    auto wings = std::make_shared<SVE::MeshEntity>("angelWings");
-    wings->setMaterial("AngelWingsMaterial");
-    wings->setRenderLast(true);
-    wingsNode->attachEntity(wings);
+    _wingsMesh = std::make_shared<SVE::MeshEntity>("angelWings");
+    _wingsMesh->setMaterial("AngelWingsMaterial");
+    _wingsMesh->setRenderLast(true);
+    _wingsMesh->getMaterialInfo()->ambient = {0.1, 0.1, 0.1, 1.0 };
+    wingsNode->attachEntity(_wingsMesh);
 }
 
 float Angel::getHeight()
@@ -69,6 +70,26 @@ float Angel::getHeight()
         return 2.0f * step;
     } else {
         return getHeight(targetIsWall);
+    }
+}
+
+void Angel::increaseState(EnemyState state)
+{
+    DefaultEnemy::increaseState(state);
+    if (state == EnemyState::Frozen)
+    {
+        _wingsMesh->setAnimationState(SVE::AnimationState::Pause);
+        _wingsMesh->getMaterialInfo()->diffuse = glm::vec4(0.5f, 0.5f, 1.0f, 1.0f);
+    }
+}
+
+void Angel::decreaseState(EnemyState state)
+{
+    DefaultEnemy::decreaseState(state);
+    if (state == EnemyState::Frozen)
+    {
+        _wingsMesh->setAnimationState(SVE::AnimationState::Play);
+        _wingsMesh->getMaterialInfo()->diffuse = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
     }
 }
 

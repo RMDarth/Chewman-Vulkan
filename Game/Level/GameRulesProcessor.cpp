@@ -146,10 +146,13 @@ void GameRulesProcessor::update(float deltaTime)
                 gameMap->eatEffectManager->addEffect(EatEffectType::Walls, mapPos);
 
                 auto& node = gameMap->mapData[mapPos.x][mapPos.y].cellBlock;
-                node->detachAllEntities();
-                node->attachEntity(std::make_shared<SVE::MeshEntity>("FloorTop"));
-                node->attachEntity(std::make_shared<SVE::MeshEntity>("FloorVert"));
+                auto list = node->getAttachedEntities();
+                for (auto &entity : list)
+                {
+                    gameMap->unusedEntitiesNode->attachEntity(entity);
+                }
 
+                node->detachAllEntities();
                 updateKnightPath();
             }
         } else {
@@ -450,9 +453,12 @@ void GameRulesProcessor::destroyWalls(glm::ivec2 pos)
                 gameMap->mapData[x][y].cellType = CellType::Floor;
 
                 auto& node = gameMap->mapData[x][y].cellBlock;
+                auto list = node->getAttachedEntities();
+                for (auto& entity : list)
+                {
+                    gameMap->unusedEntitiesNode->attachEntity(entity);
+                }
                 node->detachAllEntities();
-                node->attachEntity(std::make_shared<SVE::MeshEntity>("FloorTop"));
-                node->attachEntity(std::make_shared<SVE::MeshEntity>("FloorVert"));
             }
         }
     }
