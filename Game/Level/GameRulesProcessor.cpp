@@ -244,6 +244,23 @@ void GameRulesProcessor::update(float deltaTime)
                 return true;
             }
 
+            if (mapTraveller->isTargetReached())
+            {
+                bool isStack = true;
+                for (auto direction = 0; direction < 4; ++direction)
+                {
+                    if (mapTraveller->isMovePossible(static_cast<MoveDirection>(direction)))
+                    {
+                        isStack = false;
+                        break;
+                    }
+                }
+                if (isStack)
+                {
+                    return true;
+                }
+            }
+
             for (auto& enemy : gameMap->enemies)
             {
                 if (enemy->isDead())

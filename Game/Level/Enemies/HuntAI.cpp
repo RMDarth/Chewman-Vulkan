@@ -110,7 +110,7 @@ void HuntAI::update(float deltaTime)
             auto pathMap = pathIter->second;
             auto currentPos = _mapTraveller->getMapPosition();
             auto direction = pathMap[currentPos.x][currentPos.y];
-            if (direction != MoveDirection::None)
+            if (currentPos.x - target.x <= 7 && currentPos.y - target.y <= 7 && direction != MoveDirection::None)
             {
                 if (_mapTraveller->tryMove(direction))
                     return;
