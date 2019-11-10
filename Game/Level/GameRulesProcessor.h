@@ -9,6 +9,8 @@ namespace Chewman
 {
 class GameMapProcessor;
 class Player;
+class Enemy;
+class MapTraveller;
 
 constexpr float JackhammerTotalTime = 10.0f;
 constexpr float FreezeTotalTime = 16.0f;
@@ -35,8 +37,11 @@ private:
     void playDeath(float deltaTime);
 
     void updateAffectors(float deltaTime);
-    void activatePowerUp(PowerUpType type, glm::ivec2 pos);
+    void activatePowerUp(PowerUpType type, glm::ivec2 pos, Enemy* eater = nullptr);
     void deactivatePowerUp(PowerUpType type);
+
+    template<typename Func>
+    bool isGargoyleAffecting(glm::vec3 realPos, const std::shared_ptr<MapTraveller>& mapTraveller, Func func);
 
     std::shared_ptr<Player>& getPlayer();
 
