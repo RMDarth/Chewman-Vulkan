@@ -4,6 +4,7 @@
 #pragma once
 #include "SVE/ParticleSystemEntity.h"
 #include "SVE/LightNode.h"
+#include "FireLineEntity.h"
 
 namespace Chewman
 {
@@ -30,8 +31,10 @@ enum class GargoyleState : uint8_t
 
 struct Gargoyle
 {
-    std::shared_ptr<SVE::ParticleSystemEntity> particleSystem;
     std::shared_ptr<SVE::LightNode> lightNode;
+    std::shared_ptr<SVE::ParticleSystemEntity> particleSystem;
+    std::shared_ptr<FireLineEntity> fireLine;
+    bool isFireline = false;
 
     glm::vec3 startPoint;
     glm::vec3 finalPoint;

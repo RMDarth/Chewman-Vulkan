@@ -63,6 +63,8 @@ void GraphicsStateProcessor::show()
     lightsControl->setText(boolToText(_settings.useDynamicLights));
     auto shadowsControl = _document->getControlByName("shadows");
     shadowsControl->setText(boolToText(_settings.useShadows));
+    auto gargoyleControl = _document->getControlByName("gargFireEffect");
+    gargoyleControl->setText(getGargoyleText(_settings.gargoyleEffects));
 
     _document->getControlByName("restartInfo")->setVisible(false);
 }
@@ -96,10 +98,12 @@ void GraphicsStateProcessor::processEvent(Control* control, IEventHandler::Event
         static const std::vector<std::string> lightValues = { "lightsOff", "lightsOn" };
         static const std::vector<std::string> resValues = { "resLow", "resHigh" };
         static const std::vector<std::string> effectsValues = { "effectsLow", "effectsHigh" };
+        static const std::vector<std::string> gargoyleValues = { "gargParticles", "gargMesh" };
         setSettingByName(_settings.useShadows, shadowValues, control->getName());
         setSettingByName(_settings.useDynamicLights, lightValues, control->getName());
         setSettingByName(_settings.effectSettings, effectsValues, control->getName());
         setSettingByName(_settings.resolution, resValues, control->getName());
+        setSettingByName(_settings.gargoyleEffects, gargoyleValues, control->getName());
 
         auto currentSettings = Game::getInstance()->getGraphicsManager().getSettings();
         if (_settings.effectSettings != currentSettings.effectSettings
