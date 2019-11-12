@@ -119,11 +119,19 @@ void GameMapProcessor::updateGargoyle(float time, Gargoyle& gargoyle)
                 gargoyle.currentTime = 0;
                 gargoyle.currentLength = 0;
                 gargoyle.isFading = false;
+
+                if (gargoyle.isFireline)
+                {
+                    auto& info = gargoyle.fireLine->getInfo();
+                    info.percent = 0;
+                    info.alpha = 0;
+                }
             }
             else if (gargoyle.currentTime > gargoyle.fireTime - 0.2f && !gargoyle.isFading)
             {
                 gargoyle.isFading = true;
-                updateGargoyleParticles(gargoyle, 0, -3.5f, 5.0f);
+                if (!gargoyle.isFireline)
+                    updateGargoyleParticles(gargoyle, 0, -3.5f, 5.0f);
             }
             else
             {
@@ -135,6 +143,13 @@ void GameMapProcessor::updateGargoyle(float time, Gargoyle& gargoyle)
                     gargoyle.lightNode->getLightSettings().lightType = SVE::LightType::LineLight;
                     gargoyle.lightNode->getLightSettings().secondPoint =
                             gargoyle.startPoint + gargoyle.direction * gargoyle.totalLength * finishPercent;
+                }
+
+                if (gargoyle.isFireline)
+                {
+                    auto& fireLineinfo = gargoyle.fireLine->getInfo();
+                    fireLineinfo.percent = finishPercent;
+                    fireLineinfo.alpha = glm::clamp((gargoyle.fireTime - gargoyle.currentTime) * 3.5f, 0.3f, 1.0f);
                 }
             }
             break;
@@ -154,7 +169,12 @@ void GameMapProcessor::updateGargoyle(float time, Gargoyle& gargoyle)
                 gargoyle.state = GargoyleState::Fire;
                 gargoyle.currentTime = 0;
                 gargoyle.currentLength = 0;
-                updateGargoyleParticles(gargoyle, gargoyle.fireTime + gargoyle.restTime, 0.0f, 0.0f);
+
+
+                if (!gargoyle.isFireline)
+                    updateGargoyleParticles(gargoyle, gargoyle.fireTime + gargoyle.restTime, 0.0f, 0.0f);
+                else
+                    gargoyle.fireLine->getInfo().alpha = 1.0f;
             }
             break;
         }
@@ -191,13 +211,15 @@ void GameMapProcessor::setState(GameMapState gameState)
     {
         for (auto& gargoyle : _gameMap->gargoyles)
         {
-            gargoyle.particleSystem->pauseTime();
+            if (!gargoyle.isFireline)
+                gargoyle.particleSystem->pauseTime();
         }
     } else if (_state == GameMapState::Pause)
     {
         for (auto& gargoyle : _gameMap->gargoyles)
         {
-            gargoyle.particleSystem->unpauseTime();
+            if (!gargoyle.isFireline)
+                gargoyle.particleSystem->unpauseTime();
         }
     }
 

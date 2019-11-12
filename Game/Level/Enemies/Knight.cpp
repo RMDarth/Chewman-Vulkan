@@ -36,6 +36,10 @@ Knight::Knight(GameMap* map, glm::ivec2 startPos)
     _attackMesh = std::make_shared<SVE::MeshEntity>("knightAttack");
     _attackMesh->setMaterial(_normalMaterial);
     _attackMesh->getMaterialInfo()->ambient = {0.3, 0.3, 0.3, 1.0 };
+
+    _castMesh = std::make_shared<SVE::MeshEntity>("knightCast");
+    _castMesh->setMaterial(_normalMaterial);
+    _castMesh->getMaterialInfo()->ambient = {0.3, 0.3, 0.3, 1.0 };
 }
 
 void Knight::updatePathMap(GameMap* map)
@@ -68,8 +72,36 @@ void Knight::update(float deltaTime)
             _meshNode->detachEntity(_attackMesh);
             _attachmentNode->setEntityAttachment(_enemyMesh, "mount0");
         }
+    } else if (!isDead())
+    {
+        if (_idleTime > 0)
+        {
+            _idleTime -= deltaTime;
+            if (_idleTime < 3.5)
+            {
+                _isCollecting = true;
+            }
+            if (_idleTime < 0)
+            {
+                _meshNode->attachEntity(_enemyMesh);
+                _meshNode->detachEntity(_castMesh);
+                _attachmentNode->setEntityAttachment(_enemyMesh, "mount0");
+                _castTime = 15.0f;
+            }
+        } else
+        {
+            _castTime -= deltaTime;
+            if (_castTime <= 0)
+            {
+                _idleTime = 5.0f;
+                _meshNode->attachEntity(_castMesh);
+                _meshNode->detachEntity(_enemyMesh);
+                _attachmentNode->setEntityAttachment(_castMesh, "mount0");
+            }
+            DefaultEnemy::update(deltaTime);
+        }
     }
-    DefaultEnemy::update(deltaTime);
+
 }
 
 void Knight::attackPlayer()
@@ -90,6 +122,29 @@ void Knight::increaseState(EnemyState state)
         return;
 
     DefaultEnemy::increaseState(state);
+}
+
+bool Knight::isCollecting() const
+{
+    return _isCollecting;
+}
+
+void Knight::setCollecting(bool value)
+{
+    _isCollecting = value;
+}
+
+void Knight::resetAll()
+{
+    Enemy::resetAll();
+    _meshNode->attachEntity(_enemyMesh);
+    _meshNode->detachEntity(_attackMesh);
+    _meshNode->detachEntity(_castMesh);
+    _attachmentNode->setEntityAttachment(_enemyMesh, "mount0");
+    _castTime = 15.0;
+    _attackTime = -1;
+    _idleTime = -1;
+    _isCollecting = false;
 }
 
 } // namespace Chewman

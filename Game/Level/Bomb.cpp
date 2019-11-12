@@ -9,9 +9,9 @@ namespace Chewman
 
 Bomb::Bomb(GameMap* gameMap, glm::ivec2 startPos)
     : PowerUp(gameMap, startPos, PowerUpType::Bomb)
+    , _bombExplosionPS(std::make_shared<SVE::ParticleSystemEntity>("BombParticle"))
+    , _bombSmokePS(std::make_shared<SVE::ParticleSystemEntity>("BombSmokeParticle"))
 {
-    _bombExplosionPS = std::make_shared<SVE::ParticleSystemEntity>("BombParticle");
-    _bombSmokePS = std::make_shared<SVE::ParticleSystemEntity>("BombSmokeParticle");
 }
 
 void Bomb::eat()

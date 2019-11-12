@@ -7,7 +7,7 @@
 namespace Chewman
 {
 
-enum class ResolutionSettings
+enum class ResolutionSettings : uint8_t
 {
     Low,
     High,
@@ -15,22 +15,33 @@ enum class ResolutionSettings
     Custom
 };
 
-enum class EffectSettings
+enum class EffectSettings : uint8_t
 {
     Low,
     High
 };
 
+enum class GargoyleSettings : uint8_t
+{
+    Particles,
+    Mesh
+};
+
+constexpr uint8_t CurrentGraphicsSettingsVersion = 3;
+
 struct GraphicsSettings
 {
+    uint8_t version = CurrentGraphicsSettingsVersion;
     ResolutionSettings resolution = ResolutionSettings::High;
     bool useShadows = true;
     bool useDynamicLights = true;
+    GargoyleSettings gargoyleEffects = GargoyleSettings::Particles;
     EffectSettings effectSettings = EffectSettings::High;
 };
 
 std::string getResolutionText(ResolutionSettings resolutionSettings);
 std::string getEffectText(EffectSettings effectSettings);
+std::string getGargoyleText(GargoyleSettings settings);
 
 class GraphicsManager
 {

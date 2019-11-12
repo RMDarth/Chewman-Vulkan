@@ -17,6 +17,7 @@ add_executable(Chewman
         main.cpp
         DesktopFS.cpp
         DesktopFS.h
+        VulkanHeaders.h
         SVE/CameraNode.cpp
         SVE/CameraNode.h
         SVE/CameraSettings.cpp
@@ -48,6 +49,7 @@ add_executable(Chewman
         SVE/MaterialSettings.h
         SVE/Mesh.cpp
         SVE/Mesh.h
+        SVE/MeshDefs.h
         SVE/MeshEntity.cpp
         SVE/MeshEntity.h
         SVE/MeshManager.cpp
@@ -155,6 +157,8 @@ add_executable(Chewman
         Game/Level/Coin.h
         Game/Level/EatEffectManager.cpp
         Game/Level/EatEffectManager.h
+        Game/Level/FireLineEntity.cpp
+        Game/Level/FireLineEntity.h
         Game/Level/Enemies/Angel.cpp
         Game/Level/Enemies/Angel.h
         Game/Level/Enemies/ChewmanEnemy.cpp
@@ -214,8 +218,7 @@ add_executable(Chewman
         Game/ScoresManager.cpp
         Game/ScoresManager.h
         Game/StateProcessor.cpp
-        Game/StateProcessor.h
-        VulkanHeaders.h SVE/MeshDefs.h)
+        Game/StateProcessor.h)
 
 if (WIN32)
     target_link_libraries(Chewman mingw32 SDL2main SDL2 vulkan-1.lib VkLayer_core_validation.lib libassimp libcppfsd libtinyxml2)

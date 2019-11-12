@@ -51,6 +51,18 @@ std::string getEffectText(EffectSettings effectSettings)
     return "Unknown";
 }
 
+std::string getGargoyleText(GargoyleSettings settings)
+{
+    switch (settings)
+    {
+        case GargoyleSettings::Particles: return "Particles";
+        case GargoyleSettings::Mesh: return "Mesh";
+    }
+
+    assert(!"Incorrect gargoyle effect settings");
+    return "Unknown";
+}
+
 GraphicsManager::GraphicsManager()
 {
     load();
@@ -93,6 +105,10 @@ void GraphicsManager::load()
         return;
     }
     fin.read(reinterpret_cast<char*>(&_currentSettings), sizeof(_currentSettings));
+    if (_currentSettings.version != CurrentGraphicsSettingsVersion)
+    {
+        _currentSettings = {};
+    }
     fin.close();
 }
 

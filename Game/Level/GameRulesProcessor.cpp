@@ -43,6 +43,32 @@ std::shared_ptr<Player>& GameRulesProcessor::getPlayer()
     return _player;
 }
 
+template<typename Func>
+bool GameRulesProcessor::isGargoyleAffecting(glm::vec3 realPos, const std::shared_ptr<MapTraveller>& mapTraveller, Func func)
+{
+    auto gameMap = _gameMapProcessor.getGameMap();
+    for (auto& gargoyle : gameMap->gargoyles)
+    {
+        auto toGarg = realPos - gargoyle.startPoint;
+        auto projectionDistance = glm::dot(toGarg, gargoyle.direction);
+        float finishPercent = gargoyle.currentTime / gargoyle.fireTime;
+
+        if (projectionDistance > 0 && gargoyle.state == GargoyleState::Fire && projectionDistance - CellSize <= gargoyle.totalLength * finishPercent)
+        {
+            auto projectionPoint = gargoyle.startPoint + gargoyle.direction * projectionDistance;
+
+            if (mapTraveller->isCloseToAffect(glm::vec2(-projectionPoint.z, projectionPoint.x)))
+            {
+                if (func(gargoyle))
+                    return true;
+            }
+        }
+    }
+
+    return false;
+}
+
+
 void GameRulesProcessor::update(float deltaTime)
 {
     auto gameMap = _gameMapProcessor.getGameMap();
@@ -96,24 +122,26 @@ void GameRulesProcessor::update(float deltaTime)
         if (mapTraveller->isCloseToAffect(MapTraveller::toRealPos(mapTraveller->getMapPosition())))
         {
             auto mapPos = mapTraveller->getMapPosition();
-            if (auto& coin = gameMap->mapData[mapPos.x][mapPos.y].coin)
+            if (eatCoin(mapPos))
             {
-                gameMap->mapNode->detachSceneNode(coin->rootNode);
                 //gameMap->eatEffectManager->addEffect(EatEffectType::Gold, mapPos);
-                coin = nullptr;
                 playerInfo.points += 10;
-                --gameMap->activeCoins;
-                if (gameMap->activeCoins == 0)
-                {
-                    std::cout << "You won!" << std::endl;
-                    _gameMapProcessor.setState(GameMapState::Victory);
-                }
             }
             if (auto& powerUp = gameMap->mapData[mapPos.x][mapPos.y].powerUp)
             {
                 powerUp->eat();
                 activatePowerUp(powerUp->getType(), mapPos);
-                player->playPowerUpAnimation();
+                switch (powerUp->getType())
+                {
+                    case PowerUpType::Pentagram:
+                    case PowerUpType::Freeze:
+                    case PowerUpType::Acceleration:
+                    case PowerUpType::Life:
+                    case PowerUpType::Jackhammer:
+                    case PowerUpType::Teeth:
+                        player->playPowerUpAnimation();
+                        break;
+                }
                 powerUp = nullptr;
             }
             if (auto* teleport = gameMap->mapData[mapPos.x][mapPos.y].teleport)
@@ -161,30 +189,69 @@ void GameRulesProcessor::update(float deltaTime)
 
         for (auto& enemy : gameMap->enemies)
         {
-            if (enemy->getEnemyType() == EnemyType::Chewman)
+            if (enemy->getEnemyType() == EnemyType::Chewman && !enemy->isStateActive(EnemyState::Dead))
             {
+                // eat coins and power ups
                 auto enemyTraveller = enemy->getMapTraveller();
                 auto enemyPos = enemyTraveller->getMapPosition();
-                if (enemyTraveller->isCloseToAffect(MapTraveller::toRealPos(enemyPos)))
+                auto enemyRealPos = MapTraveller::toRealPos(enemyPos);
+                if (enemyTraveller->isCloseToAffect(enemyRealPos))
                 {
-                    if (auto& coin = gameMap->mapData[enemyPos.x][enemyPos.y].coin)
-                    {
-                        gameMap->mapNode->detachSceneNode(coin->rootNode);
-                        coin = nullptr;
-                        --gameMap->activeCoins;
-                        if (gameMap->activeCoins == 0)
-                        {
-                            std::cout << "You won!" << std::endl;
-                            _gameMapProcessor.setState(GameMapState::Victory);
-                        }
-                    }
+                    eatCoin(enemyPos);
                     if (auto& powerUp = gameMap->mapData[enemyPos.x][enemyPos.y].powerUp)
                     {
                         powerUp->eat();
-                        activatePowerUp(powerUp->getType(), enemyPos);
-                        player->playPowerUpAnimation();
+                        activatePowerUp(powerUp->getType(), enemyPos, enemy.get());
+                        switch (powerUp->getType())
+                        {
+                            case PowerUpType::Pentagram:
+                            case PowerUpType::Freeze:
+                            case PowerUpType::Acceleration:
+                            case PowerUpType::Jackhammer:
+                            case PowerUpType::Teeth:
+                                player->playPowerUpAnimation();
+                                break;
+                        }
                         powerUp = nullptr;
                     }
+                }
+
+                isGargoyleAffecting(glm::vec3(enemyRealPos.y, 0.75, -enemyRealPos.x), enemyTraveller, [&](Gargoyle& gargoyle)
+                {
+                    enemy->increaseState(EnemyState::Vulnerable);
+                    ++_activeState[static_cast<uint8_t>(PowerUpType::Pentagram)];
+                    _gameAffectors.push_back({PowerUpType::Pentagram, PentagrammTotalTime, true});
+                    return true;
+                });
+
+                // Eat enemies or be eaten
+                for (auto& otherEnemy : gameMap->enemies)
+                {
+                    if (otherEnemy->isStateActive(EnemyState::Dead))
+                        continue;
+                    if (otherEnemy != enemy && otherEnemy->getMapTraveller()->isCloseToAffect(enemyRealPos))
+                    {
+                        if (otherEnemy->isStateActive(EnemyState::Vulnerable))
+                        {
+                            otherEnemy->increaseState(EnemyState::Dead);
+                        } else {
+                            enemy->increaseState(EnemyState::Dead);
+                        }
+                    }
+                }
+            }
+
+            if (enemy->getEnemyType() == EnemyType::Knight)
+            {
+                // collect coins around when in collecting state
+                auto* knight = static_cast<Knight*>(enemy.get());
+                if (knight->isCollecting())
+                {
+                    knight->setCollecting(false);
+                    auto knightPos = knight->getMapTraveller()->getMapPosition();
+                    for (auto x = knightPos.x - 2; x <= knightPos.x + 2; ++x)
+                        for (auto y = knightPos.y - 2; y <= knightPos.y + 2; ++y)
+                            eatCoin({x, y});
                 }
             }
         }
@@ -199,6 +266,23 @@ void GameRulesProcessor::update(float deltaTime)
                 gameMap->mapData[currentClosestPos.x][currentClosestPos.y].cellType == CellType::Liquid)
             {
                 return true;
+            }
+
+            if (mapTraveller->isTargetReached())
+            {
+                bool isStack = true;
+                for (auto direction = 0; direction < 4; ++direction)
+                {
+                    if (mapTraveller->isMovePossible(static_cast<MoveDirection>(direction)))
+                    {
+                        isStack = false;
+                        break;
+                    }
+                }
+                if (isStack)
+                {
+                    return true;
+                }
             }
 
             for (auto& enemy : gameMap->enemies)
@@ -224,28 +308,19 @@ void GameRulesProcessor::update(float deltaTime)
             }
 
             const auto playerRealPos = glm::vec3(mtRealPos.y, 0.75, -mtRealPos.x);
-            for (auto& gargoyle : gameMap->gargoyles)
-            {
-                auto toGarg = playerRealPos - gargoyle.startPoint;
-                auto projectionDistance = glm::dot(toGarg, gargoyle.direction);
-                float finishPercent = gargoyle.currentTime / gargoyle.fireTime;
-
-                if (projectionDistance > 0 && gargoyle.state == GargoyleState::Fire && projectionDistance - CellSize <= gargoyle.totalLength * finishPercent)
+            if (isGargoyleAffecting(playerRealPos, mapTraveller, [&](Gargoyle& gargoyle)
                 {
-                    auto projectionPoint = gargoyle.startPoint + gargoyle.direction * projectionDistance;
-
-                    if (mapTraveller->isCloseToAffect(glm::vec2(-projectionPoint.z, projectionPoint.x)))
+                    switch(gargoyle.type)
                     {
-                        switch(gargoyle.type)
-                        {
-                            case GargoyleType::Fire:
-                                return true;
-                            case GargoyleType::Frost:
-                                activatePowerUp(PowerUpType::Slow, mapTraveller->getMapPosition());
-                                break;
-                        }
+                        case GargoyleType::Fire:
+                            return true;
+                        case GargoyleType::Frost:
+                            activatePowerUp(PowerUpType::Slow, mapTraveller->getMapPosition());
                     }
-                }
+                    return false;
+                }))
+            {
+                return true;
             }
 
             return false;
@@ -369,7 +444,7 @@ void GameRulesProcessor::deactivatePowerUp(PowerUpType type)
     }
 }
 
-void GameRulesProcessor::activatePowerUp(PowerUpType type, glm::ivec2 pos)
+void GameRulesProcessor::activatePowerUp(PowerUpType type, glm::ivec2 pos, Enemy* eater)
 {
     ++_activeState[static_cast<uint8_t>(type)];
     auto gameMap = _gameMapProcessor.getGameMap();
@@ -378,12 +453,26 @@ void GameRulesProcessor::activatePowerUp(PowerUpType type, glm::ivec2 pos)
         case PowerUpType::Pentagram:
             _gameAffectors.push_back({type, PentagrammTotalTime});
             for (auto & enemy : gameMap->enemies)
-                enemy->increaseState(EnemyState::Vulnerable);
+            {
+                if (enemy.get() != eater)
+                    enemy->increaseState(EnemyState::Vulnerable);
+            }
             break;
         case PowerUpType::Freeze:
             _gameAffectors.push_back({type, FreezeTotalTime});
             for (auto & enemy : gameMap->enemies)
-                enemy->increaseState(EnemyState::Frozen);
+            {
+                if (enemy.get() != eater)
+                    enemy->increaseState(EnemyState::Frozen);
+            }
+            if (eater != nullptr)
+            {
+                ++_activeState[static_cast<uint8_t>(PowerUpType::Slow)];
+                _gameAffectors.push_back({PowerUpType::Slow, SlowTotalTime});
+                getPlayer()->getMapTraveller()->setSpeed(MoveSpeed * 0.5f);
+                _activeState[static_cast<uint8_t>(PowerUpType::Acceleration)] = 0;
+                _lastSpeedPowerUp = PowerUpType::Slow;
+            }
             break;
         case PowerUpType::Acceleration:
             _gameAffectors.push_back({type, AccelerationTotalTime});
@@ -392,7 +481,8 @@ void GameRulesProcessor::activatePowerUp(PowerUpType type, glm::ivec2 pos)
             _lastSpeedPowerUp = type;
             break;
         case PowerUpType::Life:
-            Game::getInstance()->getProgressManager().getPlayerInfo().lives += 2;
+            if (eater == nullptr)
+                Game::getInstance()->getProgressManager().getPlayerInfo().lives += 2;
             break;
         case PowerUpType::Bomb:
         {
@@ -493,5 +583,27 @@ void GameRulesProcessor::updateKnightPath()
         Knight::updatePathMap(gameMap.get());
     }
 }
+
+bool GameRulesProcessor::eatCoin(glm::ivec2 pos)
+{
+    auto gameMap = _gameMapProcessor.getGameMap();
+    if (pos.x < 0 || pos.x >= gameMap->height ||
+        pos.y < 0 || pos.y >= gameMap->width)
+        return false;
+    if (auto& coin = gameMap->mapData[pos.x][pos.y].coin)
+    {
+        gameMap->mapNode->detachSceneNode(coin->rootNode);
+        coin = nullptr;
+        --gameMap->activeCoins;
+        if (gameMap->activeCoins == 0)
+        {
+            std::cout << "You won!" << std::endl;
+            _gameMapProcessor.setState(GameMapState::Victory);
+        }
+        return true;
+    }
+    return false;
+}
+
 
 } // namespace Chewman

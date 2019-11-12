@@ -417,6 +417,7 @@ void GameMapLoader::initMeshes(GameMap& level, const std::string& suffix)
 void GameMapLoader::createGargoyle(GameMap& level, int row, int column, char mapType)
 {
     auto* engine = SVE::Engine::getInstance();
+    auto& settings = Game::getInstance()->getGraphicsManager().getSettings();
 
     Gargoyle gargoyle;
     gargoyle.type = mapType > '4' ? GargoyleType::Frost : GargoyleType::Fire;
@@ -453,15 +454,30 @@ void GameMapLoader::createGargoyle(GameMap& level, int row, int column, char map
     rootGargoyleNode->attachSceneNode(particlesNode);
     level.mapNode->attachSceneNode(rootGargoyleNode);
 
-    const std::string particleSystemName = gargoyle.type == GargoyleType::Fire ? "FireLineParticle" : "FrostLineParticle";
-    std::shared_ptr<SVE::ParticleSystemEntity> particleSystem = std::make_shared<SVE::ParticleSystemEntity>(particleSystemName);
+    if (settings.gargoyleEffects == GargoyleSettings::Particles)
     {
-        auto &emitter = particleSystem->getSettings().particleEmitter;
-        emitter.minLife = 0;
-        emitter.maxLife = 0;
+        const std::string particleSystemName = gargoyle.type == GargoyleType::Fire ? "FireLineParticle" : "FrostLineParticle";
+        std::shared_ptr<SVE::ParticleSystemEntity> particleSystem = std::make_shared<SVE::ParticleSystemEntity>(particleSystemName);
+        {
+            auto &emitter = particleSystem->getSettings().particleEmitter;
+            emitter.minLife = 0;
+            emitter.maxLife = 0;
+        }
+        particlesNode->attachEntity(particleSystem);
+        gargoyle.particleSystem = particleSystem;
+        gargoyle.isFireline = false;
+    } else {
+        FireLineInfo info {};
+        info.percent = 0.0f;
+        info.alpha = 0.0f;
+        info.direction = glm::vec3(0,0,1.0);
+        info.startPos = glm::vec3(0);
+        const std::string materialName = gargoyle.type == GargoyleType::Fire ? "FireLineMaterial" : "FrostLineMaterial";
+        gargoyle.fireLine = std::make_shared<FireLineEntity>(materialName, info);
+        gargoyle.fireLine->setRenderLast(true);
+        gargoyle.isFireline = true;
+        particlesNode->attachEntity(gargoyle.fireLine);
     }
-    particlesNode->attachEntity(particleSystem);
-    gargoyle.particleSystem = particleSystem;
 
     // Add light effect
     SVE::LightSettings lightSettings {};
@@ -540,14 +556,21 @@ void GameMapLoader::finalizeGargoyle(GameMap& level, Gargoyle &gargoyle)
     }
     length-= 1.5f;
     gargoyle.lengthInCells = length;
-    auto& emitter = gargoyle.particleSystem->getSettings().particleEmitter;
-    emitter.minSpeed = CellSize * length / gargoyle.fireTime;
-    emitter.maxSpeed = emitter.minSpeed;
-    //gargoyle.particleSystem->getSettings().quota = (gargoyle.fireTime + gargoyle.restTime) * 200;
+    if (gargoyle.isFireline)
+    {
+        auto& info = gargoyle.fireLine->getInfo();
+        info.maxLength = length * CellSize + CellSize * (gargoyle.type == GargoyleType::Fire ? 0.5f : 0.3f);
+        info.maxParticles = info.maxLength * (gargoyle.type == GargoyleType::Fire ? 75.0f : 50.0f);
+    } else {
+        auto& emitter = gargoyle.particleSystem->getSettings().particleEmitter;
+        emitter.minSpeed = CellSize * length / gargoyle.fireTime;
+        emitter.maxSpeed = emitter.minSpeed;
+        //gargoyle.particleSystem->getSettings().quota = (gargoyle.fireTime + gargoyle.restTime) * 200;
 
-    auto &affector = gargoyle.particleSystem->getSettings().particleAffector;
-    affector.minScaleSpeed = gargoyle.type == GargoyleType::Fire ? (1.5f / gargoyle.fireTime) : (1.0f / gargoyle.fireTime);
-    affector.maxScaleSpeed = affector.minScaleSpeed;
+        auto &affector = gargoyle.particleSystem->getSettings().particleAffector;
+        affector.minScaleSpeed = gargoyle.type == GargoyleType::Fire ? (1.5f / gargoyle.fireTime) : (1.0f / gargoyle.fireTime);
+        affector.maxScaleSpeed = affector.minScaleSpeed;
+    }
 
     x-=speedX;
     y-=speedY;

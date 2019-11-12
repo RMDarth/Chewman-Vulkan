@@ -6,6 +6,7 @@
 #include "SVE/SceneManager.h"
 #include "SVE/ParticleSystemEntity.h"
 
+#include "Game/Game.h"
 #include "Game/Level/GameMap.h"
 #include "Game/Level/GameUtils.h"
 
@@ -32,7 +33,8 @@ Projectile::Projectile(GameMap* map, glm::ivec2 startPos)
     _fireballPS = std::make_shared<SVE::ParticleSystemEntity>("Fireball");
     _frostballPS = std::make_shared<SVE::ParticleSystemEntity>("Frostball");
 
-    _rootNode->attachSceneNode(addEnemyLightEffect(engine, 2.0));
+    if (Game::getInstance()->getGraphicsManager().getSettings().useDynamicLights)
+        _rootNode->attachSceneNode(addEnemyLightEffect(engine, 2.0));
 
     _state[(uint8_t)EnemyState::Dead] = 1;
 }

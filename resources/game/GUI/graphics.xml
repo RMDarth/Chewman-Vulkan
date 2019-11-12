@@ -8,22 +8,28 @@
             <Button name="resLow" text="Low" font-size="45"/>
         </DropDown>
 
-        <Label name="shadowsLabel" text="Shadows:" x="0.02" y="0.35" width="0.38" height="0.08"/>
-        <DropDown name="shadows" text="On" font-size="55" x="0.42" y="0.345" width="-5.34065" height="0.1">
+        <Label name="shadowsLabel" text="Shadows:" x="0.02" y="0.3" width="0.38" height="0.08"/>
+        <DropDown name="shadows" text="On" font-size="55" x="0.42" y="0.295" width="-5.34065" height="0.1">
             <Button name="shadowOn" text="On" font-size="45"/>
             <Button name="shadowOff" text="Off" font-size="45"/>
         </DropDown>
 
-        <Label name="lightsLabel" text="Lights:" x="0.02" y="0.5" width="0.38" height="0.08"/>
-        <DropDown name="lights" text="On" font-size="55" x="0.42" y="0.495" width="-5.34065" height="0.1">
+        <Label name="lightsLabel" text="Lights:" x="0.02" y="0.4" width="0.38" height="0.08"/>
+        <DropDown name="lights" text="On" font-size="55" x="0.42" y="0.395" width="-5.34065" height="0.1">
             <Button name="lightsOn" text="On" font-size="45"/>
             <Button name="lightsOff" text="Off" font-size="45"/>
         </DropDown>
 
-        <Label name="effectsLabel" text="Effects:" x="0.02" y="0.65" width="0.38" height="0.08"/>
-        <DropDown name="effects" text="High" font-size="55" x="0.42" y="0.645" width="-5.34065" height="0.1">
+        <Label name="effectsLabel" text="Effects:" x="0.02" y="0.5" width="0.38" height="0.08"/>
+        <DropDown name="effects" text="High" font-size="55" x="0.42" y="0.495" width="-5.34065" height="0.1">
             <Button name="effectsHigh" text="High" font-size="45"/>
             <Button name="effectsLow" text="Low" font-size="45"/>
+        </DropDown>
+
+        <Label name="gargFireEffectLabel" text="Gargoyle:" x="0.02" y="0.6" width="0.38" height="0.08"/>
+        <DropDown name="gargFireEffect" text="Particles" font-size="55" x="0.42" y="0.595" width="-5.34065" height="0.1">
+            <Button name="gargParticles" text="Particles" font-size="45"/>
+            <Button name="gargMesh" text="Mesh" font-size="45"/>
         </DropDown>
 
         <Label name="restartInfo" text="Need to restart the game" x="0.02" y="0.78" width="0.96" height="0.08" font-color="0.9 0.1 0.1 0.8"/>
