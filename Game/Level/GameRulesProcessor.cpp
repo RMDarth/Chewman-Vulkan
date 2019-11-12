@@ -177,8 +177,9 @@ void GameRulesProcessor::update(float deltaTime)
 
         for (auto& enemy : gameMap->enemies)
         {
-            if (enemy->getEnemyType() == EnemyType::Chewman)
+            if (enemy->getEnemyType() == EnemyType::Chewman && !enemy->isStateActive(EnemyState::Dead))
             {
+                // eat coins and power ups
                 auto enemyTraveller = enemy->getMapTraveller();
                 auto enemyPos = enemyTraveller->getMapPosition();
                 auto enemyRealPos = MapTraveller::toRealPos(enemyPos);
@@ -210,10 +211,27 @@ void GameRulesProcessor::update(float deltaTime)
                     _gameAffectors.push_back({PowerUpType::Pentagram, PentagrammTotalTime, true});
                     return true;
                 });
+
+                // Eat enemies or be eaten
+                for (auto& otherEnemy : gameMap->enemies)
+                {
+                    if (otherEnemy->isStateActive(EnemyState::Dead))
+                        continue;
+                    if (otherEnemy != enemy && otherEnemy->getMapTraveller()->isCloseToAffect(enemyRealPos))
+                    {
+                        if (otherEnemy->isStateActive(EnemyState::Vulnerable))
+                        {
+                            otherEnemy->increaseState(EnemyState::Dead);
+                        } else {
+                            enemy->increaseState(EnemyState::Dead);
+                        }
+                    }
+                }
             }
 
             if (enemy->getEnemyType() == EnemyType::Knight)
             {
+                // collect coins around when in collecting state
                 auto* knight = static_cast<Knight*>(enemy.get());
                 if (knight->isCollecting())
                 {
