@@ -49,6 +49,7 @@ private:
     void destroyWalls(glm::ivec2 pos);
     void updateWallsDown(float deltaTime);
     void regenerateMap();
+    bool eatCoin(glm::ivec2 pos);
 
 private:
     GameMapProcessor& _gameMapProcessor;

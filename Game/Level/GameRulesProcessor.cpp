@@ -119,18 +119,10 @@ void GameRulesProcessor::update(float deltaTime)
         if (mapTraveller->isCloseToAffect(MapTraveller::toRealPos(mapTraveller->getMapPosition())))
         {
             auto mapPos = mapTraveller->getMapPosition();
-            if (auto& coin = gameMap->mapData[mapPos.x][mapPos.y].coin)
+            if (eatCoin(mapPos))
             {
-                gameMap->mapNode->detachSceneNode(coin->rootNode);
                 //gameMap->eatEffectManager->addEffect(EatEffectType::Gold, mapPos);
-                coin = nullptr;
                 playerInfo.points += 10;
-                --gameMap->activeCoins;
-                if (gameMap->activeCoins == 0)
-                {
-                    std::cout << "You won!" << std::endl;
-                    _gameMapProcessor.setState(GameMapState::Victory);
-                }
             }
             if (auto& powerUp = gameMap->mapData[mapPos.x][mapPos.y].powerUp)
             {
@@ -192,17 +184,7 @@ void GameRulesProcessor::update(float deltaTime)
                 auto enemyRealPos = MapTraveller::toRealPos(enemyPos);
                 if (enemyTraveller->isCloseToAffect(enemyRealPos))
                 {
-                    if (auto& coin = gameMap->mapData[enemyPos.x][enemyPos.y].coin)
-                    {
-                        gameMap->mapNode->detachSceneNode(coin->rootNode);
-                        coin = nullptr;
-                        --gameMap->activeCoins;
-                        if (gameMap->activeCoins == 0)
-                        {
-                            std::cout << "You won!" << std::endl;
-                            _gameMapProcessor.setState(GameMapState::Victory);
-                        }
-                    }
+                    eatCoin(enemyPos);
                     if (auto& powerUp = gameMap->mapData[enemyPos.x][enemyPos.y].powerUp)
                     {
                         powerUp->eat();
@@ -228,6 +210,19 @@ void GameRulesProcessor::update(float deltaTime)
                     _gameAffectors.push_back({PowerUpType::Pentagram, PentagrammTotalTime, true});
                     return true;
                 });
+            }
+
+            if (enemy->getEnemyType() == EnemyType::Knight)
+            {
+                auto* knight = static_cast<Knight*>(enemy.get());
+                if (knight->isCollecting())
+                {
+                    knight->setCollecting(false);
+                    auto knightPos = knight->getMapTraveller()->getMapPosition();
+                    for (auto x = knightPos.x - 2; x <= knightPos.x + 2; ++x)
+                        for (auto y = knightPos.y - 2; y <= knightPos.y + 2; ++y)
+                            eatCoin({x, y});
+                }
             }
         }
 
@@ -568,6 +563,27 @@ void GameRulesProcessor::regenerateMap()
     {
         Knight::updatePathMap(gameMap.get());
     }
+}
+
+bool GameRulesProcessor::eatCoin(glm::ivec2 pos)
+{
+    auto gameMap = _gameMapProcessor.getGameMap();
+    if (pos.x < 0 || pos.x >= gameMap->height ||
+        pos.y < 0 || pos.y >= gameMap->width)
+        return false;
+    if (auto& coin = gameMap->mapData[pos.x][pos.y].coin)
+    {
+        gameMap->mapNode->detachSceneNode(coin->rootNode);
+        coin = nullptr;
+        --gameMap->activeCoins;
+        if (gameMap->activeCoins == 0)
+        {
+            std::cout << "You won!" << std::endl;
+            _gameMapProcessor.setState(GameMapState::Victory);
+        }
+        return true;
+    }
+    return false;
 }
 
 
