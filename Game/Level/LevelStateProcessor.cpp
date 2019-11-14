@@ -41,6 +41,7 @@ void LevelStateProcessor::initMap()
     std::stringstream ss;
     ss << "resources/game/levels/level" << levelNum << ".map";
     // TODO: Display some "Loading" message box while level is loading
+    std::cout << "Start loading level " << levelNum << std::endl;
     auto future = std::async(std::launch::async, [&]
     {
         _gameMapProcessor = std::make_unique<GameMapProcessor>(Game::getInstance()->getGameMapLoader().loadMap(ss.str()));

@@ -35,7 +35,7 @@ struct GraphicsSettings
     ResolutionSettings resolution = ResolutionSettings::High;
     bool useShadows = true;
     bool useDynamicLights = true;
-    GargoyleSettings gargoyleEffects = GargoyleSettings::Particles;
+    GargoyleSettings gargoyleEffects = GargoyleSettings::Mesh;
     EffectSettings effectSettings = EffectSettings::High;
 };
 

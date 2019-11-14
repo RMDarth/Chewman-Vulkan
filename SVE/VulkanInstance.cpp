@@ -17,7 +17,11 @@ namespace SVE
 {
 namespace
 {
+#ifdef __ANDROID__
+const char *const VK_LAYER_LUNARG_STANDARD_VALIDATION = "VK_LAYER_LUNARG_core_validation";
+#else
 const char *const VK_LAYER_LUNARG_STANDARD_VALIDATION = "VK_LAYER_LUNARG_standard_validation";
+#endif
 
 bool checkValidationLayerSupport()
 {
@@ -189,7 +193,26 @@ void VulkanInstance::resizeWindow()
 
 void VulkanInstance::finishRendering() const
 {
-    vkQueueWaitIdle(_queue);
+    VkResult result;
+    for (auto& fence : _inFlightFences)
+    {
+        result = vkWaitForFences(_device,
+                                 1,
+                                 &fence,
+                                 VK_TRUE,
+                                 std::numeric_limits<uint64_t>::max());
+        if (result != VK_SUCCESS)
+        {
+            std::cout << "Error waiting for fences" << std::endl;
+            //throw VulkanException("Error waiting for fences", result);
+        }
+    }
+    result = vkDeviceWaitIdle(_device);
+    if (result != VK_SUCCESS)
+    {
+        std::cout << "Error waiting for device idle" << std::endl;
+        //throw VulkanException("Error waiting for device idle", result);
+    }
 }
 
 void VulkanInstance::onPause()
@@ -385,6 +408,7 @@ void VulkanInstance::waitAvailableFramebuffer()
     if (result == VK_ERROR_OUT_OF_DATE_KHR)
     {
         //resizeWindow();
+        std::cout << "Out of date image" << std::endl;
         return;
     } else if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR)
     {
@@ -578,13 +602,25 @@ void VulkanInstance::createInstance()
     };
     addPlatformSpecificExtensions(extensions);
 
-    const std::vector<const char *> validationLayers = {
+    std::vector<const char *> validationLayers = {
             VK_LAYER_LUNARG_STANDARD_VALIDATION
     };
     if (_engineSettings.useValidation)
     {
-        extensions.push_back(VK_EXT_DEBUG_REPORT_EXTENSION_NAME);
-        extensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
+#ifdef __ANDROID__
+        const char *instance_layers[] = {
+                "VK_LAYER_GOOGLE_threading",
+                "VK_LAYER_LUNARG_parameter_validation",
+                "VK_LAYER_LUNARG_object_tracker",
+                "VK_LAYER_LUNARG_core_validation",
+                "VK_LAYER_GOOGLE_unique_objects"
+        };
+        validationLayers.clear();
+        for (auto& layer : instance_layers)
+            validationLayers.push_back(layer);
+#endif
+        //extensions.push_back(VK_EXT_DEBUG_REPORT_EXTENSION_NAME);
+        //extensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
     }
 
     instanceInfo.enabledExtensionCount = static_cast<uint32_t>(extensions.size());
@@ -707,7 +743,7 @@ void VulkanInstance::deleteDevice()
 
 void VulkanInstance::createDebugCallback()
 {
-    if (!_engineSettings.useValidation)
+    //if (!_engineSettings.useValidation)
         return;
 
     VkDebugReportCallbackCreateInfoEXT debugCallbackCreateInfo = {};
@@ -864,7 +900,11 @@ void VulkanInstance::createSwapchain()
     swapchainCreateInfo.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE;
 
     swapchainCreateInfo.preTransform = VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR;//_surfaceCapabilities.currentTransform;
-    swapchainCreateInfo.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR; // this is how alpha color should affect other windows
+    if (_surfaceCapabilities.supportedCompositeAlpha & VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR)
+        swapchainCreateInfo.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR; // this is how alpha color should affect other windows
+    else
+        swapchainCreateInfo.compositeAlpha = VK_COMPOSITE_ALPHA_INHERIT_BIT_KHR;
+
     swapchainCreateInfo.presentMode = _presentMode;
     swapchainCreateInfo.clipped = VK_TRUE;
     swapchainCreateInfo.oldSwapchain = VK_NULL_HANDLE;

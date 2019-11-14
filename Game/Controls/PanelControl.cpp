@@ -7,7 +7,7 @@ namespace Chewman
 {
 
 PanelControl::PanelControl(const std::string& name, float x, float y, float width, float height, Control* parent)
-    : Control(ControlType::Panel, name, x, y, width, height, "windows/untitled.png", parent)
+    : Control(ControlType::Panel, name, x, y, width, height, "windows/window.png", parent)
 {
 }
 
