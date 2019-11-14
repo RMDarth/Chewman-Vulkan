@@ -75,6 +75,9 @@ void VulkanComputeEntity::reallocateCommandBuffers()
 
 void VulkanComputeEntity::applyComputeCommands() const
 {
+    if (_computeShaderNotSupported)
+        return;
+
     vkCmdBindPipeline(_commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, _pipeline);
     vkCmdBindDescriptorSets(
             _commandBuffer,
@@ -129,7 +132,8 @@ void VulkanComputeEntity::createPipeline()
     if (vkCreateComputePipelines(_device, VK_NULL_HANDLE, 1, &pipelineCreateInfo, nullptr, &_pipeline) !=
         VK_SUCCESS)
     {
-        throw VulkanException("Can't create Vulkan Compute Pipeline");
+        _computeShaderNotSupported = true;
+        //throw VulkanException("Can't create Vulkan Compute Pipeline for shader " + _computeSettings.computeShaderName, result);
     }
 
     _computeShader->freeShaderModule();

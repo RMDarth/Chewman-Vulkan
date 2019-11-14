@@ -74,6 +74,7 @@ private:
     VkDescriptorPool _descriptorPool;
 
     VkCommandBuffer _commandBuffer;
+    bool _computeShaderNotSupported = false;
 
 };
 

@@ -462,8 +462,8 @@ void VulkanMaterial::createPipeline()
     pipelineCreateInfo.basePipelineHandle = VK_NULL_HANDLE; // no deriving from other pipeline
     pipelineCreateInfo.basePipelineIndex = -1;
 
-    if (vkCreateGraphicsPipelines(_device, VK_NULL_HANDLE, 1, &pipelineCreateInfo, nullptr, &_pipeline) !=
-        VK_SUCCESS)
+    auto result = vkCreateGraphicsPipelines(_device, VK_NULL_HANDLE, 1, &pipelineCreateInfo, nullptr, &_pipeline);
+    if (result != VK_SUCCESS)
     {
         throw VulkanException("Can't create Vulkan Graphics Pipeline");
     }

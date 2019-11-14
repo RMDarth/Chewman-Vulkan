@@ -1,0 +1,24 @@
+{
+    "name": "WaterReflection",
+    "vertexShaderName": "phongWaterVertexShader",
+    "fragmentShaderName": "phongWaterFragmentShader",
+    "textures": [
+        {
+            "samplerName": "reflectionSampler",
+            "textureType": "Reflection"
+        },
+        {
+            "samplerName": "refractionSampler",
+            "textureType": "Refraction"
+        },
+        {
+            "samplerName": "dudvSampler",
+            "textureType": "ImageFile",
+            "filename": "textures/water/waterDUDV.png"
+        },
+        {
+            "samplerName": "shadowSampler",
+            "textureType": "ShadowMapDirect"
+        }
+    ]
+}

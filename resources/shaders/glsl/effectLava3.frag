@@ -13,15 +13,12 @@ layout(set = 1, binding = 1) uniform UBO
     float time;
 } ubo;
 
-layout(location = 0) in InData
-{
-    vec3 fragColor;
-    vec2 fragTexCoord;
-    vec3 fragNormal;
-    vec3 fragBinormal;
-    vec3 fragTangent;
-    vec3 fragPos;
-};
+layout (location = 0) in vec3 fragColor;
+layout (location = 1) in vec2 fragTexCoord;
+layout (location = 2) in vec3 fragNormal;
+layout (location = 3) in vec3 fragBinormal;
+layout (location = 4) in vec3 fragTangent;
+layout (location = 5) in vec3 fragPos;
 
 layout(location = 0) out vec4 outColor;
 layout(location = 1) out vec4 outColorBloom;
