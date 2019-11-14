@@ -4,7 +4,7 @@
 #pragma once
 
 #include "VulkanHeaders.h"
-#include <vk_mem_alloc.h>
+#include <vulkan/vk_mem_alloc.h>
 #include <vector>
 
 namespace SVE

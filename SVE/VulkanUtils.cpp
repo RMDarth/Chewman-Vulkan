@@ -3,7 +3,7 @@
 // Licensed under the MIT License
 
 #define VMA_IMPLEMENTATION
-#include <vk_mem_alloc.h>
+#include <vulkan/vk_mem_alloc.h>
 
 #include "Engine.h"
 #include "VulkanUtils.h"

@@ -6,7 +6,7 @@
 #include "Engine.h"
 #include "VulkanUtils.h"
 #include "VulkanHeaders.h"
-#include <vk_mem_alloc.h>
+#include <vulkan/vk_mem_alloc.h>
 #include <vector>
 #include <SDL2/SDL.h>
 #include <map>

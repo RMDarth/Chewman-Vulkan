@@ -8,7 +8,7 @@
 #include "MaterialSettings.h"
 #include "ShaderSettings.h"
 #include <vector>
-#include <vk_mem_alloc.h>
+#include <vulkan/vk_mem_alloc.h>
 
 namespace SVE
 {

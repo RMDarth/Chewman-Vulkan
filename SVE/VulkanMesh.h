@@ -5,7 +5,7 @@
 #include "MeshSettings.h"
 #include "VulkanHeaders.h"
 #include <memory>
-#include <vk_mem_alloc.h>
+#include <vulkan/vk_mem_alloc.h>
 
 namespace SVE
 {
