@@ -4,6 +4,7 @@
 #pragma once
 #include "ComputeSettings.h"
 #include "VulkanHeaders.h"
+#include <vk_mem_alloc.h>
 
 #include <vector>
 
@@ -60,14 +61,14 @@ private:
     VkPipelineLayout _pipelineLayout;
     VkPipeline _pipeline;
 
-    VkDeviceMemory _bufferMemory;
+    VmaAllocation _bufferMemory;
     VkBuffer _buffer;
     VkBufferView _bufferView;
 
-    std::vector<VkDeviceMemory> _uniformBuffersMemory;
+    std::vector<VmaAllocation> _uniformBuffersMemory;
     std::vector<VkBuffer> _uniformBuffers;
 
-    std::vector<VkDeviceMemory> _storageBuffersMemory;
+    std::vector<VmaAllocation> _storageBuffersMemory;
     std::vector<VkBuffer> _storageBuffers;
 
     std::vector<VkDescriptorSet> _descriptorSets;

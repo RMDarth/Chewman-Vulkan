@@ -57,14 +57,14 @@ void VulkanComputeEntity::setUniformData(const UniformData &uniformData) const
 
     const auto& shaderSettings = _computeShader->getShaderSettings();
     char* data = nullptr;
-    vkMapMemory(_device,  _uniformBuffersMemory[imageIndex], 0, uniformSize, 0, (void**)&data);
+    vmaMapMemory(_vulkanInstance->getAllocator(),  _uniformBuffersMemory[imageIndex], (void**)&data);
     for (const auto& r : shaderSettings.uniformList)
     {
         auto uniformBytes = getUniformDataByType(uniformData, r.uniformType);
         memcpy(data, uniformBytes.data(), uniformBytes.size());
         data += uniformBytes.size();
     }
-    vkUnmapMemory(_device, _uniformBuffersMemory[imageIndex]);
+    vmaUnmapMemory(_vulkanInstance->getAllocator(), _uniformBuffersMemory[imageIndex]);
 }
 
 void VulkanComputeEntity::reallocateCommandBuffers()
@@ -166,9 +166,8 @@ void VulkanComputeEntity::createBufferResources()
 
 void VulkanComputeEntity::deleteBufferResources()
 {
-    vkDestroyBuffer(_device, _buffer, nullptr);
+    vmaDestroyBuffer(_vulkanInstance->getAllocator(), _buffer, _bufferMemory);
     vkDestroyBufferView(_device, _bufferView, nullptr);
-    vkFreeMemory(_device, _bufferMemory, nullptr);
 }
 
 void VulkanComputeEntity::createUniformAndStorageBuffers()
@@ -182,20 +181,19 @@ void VulkanComputeEntity::createUniformAndStorageBuffers()
     _storageBuffersMemory.resize(swapchainSize);
     _storageBuffers.resize(swapchainSize);
 
-
     for (auto i = 0u; i < swapchainSize; i++)
     {
         _vulkanUtils.createBuffer(
                 uniformBufferSize,
                 VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
-                VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+                VMA_MEMORY_USAGE_CPU_TO_GPU,
                 _uniformBuffers[i],
                 _uniformBuffersMemory[i]);
 
         _vulkanUtils.createBuffer(
-                uniformBufferSize,
+                storageBufferSize,
                 VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
-                VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+                VMA_MEMORY_USAGE_CPU_TO_GPU,
                 _storageBuffers[i],
                 _storageBuffersMemory[i]);
     }
@@ -205,22 +203,13 @@ void VulkanComputeEntity::createUniformAndStorageBuffers()
 
 void VulkanComputeEntity::deleteUniformAndStorageBuffers()
 {
-    for (auto buffer : _uniformBuffers)
+    for (auto i = 0; i < _uniformBuffers.size(); ++i)
     {
-        vkDestroyBuffer(_device, buffer, nullptr);
+        vmaDestroyBuffer(_vulkanInstance->getAllocator(), _uniformBuffers[i], _uniformBuffersMemory[i]);
     }
-    for (auto buffer : _storageBuffers)
+    for (auto i = 0; i < _storageBuffers.size(); ++i)
     {
-        vkDestroyBuffer(_device, buffer, nullptr);
-    }
-
-    for (auto memory : _uniformBuffersMemory)
-    {
-        vkFreeMemory(_device, memory, nullptr);
-    }
-    for (auto memory : _storageBuffersMemory)
-    {
-        vkFreeMemory(_device, memory, nullptr);
+        vmaDestroyBuffer(_vulkanInstance->getAllocator(), _storageBuffers[i], _storageBuffersMemory[i]);
     }
 }
 

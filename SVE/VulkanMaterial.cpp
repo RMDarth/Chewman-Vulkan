@@ -66,6 +66,7 @@ SVE::VulkanMaterial::VulkanMaterial(MaterialSettings materialSettings)
     : _materialSettings(std::move(materialSettings))
     , _vulkanInstance(Engine::getInstance()->getVulkanInstance())
     , _device(_vulkanInstance->getLogicalDevice())
+    , _allocator(_vulkanInstance->getAllocator())
     , _vulkanUtils(_vulkanInstance->getVulkanUtils())
     , _hasExternals(false)
 {
@@ -240,7 +241,7 @@ void VulkanMaterial::setUniformData(uint32_t materialIndex, const UniformData& u
             continue;
         const auto& shaderSettings = _shaderList[i]->getShaderSettings();
         void* data = nullptr;
-        vkMapMemory(_device,  _instanceData[materialIndex].uniformBuffersMemory[swapchainSize * i + imageIndex], 0, uniformSize, 0, &data);
+        vmaMapMemory(_allocator, _instanceData[materialIndex].uniformBuffersMemory[swapchainSize * i + imageIndex], &data);
         char* mappedUniformData = reinterpret_cast<char*>(data);
         for (const auto& r : shaderSettings.uniformList)
         {
@@ -248,7 +249,7 @@ void VulkanMaterial::setUniformData(uint32_t materialIndex, const UniformData& u
             memcpy(mappedUniformData, uniformBytes.data(), uniformBytes.size());
             mappedUniformData += uniformBytes.size();
         }
-        vkUnmapMemory(_device, _instanceData[materialIndex].uniformBuffersMemory[swapchainSize * i + imageIndex]);
+        vmaUnmapMemory(_allocator, _instanceData[materialIndex].uniformBuffersMemory[swapchainSize * i + imageIndex]);
     }
 
     for (const auto& b : _vertexShader->getShaderSettings().bufferList)
@@ -276,7 +277,7 @@ void VulkanMaterial::updateInstancedData()
         return;
 
     void* data = nullptr;
-    vkMapMemory(_device, _storageBuffersMemory[imageIndex], 0, _storageBufferSize, 0, &data);
+    vmaMapMemory(_allocator, _storageBuffersMemory[imageIndex], &data);
     char* mappedBufferData = reinterpret_cast<char*>(data);
     for (const auto& b : _vertexShader->getShaderSettings().bufferList)
     {
@@ -287,7 +288,7 @@ void VulkanMaterial::updateInstancedData()
             mappedBufferData += storageBytes.size();
         }
     }
-    vkUnmapMemory(_device, _storageBuffersMemory[imageIndex]);
+    vmaUnmapMemory(_allocator, _storageBuffersMemory[imageIndex]);
     _storageData = {};
     _storageUpdated = true;
 }
@@ -557,18 +558,18 @@ void VulkanMaterial::createTextureImages()
 
         // Create temporary buffer to hold pixel data
         VkBuffer stagingBuffer;
-        VkDeviceMemory stagingBufferMemory;
+        VmaAllocation stagingBufferMemory;
         _vulkanUtils.createBuffer(imageSize,
                                   VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
-                                  VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+                                  VMA_MEMORY_USAGE_CPU_TO_GPU,
                                   stagingBuffer,
                                   stagingBufferMemory);
 
         // Copy pixel data into temporary buffer
         void* data;
-        vkMapMemory(_device, stagingBufferMemory, 0, imageSize, 0, &data);
+        vmaMapMemory(_allocator, stagingBufferMemory, &data);
         memcpy(data, pixels, static_cast<size_t>(imageSize));
-        vkUnmapMemory(_device, stagingBufferMemory);
+        vmaUnmapMemory(_allocator, stagingBufferMemory);
 
         // Free pixel data
         stbi_image_free(pixels);
@@ -602,8 +603,7 @@ void VulkanMaterial::createTextureImages()
         _vulkanUtils.generateMipmaps(_textureImages[i], VK_FORMAT_R8G8B8A8_UNORM, texWidth, texHeight, _mipLevels[i]);
 
         // Free temporary buffer
-        vkDestroyBuffer(_device, stagingBuffer, nullptr);
-        vkFreeMemory(_device, stagingBufferMemory, nullptr);
+        vmaDestroyBuffer(_allocator, stagingBuffer, stagingBufferMemory);
     }
 }
 
@@ -646,23 +646,23 @@ void VulkanMaterial::createCubemapTextureImages()
 
     // Create temporary buffer to hold pixel data
     VkBuffer stagingBuffer;
-    VkDeviceMemory stagingBufferMemory;
+    VmaAllocation stagingBufferMemory;
     _vulkanUtils.createBuffer(imageSize,
                               VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
-                              VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+                              VMA_MEMORY_USAGE_CPU_TO_GPU,
                               stagingBuffer,
                               stagingBufferMemory);
 
     // Copy pixel data into temporary buffer
     void* data;
-    vkMapMemory(_device, stagingBufferMemory, 0, imageSize, 0, &data);
+    vmaMapMemory(_allocator, stagingBufferMemory, &data);
     char* mappedData = reinterpret_cast<char*>(data);
     for (auto i = 0u; i < pixelsData.size(); i++)
     {
         memcpy(mappedData, pixelsData[i], singleImageSize);
         mappedData += singleImageSize;
     }
-    vkUnmapMemory(_device, stagingBufferMemory);
+    vmaUnmapMemory(_allocator, stagingBufferMemory);
 
     // Free pixel data
     for (auto i = 0u; i < imageCount; i++)
@@ -737,8 +737,7 @@ void VulkanMaterial::createCubemapTextureImages()
     //_vulkanUtils.generateMipmaps(_textureImages[i], VK_FORMAT_R8G8B8A8_UNORM, texWidth, texHeight, _mipLevels[i]);
 
     // Free temporary buffer
-    vkDestroyBuffer(_device, stagingBuffer, nullptr);
-    vkFreeMemory(_device, stagingBufferMemory, nullptr);
+    vmaDestroyBuffer(_allocator, stagingBuffer, stagingBufferMemory);
 
     _textureNames[0] = _materialSettings.textures[0].samplerName;
     _texturesData[0].external = false;
@@ -857,7 +856,7 @@ void VulkanMaterial::createUniformBuffers()
             _vulkanUtils.createBuffer(
                     bufferSize,
                     VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
-                    VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+                    VMA_MEMORY_USAGE_CPU_TO_GPU,
                     buffers[i],
                     data.uniformBuffersMemory[memoryBufferOffset + i]);
         }
@@ -881,22 +880,18 @@ void VulkanMaterial::deleteUniformBuffers()
 
 void VulkanMaterial::deleteUniformBuffers(PerInstanceData& instance)
 {
+    auto memIndex = 0;
     for (auto buffer : instance.vertexUniformBuffers)
     {
-        vkDestroyBuffer(_device, buffer, nullptr);
+        vmaDestroyBuffer(_allocator, buffer, instance.uniformBuffersMemory[memIndex++]);
     }
     for (auto buffer : instance.geometryUniformBuffer)
     {
-        vkDestroyBuffer(_device, buffer, nullptr);
+        vmaDestroyBuffer(_allocator, buffer, instance.uniformBuffersMemory[memIndex++]);
     }
     for (auto buffer : instance.fragmentUniformBuffer)
     {
-        vkDestroyBuffer(_device, buffer, nullptr);
-    }
-
-    for (auto memory : instance.uniformBuffersMemory)
-    {
-        vkFreeMemory(_device, memory, nullptr);
+        vmaDestroyBuffer(_allocator, buffer, instance.uniformBuffersMemory[memIndex++]);
     }
 }
 
@@ -921,7 +916,7 @@ void VulkanMaterial::createStorageBuffers()
         _vulkanUtils.createBuffer(
                 _storageBufferSize,
                 VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
-                VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+                VMA_MEMORY_USAGE_CPU_TO_GPU,
                 _vertexStorageBuffers[i],
                 _storageBuffersMemory[i]);
     }
@@ -929,14 +924,9 @@ void VulkanMaterial::createStorageBuffers()
 
 void VulkanMaterial::deleteStorageBuffers()
 {
-    for (auto buffer : _vertexStorageBuffers)
+    for (auto i = 0; i < _vertexStorageBuffers.size(); ++i)
     {
-        vkDestroyBuffer(_device, buffer, nullptr);
-    }
-
-    for (auto memory : _storageBuffersMemory)
-    {
-        vkFreeMemory(_device, memory, nullptr);
+        vmaDestroyBuffer(_allocator, _vertexStorageBuffers[i], _storageBuffersMemory[i]);
     }
 }
 

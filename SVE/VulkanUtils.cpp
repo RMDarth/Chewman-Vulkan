@@ -2,10 +2,14 @@
 // Copyright (c) 2018-2019, Igor Barinov
 // Licensed under the MIT License
 
+#define VMA_IMPLEMENTATION
+#include <vk_mem_alloc.h>
+
 #include "Engine.h"
 #include "VulkanUtils.h"
 #include "VulkanInstance.h"
 #include "VulkanException.h"
+
 
 namespace SVE
 {
@@ -24,9 +28,9 @@ VulkanUtils::VulkanUtils()
 void VulkanUtils::createBuffer(
         VkDeviceSize size,
         VkBufferUsageFlags usage,
-        VkMemoryPropertyFlags properties,
+        VmaMemoryUsage memoryUsage,
         VkBuffer& buffer,
-        VkDeviceMemory& bufferMemory) const
+        VmaAllocation& allocation) const
 {
     // Create buffer
     VkBufferCreateInfo bufferInfo {};
@@ -35,29 +39,15 @@ void VulkanUtils::createBuffer(
     bufferInfo.usage = usage;
     bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 
-    if (vkCreateBuffer(_vulkanInstance->getLogicalDevice(), &bufferInfo, nullptr, &buffer) != VK_SUCCESS)
+
+    VmaAllocationCreateInfo allocInfo = {};
+    allocInfo.usage = memoryUsage;
+
+
+    if (vmaCreateBuffer(_vulkanInstance->getAllocator(), &bufferInfo, &allocInfo, &buffer, &allocation, nullptr))
     {
-        throw std::runtime_error("Can't create Vulkan buffer");
+        throw VulkanException("Can't create Vulkan buffer");
     }
-
-    // Allocate memory for buffer
-    VkMemoryRequirements memoryRequirements;
-    vkGetBufferMemoryRequirements(_vulkanInstance->getLogicalDevice(), buffer, &memoryRequirements);
-
-    VkMemoryAllocateInfo allocInfo {};
-    allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
-    allocInfo.allocationSize = memoryRequirements.size;
-    allocInfo.memoryTypeIndex = findVulkanMemoryType(memoryRequirements.memoryTypeBits, properties);
-
-    // TODO: It's not very convenient to allocate new memory for each new buffer, as those allocations are limited
-    // TODO: It can be refactored to use single allocation for many buffers (or by using VulkanMemoryAllocator lib)
-    if (vkAllocateMemory(_vulkanInstance->getLogicalDevice(), &allocInfo, nullptr, &bufferMemory) != VK_SUCCESS)
-    {
-        throw VulkanException("Can't allocate Vulkan buffer memory");
-    }
-
-    // Bind memory to buffer
-    vkBindBufferMemory(_vulkanInstance->getLogicalDevice(), buffer, bufferMemory, 0);
 }
 
 void VulkanUtils::copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size) const
@@ -99,36 +89,35 @@ void VulkanUtils::copyBufferToImage(VkBuffer buffer, VkImage image, uint32_t wid
 }
 
 void VulkanUtils::createOptimizedBuffer(const void *bufferData, VkDeviceSize bufferSize, VkBuffer &buffer,
-                                        VkDeviceMemory &deviceMemory, VkBufferUsageFlags usage) const
+                                        VmaAllocation& allocation, VkBufferUsageFlags usage) const
 {
     // create temporary slow CPU visible memory
     VkBuffer stagingBuffer;
-    VkDeviceMemory stagingBufferMemory;
+    VmaAllocation stagingBufferMemory;
     createBuffer(bufferSize,
                  VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
-                 VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+                 VMA_MEMORY_USAGE_CPU_ONLY,
                  stagingBuffer,
                  stagingBufferMemory);
 
     // Fill temporary buffer with vertex/index data
     void* data;
-    vkMapMemory(_vulkanInstance->getLogicalDevice(), stagingBufferMemory, 0, bufferSize, 0, &data);
+    vmaMapMemory(_vulkanInstance->getAllocator(), stagingBufferMemory, &data);
     memcpy(data, bufferData, (size_t) bufferSize);
-    vkUnmapMemory(_vulkanInstance->getLogicalDevice(), stagingBufferMemory);
+    vmaUnmapMemory(_vulkanInstance->getAllocator(), stagingBufferMemory);
 
     // create fast GPU-local buffer for data
     createBuffer(bufferSize,
                  VK_BUFFER_USAGE_TRANSFER_DST_BIT | usage,
-                 VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+                 VMA_MEMORY_USAGE_GPU_ONLY,
                  buffer,
-                 deviceMemory);
+                 allocation);
 
     // copy slow CPU-visible buffer to fast GPU-local
     copyBuffer(stagingBuffer, buffer, bufferSize);
 
     // destroy CPU-visible buffer
-    vkDestroyBuffer(_vulkanInstance->getLogicalDevice(), stagingBuffer, nullptr);
-    vkFreeMemory(_vulkanInstance->getLogicalDevice(), stagingBufferMemory, nullptr);
+    vmaDestroyBuffer(_vulkanInstance->getAllocator(), stagingBuffer, stagingBufferMemory);
 }
 
 void VulkanUtils::createImage(uint32_t width,

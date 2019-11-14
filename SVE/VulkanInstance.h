@@ -6,6 +6,7 @@
 #include "Engine.h"
 #include "VulkanUtils.h"
 #include "VulkanHeaders.h"
+#include <vk_mem_alloc.h>
 #include <vector>
 #include <SDL2/SDL.h>
 #include <map>
@@ -49,6 +50,7 @@ public:
     VkInstance getInstance() const;
     VkPhysicalDevice getGPU() const;
     VkDevice getLogicalDevice() const;
+    VmaAllocator getAllocator() const;
     VkCommandPool getCommandPool(PoolID index) const;
     VkRenderPass getRenderPass() const;
     VkExtent2D getExtent() const;
@@ -88,6 +90,8 @@ private:
     void deleteInstance();
     void createDevice();
     void deleteDevice();
+    void createAllocator();
+    void deleteAllocator();
     void createSurface();
     void deleteSurface();
     void createSurfaceParameters();
@@ -130,6 +134,8 @@ private:
     VkPhysicalDevice _gpu;
     VkPhysicalDeviceProperties _gpuProps;
     VkDevice _device;
+
+    VmaAllocator _allocator;
 
     VkDebugReportCallbackEXT _debugCallbackHandle;
     VkDebugUtilsMessengerEXT _debugUtilsCallbackHandle;
