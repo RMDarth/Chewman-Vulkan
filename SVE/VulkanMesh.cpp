@@ -142,61 +142,54 @@ void VulkanMesh::createGeometryBuffers()
 
 void VulkanMesh::deleteGeometryBuffers()
 {
-    vkDestroyBuffer(_vulkanInstance->getLogicalDevice(), _indexBuffer, nullptr);
-    vkFreeMemory(_vulkanInstance->getLogicalDevice(), _indexBufferMemory, nullptr);
+    vmaDestroyBuffer(_vulkanInstance->getAllocator(), _indexBuffer, _indexBufferMemory);
 
-    for (auto& buffer : _vertexBufferList)
+    for (auto i = 0; i < _vertexBufferList.size(); ++i)
     {
-        vkDestroyBuffer(_vulkanInstance->getLogicalDevice(), buffer, nullptr);
-    }
-    for (auto& memory : _vertexBufferMemoryList)
-    {
-        vkFreeMemory(_vulkanInstance->getLogicalDevice(), memory, nullptr);
+        vmaDestroyBuffer(_vulkanInstance->getAllocator(), _vertexBufferList[i], _vertexBufferMemoryList[i]);
     }
 
     _vertexBufferList.clear();
     _vertexBufferMemoryList.clear();
-
 }
 
 // This method will create fast GPU-local buffer (using transitional temporary CPU visible buffer)
 template <typename T>
 void VulkanMesh::createOptimizedBuffer(
         const std::vector<T>& bufferData,
-        VkBuffer &buffer,
-        VkDeviceMemory &deviceMemory,
+        VkBuffer& buffer,
+        VmaAllocation& allocation,
         VkBufferUsageFlags usage)
 {
     VkDeviceSize bufferSize = sizeof(bufferData[0]) * bufferData.size();
 
     // create temporary slow CPU visible memory
     VkBuffer stagingBuffer;
-    VkDeviceMemory stagingBufferMemory;
+    VmaAllocation stagingBufferMemory;
     _vulkanUtils.createBuffer(bufferSize,
                               VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
-                              VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+                              VMA_MEMORY_USAGE_CPU_TO_GPU,
                               stagingBuffer,
                               stagingBufferMemory);
 
     // Fill temporary buffer with vertex/index data
     void* data;
-    vkMapMemory(_vulkanInstance->getLogicalDevice(), stagingBufferMemory, 0, bufferSize, 0, &data);
+    vmaMapMemory(_vulkanInstance->getAllocator(), stagingBufferMemory, &data);
     memcpy(data, bufferData.data(), (size_t) bufferSize);
-    vkUnmapMemory(_vulkanInstance->getLogicalDevice(), stagingBufferMemory);
+    vmaUnmapMemory(_vulkanInstance->getAllocator(), stagingBufferMemory);
 
     // create fast GPU-local buffer for data
     _vulkanUtils.createBuffer(bufferSize,
                               VK_BUFFER_USAGE_TRANSFER_DST_BIT | usage,
-                              VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+                              VMA_MEMORY_USAGE_GPU_ONLY,
                               buffer,
-                              deviceMemory);
+                              allocation);
 
     // copy slow CPU-visible buffer to fast GPU-local
     _vulkanUtils.copyBuffer(stagingBuffer, buffer, bufferSize);
 
     // destroy CPU-visible buffer
-    vkDestroyBuffer(_vulkanInstance->getLogicalDevice(), stagingBuffer, nullptr);
-    vkFreeMemory(_vulkanInstance->getLogicalDevice(), stagingBufferMemory, nullptr);
+    vmaDestroyBuffer(_vulkanInstance->getAllocator(), stagingBuffer, stagingBufferMemory);
 }
 
 } // namespace SVE

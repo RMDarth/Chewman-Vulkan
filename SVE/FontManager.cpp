@@ -2,6 +2,7 @@
 // Copyright (c) 2018-2019, Igor Barinov
 // Licensed under the MIT License
 #include "FontManager.h"
+#include "VulkanException.h"
 
 namespace SVE
 {
@@ -15,6 +16,12 @@ TextInfo FontManager::generateText(const std::string& text, const std::string& f
 {
     TextInfo info {};
     info.text = text;
+    auto fontIter = _fontList.find(font);
+    if (fontIter == _fontList.end())
+    {
+        // TODO: Rename or add SVE Exception?
+        throw VulkanException("Can't find font: " + font + ".");
+    }
     info.font = &_fontList.at(font);
     info.symbolCount = text.size();
 

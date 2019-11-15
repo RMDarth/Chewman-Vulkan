@@ -4,6 +4,7 @@
 #pragma once
 
 #include "VulkanHeaders.h"
+#include <vulkan/vk_mem_alloc.h>
 #include <vector>
 
 namespace SVE
@@ -26,9 +27,9 @@ public:
     void createBuffer(
             VkDeviceSize size,
             VkBufferUsageFlags usage,
-            VkMemoryPropertyFlags properties,
+            VmaMemoryUsage memoryUsage,
             VkBuffer& buffer,
-            VkDeviceMemory& bufferMemory) const;
+            VmaAllocation& allocation) const;
     void copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size) const;
     void copyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height) const;
 
@@ -37,7 +38,7 @@ public:
             const void* bufferData,
             VkDeviceSize bufferSize,
             VkBuffer &buffer,
-            VkDeviceMemory &deviceMemory,
+            VmaAllocation& allocation,
             VkBufferUsageFlags usage) const;
 
     void createImage(uint32_t width,

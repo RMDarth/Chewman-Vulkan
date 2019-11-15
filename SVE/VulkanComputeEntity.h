@@ -4,6 +4,7 @@
 #pragma once
 #include "ComputeSettings.h"
 #include "VulkanHeaders.h"
+#include <vulkan/vk_mem_alloc.h>
 
 #include <vector>
 
@@ -61,20 +62,21 @@ private:
     VkPipeline _pipeline;
 
     // One for particles configuration, second for final vertices
-    VkDeviceMemory _bufferMemory[2];
+    VmaAllocation _bufferMemory[2];
     VkBuffer _buffer[2];
     VkBufferView _bufferView[2];
 
-    std::vector<VkDeviceMemory> _uniformBuffersMemory;
+    std::vector<VmaAllocation> _uniformBuffersMemory;
     std::vector<VkBuffer> _uniformBuffers;
 
-    std::vector<VkDeviceMemory> _storageBuffersMemory;
+    std::vector<VmaAllocation> _storageBuffersMemory;
     std::vector<VkBuffer> _storageBuffers;
 
     std::vector<VkDescriptorSet> _descriptorSets;
     VkDescriptorPool _descriptorPool;
 
     VkCommandBuffer _commandBuffer;
+    bool _computeShaderNotSupported = false;
 
 };
 

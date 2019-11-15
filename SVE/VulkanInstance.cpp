@@ -137,6 +137,7 @@ VulkanInstance::VulkanInstance(SDL_Window* window, EngineSettings settings)
     createInstance();
     createDebugCallback();
     createDevice();
+    createAllocator();
     createSurface();
     createSurfaceParameters();
     createSwapchain();
@@ -163,6 +164,7 @@ VulkanInstance::~VulkanInstance()
     deleteSwapchain();
     deleteSurfaceParameters();
     deleteSurface();
+    deleteAllocator();
     deleteDevice();
     deleteDebugCallback();
     deleteInstance();
@@ -273,6 +275,11 @@ VkPhysicalDevice VulkanInstance::getGPU() const
 VkDevice VulkanInstance::getLogicalDevice() const
 {
     return _device;
+}
+
+VmaAllocator VulkanInstance::getAllocator() const
+{
+    return _allocator;
 }
 
 VkCommandPool VulkanInstance::getCommandPool(PoolID index) const
@@ -740,6 +747,19 @@ void VulkanInstance::deleteDevice()
     _device = nullptr;
 }
 
+void VulkanInstance::createAllocator()
+{
+    VmaAllocatorCreateInfo allocatorInfo = {};
+    allocatorInfo.physicalDevice = _gpu;
+    allocatorInfo.device = _device;
+
+    vmaCreateAllocator(&allocatorInfo, &_allocator);
+}
+
+void VulkanInstance::deleteAllocator()
+{
+    vmaDestroyAllocator(_allocator);
+}
 
 void VulkanInstance::createDebugCallback()
 {

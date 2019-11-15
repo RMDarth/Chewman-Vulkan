@@ -147,7 +147,7 @@ void LevelStateProcessor::processEvent(Control* control, IEventHandler::EventTyp
         }
         if (control->getName() == "lifeimg")
         {
-            static bool isNight = true;
+            static bool isNight = false;
             auto sunLight = SVE::Engine::getInstance()->getSceneManager()->getLightManager()->getDirectionLight();
             if (isNight)
             {

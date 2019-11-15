@@ -5,6 +5,7 @@
 #include "MeshSettings.h"
 #include "VulkanHeaders.h"
 #include <memory>
+#include <vulkan/vk_mem_alloc.h>
 
 namespace SVE
 {
@@ -33,7 +34,7 @@ private:
     void createOptimizedBuffer(
             const std::vector<T>& data,
             VkBuffer &buffer,
-            VkDeviceMemory &deviceMemory,
+            VmaAllocation& allocation,
             VkBufferUsageFlags usage);
 
 private:
@@ -43,9 +44,9 @@ private:
     MeshSettings _meshSettings;
 
     std::vector<VkBuffer> _vertexBufferList;
-    std::vector<VkDeviceMemory> _vertexBufferMemoryList;
+    std::vector<VmaAllocation> _vertexBufferMemoryList;
     VkBuffer _indexBuffer = VK_NULL_HANDLE;
-    VkDeviceMemory _indexBufferMemory = VK_NULL_HANDLE;
+    VmaAllocation _indexBufferMemory = VK_NULL_HANDLE;
 };
 
 } // namespace SVE

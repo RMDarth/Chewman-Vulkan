@@ -36,7 +36,7 @@ struct GraphicsSettings
     bool useShadows = true;
     bool useDynamicLights = true;
     GargoyleSettings gargoyleEffects = GargoyleSettings::Mesh;
-    EffectSettings effectSettings = EffectSettings::High;
+    EffectSettings effectSettings = EffectSettings::Low;
 };
 
 std::string getResolutionText(ResolutionSettings resolutionSettings);

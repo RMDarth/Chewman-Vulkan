@@ -8,6 +8,7 @@
 #include "MaterialSettings.h"
 #include "ShaderSettings.h"
 #include <vector>
+#include <vulkan/vk_mem_alloc.h>
 
 namespace SVE
 {
@@ -94,6 +95,7 @@ private:
 
     VulkanInstance* _vulkanInstance;
     VkDevice _device;
+    VmaAllocator _allocator;
     const VulkanUtils& _vulkanUtils;
 
     VulkanShaderInfo* _vertexShader = nullptr;
@@ -125,7 +127,7 @@ private:
         std::vector<VkBuffer> vertexUniformBuffers;
         std::vector<VkBuffer> fragmentUniformBuffer;
         std::vector<VkBuffer> geometryUniformBuffer;
-        std::vector<VkDeviceMemory> uniformBuffersMemory;
+        std::vector<VmaAllocation> uniformBuffersMemory;
 
         VkDescriptorPool descriptorPool = VK_NULL_HANDLE;
 
@@ -139,7 +141,7 @@ private:
     bool _storageUpdated = true;
     VkDeviceSize _storageBufferSize = 0;
     std::vector<VkBuffer> _vertexStorageBuffers;
-    std::vector<VkDeviceMemory> _storageBuffersMemory;
+    std::vector<VmaAllocation> _storageBuffersMemory;
     uint32_t _mainInstance = 0;
     uint32_t _currentInstanceCount = 0;
     bool _instancesRendered = false;
