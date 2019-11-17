@@ -8,8 +8,8 @@ layout (std140, set = 0, binding = 0) uniform UBO
     mat4 model;
     mat4 viewProjection;
     TextInfo textInfo;
-    GlyphInfo font[300];
     TextSymbolInfo textSymbolInfo[100];
+    GlyphInfo font[300];
 } ubo;
 
 layout(location = 0) out vec2 fragTexCoord;

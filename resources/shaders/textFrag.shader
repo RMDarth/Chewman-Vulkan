@@ -7,7 +7,7 @@
     ],
     "uniformList": [
         { "uniformType": "TextInfo" },
-        { "uniformType": "GlyphInfoList" },
-        { "uniformType": "TextSymbolList" }
+        { "uniformType": "TextSymbolList" },
+        { "uniformType": "GlyphInfoList" }
     ]
 }
