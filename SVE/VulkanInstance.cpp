@@ -893,7 +893,9 @@ void VulkanInstance::createRenderPass()
     colorAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
     colorAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
     colorAttachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-    colorAttachment.finalLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL; // for use in MSAA( otherwise VK_IMAGE_LAYOUT_PRESENT_SRC_KHR needed)
+    colorAttachment.finalLayout = _msaaSamples == VK_SAMPLE_COUNT_1_BIT
+                                    ? VK_IMAGE_LAYOUT_PRESENT_SRC_KHR
+                                    : VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL; // for use in MSAA( otherwise VK_IMAGE_LAYOUT_PRESENT_SRC_KHR needed)
 
     // resolve color attachment (after MSAA applied)
     VkAttachmentDescription colorAttachmentResolve {};
@@ -933,7 +935,8 @@ void VulkanInstance::createRenderPass()
     subpass.colorAttachmentCount = 1;
     subpass.pColorAttachments = &colorAttachmentRef; // this array correspond to fragment shader output layout
     subpass.pDepthStencilAttachment = &depthAttachmentRef; // only one depth attachment possible
-    subpass.pResolveAttachments = &colorAttachmentResolveRef; // MSAA attachment
+    if (_msaaSamples != VK_SAMPLE_COUNT_1_BIT)
+        subpass.pResolveAttachments = &colorAttachmentResolveRef; // MSAA attachment
 
     VkSubpassDependency subpassDependency{};
     subpassDependency.srcSubpass = VK_SUBPASS_EXTERNAL; // implicit subpass (pre-render pass)
@@ -943,12 +946,14 @@ void VulkanInstance::createRenderPass()
     subpassDependency.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
     subpassDependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
 
-    VkAttachmentDescription attachments[] = {colorAttachment, depthAttachment, colorAttachmentResolve};
+    std::vector<VkAttachmentDescription> attachments = {colorAttachment, depthAttachment, colorAttachmentResolve};
+    if (_msaaSamples == VK_SAMPLE_COUNT_1_BIT)
+        attachments.resize(2);
 
     VkRenderPassCreateInfo renderPassCreateInfo{};
     renderPassCreateInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
-    renderPassCreateInfo.attachmentCount = 3;
-    renderPassCreateInfo.pAttachments = attachments;
+    renderPassCreateInfo.attachmentCount = attachments.size();
+    renderPassCreateInfo.pAttachments = attachments.data();
     renderPassCreateInfo.subpassCount = 1;
     renderPassCreateInfo.pSubpasses = &subpass;
     renderPassCreateInfo.dependencyCount = 1;
@@ -1079,13 +1084,17 @@ void VulkanInstance::createFramebuffers()
 
     for (size_t i = 0; i < _swapchainImageViews.size(); i++)
     {
-        VkImageView attachments[] = {_colorImageView, _depthImageView, _swapchainImageViews[i]};
+        std::vector<VkImageView> attachments;
+        if (_msaaSamples != VK_SAMPLE_COUNT_1_BIT)
+            attachments = {_colorImageView, _depthImageView, _swapchainImageViews[i]};
+        else
+            attachments = {_swapchainImageViews[i], _depthImageView};
 
         VkFramebufferCreateInfo framebufferCreateInfo{};
         framebufferCreateInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
         framebufferCreateInfo.renderPass = _renderPass;
-        framebufferCreateInfo.attachmentCount = 3;
-        framebufferCreateInfo.pAttachments = attachments;
+        framebufferCreateInfo.attachmentCount = attachments.size();
+        framebufferCreateInfo.pAttachments = attachments.data();
         framebufferCreateInfo.width = _extent.width;
         framebufferCreateInfo.height = _extent.height;
         framebufferCreateInfo.layers = 1;

@@ -24,7 +24,9 @@ VulkanPostEffect::VulkanPostEffect(int index, int width, int height)
     createImages();
     createFramebuffers();
 
-    VulkanSamplerHolder::SamplerInfo samplerInfo { _resolveImageView, _colorSampler };
+    VulkanSamplerHolder::SamplerInfo samplerInfo {
+        _vulkanInstance->getMSAASamples() == VK_SAMPLE_COUNT_1_BIT ? _colorImageView : _resolveImageView,
+        _colorSampler };
     VulkanSamplerInfoList list(_vulkanInstance->getSwapchainSize(), samplerInfo);
     _vulkanInstance->getSamplerHolder()->setSamplerInfo(TextureType::ScreenQuad, list, index);
 }
@@ -130,7 +132,9 @@ void VulkanPostEffect::createRenderPass()
     colorAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
     colorAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
     colorAttachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-    colorAttachment.finalLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+    colorAttachment.finalLayout = sampleCount == VK_SAMPLE_COUNT_1_BIT
+                                                    ? VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
+                                                    : VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 
     // resolve color attachment (after MSAA applied)
     VkAttachmentDescription colorAttachmentResolve {};
@@ -170,7 +174,8 @@ void VulkanPostEffect::createRenderPass()
     subpass.colorAttachmentCount = 1;
     subpass.pColorAttachments = &colorAttachmentRef; // this array correspond to fragment shader output layout
     subpass.pDepthStencilAttachment = &depthAttachmentRef; // only one depth attachment possible
-    subpass.pResolveAttachments = &colorAttachmentResolveRef; // MSAA attachment
+    if (sampleCount != VK_SAMPLE_COUNT_1_BIT)
+        subpass.pResolveAttachments = &colorAttachmentResolveRef; // MSAA attachment
 
     std::vector<VkSubpassDependency> dependencies(2);
     dependencies[0].srcSubpass = VK_SUBPASS_EXTERNAL;
@@ -190,6 +195,8 @@ void VulkanPostEffect::createRenderPass()
     dependencies[1].dependencyFlags = VK_DEPENDENCY_BY_REGION_BIT;
 
     std::vector<VkAttachmentDescription> attachments { colorAttachment, depthAttachment, colorAttachmentResolve };
+    if (sampleCount == VK_SAMPLE_COUNT_1_BIT)
+        attachments.resize(2);
 
     VkRenderPassCreateInfo renderPassCreateInfo{};
     renderPassCreateInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
@@ -225,6 +232,10 @@ void VulkanPostEffect::createImages()
         aspectFlags |= VK_IMAGE_ASPECT_STENCIL_BIT;
 
     // create color attachment image
+    VkImageUsageFlags colorImageFlags = VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
+    if (sampleCount == VK_SAMPLE_COUNT_1_BIT)
+        colorImageFlags = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT;
+
     _vulkanUtils.createImage(
             _width,
             _height,
@@ -232,7 +243,7 @@ void VulkanPostEffect::createImages()
             sampleCount,
             _vulkanInstance->getSurfaceColorFormat(),
             VK_IMAGE_TILING_OPTIMAL,
-            VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
+            colorImageFlags,
             VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
             _colorImage,
             _colorImageMemory);
@@ -342,6 +353,8 @@ void VulkanPostEffect::deleteImages()
 void VulkanPostEffect::createFramebuffers()
 {
     std::vector<VkImageView> attachments = { _colorImageView, _depthImageView, _resolveImageView };
+    if (_vulkanInstance->getMSAASamples() == VK_SAMPLE_COUNT_1_BIT)
+        attachments.resize(2);
 
     VkFramebufferCreateInfo framebufferCreateInfo{};
     framebufferCreateInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;

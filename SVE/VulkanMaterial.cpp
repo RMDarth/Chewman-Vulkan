@@ -1058,16 +1058,19 @@ void VulkanMaterial::createDescriptorSets()
             // Add texture samplers
             if (!imageInfoList.empty())
             {
-                VkWriteDescriptorSet imagesBuffer {};
-                imagesBuffer.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-                imagesBuffer.dstSet = descriptorSets[i];
-                imagesBuffer.dstBinding = bindingIndex;
-                imagesBuffer.dstArrayElement = 0;
-                imagesBuffer.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-                imagesBuffer.descriptorCount = imageInfoList.size();
-                imagesBuffer.pImageInfo = imageInfoList.data();
-                descriptorWrites.push_back(imagesBuffer);
-                bindingIndex += imageInfoList.size();
+                for (auto& imageInfo : imageInfoList)
+                {
+                    VkWriteDescriptorSet imagesBuffer{};
+                    imagesBuffer.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+                    imagesBuffer.dstSet = descriptorSets[i];
+                    imagesBuffer.dstBinding = bindingIndex;
+                    imagesBuffer.dstArrayElement = 0;
+                    imagesBuffer.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+                    imagesBuffer.descriptorCount = 1;
+                    imagesBuffer.pImageInfo = &imageInfo;
+                    descriptorWrites.push_back(imagesBuffer);
+                    bindingIndex ++;
+                }
             }
             // Add uniforms
             if (!shaderBuffers.empty())
@@ -1219,16 +1222,19 @@ void VulkanMaterial::updateDescriptorSet(
     // Add texture samplers
     if (!imageInfoList.empty())
     {
-        VkWriteDescriptorSet imagesBuffer {};
-        imagesBuffer.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-        imagesBuffer.dstSet = descriptorSet;
-        imagesBuffer.dstBinding = bindingIndex;
-        imagesBuffer.dstArrayElement = 0;
-        imagesBuffer.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-        imagesBuffer.descriptorCount = imageInfoList.size();
-        imagesBuffer.pImageInfo = imageInfoList.data();
-        descriptorWrites.push_back(imagesBuffer);
-        bindingIndex += imageInfoList.size();
+        for (auto& imageInfo : imageInfoList)
+        {
+            VkWriteDescriptorSet imagesBuffer{};
+            imagesBuffer.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+            imagesBuffer.dstSet = descriptorSet;
+            imagesBuffer.dstBinding = bindingIndex;
+            imagesBuffer.dstArrayElement = 0;
+            imagesBuffer.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+            imagesBuffer.descriptorCount = 1;
+            imagesBuffer.pImageInfo = &imageInfo;
+            descriptorWrites.push_back(imagesBuffer);
+            bindingIndex ++;
+        }
     }
     // Add uniforms
     if (shaderBuffer)
