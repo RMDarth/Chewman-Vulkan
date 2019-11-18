@@ -425,7 +425,7 @@ void GameMapLoader::createGargoyle(GameMap& level, int row, int column, char map
     rootGargoyleNode->attachSceneNode(particlesNode);
     level.mapNode->attachSceneNode(rootGargoyleNode);
 
-    if (settings.gargoyleEffects == GargoyleSettings::Particles)
+    if (settings.particleEffects == ParticlesSettings::Full)
     {
         const std::string particleSystemName = gargoyle.type == GargoyleType::Fire ? "FireLineParticle" : "FrostLineParticle";
         std::shared_ptr<SVE::ParticleSystemEntity> particleSystem = std::make_shared<SVE::ParticleSystemEntity>(particleSystemName);

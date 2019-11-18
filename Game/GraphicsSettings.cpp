@@ -3,6 +3,7 @@
 // Licensed under the MIT License
 #include <fstream>
 #include <SVE/VulkanException.h>
+#include <SVE/VulkanInstance.h>
 #include "GraphicsSettings.h"
 #include "SVE/Engine.h"
 #include "SVE/SceneManager.h"
@@ -51,15 +52,16 @@ std::string getEffectText(EffectSettings effectSettings)
     return "Unknown";
 }
 
-std::string getGargoyleText(GargoyleSettings settings)
+std::string getParticlesText(ParticlesSettings settings)
 {
     switch (settings)
     {
-        case GargoyleSettings::Particles: return "Particles";
-        case GargoyleSettings::Mesh: return "Mesh";
+        case ParticlesSettings::Full: return "Full";
+        case ParticlesSettings::Partial: return "Partial";
+        case ParticlesSettings::None: return "None";
     }
 
-    assert(!"Incorrect gargoyle effect settings");
+    assert(!"Incorrect particle effect settings");
     return "Unknown";
 }
 
@@ -75,6 +77,7 @@ void GraphicsManager::setSettings(GraphicsSettings settings)
 
     auto sunLight = engine->getSceneManager()->getLightManager()->getDirectionLight();
     sunLight->getLightSettings().castShadows = _currentSettings.useShadows;
+    engine->getVulkanInstance()->disableParticles(_currentSettings.particleEffects == ParticlesSettings::None);
 
     store();
 }
@@ -109,6 +112,8 @@ void GraphicsManager::load()
     {
         _currentSettings = {};
     }
+    SVE::Engine::getInstance()->getVulkanInstance()->disableParticles(_currentSettings.particleEffects == ParticlesSettings::None);
+
     fin.close();
 }
 

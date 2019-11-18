@@ -189,6 +189,11 @@ void VulkanInstance::resizeWindow()
     createFramebuffers();
 }
 
+void VulkanInstance::disableParticles(bool value)
+{
+    _engineSettings.particlesEnabled = !value;
+}
+
 void VulkanInstance::finishRendering() const
 {
     vkDeviceWaitIdle(_device);

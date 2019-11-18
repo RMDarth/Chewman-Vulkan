@@ -80,6 +80,7 @@ EngineSettings loadEngine(const std::string& data)
     setOptional(engineSettings.initWater = document["initWater"].GetBool());
     setOptional(engineSettings.useScreenQuad = document["useScreenQuad"].GetBool());
     setOptional(engineSettings.useCascadeShadowMap = document["useCascadeShadowMap"].GetBool());
+    setOptional(engineSettings.particlesEnabled = document["particlesEnabled"].GetBool());
 
     return engineSettings;
 }

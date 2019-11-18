@@ -45,6 +45,7 @@ public:
     const EngineSettings& getEngineSettings() const;
 
     void resizeWindow();
+    void disableParticles(bool value = true);
     void finishRendering() const;
 
     VkInstance getInstance() const;
