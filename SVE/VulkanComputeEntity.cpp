@@ -149,7 +149,8 @@ void VulkanComputeEntity::createPipeline()
 
 void VulkanComputeEntity::deletePipeline()
 {
-    vkDestroyPipeline(_device, _pipeline, nullptr);
+    if (_pipeline != VK_NULL_HANDLE)
+        vkDestroyPipeline(_device, _pipeline, nullptr);
 }
 
 void VulkanComputeEntity::createBufferResources()

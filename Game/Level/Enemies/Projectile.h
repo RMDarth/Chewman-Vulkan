@@ -4,6 +4,7 @@
 #pragma once
 #include <SVE/SceneNode.h>
 #include <SVE/Engine.h>
+#include "Game/Level/FireballEntity.h"
 #include "Enemy.h"
 
 namespace SVE
@@ -44,6 +45,8 @@ protected:
     std::shared_ptr<SVE::SceneNode> _psNode;
     std::shared_ptr<SVE::ParticleSystemEntity> _fireballPS;
     std::shared_ptr<SVE::ParticleSystemEntity> _frostballPS;
+    std::shared_ptr<FireballEntity> _fireballMesh;
+    bool _isParticles = false;
 
 
     MoveDirection _magicDirection = MoveDirection::None;

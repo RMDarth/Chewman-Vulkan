@@ -59,7 +59,7 @@ private:
     VulkanShaderInfo* _computeShader = nullptr;
 
     VkPipelineLayout _pipelineLayout;
-    VkPipeline _pipeline;
+    VkPipeline _pipeline = VK_NULL_HANDLE;
 
     VmaAllocation _bufferMemory;
     VkBuffer _buffer;

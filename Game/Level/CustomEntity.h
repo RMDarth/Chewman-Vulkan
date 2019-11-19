@@ -26,6 +26,13 @@ public:
         , _currentInfo(startInfo)
     {
         _materialIndex = _material->getVulkanMaterial()->getInstanceForEntity(this);
+        _renderLast = true;
+    }
+
+    void setMaterial(const std::string& materialName) override
+    {
+        _material = SVE::Engine::getInstance()->getMaterialManager()->getMaterial(materialName);
+        _materialIndex = _material->getVulkanMaterial()->getInstanceForEntity(this);
     }
 
     void updateInfo(InfoStruct info)

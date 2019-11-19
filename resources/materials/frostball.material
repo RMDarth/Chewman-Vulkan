@@ -1,0 +1,18 @@
+{
+    "name": "FrostballMaterial",
+    "vertexShaderName": "fireballVertexShader",
+    "fragmentShaderName": "fireLineFragmentShader",
+    "cullFace": "None",
+    "useAlphaBlending": true,
+    "srcBlendFactor": "SrcAlpha",
+    "dstBlendFactor": "One",
+    "useDepthWrite": false,
+    "textures": [
+        {
+            "samplerName": "spritesheet",
+            "textureType": "ImageFile",
+            "filename": "textures/frostParticle.png",
+            "spritesheetSize": [ 1, 1 ]
+        }
+    ]
+}
