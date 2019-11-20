@@ -55,7 +55,8 @@ enum class GameMapState
     Pause,
     Animation,
     Victory,
-    GameOver
+    GameOver,
+    LevelStart
 };
 
 class GameMapProcessor

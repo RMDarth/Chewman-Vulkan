@@ -207,14 +207,14 @@ std::shared_ptr<GameMap> GameMapProcessor::getGameMap()
 
 void GameMapProcessor::setState(GameMapState gameState)
 {
-    if (gameState == GameMapState::Pause || gameState == GameMapState::GameOver || gameState == GameMapState::Victory)
+    if (gameState == GameMapState::Pause || gameState == GameMapState::GameOver || gameState == GameMapState::Victory || gameState == GameMapState::LevelStart)
     {
         for (auto& gargoyle : _gameMap->gargoyles)
         {
             if (!gargoyle.isFireline)
                 gargoyle.particleSystem->pauseTime();
         }
-    } else if (_state == GameMapState::Pause)
+    } else if (_state == GameMapState::Pause || _state == GameMapState::LevelStart)
     {
         for (auto& gargoyle : _gameMap->gargoyles)
         {
@@ -224,7 +224,10 @@ void GameMapProcessor::setState(GameMapState gameState)
     }
 
     _state = gameState;
-
+    if (_state == GameMapState::LevelStart)
+    {
+        _gameRulesProcessor.runStartLevelAnimation();
+    }
 }
 
 GameMapState GameMapProcessor::getState() const

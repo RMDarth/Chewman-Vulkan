@@ -16,6 +16,11 @@ LevelStateProcessor::LevelStateProcessor()
 {
     _document = std::make_unique<ControlDocument>("resources/game/GUI/HUD.xml");
     _document->setMouseUpHandler(this);
+    _counterControl = _document->getControlByName("Counter");
+    _counterControl->setDefaultMaterial("counter1.png");
+    _counterControl->setDefaultMaterial("counter2.png");
+    _counterControl->setDefaultMaterial("counter3.png");
+
     _document->hide();
 }
 
@@ -39,13 +44,21 @@ void LevelStateProcessor::initMap()
 
 GameState LevelStateProcessor::update(float deltaTime)
 {
+    if (deltaTime > 0.15)
+        deltaTime = 0.15;
+
     _gameMapProcessor->update(deltaTime);
-    _time += deltaTime;
     updateHUD(deltaTime);
 
     switch (_gameMapProcessor->getState())
     {
         case GameMapState::Game:
+            _time += deltaTime;
+            if (_counterTime > 0)
+            {
+                _counterControl->setVisible(false);
+                _counterTime = -1;
+            }
             break;
         case GameMapState::Pause:
             break;
@@ -62,6 +75,16 @@ GameState LevelStateProcessor::update(float deltaTime)
             _progressManager.setStarted(false);
             _progressManager.getPlayerInfo().time = (int)_time;
             return GameState::Score;
+        case GameMapState::LevelStart:
+        {
+            _counterTime += deltaTime;
+            if (_counterTime > 1.33f)
+                _counterControl->setDefaultMaterial("counter1.png");
+            else if (_counterTime > 0.67f)
+                _counterControl->setDefaultMaterial("counter2.png");
+            else
+                _counterControl->setDefaultMaterial("counter3.png");
+        }
     }
 
     if (_countToRemove > 0)
@@ -88,6 +111,8 @@ void LevelStateProcessor::show()
         _progressManager.setVictory(false);
         initMap();
         _time = 0.0f;
+        _counterTime = 0.0f;
+        _gameMapProcessor->setState(GameMapState::LevelStart);
     } else {
         _gameMapProcessor->setState(GameMapState::Game);
     }

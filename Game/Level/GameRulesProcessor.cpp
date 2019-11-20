@@ -32,6 +32,24 @@ GameRulesProcessor::GameRulesProcessor(GameMapProcessor& gameMapProcessor)
 {
 }
 
+void GameRulesProcessor::runStartLevelAnimation()
+{
+    auto camera = SVE::Engine::getInstance()->getSceneManager()->getMainCamera();
+    _cameraStart[0] = glm::vec3((_gameMapProcessor.getGameMap()->width - 1) * CellSize * 0.5, 41, 16);
+    _cameraStart[1] = glm::vec3(0, -0.86, 0);
+
+    getPlayer()->update(0);
+    camera->setLookAt(glm::vec3(0.0f, 16.0f, 19.0f), glm::vec3(0), glm::vec3(0, 1, 0));
+    _cameraEnd[0] = camera->getPosition();
+    _cameraEnd[1] = camera->getYawPitchRoll();
+
+    _cameraSpeed = 0.5f;
+    _cameraTime = 0.0f;
+    _isCameraMoving = true;
+    updateCameraAnimation(0.0f);
+    getPlayer()->setCameraFollow(false);
+}
+
 std::shared_ptr<Player>& GameRulesProcessor::getPlayer()
 {
     if (!_player)
@@ -603,6 +621,5 @@ bool GameRulesProcessor::eatCoin(glm::ivec2 pos)
     }
     return false;
 }
-
 
 } // namespace Chewman
