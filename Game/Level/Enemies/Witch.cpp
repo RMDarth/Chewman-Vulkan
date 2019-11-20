@@ -50,7 +50,10 @@ void Witch::update(float deltaTime)
         _teleportMagicRestore -= deltaTime;
 
     if (isStateActive(EnemyState::Dead))
+    {
+        DefaultEnemy::update(deltaTime);
         return;
+    }
 
     if (_mapTraveller->isTargetReached())
     {

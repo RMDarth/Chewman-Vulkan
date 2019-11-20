@@ -18,6 +18,8 @@
 namespace Chewman
 {
 
+constexpr float ReviveTime = 70.0f;
+
 DefaultEnemy::DefaultEnemy(GameMap* map, glm::ivec2 startPos, EnemyType enemyType,
                            const std::string& meshName, std::string normalMaterial,
                            int noReturnWayChance, float lightHeight)
@@ -38,6 +40,8 @@ DefaultEnemy::DefaultEnemy(GameMap* map, glm::ivec2 startPos, EnemyType enemyTyp
 
     _rootNode->setNodeTransformation(transform);
     map->mapNode->attachSceneNode(_rootNode);
+
+    createAppearEffect(transform);
 
     _meshNode = engine->getSceneManager()->createSceneNode();
     _rotateNode->attachSceneNode(_meshNode);
@@ -60,8 +64,15 @@ DefaultEnemy::DefaultEnemy(GameMap* map, glm::ivec2 startPos, EnemyType enemyTyp
 
 void DefaultEnemy::update(float deltaTime)
 {
+    if (isStateActive(EnemyState::Dead))
+    {
+        updateDeadState(deltaTime);
+        return;
+    }
+
     if (!isStateActive(EnemyState::Frozen))
         _ai->update(deltaTime);
+
     const auto realMapPos = _mapTraveller->getRealPosition();
     const auto position = glm::vec3(realMapPos.y, getHeight(), -realMapPos.x);
     auto transform = glm::translate(glm::mat4(1), position);
@@ -91,7 +102,11 @@ void DefaultEnemy::increaseState(EnemyState state)
             break;
         case EnemyState::Dead:
             if (_rootNode->getParent())
+            {
                 _rootNode->getParent()->detachSceneNode(_rootNode);
+                _deadTime = ReviveTime;
+                _isAppearing = false;
+            }
             break;
     }
 }
@@ -113,6 +128,11 @@ void DefaultEnemy::decreaseState(EnemyState state)
                 break;
             case EnemyState::Dead:
                 _gameMap->mapNode->attachSceneNode(_rootNode);
+                if (_isAppearing)
+                {
+                    _isAppearing = false;
+                    _gameMap->mapNode->detachSceneNode(_appearNode);
+                }
                 break;
         }
     }
@@ -146,6 +166,44 @@ void DefaultEnemy::createMaterials()
     setFragShader(_vulnerableMaterial, "phongShadowBlinkFragmentShader");
     setFragShader(_frostMaterial, "phongShadowFrostFragmentShader");
     setFragShader(_frostVulnerableMaterial, "phongShadowFrostBlinkFragmentShader");
+}
+
+void DefaultEnemy::createAppearEffect(glm::mat4 transform)
+{
+    _appearNode = SVE::Engine::getInstance()->getSceneManager()->createSceneNode();
+    _appearNode->setNodeTransformation(transform);
+    _appearNodeRotate = SVE::Engine::getInstance()->getSceneManager()->createSceneNode();
+    {
+        std::shared_ptr<SVE::MeshEntity> teleportCircleEntity = std::make_shared<SVE::MeshEntity>("cylinder");
+        teleportCircleEntity->setMaterial("TeleportCircleMaterial");
+        teleportCircleEntity->setRenderLast();
+        teleportCircleEntity->setCastShadows(false);
+        teleportCircleEntity->getMaterialInfo()->diffuse = {1.0, 1.0, 0.5, 1.0f};
+        _appearNodeRotate->attachEntity(teleportCircleEntity);
+    }
+    _appearNode->attachSceneNode(_appearNodeRotate);
+}
+
+void DefaultEnemy::updateDeadState(float deltaTime)
+{
+    _deadTime -= deltaTime;
+    if (_deadTime < 1.5)
+    {
+        if (!_isAppearing)
+        {
+            _isAppearing = true;
+            _gameMap->mapNode->attachSceneNode(_appearNode);
+        } else {
+            auto nodeTransform = glm::rotate(glm::mat4(1.0f), _deadTime * glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+            _appearNodeRotate->setNodeTransformation(nodeTransform);
+        }
+    }
+    if (_deadTime < 0)
+    {
+        _gameMap->mapNode->detachSceneNode(_appearNode);
+        _isAppearing = false;
+        resetAll();
+    }
 }
 
 } // namespace Chewman
