@@ -7,8 +7,8 @@ layout(set = 1, binding = 0) uniform sampler2D texSampler;
 layout(std140, set = 1, binding = 1) uniform UBO
 {
     TextInfo textInfo;
-    GlyphInfo font[300];
     TextSymbolInfo textSymbolInfo[100];
+    GlyphInfo font[300];
 } ubo;
 
 layout(location = 0) in vec2 fragTexCoord;

@@ -67,8 +67,8 @@ void OverlayEntity::updateUniforms(UniformDataList uniformDataList) const
         uniformData.glyphList.reserve(300);
         std::copy(_overlayInfo.textInfo.font->symbols, _overlayInfo.textInfo.font->symbols + 300, std::back_inserter(uniformData.glyphList));
         uniformData.glyphList.resize(300);
-        uniformData.textSymbolList.reserve(_overlayInfo.textInfo.symbolCount);
         uniformData.textSymbolList = _overlayInfo.textInfo.symbols;
+        uniformData.textSymbolList.resize(100);
 
         _textMaterial->getVulkanMaterial()->setUniformData(_textMaterialIndex, uniformData);
     }

@@ -28,6 +28,7 @@ struct EngineSettings
     bool initShadows = false;
     bool initWater = false;
     bool useCascadeShadowMap = false;
+    bool particlesEnabled = true;
 
     static const int BEST_GPU_AVAILABLE;
     static const int BEST_MSAA_AVAILABLE;

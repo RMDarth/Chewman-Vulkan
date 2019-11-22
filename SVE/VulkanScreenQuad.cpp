@@ -23,12 +23,19 @@ VulkanScreenQuad::VulkanScreenQuad(glm::ivec2 resolution)
     createImages();
     createFramebuffers();
 
+    auto sampleCount = _vulkanInstance->getMSAASamples();
+    VkImageView* imageViewArray;
+    if (sampleCount != VK_SAMPLE_COUNT_1_BIT)
+        imageViewArray = _resolveImageView;
+    else
+        imageViewArray = _colorImageView;
+
     auto scSize = _vulkanInstance->getSwapchainSize();
-    VulkanSamplerHolder::SamplerInfo samplerInfo { _resolveImageView[0], _colorSampler[0] };
-    VulkanSamplerInfoList list(scSize, samplerInfo);
+
+    VulkanSamplerInfoList list(scSize, { imageViewArray[0], _colorSampler[0] });
     _vulkanInstance->getSamplerHolder()->setSamplerInfo(TextureType::ScreenQuad, list);
 
-    VulkanSamplerHolder::SamplerInfo samplerInfoLate {_resolveImageView[1], _colorSampler[1] };
+    VulkanSamplerHolder::SamplerInfo samplerInfoLate {imageViewArray[1], _colorSampler[1] };
     VulkanSamplerInfoList listLate(scSize, samplerInfoLate);
     _vulkanInstance->getSamplerHolder()->setSamplerInfo(TextureType::ScreenQuadSecond, listLate);
 
@@ -166,7 +173,7 @@ void VulkanScreenQuad::createRenderPass()
         colorAttachment[i].stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
         colorAttachment[i].stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
         colorAttachment[i].initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-        colorAttachment[i].finalLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+        colorAttachment[i].finalLayout = sampleCount == VK_SAMPLE_COUNT_1_BIT ? VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL : VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 
         colorAttachmentResolve[i].format = _vulkanInstance->getSurfaceColorFormat();
         colorAttachmentResolve[i].samples = VK_SAMPLE_COUNT_1_BIT;
@@ -178,7 +185,7 @@ void VulkanScreenQuad::createRenderPass()
         colorAttachmentResolve[i].finalLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
     }
     colorAttachment[1].loadOp = VK_ATTACHMENT_LOAD_OP_LOAD; // reuse data from previous pass
-    colorAttachment[1].initialLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+    colorAttachment[1].initialLayout = sampleCount == VK_SAMPLE_COUNT_1_BIT ? VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL : VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
     colorAttachment[3].loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
     colorAttachment[3].storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
 
@@ -200,11 +207,13 @@ void VulkanScreenQuad::createRenderPass()
     VkAttachmentReference colorAttachmentResolveRef[2] = {};
     colorAttachmentRef[0].attachment = 0;
     colorAttachmentRef[0].layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
-    colorAttachmentResolveRef[0].attachment = 2;
+    auto attachmentNum = 2;
+    if (sampleCount != VK_SAMPLE_COUNT_1_BIT)
+        colorAttachmentResolveRef[0].attachment = attachmentNum++;
     colorAttachmentResolveRef[0].layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
-    colorAttachmentRef[1].attachment = 3;
+    colorAttachmentRef[1].attachment = attachmentNum++;
     colorAttachmentRef[1].layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
-    colorAttachmentResolveRef[1].attachment = 4;
+    colorAttachmentResolveRef[1].attachment = attachmentNum;
     colorAttachmentResolveRef[1].layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 
     VkAttachmentReference depthAttachmentRef[2] {};
@@ -220,7 +229,8 @@ void VulkanScreenQuad::createRenderPass()
         subpass[i].colorAttachmentCount = i + 1;
         subpass[i].pColorAttachments = colorAttachmentRef; // this array correspond to fragment shader output layout
         subpass[i].pDepthStencilAttachment = &depthAttachmentRef[0]; // only one depth attachment possible
-        subpass[i].pResolveAttachments = colorAttachmentResolveRef; // MSAA attachment
+        if (sampleCount != VK_SAMPLE_COUNT_1_BIT)
+            subpass[i].pResolveAttachments = colorAttachmentResolveRef; // MSAA attachment
     }
     subpass[2].pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
     subpass[2].colorAttachmentCount = 1;
@@ -249,6 +259,9 @@ void VulkanScreenQuad::createRenderPass()
         std::vector<VkAttachmentDescription> attachments{colorAttachment[0], depthAttachment[0],
                                                          colorAttachmentResolve[0]};
 
+        if (sampleCount == VK_SAMPLE_COUNT_1_BIT)
+            attachments.resize(2);
+
         VkRenderPassCreateInfo renderPassCreateInfo{};
         renderPassCreateInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
         renderPassCreateInfo.attachmentCount = attachments.size();
@@ -270,8 +283,11 @@ void VulkanScreenQuad::createRenderPass()
         _vulkanInstance->getPassInfo()->setPassData(CommandsType::ScreenQuadPass, data);
     }
     {
-        std::vector<VkAttachmentDescription> attachments{colorAttachment[1], depthAttachment[1],
-                                                         colorAttachmentResolve[1], colorAttachment[2], colorAttachmentResolve[2]};
+        std::vector<VkAttachmentDescription> attachments;
+        if (sampleCount != VK_SAMPLE_COUNT_1_BIT)
+            attachments = {colorAttachment[1], depthAttachment[1], colorAttachmentResolve[1], colorAttachment[2], colorAttachmentResolve[2]};
+        else
+            attachments = {colorAttachment[1], depthAttachment[1], colorAttachment[2]};
 
         VkRenderPassCreateInfo renderPassCreateInfo{};
         renderPassCreateInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
@@ -297,6 +313,8 @@ void VulkanScreenQuad::createRenderPass()
     {
         std::vector<VkAttachmentDescription> attachments{colorAttachment[1], depthAttachment[2],
                                                          colorAttachmentResolve[1]};
+        if (sampleCount == VK_SAMPLE_COUNT_1_BIT)
+            attachments.resize(2);
 
         VkRenderPassCreateInfo renderPassCreateInfo{};
         renderPassCreateInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
@@ -362,6 +380,9 @@ void VulkanScreenQuad::createImages()
 
     for (auto i = 0; i < 2; ++i)
     {
+        VkImageUsageFlags colorImageFlags = VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
+        if (sampleCount == VK_SAMPLE_COUNT_1_BIT)
+            colorImageFlags = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT;
         // create color attachment image
         _vulkanUtils.createImage(
                 _width,
@@ -370,7 +391,7 @@ void VulkanScreenQuad::createImages()
                 sampleCount,
                 _vulkanInstance->getSurfaceColorFormat(),
                 VK_IMAGE_TILING_OPTIMAL,
-                VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
+                colorImageFlags,
                 VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
                 _colorImage[i],
                 _colorImageMemory[i]);
@@ -431,7 +452,7 @@ void VulkanScreenQuad::createImages()
                 _depthImage[i],
                 depthFormat,
                 {VK_IMAGE_LAYOUT_UNDEFINED, 0, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT},
-                {VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
+                {VK_IMAGE_LAYOUT_DEPTH_ATTACHMENT_STENCIL_READ_ONLY_OPTIMAL,
                  VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT,
                  VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT},
                 1,
@@ -501,7 +522,11 @@ void VulkanScreenQuad::deleteImages()
 
 void VulkanScreenQuad::createFramebuffers()
 {
+    auto sampleCount = _vulkanInstance->getMSAASamples();
     std::vector<VkImageView> attachments = { _colorImageView[0], _depthImageView[0], _resolveImageView[0] };
+
+    if (sampleCount == VK_SAMPLE_COUNT_1_BIT)
+        attachments.resize(2);
 
     VkFramebufferCreateInfo framebufferCreateInfo{};
     framebufferCreateInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
@@ -524,7 +549,8 @@ void VulkanScreenQuad::createFramebuffers()
     }
 
     attachments.push_back(_colorImageView[1]);
-    attachments.push_back(_resolveImageView[1]);
+    if (sampleCount != VK_SAMPLE_COUNT_1_BIT)
+        attachments.push_back(_resolveImageView[1]);
     framebufferCreateInfo.renderPass = _renderPass[MRT];
     framebufferCreateInfo.attachmentCount = attachments.size();
     framebufferCreateInfo.pAttachments = attachments.data();
@@ -535,7 +561,11 @@ void VulkanScreenQuad::createFramebuffers()
     }
 
     attachments.clear();
-    attachments.push_back(_resolveImageView[0]);
+    if (sampleCount != VK_SAMPLE_COUNT_1_BIT)
+        attachments.push_back(_resolveImageView[0]);
+    else
+        attachments.push_back(_colorImageView[0]);
+
     attachments.push_back(_depthImageView[1]);
     framebufferCreateInfo.renderPass = _renderPass[Depth];
     framebufferCreateInfo.attachmentCount = attachments.size();

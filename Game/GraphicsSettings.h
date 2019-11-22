@@ -21,10 +21,11 @@ enum class EffectSettings : uint8_t
     High
 };
 
-enum class GargoyleSettings : uint8_t
+enum class ParticlesSettings : uint8_t
 {
-    Particles,
-    Mesh
+    Full,
+    Partial,
+    None
 };
 
 constexpr uint8_t CurrentGraphicsSettingsVersion = 3;
@@ -35,13 +36,13 @@ struct GraphicsSettings
     ResolutionSettings resolution = ResolutionSettings::High;
     bool useShadows = true;
     bool useDynamicLights = true;
-    GargoyleSettings gargoyleEffects = GargoyleSettings::Mesh;
+    ParticlesSettings particleEffects = ParticlesSettings::Partial;
     EffectSettings effectSettings = EffectSettings::Low;
 };
 
 std::string getResolutionText(ResolutionSettings resolutionSettings);
 std::string getEffectText(EffectSettings effectSettings);
-std::string getGargoyleText(GargoyleSettings settings);
+std::string getParticlesText(ParticlesSettings settings);
 
 class GraphicsManager
 {

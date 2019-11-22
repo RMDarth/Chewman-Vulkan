@@ -2,6 +2,7 @@
     "name": "SimpleDepth",
     "vertexShaderName": "simpleDepthVertexShader",
     "fragmentShaderName": "simpleDepthFragmentShader",
+    "cullFace": "None",
     "useDepthBias": true,
     "useMultisampling": false,
     "passType": "ShadowPassDirectLight"

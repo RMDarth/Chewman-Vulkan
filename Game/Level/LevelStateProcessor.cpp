@@ -20,6 +20,11 @@ LevelStateProcessor::LevelStateProcessor()
 {
     _document = std::make_unique<ControlDocument>("resources/game/GUI/HUD.xml");
     _document->setMouseUpHandler(this);
+    _counterControl = _document->getControlByName("Counter");
+    _counterControl->setDefaultMaterial("counter1.png");
+    _counterControl->setDefaultMaterial("counter2.png");
+    _counterControl->setDefaultMaterial("counter3.png");
+
     _document->hide();
 
     _loadingFinished = false;
@@ -55,13 +60,21 @@ GameState LevelStateProcessor::update(float deltaTime)
     if (_loadingFinished == false)
         return GameState::Level;
 
+    if (deltaTime > 0.15)
+        deltaTime = 0.15;
+
     _gameMapProcessor->update(deltaTime);
-    _time += deltaTime;
     updateHUD(deltaTime);
 
     switch (_gameMapProcessor->getState())
     {
         case GameMapState::Game:
+            _time += deltaTime;
+            if (_counterTime > 0)
+            {
+                _counterControl->setVisible(false);
+                _counterTime = -1;
+            }
             break;
         case GameMapState::Pause:
             break;
@@ -78,6 +91,16 @@ GameState LevelStateProcessor::update(float deltaTime)
             _progressManager.setStarted(false);
             _progressManager.getPlayerInfo().time = (int)_time;
             return GameState::Score;
+        case GameMapState::LevelStart:
+        {
+            _counterTime += deltaTime;
+            if (_counterTime > 1.33f)
+                _counterControl->setDefaultMaterial("counter1.png");
+            else if (_counterTime > 0.67f)
+                _counterControl->setDefaultMaterial("counter2.png");
+            else
+                _counterControl->setDefaultMaterial("counter3.png");
+        }
     }
 
     if (_countToRemove > 0)
@@ -113,11 +136,19 @@ void LevelStateProcessor::show()
         _loadingFinished = false;
         initMap();
         _time = 0.0f;
-    } else {
-        _gameMapProcessor->setState(GameMapState::Game);
-        _gameMapProcessor->setVisible(true);
-    }
+        _counterTime = 0.01f;
+        _gameMapProcessor->setState(GameMapState::LevelStart);
 
+        if (_gameMapProcessor->getGameMap()->hasTutorial)
+        {
+            //_gameMapProcessor->setState(GameMapState::Pause);
+            Game::getInstance()->setState(GameState::Tutorial);
+        }
+    } else {
+        if (_gameMapProcessor->getState() != GameMapState::LevelStart)
+            _gameMapProcessor->setState(GameMapState::Game);
+    }
+    _gameMapProcessor->setVisible(true);
     _document->show();
 
     std::stringstream ss;

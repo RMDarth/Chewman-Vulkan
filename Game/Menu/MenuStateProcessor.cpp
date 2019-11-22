@@ -37,7 +37,14 @@ void MenuStateProcessor::show()
 {
     _gameMapProcessor->setVisible(true);
     auto camera = SVE::Engine::getInstance()->getSceneManager()->getMainCamera();
-    camera->setPosition({5.48245, 8.69662, 4.26211});
+
+    auto windowSize = SVE::Engine::getInstance()->getRenderWindowSize();
+
+    if ((float)windowSize.x / windowSize.y < 1.4)
+        camera->setPosition({3.15083, 12.5414, 9.36191});  // 3:4
+    else
+        camera->setPosition({5.48245, 8.69662, 4.26211}); // wide
+
     camera->setYawPitchRoll({-0.411897, -0.614356, 0});
 
     // -1.36845 20.7681 19.9432

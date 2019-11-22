@@ -100,8 +100,9 @@ void Knight::update(float deltaTime)
             }
             DefaultEnemy::update(deltaTime);
         }
+    } else {
+        DefaultEnemy::update(deltaTime);
     }
-
 }
 
 void Knight::attackPlayer()

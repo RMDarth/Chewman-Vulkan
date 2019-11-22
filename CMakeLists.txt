@@ -211,6 +211,8 @@ add_executable(Chewman
         Game/Menu/PauseStateProcessor.h
         Game/Menu/ScoreStateProcessor.cpp
         Game/Menu/ScoreStateProcessor.h
+        Game/Menu/TutorialStateProcessor.cpp
+        Game/Menu/TutorialStateProcessor.h
         Game/Menu/WorldSelectionStateProcessor.cpp
         Game/Menu/WorldSelectionStateProcessor.h
         Game/ProgressManager.cpp

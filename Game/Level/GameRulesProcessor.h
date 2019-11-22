@@ -39,6 +39,7 @@ class GameRulesProcessor
 public:
     explicit GameRulesProcessor(GameMapProcessor& gameMapProcessor);
 
+    void runStartLevelAnimation();
     void update(float deltaTime);
 
 private:

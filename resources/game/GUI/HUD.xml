@@ -15,6 +15,8 @@
 
     <Label name="FPS" text="0" x="0.6" y="0.10" width="0.1" height="0.05" mousetransparent="true"/>
 
+    <Image name="Counter" y="0.4" height="0.2" width="-0.67" alignment="center" image="counter3.png"/>
+
     <Button name="pause" text="" x="0.87" y="0.01" width="0.08" height="-1" image="buttons/pause.png"
             hoverimage="buttons/pause_hover.png" pressedimage="buttons/pause_pressed.png"/>
 </document>

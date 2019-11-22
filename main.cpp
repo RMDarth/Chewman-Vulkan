@@ -61,7 +61,6 @@ int runGame()
     SDL_Window *window;
     SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS);
 
-    // TODO: Replace with C++11 random numbers
     srand((unsigned)time(0));
 
     window = SDL_CreateWindow(

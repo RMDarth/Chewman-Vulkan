@@ -9,6 +9,7 @@
 #include "Game/Game.h"
 #include "Game/Level/GameMap.h"
 #include "Game/Level/GameUtils.h"
+#include "Game/Level/CustomEntity.h"
 
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -30,8 +31,16 @@ Projectile::Projectile(GameMap* map, glm::ivec2 startPos)
     _rotateNode->attachSceneNode(_psNode);
     _psNode->setNodeTransformation(glm::translate(glm::mat4(1), glm::vec3(0.0f, 0.0f, -2.0f)));
 
-    _fireballPS = std::make_shared<SVE::ParticleSystemEntity>("Fireball");
-    _frostballPS = std::make_shared<SVE::ParticleSystemEntity>("Frostball");
+    if (Game::getInstance()->getGraphicsManager().getSettings().particleEffects == ParticlesSettings::None)
+    {
+        FireballInfo info {};
+        _fireballMesh = std::make_shared<FireballEntity>("FireballMaterial", info);
+        _isParticles = false;
+    } else {
+        _fireballPS = std::make_shared<SVE::ParticleSystemEntity>("Fireball");
+        _frostballPS = std::make_shared<SVE::ParticleSystemEntity>("Frostball");
+        _isParticles = true;
+    }
 
     if (Game::getInstance()->getGraphicsManager().getSettings().useDynamicLights)
         _rootNode->attachSceneNode(addEnemyLightEffect(engine, 2.0));
@@ -99,16 +108,25 @@ void Projectile::activate(MoveDirection direction, glm::ivec2 pos, ProjectileTyp
     _magicDirection = direction;
     _type = projectileType;
     _rotateNode->setNodeTransformation(glm::rotate(glm::mat4(1), glm::radians(getRotateAngle(direction)), glm::vec3(0, 1, 0)));
-    switch (projectileType)
+
+    if (_isParticles)
     {
-        case ProjectileType::Fire:
-            _psNode->detachEntity(_frostballPS);
-            _psNode->attachEntity(_fireballPS);
-            break;
-        case ProjectileType::Frost:
-            _psNode->detachEntity(_fireballPS);
-            _psNode->attachEntity(_frostballPS);
-            break;
+        switch (projectileType)
+        {
+            case ProjectileType::Fire:
+                _psNode->detachEntity(_frostballPS);
+                _psNode->attachEntity(_fireballPS);
+                break;
+            case ProjectileType::Frost:
+                _psNode->detachEntity(_fireballPS);
+                _psNode->attachEntity(_frostballPS);
+                break;
+        }
+    }
+    else
+    {
+        _psNode->attachEntity(_fireballMesh);
+        _fireballMesh->setMaterial(projectileType == ProjectileType::Fire ? "FireballMaterial" : "FrostballMaterial");
     }
     decreaseState(EnemyState::Dead);
 }

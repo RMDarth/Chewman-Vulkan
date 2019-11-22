@@ -1,6 +1,6 @@
 <document>
     <Panel name="panel" alignment="center" y="0.07" width="-1" height="0.85" image="windows/window_square.png">
-        <Label name="worldname" text="Graphics" alignment="center" y = "0.04" width="0.5" height="0.06" />
+        <Label name="windowName" text="Graphics" alignment="center" y = "0.04" width="0.5" height="0.06" />
 
         <Label name="resolutionLabel" text="Resolution:" x="0.02" y="0.2" width="0.38" height="0.08"/>
         <DropDown name="resolution" text="High" font-size="55" x="0.42" y="0.195" width="-5.34065" height="0.1">
@@ -26,10 +26,11 @@
             <Button name="effectsLow" text="Low" font-size="45"/>
         </DropDown>
 
-        <Label name="gargFireEffectLabel" text="Gargoyle:" x="0.02" y="0.6" width="0.38" height="0.08"/>
-        <DropDown name="gargFireEffect" text="Particles" font-size="55" x="0.42" y="0.595" width="-5.34065" height="0.1">
-            <Button name="gargParticles" text="Particles" font-size="45"/>
-            <Button name="gargMesh" text="Mesh" font-size="45"/>
+        <Label name="particleEffectLabel" text="Particles:" x="0.02" y="0.6" width="0.38" height="0.08"/>
+        <DropDown name="partEffect" text="Full" font-size="55" x="0.42" y="0.595" width="-5.34065" height="0.1">
+            <Button name="particlesFull" text="Full" font-size="45"/>
+            <Button name="particlesPartial" text="Partial" font-size="45"/>
+            <Button name="particlesNone" text="None" font-size="45"/>
         </DropDown>
 
         <Label name="restartInfo" text="Need to restart the game" x="0.02" y="0.78" width="0.96" height="0.08" font-color="0.9 0.1 0.1 0.8"/>

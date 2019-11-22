@@ -3,6 +3,7 @@
 // Licensed under the MIT License
 #pragma once
 #include "PowerUp.h"
+#include "BombFireEntity.h"
 
 namespace Chewman
 {
@@ -20,6 +21,8 @@ private:
     uint32_t _emittersStopped = 0;
     std::shared_ptr<SVE::ParticleSystemEntity> _bombExplosionPS;
     std::shared_ptr<SVE::ParticleSystemEntity> _bombSmokePS;
+    std::shared_ptr<BombFireEntity> _bombFire;
+    bool _isParticles;
 };
 
 } // namespace Chewman

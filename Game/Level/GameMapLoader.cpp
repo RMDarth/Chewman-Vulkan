@@ -215,6 +215,21 @@ std::shared_ptr<GameMap> GameMapLoader::loadMap(const std::string& filename, con
         return !std::isspace(ch);
     }).base(), gameMap->name.end());
 
+    auto& tutorialData = Game::getInstance()->getTutorialData();
+    tutorialData.clear();
+    if (gameMap->name.find("Tutorial") != std::string::npos)
+    {
+        for (auto i = 0; i < 4; ++i)
+        {
+            fin.getline(line, 90);
+            gameMap->tutorialText.push_back(std::string(line));
+            tutorialData.push_back(line);
+        }
+        gameMap->hasTutorial = true;
+    } else {
+        gameMap->hasTutorial = false;
+    }
+
     // Static object help
     int nextIsRotation = 0;
     char staticObjectType = 0;
@@ -454,7 +469,7 @@ void GameMapLoader::createGargoyle(GameMap& level, int row, int column, char map
     rootGargoyleNode->attachSceneNode(particlesNode);
     level.mapNode->attachSceneNode(rootGargoyleNode);
 
-    if (settings.gargoyleEffects == GargoyleSettings::Particles)
+    if (settings.particleEffects == ParticlesSettings::Full)
     {
         const std::string particleSystemName = gargoyle.type == GargoyleType::Fire ? "FireLineParticle" : "FrostLineParticle";
         std::shared_ptr<SVE::ParticleSystemEntity> particleSystem = std::make_shared<SVE::ParticleSystemEntity>(particleSystemName);

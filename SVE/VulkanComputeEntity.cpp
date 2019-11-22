@@ -129,11 +129,19 @@ void VulkanComputeEntity::createPipeline()
     pipelineCreateInfo.basePipelineHandle = VK_NULL_HANDLE; // no deriving from other pipeline
     pipelineCreateInfo.basePipelineIndex = -1;
 
-    auto result = vkCreateComputePipelines(_device, VK_NULL_HANDLE, 1, &pipelineCreateInfo, nullptr, &_pipeline);
-    if (result != VK_SUCCESS)
+    if (!_vulkanInstance->getEngineSettings().particlesEnabled)
     {
         _computeShaderNotSupported = true;
-        //throw VulkanException("Can't create Vulkan Compute Pipeline for shader " + _computeSettings.computeShaderName, result);
+    }
+    else
+    {
+        if (vkCreateComputePipelines(_device, VK_NULL_HANDLE, 1, &pipelineCreateInfo, nullptr, &_pipeline) !=
+            VK_SUCCESS)
+        {
+            _computeShaderNotSupported = true;
+            _vulkanInstance->disableParticles();
+            //throw VulkanException("Can't create Vulkan Compute Pipeline for shader " + _computeSettings.computeShaderName, result);
+        }
     }
 
     _computeShader->freeShaderModule();
@@ -141,7 +149,8 @@ void VulkanComputeEntity::createPipeline()
 
 void VulkanComputeEntity::deletePipeline()
 {
-    vkDestroyPipeline(_device, _pipeline, nullptr);
+    if (_pipeline != VK_NULL_HANDLE)
+        vkDestroyPipeline(_device, _pipeline, nullptr);
 }
 
 void VulkanComputeEntity::createBufferResources()
