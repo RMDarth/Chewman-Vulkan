@@ -17,7 +17,8 @@ enum class GameState
     Score,
     WorldSelection,
     LevelSelection,
-    Graphics
+    Graphics,
+    Tutorial
 };
 
 } // namespace Chewman

@@ -34,6 +34,7 @@ public:
     GraphicsManager& getGraphicsManager();
     ScoresManager& getScoresManager();
     GameMapLoader& getGameMapLoader();
+    std::vector<std::string>& getTutorialData();
 
 private:
     Game();
@@ -46,6 +47,7 @@ private:
     ProgressManager _progressManager;
     GraphicsManager _graphicsManager;
     ScoresManager _scoresManager;
+    std::vector<std::string> _tutorialText;
     std::unique_ptr<GameMapLoader> _mapLoader;
     std::map<GameState, std::shared_ptr<StateProcessor>> _stateProcessors;
 

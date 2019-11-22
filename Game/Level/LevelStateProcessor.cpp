@@ -111,10 +111,17 @@ void LevelStateProcessor::show()
         _progressManager.setVictory(false);
         initMap();
         _time = 0.0f;
-        _counterTime = 0.0f;
+        _counterTime = 0.01f;
         _gameMapProcessor->setState(GameMapState::LevelStart);
+
+        if (_gameMapProcessor->getGameMap()->hasTutorial)
+        {
+            //_gameMapProcessor->setState(GameMapState::Pause);
+            Game::getInstance()->setState(GameState::Tutorial);
+        }
     } else {
-        _gameMapProcessor->setState(GameMapState::Game);
+        if (_gameMapProcessor->getState() != GameMapState::LevelStart)
+            _gameMapProcessor->setState(GameMapState::Game);
     }
     _gameMapProcessor->setVisible(true);
     _document->show();

@@ -13,6 +13,7 @@
 #include "Game/Menu/WorldSelectionStateProcessor.h"
 #include "Game/Menu/LevelSelectionStateProcessor.h"
 #include "Game/Menu/GraphicsStateProcessor.h"
+#include "Game/Menu/TutorialStateProcessor.h"
 
 
 namespace Chewman
@@ -88,6 +89,11 @@ GameMapLoader& Game::getGameMapLoader()
     return *_mapLoader;
 }
 
+std::vector<std::string>& Game::getTutorialData()
+{
+    return _tutorialText;
+}
+
 Game::Game()
     : _mapLoader(std::make_unique<GameMapLoader>())
 {
@@ -102,8 +108,10 @@ void Game::initStates()
     registerStateProcessor(GameState::WorldSelection, std::make_shared<WorldSelectionStateProcessor>());
     registerStateProcessor(GameState::LevelSelection, std::make_shared<LevelSelectionStateProcessor>());
     registerStateProcessor(GameState::Graphics, std::make_shared<GraphicsStateProcessor>());
+    registerStateProcessor(GameState::Tutorial, std::make_shared<TutorialStateProcessor>());
 
     _stateProcessors[_gameState]->show();
 }
+
 
 } // namespace Chewman

@@ -32,6 +32,9 @@ struct GameMap
     std::shared_ptr<SVE::MeshEntity> smokeNAEntity;
     std::shared_ptr<SVE::MeshEntity> lavaEntity;
 
+    std::vector<std::string> tutorialText;
+    bool hasTutorial;
+
     std::shared_ptr<Player> player;
     std::vector<Gargoyle> gargoyles;
     std::vector<Teleport> teleports;
