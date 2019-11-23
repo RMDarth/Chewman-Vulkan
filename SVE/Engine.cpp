@@ -563,4 +563,14 @@ void Engine::destroyInstance()
     _engineInstance = nullptr;
 }
 
+void Engine::setIsFirstRun(bool value)
+{
+    _isFirstRun = value;
+}
+
+bool Engine::isFirstRun() const
+{
+    return _isFirstRun;
+}
+
 } // namespace SVE

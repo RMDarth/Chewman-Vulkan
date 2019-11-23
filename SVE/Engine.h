@@ -70,6 +70,9 @@ public:
     bool isShadowMappingEnabled() const;
     bool isWaterEnabled() const;
 
+    bool isFirstRun() const;
+    void setIsFirstRun(bool value);
+
     CommandsType getPassType() const;
     float getTime();
     float getDeltaTime();
@@ -103,6 +106,8 @@ private:
     float _duration;
     float _deltaTime;
     uint64_t _frameId = 0;
+
+    bool _isFirstRun = false;
 };
 
 } // namespace SVE

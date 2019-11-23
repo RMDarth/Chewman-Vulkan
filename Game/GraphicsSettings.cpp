@@ -68,6 +68,11 @@ std::string getParticlesText(ParticlesSettings settings)
 GraphicsManager::GraphicsManager()
 {
     load();
+
+    if (SVE::Engine::getInstance()->isFirstRun())
+    {
+        tuneSettings();
+    }
 }
 
 void GraphicsManager::setSettings(GraphicsSettings settings)
@@ -115,6 +120,76 @@ void GraphicsManager::load()
     SVE::Engine::getInstance()->getVulkanInstance()->disableParticles(_currentSettings.particleEffects == ParticlesSettings::None);
 
     fin.close();
+}
+
+void GraphicsManager::tuneSettings()
+{
+    auto gpuInfo = SVE::Engine::getInstance()->getVulkanInstance()->getGPUInfo();
+
+    std::string deviceName = gpuInfo.deviceName;
+    if (deviceName.find("Adreno") != std::string::npos)
+    {
+        int model = 0;
+        if (sscanf(gpuInfo.deviceName, "Adreno (TM) %d", &model) != EOF)
+        {
+            if (_currentSettings.effectSettings == EffectSettings::Unknown)
+                _currentSettings.effectSettings = EffectSettings::High;
+
+            if (model < 630)
+            {
+                _currentSettings.effectSettings = EffectSettings::Low;
+                _currentSettings.useDynamicLights = false;
+            }
+            if (model < 540)
+            {
+                _currentSettings.resolution = ResolutionSettings::Low;
+            }
+        }
+    }
+    if (deviceName.find("Mali") != std::string::npos)
+    {
+        if (_currentSettings.effectSettings != EffectSettings::Unknown)
+            _currentSettings.effectSettings = EffectSettings::High;
+
+        if (deviceName.find("Mali-G") != std::string::npos)
+        {
+            int model = 0;
+            if (sscanf(gpuInfo.deviceName, "Mali-G%d", &model) != EOF)
+            {
+                if (_currentSettings.effectSettings == EffectSettings::Unknown)
+                    _currentSettings.effectSettings = EffectSettings::High;
+
+                if (model < 72)
+                {
+                    _currentSettings.effectSettings = EffectSettings::Low;
+                    _currentSettings.useDynamicLights = false;
+                }
+                if (model < 57)
+                {
+                    _currentSettings.resolution = ResolutionSettings::Low;
+                }
+
+            }
+        } else if (deviceName.find("Mali-T"))
+        {
+            _currentSettings.effectSettings = EffectSettings::Low;
+            _currentSettings.useDynamicLights = false;
+            _currentSettings.resolution = ResolutionSettings::Low;
+        }
+    }
+
+    if (_currentSettings.effectSettings == EffectSettings::Unknown)
+    {
+        _currentSettings.effectSettings = EffectSettings::Low;
+        _currentSettings.useDynamicLights = false;
+
+        if (gpuInfo.limits.maxPerStageDescriptorSamplers < 100)
+        {
+            _currentSettings.resolution = ResolutionSettings::Low;
+        }
+    }
+
+    store();
 }
 
 } // namespace Chewman

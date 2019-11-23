@@ -37,8 +37,8 @@ void main()
     //vec3 norm = normalize(fragNormal);
     mat3 rotation = mat3(fragTangent, fragBinormal, fragNormal);
     vec3 normal = rotation * (normalData.xyz * 2.0 - 1.0); // to object space
-    mat3 iTWRot = mat3(ubo.invModel[0].xyz, ubo.invModel[1].xyz, ubo.invModel[2].xyz);
-    normal = normalize(iTWRot * normal);
+    //mat3 iTWRot = mat3(ubo.invModel[0].xyz, ubo.invModel[1].xyz, ubo.invModel[2].xyz);
+    normal = normalize(normal);
 
     //normal = normalize(fragNormal);
 

@@ -18,7 +18,8 @@ enum class ResolutionSettings : uint8_t
 enum class EffectSettings : uint8_t
 {
     Low,
-    High
+    High,
+    Unknown
 };
 
 enum class ParticlesSettings : uint8_t
@@ -56,6 +57,8 @@ public:
     void store();
     void load();
 private:
+    void tuneSettings();
+
     GraphicsSettings _currentSettings;
 };
 

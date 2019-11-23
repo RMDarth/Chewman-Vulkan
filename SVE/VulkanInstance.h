@@ -50,6 +50,7 @@ public:
 
     VkInstance getInstance() const;
     VkPhysicalDevice getGPU() const;
+    VkPhysicalDeviceProperties getGPUInfo() const;
     VkDevice getLogicalDevice() const;
     VmaAllocator getAllocator() const;
     VkCommandPool getCommandPool(PoolID index) const;
