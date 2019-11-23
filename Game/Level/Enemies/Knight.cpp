@@ -87,6 +87,9 @@ void Knight::update(float deltaTime)
                 _meshNode->detachEntity(_castMesh);
                 _attachmentNode->setEntityAttachment(_enemyMesh, "mount0");
                 _castTime = 15.0f;
+
+                auto transform = glm::scale(glm::mat4(1), glm::vec3(1.5f));
+                _meshNode->setNodeTransformation(transform);
             }
         } else
         {
@@ -97,6 +100,10 @@ void Knight::update(float deltaTime)
                 _meshNode->attachEntity(_castMesh);
                 _meshNode->detachEntity(_enemyMesh);
                 _attachmentNode->setEntityAttachment(_castMesh, "mount0");
+
+                auto transform = glm::scale(glm::mat4(1), glm::vec3(1.5f));
+                transform = glm::rotate(transform, glm::radians(180.0f), glm::vec3(0, 1, 0));
+                _meshNode->setNodeTransformation(transform);
             }
             DefaultEnemy::update(deltaTime);
         }
@@ -142,6 +149,10 @@ void Knight::resetAll()
     _meshNode->detachEntity(_attackMesh);
     _meshNode->detachEntity(_castMesh);
     _attachmentNode->setEntityAttachment(_enemyMesh, "mount0");
+
+    auto transform = glm::scale(glm::mat4(1), glm::vec3(1.5f));
+    _meshNode->setNodeTransformation(transform);
+
     _castTime = 15.0;
     _attackTime = -1;
     _idleTime = -1;
