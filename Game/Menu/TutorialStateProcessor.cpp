@@ -10,8 +10,9 @@ namespace Chewman
 {
 
 TutorialStateProcessor::TutorialStateProcessor()
+    : _document(std::make_unique<ControlDocument>("resources/game/GUI/tutorial.xml"))
 {
-    _document = std::make_unique<ControlDocument>("resources/game/GUI/tutorial.xml");
+
     _document->setMouseUpHandler(this);
     _document->raisePriority(120);
     _document->hide();

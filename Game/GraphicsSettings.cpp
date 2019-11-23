@@ -170,7 +170,7 @@ void GraphicsManager::tuneSettings()
                 }
 
             }
-        } else if (deviceName.find("Mali-T"))
+        } else if (deviceName.find("Mali-T") != std::string::npos)
         {
             _currentSettings.effectSettings = EffectSettings::Low;
             _currentSettings.useDynamicLights = false;

@@ -203,6 +203,8 @@ add_executable(Chewman
         Game/Level/Teleport.h
         Game/Menu/GraphicsStateProcessor.cpp
         Game/Menu/GraphicsStateProcessor.h
+        Game/Menu/HighScoresStateProcessor.cpp
+        Game/Menu/HighScoresStateProcessor.h
         Game/Menu/LevelSelectionStateProcessor.cpp
         Game/Menu/LevelSelectionStateProcessor.h
         Game/Menu/MenuStateProcessor.cpp

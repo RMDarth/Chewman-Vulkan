@@ -69,6 +69,8 @@ void MenuStateProcessor::processEvent(Control* control, IEventHandler::EventType
     {
         if (control->getName() == "start")
         {
+            _document->hide();
+
             auto& progressManager = Game::getInstance()->getProgressManager();
             progressManager.setCurrentLevel(1);
             progressManager.setVictory(false);
@@ -79,6 +81,11 @@ void MenuStateProcessor::processEvent(Control* control, IEventHandler::EventType
         if (control->getName() == "config")
         {
             Game::getInstance()->setState(GameState::Graphics);
+        }
+        if (control->getName() == "score")
+        {
+            _document->hide();
+            Game::getInstance()->setState(GameState::Highscores);
         }
     }
 }

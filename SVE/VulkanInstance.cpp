@@ -220,6 +220,11 @@ VkPhysicalDevice VulkanInstance::getGPU() const
     return _gpu;
 }
 
+VkPhysicalDeviceProperties VulkanInstance::getGPUInfo() const
+{
+    return _gpuProps;
+}
+
 VkDevice VulkanInstance::getLogicalDevice() const
 {
     return _device;

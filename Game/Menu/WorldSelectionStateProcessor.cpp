@@ -41,7 +41,7 @@ void WorldSelectionStateProcessor::hide()
 
 bool WorldSelectionStateProcessor::isOverlapping()
 {
-    return false;
+    return true;
 }
 
 void WorldSelectionStateProcessor::processEvent(Control* control, IEventHandler::EventType type, int x, int y)
@@ -54,6 +54,7 @@ void WorldSelectionStateProcessor::processEvent(Control* control, IEventHandler:
         }
         else if (control->getName() == "slider")
         {
+            hide();
             auto worldNum = static_cast<SliderControl*>(control)->getSelectedObject();
             Game::getInstance()->getProgressManager().setCurrentWorld(worldNum);
             Game::getInstance()->setState(GameState::LevelSelection);
