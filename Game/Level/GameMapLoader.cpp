@@ -11,6 +11,7 @@
 
 #include "Bomb.h"
 #include "Game/Game.h"
+#include "Game/Level/CustomEntity.h"
 #include "Game/Level/Enemies/Nun.h"
 #include "Game/Level/Enemies/Angel.h"
 #include "Game/Level/Enemies/ChewmanEnemy.h"
@@ -611,17 +612,29 @@ void GameMapLoader::createTeleport(GameMap& level, int row, int column, char map
     auto teleportNode = engine->getSceneManager()->createSceneNode();
     teleportNode->setNodeTransformation(glm::translate(glm::mat4(1), position));
     level.mapNode->attachSceneNode(teleportNode);
-    std::shared_ptr<SVE::ParticleSystemEntity> teleportPS = std::make_shared<SVE::ParticleSystemEntity>("TeleportStars");
-    teleportPS->getMaterialInfo()->diffuse = glm::vec4(color, 1.0f);
-    teleportNode->attachEntity(teleportPS);
+
+    auto teleportParticlesNode = engine->getSceneManager()->createSceneNode();
+    if (Game::getInstance()->getGraphicsManager().getSettings().particleEffects == ParticlesSettings::None)
+    {
+        MagicInfo info {};
+        info.color = color;
+        teleport.sparks = std::make_shared<MagicEntity>("TeleportMeshParticleMaterial", info);
+        teleportParticlesNode->attachEntity(teleport.sparks);
+    } else {
+        std::shared_ptr<SVE::ParticleSystemEntity> teleportPS = std::make_shared<SVE::ParticleSystemEntity>("TeleportStars");
+        teleportPS->getMaterialInfo()->diffuse = glm::vec4(color, 1.0f);
+        teleportNode->attachEntity(teleportPS);
+    }
 
     auto teleportCircleNode = engine->getSceneManager()->createSceneNode();
     auto teleportGlowNode = engine->getSceneManager()->createSceneNode();
     auto teleportLightNode = engine->getSceneManager()->createSceneNode();
     auto teleportPlatformNode = engine->getSceneManager()->createSceneNode();
+
     teleportNode->attachSceneNode(teleportCircleNode);
     teleportNode->attachSceneNode(teleportGlowNode);
     teleportNode->attachSceneNode(teleportLightNode);
+    teleportNode->attachSceneNode(teleportParticlesNode);
     teleportNode->attachSceneNode(teleportPlatformNode);
     {
         teleportPlatformNode->setNodeTransformation(glm::translate(glm::mat4(1), glm::vec3(-1.0, -0.2, 1.0)));

@@ -194,6 +194,7 @@ add_executable(Chewman
         Game/Level/Gargoyle.h
         Game/Level/LevelStateProcessor.cpp
         Game/Level/LevelStateProcessor.h
+        Game/Level/MagicEntity.h
         Game/Level/MapTraveller.cpp
         Game/Level/MapTraveller.h
         Game/Level/Player.cpp

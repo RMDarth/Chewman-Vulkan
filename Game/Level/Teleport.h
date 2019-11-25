@@ -3,6 +3,7 @@
 // Licensed under the MIT License
 #pragma once
 #include "SVE/SceneNode.h"
+#include "MagicEntity.h"
 
 namespace Chewman
 {
@@ -21,6 +22,7 @@ struct Teleport
 
     std::shared_ptr<SVE::SceneNode> circleNode;
     std::shared_ptr<SVE::SceneNode> glowNode;
+    std::shared_ptr<MagicEntity> sparks;
     glm::ivec2 position;
 
     Teleport* secondEnd;
