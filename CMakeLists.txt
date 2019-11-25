@@ -161,6 +161,8 @@ add_executable(Chewman
         Game/Level/FireLineEntity.h
         Game/Level/Enemies/Angel.cpp
         Game/Level/Enemies/Angel.h
+        Game/Level/Enemies/ChewmanAI.cpp
+        Game/Level/Enemies/ChewmanAI.h
         Game/Level/Enemies/ChewmanEnemy.cpp
         Game/Level/Enemies/ChewmanEnemy.h
         Game/Level/Enemies/DefaultEnemy.cpp

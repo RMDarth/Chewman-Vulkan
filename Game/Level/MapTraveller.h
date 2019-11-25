@@ -47,6 +47,7 @@ public:
 
     glm::vec2 getStartPos() const;
     glm::vec2 getTargetPos() const;
+    void setTargetPos(glm::vec2 pos);
     GameMap* getGameMap() const;
 
     bool isCloseToAffect(glm::vec2 pos) const;

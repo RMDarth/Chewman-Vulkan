@@ -235,7 +235,8 @@ void GameRulesProcessor::update(float deltaTime)
                 {
                     if (otherEnemy->isStateActive(EnemyState::Dead))
                         continue;
-                    if (otherEnemy != enemy && otherEnemy->getMapTraveller()->isCloseToAffect(enemyRealPos))
+
+                    if (otherEnemy != enemy && otherEnemy->getMapTraveller()->isCloseToAffect(enemy->getPosition()))
                     {
                         if (otherEnemy->isStateActive(EnemyState::Vulnerable))
                         {
