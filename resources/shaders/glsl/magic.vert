@@ -41,7 +41,7 @@ void main() {
     vertPos = mod(vertPos, 5.0);
     vec4 position =  vec4(xPos, vertPos, yPos, 1);
     float alpha = 5.0 - vertPos;
-    float halfSize = 0.15 * alpha * 0.3;
+    float halfSize = ubo.configuration[0].w * alpha * 0.3;
     float sizeScale = ubo.configuration[0].x;
     float halfSizeHoriz = halfSize * sizeScale;
 

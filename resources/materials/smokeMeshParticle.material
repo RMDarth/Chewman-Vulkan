@@ -1,5 +1,5 @@
 {
-    "name": "TeleportMeshParticleMaterial",
+    "name": "SmokeParticleMaterial",
     "vertexShaderName": "magicVertexShader",
     "fragmentShaderName": "magicFragmentShader",
     "cullFace": "None",
@@ -10,7 +10,7 @@
     "textures": [
         {
             "samplerName": "texSampler",
-            "filename": "textures/teleport/Sparkle_sprite_good.png"
+            "filename": "textures/smokeParticle.png"
         }
     ]
 }

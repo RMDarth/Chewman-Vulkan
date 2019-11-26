@@ -618,7 +618,7 @@ void GameMapLoader::createTeleport(GameMap& level, int row, int column, char map
     {
         MagicInfo info {};
         info.color = color;
-        teleport.sparks = std::make_shared<MagicEntity>("TeleportMeshParticleMaterial", info);
+        teleport.sparks = std::make_shared<MagicEntity>("MagicMeshParticleMaterial", info);
         teleportParticlesNode->attachEntity(teleport.sparks);
     } else {
         std::shared_ptr<SVE::ParticleSystemEntity> teleportPS = std::make_shared<SVE::ParticleSystemEntity>("TeleportStars");
