@@ -1,11 +1,11 @@
 {
     "name": "SmokeParticleMaterial",
-    "vertexShaderName": "magicVertexShader",
+    "vertexShaderName": "bombFireVertexShader",
     "fragmentShaderName": "magicFragmentShader",
     "cullFace": "None",
     "useAlphaBlending": true,
     "srcBlendFactor": "SrcAlpha",
-    "dstBlendFactor": "One",
+    "dstBlendFactor": "OneMinusSrcAlpha",
     "useDepthWrite": false,
     "textures": [
         {

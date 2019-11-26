@@ -54,8 +54,9 @@ void main() {
         int vertexId = gl_VertexIndex % 6;
         vec3 startPos = ubo.configuration[0].xyz;
 
-        float radius = 8.5;
-        float halfSize = 2.0;
+        float radius = ubo.configuration[1].z;
+        float halfSize = ubo.configuration[1].w;
+        float alpha = ubo.configuration[1].x;
         float polygonRandom = random(polygonId);
         float xPos = getRandomValue(-radius, radius, 1 + polygonRandom);
         float yPos = getRandomValue(-radius, radius, 2 + polygonRandom);
@@ -92,7 +93,7 @@ void main() {
             gl_Position = ubo.projection * (position + vec4(rotateVector(halfSize, -halfSize, angle), 0.0, 0.0 ));
             fragTexCoord = vec2(1.0, 0.0);
         }
-        fragColor = vec4(1,1,1,1);
+        fragColor = vec4(1,1,1,alpha);
         fragLifePercent = clamp(1.0 - (-polygonRandom + percent * 2.0), 0.0, 1.0);
     }
 }

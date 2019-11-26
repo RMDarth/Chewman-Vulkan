@@ -36,6 +36,7 @@ private:
     GameMap* _gameMap;
     std::list<EffectInfo> _currentEffects;
     std::array<std::queue<std::shared_ptr<SVE::SceneNode>>, EatEffectsCount> _effectsPool;
+    bool _isParticlesEnabled = true;
 };
 
 } // anonymous Chewman
