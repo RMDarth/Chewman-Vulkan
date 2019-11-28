@@ -11,6 +11,7 @@
 #include "Game/Game.h"
 #include "GameMap.h"
 #include "GameUtils.h"
+#include "CustomEntity.h"
 
 #include <SDL2/SDL_events.h>
 
@@ -320,9 +321,22 @@ void Player::createDisappearEffect()
     auto color = glm::vec3(1.0, 0.5, 0.0);
 
     _disappearNode = engine->getSceneManager()->createSceneNode();
-    std::shared_ptr<SVE::ParticleSystemEntity> disappearPS = std::make_shared<SVE::ParticleSystemEntity>("Disappear");
-    disappearPS->getMaterialInfo()->diffuse = glm::vec4(color, 1.5f);
-    _disappearNode->attachEntity(disappearPS);
+
+   if (Game::getInstance()->getGraphicsManager().getSettings().particleEffects != ParticlesSettings::None)
+   {
+       std::shared_ptr<SVE::ParticleSystemEntity> disappearPS = std::make_shared<SVE::ParticleSystemEntity>("Disappear");
+       disappearPS->getMaterialInfo()->diffuse = glm::vec4(color, 1.5f);
+       _disappearNode->attachEntity(disappearPS);
+   } else {
+       MagicInfo info {};
+       info.color = color;
+       info.maxParticles = 500;
+       info.ratio = 10.0;
+       info.radius = 0.7f;
+       info.particleSize = 0.2;
+       auto magicEntity = std::make_shared<MagicEntity>("MagicMeshParticleMaterial", info);
+       _disappearNode->attachEntity(magicEntity);
+   }
 }
 
 void Player::setCameraFollow(bool value)

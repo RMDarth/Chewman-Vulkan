@@ -19,7 +19,8 @@ enum class GameState
     LevelSelection,
     Graphics,
     Tutorial,
-    Highscores
+    Highscores,
+    Credits
 };
 
 } // namespace Chewman

@@ -159,8 +159,16 @@ void GraphicsManager::tuneSettings()
                 if (_currentSettings.effectSettings == EffectSettings::Unknown)
                     _currentSettings.effectSettings = EffectSettings::High;
 
+                if (model == 72)
+                {
+                    if (deviceName.find("Samsung") == std::string::npos)
+                    {
+                        _currentSettings.effectSettings = EffectSettings::Low;
+                    }
+                }
                 if (model < 72)
                 {
+                    // TODO: If AndroidVersion < 8.0 (API 26) then throw exception
                     _currentSettings.effectSettings = EffectSettings::Low;
                     _currentSettings.useDynamicLights = false;
                 }

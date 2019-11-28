@@ -8,14 +8,14 @@
 
 namespace Chewman
 {
-class ControlDocument;
-class GameMapProcessor;
 
-class MenuStateProcessor : public StateProcessor, public IEventHandler
+class ControlDocument;
+
+class CreditsStateProcessor : public StateProcessor, public IEventHandler
 {
 public:
-    MenuStateProcessor();
-    ~MenuStateProcessor() override;
+    CreditsStateProcessor();
+    ~CreditsStateProcessor() override;
 
     GameState update(float deltaTime) override;
     void processInput(const SDL_Event& event) override;
@@ -29,14 +29,7 @@ public:
     void processEvent(Control* control, EventType type, int x, int y) override;
 
 private:
-    void updateConfigSlider();
-    void setConfigSliderVisibility(bool visible);
-
-private:
     std::unique_ptr<ControlDocument> _document;
-    std::unique_ptr<GameMapProcessor> _gameMapProcessor;
-    std::shared_ptr<Control> _configPanel;
-    bool _configPanelVisible = false;
 };
 
 } // namespace Chewman

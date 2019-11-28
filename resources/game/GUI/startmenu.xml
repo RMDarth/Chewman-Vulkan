@@ -5,6 +5,13 @@
     <Button name="start" text="Play" alignment="center" y="0.75" width="-3.873" height="0.12" />
     <Button name="score" text="Scoreboard" alignment="center" y="0.85" width="-3.873" height="0.12"  />
 
+    <Panel name="configpanel" x="0.0635" y="0.85" width="0.055" height="-1" image="buttons/config_panel.png" >
+        <Button name="settings" text="" x="0.05" y="0.2" width="0.9" height="-1" image="buttons/Tool.png" hoverimage="buttons/Tool.png" pressedimage="buttons/Tool.png" />
+        <Button name="sound" text="" x="0.05" y="0.4" width="0.9" height="-1" image="buttons/Sound.png" hoverimage="buttons/Sound.png" pressedimage="buttons/NoSound.png" />
+        <Button name="music" text="" x="0.05" y="0.6" width="0.9" height="-1" image="buttons/Music.png" hoverimage="buttons/Music.png" pressedimage="buttons/NoMusic.png" />
+        <Button name="info" text="" x="0.05" y="0.8" width="0.9" height="-1" image="buttons/Info.png" hoverimage="buttons/Info.png" pressedimage="buttons/Info.png" />
+    </Panel>
+
     <Button name="config" text="" x="0.05" y="0.85" width="0.08" height="-1"
             image="buttons/config.png" hoverimage="buttons/config_hover.png" pressedimage="buttons/config_pressed.png" />
 </document>

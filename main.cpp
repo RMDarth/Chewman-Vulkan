@@ -16,7 +16,6 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <memory>
 
-
 // Thanks to:
 // Karl "ThinMatrix" for his video blogs on OpenGL techniques
 // Niko Kauppi for his Vulkan video tutorials
@@ -25,9 +24,6 @@
 // Joey de Vries for his OpenGL tutorials (learnopengl.com)
 // Eray Meiri for his OGL dev tutorials (ogldev.org)
 // Pawel Lapinski for his Vulkan Cookbook and compute shaders receipts
-
-// main.cpp currenly holds some test data for engine features tests.
-// TODO: clean this code
 
 void moveCamera(const Uint8* keystates, float deltaTime, std::shared_ptr<SVE::CameraNode>& camera)
 {
@@ -107,6 +103,10 @@ int runGame()
             engine->getPostEffectManager()->addPostEffect("VBlurEffect", "VBlurEffect",windowSize.x / 8, windowSize.y / 8);
             engine->getPostEffectManager()->addPostEffect("HBlurEffect", "HBlurEffect",windowSize.x / 8, windowSize.y / 8);
             engine->getPostEffectManager()->addPostEffect("BloomEffect", "BloomEffect");
+
+            //engine->getPostEffectManager()->addPostEffect("BlurAllEffect", "BlurAllEffect", windowSize.x / 4, windowSize.y / 4);
+            //engine->getPostEffectManager()->addPostEffect("HBlurEffect", "HBlurEffect",windowSize.x / 8, windowSize.y / 8);
+
             // engine->getPostEffectManager()->addPostEffect("GrayscaleEffect", "GrayscaleEffect");
             // engine->getPostEffectManager()->addPostEffect("PencilEffect", "PencilEffect");
         }
