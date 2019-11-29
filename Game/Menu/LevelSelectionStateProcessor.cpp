@@ -3,7 +3,7 @@
 // Licensed under the MIT License
 #include "LevelSelectionStateProcessor.h"
 #include "Game/Controls/ControlDocument.h"
-#include "Game/Controls/SliderControl.h"
+#include "Game/Controls/BoxSliderControl.h"
 #include "Game/Game.h"
 
 namespace Chewman

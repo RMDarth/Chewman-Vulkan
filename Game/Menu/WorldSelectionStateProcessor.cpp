@@ -3,7 +3,7 @@
 // Licensed under the MIT License
 #include "WorldSelectionStateProcessor.h"
 #include "Game/Controls/ControlDocument.h"
-#include "Game/Controls/SliderControl.h"
+#include "Game/Controls/BoxSliderControl.h"
 #include "Game/Game.h"
 
 namespace Chewman
@@ -55,7 +55,7 @@ void WorldSelectionStateProcessor::processEvent(Control* control, IEventHandler:
         else if (control->getName() == "slider")
         {
             hide();
-            auto worldNum = static_cast<SliderControl*>(control)->getSelectedObject();
+            auto worldNum = static_cast<BoxSliderControl*>(control)->getSelectedObject();
             Game::getInstance()->getProgressManager().setCurrentWorld(worldNum);
             Game::getInstance()->setState(GameState::LevelSelection);
         }

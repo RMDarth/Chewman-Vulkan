@@ -4,8 +4,8 @@
 
         <Label name="resolutionLabel" text="Resolution:" x="0.02" y="0.2" width="0.38" height="0.08"/>
         <DropDown name="resolution" text="High" font-size="55" x="0.42" y="0.195" width="-5.34065" height="0.1">
-            <Button name="resHigh" text="High" font-size="45"/>
-            <Button name="resLow" text="Low" font-size="45"/>
+            <Button name="resHigh" text="1080p" font-size="45"/>
+            <Button name="resLow" text="720p" font-size="45"/>
         </DropDown>
 
         <Label name="shadowsLabel" text="Shadows:" x="0.02" y="0.3" width="0.38" height="0.08"/>

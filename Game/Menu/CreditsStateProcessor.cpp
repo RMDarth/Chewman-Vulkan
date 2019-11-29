@@ -13,7 +13,6 @@ CreditsStateProcessor::CreditsStateProcessor()
         : _document(std::make_unique<ControlDocument>("resources/game/GUI/credits.xml"))
 {
     _document->setMouseUpHandler(this);
-    _document->raisePriority(120);
     _document->hide();
 }
 
@@ -21,6 +20,7 @@ CreditsStateProcessor::~CreditsStateProcessor() = default;
 
 GameState CreditsStateProcessor::update(float deltaTime)
 {
+    _document->update(deltaTime);
     return GameState::Credits;
 }
 
@@ -31,11 +31,6 @@ void CreditsStateProcessor::processInput(const SDL_Event& event)
 
 void CreditsStateProcessor::show()
 {
-    auto tutorialData = Game::getInstance()->getTutorialData();
-    for (auto i = 0; i < tutorialData.size(); ++i)
-    {
-        _document->getControlByName("text" + std::to_string(i + 1))->setText(tutorialData[i]);
-    }
     _document->show();
 }
 

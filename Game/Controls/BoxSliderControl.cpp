@@ -1,7 +1,7 @@
 // Chewman Vulkan game
 // Copyright (c) 2018-2019, Igor Barinov
 // Licensed under the MIT License
-#include "SliderControl.h"
+#include "BoxSliderControl.h"
 
 namespace Chewman
 {
@@ -25,7 +25,7 @@ void alignToZero(float& value, float deltaTime, float alignSpeed)
 
 } // anon namespace
 
-SliderControl::SliderControl(const std::string& name, float x, float y, float width, float height, Control* parent)
+BoxSliderControl::BoxSliderControl(const std::string& name, float x, float y, float width, float height, Control* parent)
         : Control(ControlType::Slider, name, x, y, width, height, std::string(), parent)
         , _halfWidth(_width / 2)
         , _nextObjShift(_halfWidth + _halfWidth / 2)
@@ -33,7 +33,7 @@ SliderControl::SliderControl(const std::string& name, float x, float y, float wi
     setRenderOrder(50);
 }
 
-void SliderControl::update(float deltaTime)
+void BoxSliderControl::update(float deltaTime)
 {
     _nextObjShift = _children.front()->getSize().x + _halfWidth / 8;
     for (auto i = 0; i < _children.size(); ++i)
@@ -54,7 +54,7 @@ void SliderControl::update(float deltaTime)
     Control::update(deltaTime);
 }
 
-bool SliderControl::onMouseMove(int x, int y)
+bool BoxSliderControl::onMouseMove(int x, int y)
 {
     if (isInside(x, y) && _isMoving && !_mouseTransparent)
     {
@@ -65,7 +65,7 @@ bool SliderControl::onMouseMove(int x, int y)
     return false;
 }
 
-bool SliderControl::onMouseDown(int x, int y)
+bool BoxSliderControl::onMouseDown(int x, int y)
 {
     if (isInside(x, y) && _visible && !_mouseTransparent)
     {
@@ -79,7 +79,7 @@ bool SliderControl::onMouseDown(int x, int y)
     return false;
 }
 
-bool SliderControl::onMouseUp(int x, int y)
+bool BoxSliderControl::onMouseUp(int x, int y)
 {
     if (!_visible)
         return Control::onMouseUp(x, y);
@@ -117,7 +117,7 @@ bool SliderControl::onMouseUp(int x, int y)
     return false;
 }
 
-uint32_t SliderControl::getSelectedObject() const
+uint32_t BoxSliderControl::getSelectedObject() const
 {
     return _currentObject;
 }

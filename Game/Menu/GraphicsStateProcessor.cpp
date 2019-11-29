@@ -76,7 +76,7 @@ void GraphicsStateProcessor::hide()
 
 bool GraphicsStateProcessor::isOverlapping()
 {
-    return false;
+    return true;
 }
 
 void GraphicsStateProcessor::processEvent(Control* control, IEventHandler::EventType type, int x, int y)

@@ -30,8 +30,8 @@ std::string getResolutionText(ResolutionSettings resolutionSettings)
 {
     switch(resolutionSettings)
     {
-        case ResolutionSettings::Low: return "Low";
-        case ResolutionSettings::High: return "High";
+        case ResolutionSettings::Low: return "720p";
+        case ResolutionSettings::High: return "1080p";
         case ResolutionSettings::Native: return "Native";
         case ResolutionSettings::Custom: return "Custom";
     }
@@ -140,6 +140,7 @@ void GraphicsManager::tuneSettings()
                 _currentSettings.effectSettings = EffectSettings::Low;
                 _currentSettings.useDynamicLights = false;
             }
+            // if (model <= 540) & Android version < 8.0 throw exception or show warning
             if (model < 540)
             {
                 _currentSettings.resolution = ResolutionSettings::Low;
@@ -168,7 +169,7 @@ void GraphicsManager::tuneSettings()
                 }
                 if (model < 72)
                 {
-                    // TODO: If AndroidVersion < 8.0 (API 26) then throw exception
+                    // TODO: If AndroidVersion < 8.0 (API 26) then throw exception or show warning
                     _currentSettings.effectSettings = EffectSettings::Low;
                     _currentSettings.useDynamicLights = false;
                 }

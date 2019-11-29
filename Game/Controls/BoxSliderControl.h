@@ -7,10 +7,10 @@
 namespace Chewman
 {
 
-class SliderControl : public Control
+class BoxSliderControl : public Control
 {
 public:
-    SliderControl(const std::string& name, float x, float y, float width, float height, Control* parent = nullptr);
+    BoxSliderControl(const std::string& name, float x, float y, float width, float height, Control* parent = nullptr);
 
     void update(float deltaTime) override;
 

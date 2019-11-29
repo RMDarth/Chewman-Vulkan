@@ -143,8 +143,8 @@ add_executable(Chewman
         Game/Controls/LevelButtonControl.h
         Game/Controls/PanelControl.cpp
         Game/Controls/PanelControl.h
-        Game/Controls/SliderControl.cpp
-        Game/Controls/SliderControl.h
+        Game/Controls/BoxSliderControl.cpp
+        Game/Controls/BoxSliderControl.h
         Game/Game.cpp
         Game/Game.h
         Game/GameDefs.h
