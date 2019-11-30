@@ -39,6 +39,13 @@ struct GraphicsSettings
     bool useDynamicLights = true;
     ParticlesSettings particleEffects = ParticlesSettings::Full;
     EffectSettings effectSettings = EffectSettings::High;
+
+    bool operator==(const GraphicsSettings& other)
+    {
+        return resolution == other.resolution && useShadows == other.useShadows &&
+               useDynamicLights == other.useDynamicLights && particleEffects == other.particleEffects &&
+               effectSettings == other.effectSettings;
+    }
 };
 
 std::string getResolutionText(ResolutionSettings resolutionSettings);
@@ -54,12 +61,17 @@ public:
     void setSettings(GraphicsSettings settings);
     const GraphicsSettings& getSettings() const;
 
+    bool needRestart() const;
+    void setNeedRestart(bool value = true);
+    bool changesRequireRestart(GraphicsSettings& settings);
+
     void store();
     void load();
 private:
     void tuneSettings();
 
     GraphicsSettings _currentSettings;
+    bool _needRestart = false;
 };
 
 } // namespace Chewman

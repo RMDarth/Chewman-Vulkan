@@ -30,6 +30,7 @@ void setSettingByName(T& setting, const std::vector<std::string>& values, const 
 
 } // anon namespace
 
+
 GraphicsStateProcessor::GraphicsStateProcessor()
 {
     _document = std::make_unique<ControlDocument>("resources/game/GUI/graphics.xml");
@@ -85,12 +86,14 @@ void GraphicsStateProcessor::processEvent(Control* control, IEventHandler::Event
     {
         if (control->getName() == "back")
         {
-            Game::getInstance()->setState(GameState::MainMenu);
+            _document->hide();
+            Game::getInstance()->setState(GameState::Settings);
         }
         if (control->getName() == "accept")
         {
+            _document->hide();
             Game::getInstance()->getGraphicsManager().setSettings(_settings);
-            Game::getInstance()->setState(GameState::MainMenu);
+            Game::getInstance()->setState(GameState::Settings);
         }
 
         // settings //
@@ -105,11 +108,10 @@ void GraphicsStateProcessor::processEvent(Control* control, IEventHandler::Event
         setSettingByName(_settings.resolution, resValues, control->getName());
         setSettingByName(_settings.particleEffects, gargoyleValues, control->getName());
 
-        auto currentSettings = Game::getInstance()->getGraphicsManager().getSettings();
-        if (_settings.effectSettings != currentSettings.effectSettings
-            || _settings.resolution != currentSettings.resolution)
+        if (Game::getInstance()->getGraphicsManager().changesRequireRestart(_settings))
         {
-            _document->getControlByName("restartInfo")->setVisible(true);
+            if (_document->isVisible())
+                _document->getControlByName("restartInfo")->setVisible(true);
         }
 
     }

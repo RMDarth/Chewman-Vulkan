@@ -23,6 +23,7 @@ public:
 
     void show();
     void hide();
+    bool isVisible() const;
 
     void update(float deltaTime);
 
@@ -46,6 +47,7 @@ private:
     std::vector<std::shared_ptr<Control>> _controlList;
 
     ControlFactory _controlFactory;
+    bool _visible = true;
 };
 
 } // namespace Chewman

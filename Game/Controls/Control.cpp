@@ -229,17 +229,22 @@ bool Control::onMouseMove(int x, int y)
 {
     if (isInside(x, y) && _visible)
     {
-        if (!_hoverMaterial.empty() && !_pressed)
+        if (!_mouseTransparent)
         {
-            _overlay->setMaterial(_hoverMaterial);
-        }
-        if (!_mouseMoveHandlerList.empty())
-        {
-            std::for_each(_mouseMoveHandlerList.begin(), _mouseMoveHandlerList.end(),
-                          [&](IEventHandler* handler) { handler->processEvent(this, IEventHandler::MouseMove, x, y); });
-        }
+            if (!_hoverMaterial.empty() && !_pressed)
+            {
+                _overlay->setMaterial(_hoverMaterial);
+            }
+            if (!_mouseMoveHandlerList.empty())
+            {
+                std::for_each(_mouseMoveHandlerList.begin(), _mouseMoveHandlerList.end(),
+                              [&](IEventHandler* handler) {
+                                  handler->processEvent(this, IEventHandler::MouseMove, x, y);
+                              });
+            }
 
-        return true;
+            return true;
+        }
     } else {
         if (!_pressed && _visible)
         {
@@ -254,19 +259,23 @@ bool Control::onMouseDown(int x, int y)
 {
     if (isInside(x, y) && _visible)
     {
-        if (!_pushMaterial.empty())
-        {
-            _overlay->setMaterial(_pushMaterial);
-        }
-        if (!_mouseDownHandlerList.empty())
-        {
-            std::for_each(_mouseDownHandlerList.begin(), _mouseDownHandlerList.end(),
-                          [&](IEventHandler* handler) { handler->processEvent(this, IEventHandler::MouseDown, x, y); });
-        }
-        _pressed = true;
-
         if (!_mouseTransparent)
+        {
+            if (!_pushMaterial.empty())
+            {
+                _overlay->setMaterial(_pushMaterial);
+            }
+            if (!_mouseDownHandlerList.empty())
+            {
+                std::for_each(_mouseDownHandlerList.begin(), _mouseDownHandlerList.end(),
+                              [&](IEventHandler* handler) {
+                                  handler->processEvent(this, IEventHandler::MouseDown, x, y);
+                              });
+            }
+            _pressed = true;
+
             return true;
+        }
     }
 
     return false;
@@ -277,13 +286,14 @@ bool Control::onMouseUp(int x, int y)
     bool result = false;
     if (isInside(x, y) && _visible)
     {
-        _overlay->setMaterial(!_hoverMaterial.empty() ? _hoverMaterial :_defaultMaterial);
-
-        std::for_each(_mouseUpHandlerList.begin(), _mouseUpHandlerList.end(),
-                      [&](IEventHandler* handler) { handler->processEvent(this, IEventHandler::MouseUp, x, y); });
-
         if (!_mouseTransparent)
+        {
+            _overlay->setMaterial(!_hoverMaterial.empty() ? _hoverMaterial : _defaultMaterial);
+
+            std::for_each(_mouseUpHandlerList.begin(), _mouseUpHandlerList.end(),
+                          [&](IEventHandler* handler) { handler->processEvent(this, IEventHandler::MouseUp, x, y); });
             result = true;
+        }
     } else if (_visible) {
         _overlay->setMaterial(_defaultMaterial);
     }
@@ -408,6 +418,11 @@ void Control::setSize(glm::ivec2 size)
     _overlay->getInfo().height = _height;
     if (!_overlay->getInfo().textInfo.text.empty())
         setText(_overlay->getInfo().textInfo.text);
+}
+
+void Control::setTexCoords(glm::vec4 xxyy)
+{
+    _overlay->getInfo().texCoord = xxyy;
 }
 
 void Control::setTextAlignment(SVE::TextAlignment alignment)

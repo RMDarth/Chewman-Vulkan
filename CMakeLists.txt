@@ -227,7 +227,7 @@ add_executable(Chewman
         Game/ScoresManager.cpp
         Game/ScoresManager.h
         Game/StateProcessor.cpp
-        Game/StateProcessor.h)
+        Game/StateProcessor.h Game/Controls/SliderControl.cpp Game/Controls/SliderControl.h Game/Menu/SettingsStateProcessor.cpp Game/Menu/SettingsStateProcessor.h)
 
 if (WIN32)
     target_link_libraries(Chewman mingw32 SDL2main SDL2 vulkan-1.lib VkLayer_core_validation.lib libassimp libcppfsd libtinyxml2)

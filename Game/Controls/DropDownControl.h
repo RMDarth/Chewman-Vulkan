@@ -21,6 +21,8 @@ public:
 
     bool isClickProcessed() override;
 
+    std::string getCustomAttribute(const std::string& name) override;
+
 private:
     void showList();
 

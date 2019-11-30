@@ -86,7 +86,7 @@ void MenuStateProcessor::processEvent(Control* control, IEventHandler::EventType
         if (control->getName() == "settings")
         {
             _document->hide();
-            Game::getInstance()->setState(GameState::Graphics);
+            Game::getInstance()->setState(GameState::Settings);
         }
         if (control->getName() == "info")
         {

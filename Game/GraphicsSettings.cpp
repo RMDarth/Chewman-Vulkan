@@ -78,6 +78,8 @@ GraphicsManager::GraphicsManager()
 void GraphicsManager::setSettings(GraphicsSettings settings)
 {
     auto* engine = SVE::Engine::getInstance();
+
+    _needRestart = changesRequireRestart(settings);
     _currentSettings = settings;
 
     auto sunLight = engine->getSceneManager()->getLightManager()->getDirectionLight();
@@ -87,9 +89,25 @@ void GraphicsManager::setSettings(GraphicsSettings settings)
     store();
 }
 
+bool GraphicsManager::changesRequireRestart(GraphicsSettings& settings)
+{
+    return _currentSettings.effectSettings != settings.effectSettings
+           || _currentSettings.resolution != settings.resolution;
+}
+
 const GraphicsSettings& GraphicsManager::getSettings() const
 {
     return _currentSettings;
+}
+
+bool GraphicsManager::needRestart() const
+{
+    return _needRestart;
+}
+
+void GraphicsManager::setNeedRestart(bool value)
+{
+    _needRestart = value;
 }
 
 void GraphicsManager::store()
