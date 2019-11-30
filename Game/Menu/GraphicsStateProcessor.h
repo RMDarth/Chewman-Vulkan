@@ -32,7 +32,6 @@ public:
 private:
     std::unique_ptr<ControlDocument> _document;
     GraphicsSettings _settings;
-
 };
 
 } // namespace Chewman

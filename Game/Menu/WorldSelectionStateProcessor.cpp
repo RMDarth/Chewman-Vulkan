@@ -3,7 +3,7 @@
 // Licensed under the MIT License
 #include "WorldSelectionStateProcessor.h"
 #include "Game/Controls/ControlDocument.h"
-#include "Game/Controls/SliderControl.h"
+#include "Game/Controls/BoxSliderControl.h"
 #include "Game/Game.h"
 
 namespace Chewman
@@ -41,7 +41,7 @@ void WorldSelectionStateProcessor::hide()
 
 bool WorldSelectionStateProcessor::isOverlapping()
 {
-    return false;
+    return true;
 }
 
 void WorldSelectionStateProcessor::processEvent(Control* control, IEventHandler::EventType type, int x, int y)
@@ -54,7 +54,8 @@ void WorldSelectionStateProcessor::processEvent(Control* control, IEventHandler:
         }
         else if (control->getName() == "slider")
         {
-            auto worldNum = static_cast<SliderControl*>(control)->getSelectedObject();
+            hide();
+            auto worldNum = static_cast<BoxSliderControl*>(control)->getSelectedObject();
             Game::getInstance()->getProgressManager().setCurrentWorld(worldNum);
             Game::getInstance()->setState(GameState::LevelSelection);
         }

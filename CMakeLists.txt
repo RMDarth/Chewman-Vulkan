@@ -122,6 +122,8 @@ add_executable(Chewman
         SVE/VulkanWater.h
         SVE/Water.cpp
         SVE/Water.h
+        Game/Controls/BoxSliderControl.cpp
+        Game/Controls/BoxSliderControl.h
         Game/Controls/ButtonControl.cpp
         Game/Controls/ButtonControl.h
         Game/Controls/ContainerControl.cpp
@@ -161,6 +163,8 @@ add_executable(Chewman
         Game/Level/FireLineEntity.h
         Game/Level/Enemies/Angel.cpp
         Game/Level/Enemies/Angel.h
+        Game/Level/Enemies/ChewmanAI.cpp
+        Game/Level/Enemies/ChewmanAI.h
         Game/Level/Enemies/ChewmanEnemy.cpp
         Game/Level/Enemies/ChewmanEnemy.h
         Game/Level/Enemies/DefaultEnemy.cpp
@@ -192,6 +196,7 @@ add_executable(Chewman
         Game/Level/Gargoyle.h
         Game/Level/LevelStateProcessor.cpp
         Game/Level/LevelStateProcessor.h
+        Game/Level/MagicEntity.h
         Game/Level/MapTraveller.cpp
         Game/Level/MapTraveller.h
         Game/Level/Player.cpp
@@ -201,8 +206,12 @@ add_executable(Chewman
         Game/Level/StaticObject.cpp
         Game/Level/StaticObject.h
         Game/Level/Teleport.h
+        Game/Menu/CreditsStateProcessor.cpp
+        Game/Menu/CreditsStateProcessor.h
         Game/Menu/GraphicsStateProcessor.cpp
         Game/Menu/GraphicsStateProcessor.h
+        Game/Menu/HighScoresStateProcessor.cpp
+        Game/Menu/HighScoresStateProcessor.h
         Game/Menu/LevelSelectionStateProcessor.cpp
         Game/Menu/LevelSelectionStateProcessor.h
         Game/Menu/MenuStateProcessor.cpp
@@ -211,6 +220,8 @@ add_executable(Chewman
         Game/Menu/PauseStateProcessor.h
         Game/Menu/ScoreStateProcessor.cpp
         Game/Menu/ScoreStateProcessor.h
+        Game/Menu/SettingsStateProcessor.cpp
+        Game/Menu/SettingsStateProcessor.h
         Game/Menu/TutorialStateProcessor.cpp
         Game/Menu/TutorialStateProcessor.h
         Game/Menu/WorldSelectionStateProcessor.cpp

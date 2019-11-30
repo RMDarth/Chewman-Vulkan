@@ -6,4 +6,5 @@ struct OverlayInfo
     int y;
     int width;
     int height;
+    vec4 texCoord; // xmin xMax ymin yMax
 };

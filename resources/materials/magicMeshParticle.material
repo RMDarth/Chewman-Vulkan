@@ -1,0 +1,16 @@
+{
+    "name": "MagicMeshParticleMaterial",
+    "vertexShaderName": "magicVertexShader",
+    "fragmentShaderName": "magicFragmentShader",
+    "cullFace": "None",
+    "useAlphaBlending": true,
+    "srcBlendFactor": "SrcAlpha",
+    "dstBlendFactor": "One",
+    "useDepthWrite": false,
+    "textures": [
+        {
+            "samplerName": "texSampler",
+            "filename": "textures/teleport/Sparkle_sprite_good.png"
+        }
+    ]
+}

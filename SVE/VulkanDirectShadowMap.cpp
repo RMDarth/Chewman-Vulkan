@@ -77,9 +77,9 @@ uint32_t VulkanDirectShadowMap::startRenderCommandBufferCreation(uint32_t buffer
     // TODO: Add depth bias constants to configuration
     vkCmdSetDepthBias(
             _commandBuffers[bufferNumber],
-            5.25f,
+            1.25f,
             0.0f,
-            5.75f);
+            1.75f);
 
     VkViewport viewport;
     viewport.x = 0.0f;

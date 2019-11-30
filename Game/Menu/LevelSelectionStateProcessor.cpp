@@ -3,7 +3,7 @@
 // Licensed under the MIT License
 #include "LevelSelectionStateProcessor.h"
 #include "Game/Controls/ControlDocument.h"
-#include "Game/Controls/SliderControl.h"
+#include "Game/Controls/BoxSliderControl.h"
 #include "Game/Game.h"
 
 namespace Chewman
@@ -61,7 +61,7 @@ void LevelSelectionStateProcessor::hide()
 
 bool LevelSelectionStateProcessor::isOverlapping()
 {
-    return false;
+    return true;
 }
 
 void LevelSelectionStateProcessor::processEvent(Control* control, IEventHandler::EventType type, int x, int y)
@@ -70,6 +70,7 @@ void LevelSelectionStateProcessor::processEvent(Control* control, IEventHandler:
     {
         if (control->getName() == "back")
         {
+            hide();
             Game::getInstance()->setState(GameState::WorldSelection);
         }
         else if (control->getType() == ControlType::LevelButton)

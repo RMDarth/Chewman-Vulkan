@@ -4,6 +4,10 @@
 #include "EatEffectManager.h"
 #include "GameMap.h"
 #include "GameUtils.h"
+#include "Game/GraphicsSettings.h"
+#include "Game/Game.h"
+#include "BombFireEntity.h"
+#include "CustomEntity.h"
 #include <SVE/Engine.h>
 #include <SVE/SceneManager.h>
 
@@ -19,10 +23,23 @@ EatEffectManager::EatEffectManager(Chewman::GameMap *gameMap)
 {
     auto* sceneManager = SVE::Engine::getInstance()->getSceneManager();
 
+    _isParticlesEnabled = Game::getInstance()->getGraphicsManager().getSettings().particleEffects != ParticlesSettings::None;
+
     auto getNodeWithPS = [&](const std::string& psName)
     {
         auto node = sceneManager->createSceneNode();
-        node->attachEntity(std::make_shared<SVE::ParticleSystemEntity>(psName));
+        if (_isParticlesEnabled)
+            node->attachEntity(std::make_shared<SVE::ParticleSystemEntity>(psName));
+        else
+        {
+            // TODO: Make this configurable
+            BombFireInfo info {};
+            info.radius = 1.5f;
+            info.maxParticles = 600;
+            info.percent = 0.0f;
+            info.halfSize = 0.6f;
+            node->attachEntity(std::make_shared<BombFireEntity>("SmokeParticleMaterial", info));
+        }
         return node;
     };
 
@@ -57,8 +74,15 @@ void EatEffectManager::update(float deltaTime)
             _gameMap->mapNode->detachSceneNode(effect.effectNode);
             needRemove = true;
         } else {
-            auto* ps = static_cast<SVE::ParticleSystemEntity*>(effect.effectNode->getAttachedEntities().front().get());
-            ps->getSettings().particleEmitter.emissionRate = 300.0f * std::max(0.0f, effect.time - 0.5f);
+            if (_isParticlesEnabled)
+            {
+                auto* ps = static_cast<SVE::ParticleSystemEntity*>(effect.effectNode->getAttachedEntities().front().get());
+                ps->getSettings().particleEmitter.emissionRate = 300.0f * std::max(0.0f, effect.time - 0.5f);
+            } else {
+                auto* entity = static_cast<BombFireEntity*>(effect.effectNode->getAttachedEntities().front().get());
+                entity->getInfo().percent = 2.0f - effect.time;
+                entity->getInfo().alpha = effect.time;
+            }
         }
     }
 

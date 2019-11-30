@@ -50,6 +50,7 @@ public:
         auto mainUniform = uniformDataList[toInt(SVE::CommandsType::MainPass)];
         mainUniform->customMat4 = _currentInfo.toMat4();
         mainUniform->spritesheetSize = _material->getVulkanMaterial()->getSpritesheetSize();
+        mainUniform->materialInfo.diffuse = glm::vec4(1);
 
         _material->getVulkanMaterial()->setUniformData(_materialIndex, *mainUniform);
     }

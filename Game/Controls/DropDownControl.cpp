@@ -118,4 +118,13 @@ bool DropDownControl::isClickProcessed()
     return _listShown && _needHide;
 }
 
+std::string DropDownControl::getCustomAttribute(const std::string& name)
+{
+    if (name == "listShown")
+    {
+        return (_listShown && !_needHide) ? "true" : "false";
+    }
+    return Control::getCustomAttribute(name);
+}
+
 } // namespace Chewman

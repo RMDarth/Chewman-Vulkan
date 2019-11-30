@@ -51,6 +51,7 @@ void OverlayEntity::updateUniforms(UniformDataList uniformDataList) const
     uniformData.overlayInfo.y = _overlayInfo.y;
     uniformData.overlayInfo.width = _overlayInfo.width;
     uniformData.overlayInfo.height = _overlayInfo.height;
+    uniformData.overlayInfo.texCoord = _overlayInfo.texCoord;
     if (_material)
         _material->getVulkanMaterial()->setUniformData(_materialIndex, uniformData);
 

@@ -3,6 +3,7 @@
 // Licensed under the MIT License
 #pragma once
 #include "Control.h"
+#include "ImageControl.h"
 
 namespace Chewman
 {
@@ -12,23 +13,25 @@ class SliderControl : public Control
 public:
     SliderControl(const std::string& name, float x, float y, float width, float height, Control* parent = nullptr);
 
-    void update(float deltaTime) override;
+    void setCustomAttribute(const std::string& name, std::string value) override;
+    std::string getCustomAttribute(const std::string& name) override;
+
+    void setProgress(float progress);
+    void setVisible(bool visible) override;
 
     bool onMouseMove(int x, int y) override;
     bool onMouseDown(int x, int y) override;
     bool onMouseUp(int x, int y) override;
 
-    uint32_t getSelectedObject() const;
-
 private:
-    uint32_t _currentObject = 0;
-    float _halfWidth = 0;
-    float _nextObjShift = 0;
+    float _progress = 0.0f;
 
-    bool _isMoving = false;
-    int _startShift = 0; // displacement on mouse down
-    int _currentShift = 0; // displacement on mouse move
-    float _remainShift = 0; // drifting to fixed pos after mouse up
+    int _progressMaxWidth = 0;
+    int _knotStartPos = 0;
+    std::shared_ptr<ImageControl> _progressBar;
+    std::shared_ptr<ImageControl> _knot;
+
+    bool _slidering = false;
 };
 
 } // namespace Chewman

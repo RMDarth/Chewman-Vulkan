@@ -4,6 +4,9 @@
 #include "Witch.h"
 #include "Game/Level/GameMap.h"
 #include "Game/Level/GameUtils.h"
+#include "Game/Level/CustomEntity.h"
+#include "Game/GraphicsSettings.h"
+#include "Game/Game.h"
 
 #include "SVE/MeshEntity.h"
 #include "SVE/SceneManager.h"
@@ -33,8 +36,22 @@ Witch::Witch(GameMap* map, glm::ivec2 startPos)
     _teleportMesh->setMaterial(_normalMaterial);
     _teleportMesh->getMaterialInfo()->ambient = {0.3, 0.3, 0.3, 1.0 };
 
-    _teleportPS = std::make_shared<SVE::ParticleSystemEntity>("WitchTeleport");
-    _teleportPS->getMaterialInfo()->diffuse = glm::vec4(0.7, 0.3, 1.0, 1.5f);
+    if (Game::getInstance()->getGraphicsManager().getSettings().particleEffects == ParticlesSettings::None)
+    {
+        MagicInfo info {};
+        info.color = glm::vec3(1.0, 0.0, 1.0);
+        info.maxParticles = 300;
+        info.ratio = 15.0;
+        info.radius = 1.0f;
+        info.particleSize = 0.1;
+        _teleportMeshPS = std::make_shared<MagicEntity>("MagicMeshParticleMaterial", info);
+        _isParticlesEnabled = false;
+    } else
+    {
+        _teleportPS = std::make_shared<SVE::ParticleSystemEntity>("WitchTeleport");
+        _teleportPS->getMaterialInfo()->diffuse = glm::vec4(0.7, 0.3, 1.0, 1.5f);
+        _isParticlesEnabled = true;
+    }
 
     // Init projectile
     auto projectile = std::make_unique<Projectile>(_gameMap, startPos);
@@ -186,8 +203,14 @@ void Witch::updateMagic(float deltaTime)
             if (_castingTime < 1.4 && !_teleportPSAttached)
             {
                 _teleportPSAttached = true;
-                _teleportPS->getMaterialInfo()->diffuse = glm::vec4(0.7, 0.3, 1.0, 1.5f);
-                _rootNode->attachEntity(_teleportPS);
+                if (_isParticlesEnabled)
+                {
+                    _teleportPS->getMaterialInfo()->diffuse = glm::vec4(0.7, 0.3, 1.0, 1.5f);
+                    _rootNode->attachEntity(_teleportPS);
+                } else {
+                    _teleportMeshPS->getInfo().color = glm::vec3(1.0, 0.2, 1.0);
+                    _rootNode->attachEntity(_teleportMeshPS);
+                }
             }
             if (_castingTime < 0.6 && _teleportMagicRestore <= 0)
                 applyMagic();
@@ -201,8 +224,14 @@ void Witch::updateMagic(float deltaTime)
             if (_castingTime < 1.4 && !_teleportPSAttached)
             {
                 _teleportPSAttached = true;
-                _teleportPS->getMaterialInfo()->diffuse = glm::vec4(0.3, 0.3, 1.0, 1.5f);
-                _rootNode->attachEntity(_teleportPS);
+                if (_isParticlesEnabled)
+                {
+                    _teleportPS->getMaterialInfo()->diffuse = glm::vec4(0.3, 0.3, 1.0, 1.5f);
+                    _rootNode->attachEntity(_teleportPS);
+                } else {
+                    _teleportMeshPS->getInfo().color = glm::vec3(0.3f, 0.3f, 1.0f);
+                    _rootNode->attachEntity(_teleportMeshPS);
+                }
             }
             if (_castingTime <= 0)
                 stopCasting();
@@ -222,12 +251,18 @@ void Witch::stopCasting()
             break;
         case MagicType::Teleport:
             _meshNode->detachEntity(_teleportMesh);
-            _rootNode->detachEntity(_teleportPS);
+            if (_isParticlesEnabled)
+                _rootNode->detachEntity(_teleportPS);
+            else
+                _rootNode->detachEntity(_teleportMeshPS);
             _teleportPSAttached = false;
             break;
         case MagicType::Defrost:
             _meshNode->detachEntity(_teleportMesh);
-            _rootNode->detachEntity(_teleportPS);
+            if (_isParticlesEnabled)
+                _rootNode->detachEntity(_teleportPS);
+            else
+                _rootNode->detachEntity(_teleportMeshPS);
             _teleportPSAttached = false;
             break;
     }

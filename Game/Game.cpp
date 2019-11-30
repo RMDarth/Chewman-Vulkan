@@ -14,6 +14,9 @@
 #include "Game/Menu/LevelSelectionStateProcessor.h"
 #include "Game/Menu/GraphicsStateProcessor.h"
 #include "Game/Menu/TutorialStateProcessor.h"
+#include "Game/Menu/HighScoresStateProcessor.h"
+#include "Game/Menu/CreditsStateProcessor.h"
+#include "Game/Menu/SettingsStateProcessor.h"
 
 
 namespace Chewman
@@ -47,7 +50,12 @@ void Game::setState(GameState newState)
             _stateProcessors[state]->hide();
         _overlappedStateList.clear();
     } else {
-        _overlappedStateList.push_back(_gameState);
+        if (!_overlappedStateList.empty() && _overlappedStateList.back() == newState)
+        {
+            _overlappedStateList.pop_back();
+        } else {
+            _overlappedStateList.push_back(_gameState);
+        }
     }
 
     _gameState = newState;
@@ -109,6 +117,9 @@ void Game::initStates()
     registerStateProcessor(GameState::LevelSelection, std::make_shared<LevelSelectionStateProcessor>());
     registerStateProcessor(GameState::Graphics, std::make_shared<GraphicsStateProcessor>());
     registerStateProcessor(GameState::Tutorial, std::make_shared<TutorialStateProcessor>());
+    registerStateProcessor(GameState::Highscores, std::make_shared<HighscoresStateProcessor>());
+    registerStateProcessor(GameState::Credits, std::make_shared<CreditsStateProcessor>());
+    registerStateProcessor(GameState::Settings, std::make_shared<SettingsStateProcessor>());
 
     _stateProcessors[_gameState]->show();
 }

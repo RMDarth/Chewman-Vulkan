@@ -29,8 +29,14 @@ public:
     void processEvent(Control* control, EventType type, int x, int y) override;
 
 private:
+    void updateConfigSlider();
+    void setConfigSliderVisibility(bool visible);
+
+private:
     std::unique_ptr<ControlDocument> _document;
     std::unique_ptr<GameMapProcessor> _gameMapProcessor;
+    std::shared_ptr<Control> _configPanel;
+    bool _configPanelVisible = false;
 };
 
 } // namespace Chewman

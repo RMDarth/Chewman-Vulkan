@@ -151,12 +151,19 @@ void ControlDocument::show()
 {
     for_each(_controlList.begin(), _controlList.end(),
              [](std::shared_ptr<Control>& control) {  control->setVisible(true); } );
+    _visible = true;
 }
 
 void ControlDocument::hide()
 {
     for_each(_controlList.begin(), _controlList.end(),
              [](std::shared_ptr<Control>& control) {  control->setVisible(false); } );
+    _visible = false;
+}
+
+bool ControlDocument::isVisible() const
+{
+    return _visible;
 }
 
 void ControlDocument::update(float deltaTime)

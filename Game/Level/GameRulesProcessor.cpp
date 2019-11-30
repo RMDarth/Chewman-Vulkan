@@ -144,6 +144,10 @@ void GameRulesProcessor::update(float deltaTime)
             {
                 //gameMap->eatEffectManager->addEffect(EatEffectType::Gold, mapPos);
                 playerInfo.points += 10;
+                if (gameMap->activeCoins == 0)
+                {
+                    return;
+                }
             }
             if (auto& powerUp = gameMap->mapData[mapPos.x][mapPos.y].powerUp)
             {
@@ -247,7 +251,8 @@ void GameRulesProcessor::update(float deltaTime)
                 {
                     if (otherEnemy->isStateActive(EnemyState::Dead))
                         continue;
-                    if (otherEnemy != enemy && otherEnemy->getMapTraveller()->isCloseToAffect(enemyRealPos))
+
+                    if (otherEnemy != enemy && otherEnemy->getMapTraveller()->isCloseToAffect(enemy->getPosition()))
                     {
                         if (otherEnemy->isStateActive(EnemyState::Vulnerable))
                         {
@@ -316,7 +321,10 @@ void GameRulesProcessor::update(float deltaTime)
                         enemy->increaseState(EnemyState::Dead);
                     }
                     else if (enemy->isStateActive(EnemyState::Vulnerable))
+                    {
+                        playerInfo.points += 10;
                         enemy->increaseState(EnemyState::Dead);
+                    }
                     else
                     {
                         enemy->attackPlayer();

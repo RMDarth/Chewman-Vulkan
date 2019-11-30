@@ -158,6 +158,11 @@ glm::vec2 MapTraveller::getTargetPos() const
     return _target;
 }
 
+void MapTraveller::setTargetPos(glm::vec2 pos)
+{
+    _target = pos;
+}
+
 GameMap* MapTraveller::getGameMap() const
 {
     return _map;

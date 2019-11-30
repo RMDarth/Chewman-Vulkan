@@ -30,8 +30,8 @@ std::string getResolutionText(ResolutionSettings resolutionSettings)
 {
     switch(resolutionSettings)
     {
-        case ResolutionSettings::Low: return "Low";
-        case ResolutionSettings::High: return "High";
+        case ResolutionSettings::Low: return "720p";
+        case ResolutionSettings::High: return "1080p";
         case ResolutionSettings::Native: return "Native";
         case ResolutionSettings::Custom: return "Custom";
     }
@@ -68,11 +68,18 @@ std::string getParticlesText(ParticlesSettings settings)
 GraphicsManager::GraphicsManager()
 {
     load();
+
+    if (SVE::Engine::getInstance()->isFirstRun())
+    {
+        tuneSettings();
+    }
 }
 
 void GraphicsManager::setSettings(GraphicsSettings settings)
 {
     auto* engine = SVE::Engine::getInstance();
+
+    _needRestart = changesRequireRestart(settings);
     _currentSettings = settings;
 
     auto sunLight = engine->getSceneManager()->getLightManager()->getDirectionLight();
@@ -82,9 +89,25 @@ void GraphicsManager::setSettings(GraphicsSettings settings)
     store();
 }
 
+bool GraphicsManager::changesRequireRestart(GraphicsSettings& settings)
+{
+    return _currentSettings.effectSettings != settings.effectSettings
+           || _currentSettings.resolution != settings.resolution;
+}
+
 const GraphicsSettings& GraphicsManager::getSettings() const
 {
     return _currentSettings;
+}
+
+bool GraphicsManager::needRestart() const
+{
+    return _needRestart;
+}
+
+void GraphicsManager::setNeedRestart(bool value)
+{
+    _needRestart = value;
 }
 
 void GraphicsManager::store()
@@ -115,6 +138,85 @@ void GraphicsManager::load()
     SVE::Engine::getInstance()->getVulkanInstance()->disableParticles(_currentSettings.particleEffects == ParticlesSettings::None);
 
     fin.close();
+}
+
+void GraphicsManager::tuneSettings()
+{
+    auto gpuInfo = SVE::Engine::getInstance()->getVulkanInstance()->getGPUInfo();
+
+    std::string deviceName = gpuInfo.deviceName;
+    if (deviceName.find("Adreno") != std::string::npos)
+    {
+        int model = 0;
+        if (sscanf(gpuInfo.deviceName, "Adreno (TM) %d", &model) != EOF)
+        {
+            if (_currentSettings.effectSettings == EffectSettings::Unknown)
+                _currentSettings.effectSettings = EffectSettings::High;
+
+            if (model < 630)
+            {
+                _currentSettings.effectSettings = EffectSettings::Low;
+                _currentSettings.useDynamicLights = false;
+            }
+            // if (model <= 540) & Android version < 8.0 throw exception or show warning
+            if (model < 540)
+            {
+                _currentSettings.resolution = ResolutionSettings::Low;
+            }
+        }
+    }
+    if (deviceName.find("Mali") != std::string::npos)
+    {
+        if (_currentSettings.effectSettings != EffectSettings::Unknown)
+            _currentSettings.effectSettings = EffectSettings::High;
+
+        if (deviceName.find("Mali-G") != std::string::npos)
+        {
+            int model = 0;
+            if (sscanf(gpuInfo.deviceName, "Mali-G%d", &model) != EOF)
+            {
+                if (_currentSettings.effectSettings == EffectSettings::Unknown)
+                    _currentSettings.effectSettings = EffectSettings::High;
+
+                if (model == 72)
+                {
+                    if (deviceName.find("Samsung") == std::string::npos)
+                    {
+                        _currentSettings.effectSettings = EffectSettings::Low;
+                    }
+                }
+                if (model < 72)
+                {
+                    // TODO: If AndroidVersion < 8.0 (API 26) then throw exception or show warning
+                    _currentSettings.effectSettings = EffectSettings::Low;
+                    _currentSettings.useDynamicLights = false;
+                }
+                if (model < 57)
+                {
+                    _currentSettings.resolution = ResolutionSettings::Low;
+                }
+
+            }
+        } else if (deviceName.find("Mali-T") != std::string::npos)
+        {
+            _currentSettings.effectSettings = EffectSettings::Low;
+            _currentSettings.useDynamicLights = false;
+            _currentSettings.resolution = ResolutionSettings::Low;
+        }
+    }
+
+    if (_currentSettings.effectSettings == EffectSettings::Unknown)
+    {
+        _currentSettings.effectSettings = EffectSettings::Low;
+        _currentSettings.useDynamicLights = false;
+
+        if (gpuInfo.limits.maxPerStageDescriptorSamplers < 100)
+        {
+            _currentSettings.resolution = ResolutionSettings::Low;
+        }
+    }
+
+    store();
 }
 
 } // namespace Chewman

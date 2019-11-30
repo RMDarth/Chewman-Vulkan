@@ -22,9 +22,10 @@ enum class ControlType
     Label,
     Container,
     Panel,
-    Slider,
+    BoxSlider,
     LevelButton,
-    DropDown
+    DropDown,
+    Slider
 };
 
 class Control
@@ -73,6 +74,7 @@ public:
     virtual glm::ivec2 getSize() const;
     virtual void setPosition(glm::ivec2 pos);
     virtual void setSize(glm::ivec2 size);
+    virtual void setTexCoords(glm::vec4 xxyy);
 
     virtual void setCustomAttribute(const std::string& name, std::string value);
     virtual std::string getCustomAttribute(const std::string& name);

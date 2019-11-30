@@ -18,7 +18,8 @@ enum class ResolutionSettings : uint8_t
 enum class EffectSettings : uint8_t
 {
     Low,
-    High
+    High,
+    Unknown
 };
 
 enum class ParticlesSettings : uint8_t
@@ -38,6 +39,13 @@ struct GraphicsSettings
     bool useDynamicLights = true;
     ParticlesSettings particleEffects = ParticlesSettings::Partial;
     EffectSettings effectSettings = EffectSettings::Low;
+
+    bool operator==(const GraphicsSettings& other)
+    {
+        return resolution == other.resolution && useShadows == other.useShadows &&
+               useDynamicLights == other.useDynamicLights && particleEffects == other.particleEffects &&
+               effectSettings == other.effectSettings;
+    }
 };
 
 std::string getResolutionText(ResolutionSettings resolutionSettings);
@@ -53,10 +61,17 @@ public:
     void setSettings(GraphicsSettings settings);
     const GraphicsSettings& getSettings() const;
 
+    bool needRestart() const;
+    void setNeedRestart(bool value = true);
+    bool changesRequireRestart(GraphicsSettings& settings);
+
     void store();
     void load();
 private:
+    void tuneSettings();
+
     GraphicsSettings _currentSettings;
+    bool _needRestart = false;
 };
 
 } // namespace Chewman

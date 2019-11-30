@@ -1,0 +1,16 @@
+{
+    "name": "SmokeParticleMaterial",
+    "vertexShaderName": "bombFireVertexShader",
+    "fragmentShaderName": "magicFragmentShader",
+    "cullFace": "None",
+    "useAlphaBlending": true,
+    "srcBlendFactor": "SrcAlpha",
+    "dstBlendFactor": "OneMinusSrcAlpha",
+    "useDepthWrite": false,
+    "textures": [
+        {
+            "samplerName": "texSampler",
+            "filename": "textures/smokeParticle.png"
+        }
+    ]
+}

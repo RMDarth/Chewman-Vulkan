@@ -18,6 +18,8 @@ struct OverlayInfo
     std::string materialName;
     uint32_t zOrder = 100;
 
+    glm::vec4 texCoord = { 0.0f, 1.0f, 0.0f, 1.0f }; // minX, maxX, minY, maxY
+
     TextInfo textInfo {};
     TextAlignment textHAlignment = TextAlignment::Center;
     TextVerticalAlignment textVAlignment = TextVerticalAlignment::Center;
@@ -29,6 +31,7 @@ struct UniformOverlayInfo
     int32_t y = 0;
     uint32_t width = 0;
     uint32_t height = 0;
+    glm::vec4 texCoord = {0.0f, 1.0f, 0.0f, 1.0f};
 };
 
 } // namespace SVE

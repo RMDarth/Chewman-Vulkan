@@ -2,8 +2,10 @@
 // Copyright (c) 2018-2019, Igor Barinov
 // Licensed under the MIT License
 #pragma once
+
 #include "DefaultEnemy.h"
 #include "Projectile.h"
+#include "Game/Level/MagicEntity.h"
 
 namespace SVE
 {
@@ -50,7 +52,10 @@ private:
 
     std::shared_ptr<SVE::MeshEntity> _teleportMesh;
     bool _teleportPSAttached = false;
+
     std::shared_ptr<SVE::ParticleSystemEntity> _teleportPS;
+    std::shared_ptr<MagicEntity> _teleportMeshPS;
+    bool _isParticlesEnabled = true;
 
     float _fireMagicRestore = 0.0;
     float _teleportMagicRestore = 6.5f;

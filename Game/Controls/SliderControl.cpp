@@ -2,63 +2,76 @@
 // Copyright (c) 2018-2019, Igor Barinov
 // Licensed under the MIT License
 #include "SliderControl.h"
+#include <string>
 
 namespace Chewman
 {
-namespace
-{
-
-void alignToZero(float& value, float deltaTime, float alignSpeed)
-{
-    if (value > 0.01)
-    {
-        value -= deltaTime * alignSpeed;
-        if (value < 0)
-            value = 0;
-    } else if (value < -0.01)
-    {
-        value += deltaTime * alignSpeed;
-        if (value > 0)
-            value = 0;
-    }
-}
-
-} // anon namespace
 
 SliderControl::SliderControl(const std::string& name, float x, float y, float width, float height, Control* parent)
-        : Control(ControlType::Slider, name, x, y, width, height, std::string(), parent)
-        , _halfWidth(_width / 2)
-        , _nextObjShift(_halfWidth + _halfWidth / 2)
+        : Control(ControlType::Slider, name, x, y, width, height, "slider/groover3.png", parent)
 {
-    setRenderOrder(50);
+    _progressBar = std::make_shared<ImageControl>(name + "ProgressBar", 0.055, 0, 0.905, 1, this);
+    _progressBar->setDefaultMaterial("slider/progress2.png");
+    _progressBar->setRenderOrder(110);
+    _progressMaxWidth = _progressBar->getSize().x;
+
+    _knot = std::make_shared<ImageControl>(name + "Knot", 0.005, 0.03, 0.09, -1, this);
+    _knot->setDefaultMaterial("slider/knot.png");
+    _knot->setRenderOrder(115);
+    _knotStartPos = _knot->getPosition().x;
+
+    setProgress(0.5f);
 }
 
-void SliderControl::update(float deltaTime)
+void SliderControl::setCustomAttribute(const std::string& name, std::string value)
 {
-    _nextObjShift = _children.front()->getSize().x + _halfWidth / 8;
-    for (auto i = 0; i < _children.size(); ++i)
+    if (name == "progress")
     {
-        int slideShift = _width/2 + i * _nextObjShift - _children[i]->getSize().x / 2; // base shift
-        slideShift -= _currentObject * _nextObjShift;
-
-        if (_isMoving)
-            slideShift += _currentShift - _startShift;
-        else
-        {
-            slideShift -= _remainShift;
-            alignToZero(_remainShift, deltaTime, _width);
-        }
-
-        _children[i]->setPosition(glm::ivec2(slideShift, (_height - _children[i]->getSize().y) / 2));
+        setProgress(std::stof(value));
     }
-    Control::update(deltaTime);
+    else
+    {
+        Control::setCustomAttribute(name, value);
+    }
+}
+
+std::string SliderControl::getCustomAttribute(const std::string& name)
+{
+    if (name == "progress")
+        return std::to_string(_progress);
+    return Control::getCustomAttribute(name);
+}
+
+void SliderControl::setVisible(bool visible)
+{
+    Control::setVisible(visible);
+    _progressBar->setVisible(visible);
+    _knot->setVisible(visible);
+}
+
+void SliderControl::setProgress(float progress)
+{
+    _progress = progress;
+
+    _progressBar->setSize({_progressMaxWidth * progress, _progressBar->getSize().y});
+    _progressBar->setTexCoords({0.0f, progress, 0.0f, 1.0f});
+
+    _knot->setPosition({_knotStartPos + _progressMaxWidth * progress, _knot->getPosition().y});
 }
 
 bool SliderControl::onMouseMove(int x, int y)
 {
-    if (isInside(x, y) && _isMoving && !_mouseTransparent)
+    if (_slidering)
     {
-        _currentShift = x;
+        auto posInside = x - _knotStartPos - _knot->getSize().x / 2 - 0.005f;
+        float progress = 0.0f;
+        if (posInside > 0)
+        {
+            progress = std::min((float)posInside / _progressMaxWidth, 1.0f);
+        }
+
+        setProgress(progress);
+
         return true;
     }
 
@@ -67,59 +80,20 @@ bool SliderControl::onMouseMove(int x, int y)
 
 bool SliderControl::onMouseDown(int x, int y)
 {
-    if (isInside(x, y) && _visible && !_mouseTransparent)
+    if (isInside(x, y) && _visible)
     {
-        _isMoving = true;
-        _startShift = x + _remainShift;
-        _remainShift = 0;
-        _currentShift = x;
+        _slidering = true;
 
         return true;
     }
+
     return false;
 }
 
 bool SliderControl::onMouseUp(int x, int y)
 {
-    if (!_visible)
-        return Control::onMouseUp(x, y);
-
-    if (_isMoving)
-    {
-        _isMoving = false;
-        _remainShift = _startShift - _currentShift;
-
-        if (fabsf(_remainShift) < _width * 0.03)
-        {
-            // just click
-            if (_children[_currentObject]->isInside(x, y))
-            {
-                std::for_each(_mouseUpHandlerList.begin(), _mouseUpHandlerList.end(),
-                              [&](IEventHandler* handler) { handler->processEvent(this, IEventHandler::MouseUp, x, y); });
-            }
-        }
-        else if (_startShift - _currentShift > _nextObjShift * 0.3f && _currentObject < _children.size() - 1)
-        {
-            // shifting to right object
-            _currentObject++;
-            _remainShift -= _nextObjShift;
-        }
-        else if (_currentShift - _startShift > _nextObjShift * 0.3f && _currentObject > 0)
-        {
-            // shifting to left object
-            _currentObject--;
-            _remainShift += _nextObjShift;
-        }
-
-        return true;
-    }
-
-    return false;
-}
-
-uint32_t SliderControl::getSelectedObject() const
-{
-    return _currentObject;
+    _slidering = false;
+    return Control::onMouseUp(x, y);
 }
 
 } // namespace Chewman

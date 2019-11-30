@@ -1,0 +1,12 @@
+{
+    "name": "BlurAllEffect",
+    "vertexShaderName": "VBlurVertexShader",
+    "fragmentShaderName": "BlurFragmentShader",
+    "cullFace": "FrontFace",
+    "textures": [
+            {
+                "samplerName": "texSampler",
+                "textureType": "ScreenQuad"
+            }
+        ]
+}

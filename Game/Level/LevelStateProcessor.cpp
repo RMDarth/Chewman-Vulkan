@@ -150,6 +150,8 @@ void LevelStateProcessor::show()
     }
     _gameMapProcessor->setVisible(true);
     _document->show();
+    if (_gameMapProcessor->getState() != GameMapState::LevelStart)
+        _counterControl->setVisible(false);
 
     std::stringstream ss;
     ss << "Level " << _progressManager.getCurrentLevel() << ": " << _gameMapProcessor->getGameMap()->name;

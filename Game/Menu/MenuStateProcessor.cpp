@@ -15,6 +15,7 @@ MenuStateProcessor::MenuStateProcessor()
     _document = std::make_unique<ControlDocument>("resources/game/GUI/startmenu.xml");
     _document->setMouseUpHandler(this);
     _document->hide();
+    updateConfigSlider();
 
     _gameMapProcessor = std::make_unique<GameMapProcessor>(Game::getInstance()->getGameMapLoader().loadMap("resources/game/levels/load.map", "load"));
     _gameMapProcessor->getGameMap()->player->setCameraFollow(false);
@@ -47,9 +48,8 @@ void MenuStateProcessor::show()
 
     camera->setYawPitchRoll({-0.411897, -0.614356, 0});
 
-    // -1.36845 20.7681 19.9432
-
     _document->show();
+    setConfigSliderVisibility(false);
 }
 
 void MenuStateProcessor::hide()
@@ -65,10 +65,13 @@ bool MenuStateProcessor::isOverlapping()
 
 void MenuStateProcessor::processEvent(Control* control, IEventHandler::EventType type, int x, int y)
 {
+    //setConfigSliderVisibility(true);
     if (type == IEventHandler::MouseUp)
     {
         if (control->getName() == "start")
         {
+            _document->hide();
+
             auto& progressManager = Game::getInstance()->getProgressManager();
             progressManager.setCurrentLevel(1);
             progressManager.setVictory(false);
@@ -78,9 +81,63 @@ void MenuStateProcessor::processEvent(Control* control, IEventHandler::EventType
         }
         if (control->getName() == "config")
         {
-            Game::getInstance()->setState(GameState::Graphics);
+            setConfigSliderVisibility(!_configPanelVisible);
+        }
+        if (control->getName() == "settings")
+        {
+            _document->hide();
+            Game::getInstance()->setState(GameState::Settings);
+        }
+        if (control->getName() == "info")
+        {
+            _document->hide();
+            Game::getInstance()->setState(GameState::Credits);
+        }
+        if (control->getName() == "score")
+        {
+            _document->hide();
+            Game::getInstance()->setState(GameState::Highscores);
         }
     }
+}
+
+void MenuStateProcessor::updateConfigSlider()
+{
+    _configPanel = _document->getControlByName("configpanel");
+    auto pos = _configPanel->getPosition();
+    auto size = _configPanel->getSize();
+    pos.y = pos.y - (size.x  * 4.0f) + (size.x  * 0.5f) ;
+    _configPanel->setPosition(pos);
+    _configPanel->setSize({size.x, size.x * 4.0f});
+    _configPanel->setRenderOrder(50);
+
+    pos.y = pos.y + (int)(size.x * 0.3f);
+    pos.x = pos.x + (int)(size.x * 0.05f);
+    auto settingsButton = _document->getControlByName("settings");
+    settingsButton->setPosition(pos);
+    auto buttonSize = settingsButton->getSize().x;
+
+    pos.y = pos.y + (int)(buttonSize * 0.9f);
+    auto soundButton = _document->getControlByName("sound");
+    soundButton->setPosition(pos);
+
+    pos.y = pos.y + (int)(buttonSize * 0.9f);
+    auto musicButton = _document->getControlByName("music");
+    musicButton->setPosition(pos);
+
+    pos.y = pos.y + (int)(buttonSize * 0.9f);
+    auto infoButton = _document->getControlByName("info");
+    infoButton->setPosition(pos);
+}
+
+void MenuStateProcessor::setConfigSliderVisibility(bool visible)
+{
+    _configPanelVisible = visible;
+    _configPanel->setVisible(visible);
+    _document->getControlByName("settings")->setVisible(visible);
+    _document->getControlByName("sound")->setVisible(visible);
+    _document->getControlByName("music")->setVisible(visible);
+    _document->getControlByName("info")->setVisible(visible);
 }
 
 } // namespace Chewman
