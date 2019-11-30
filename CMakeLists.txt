@@ -122,6 +122,8 @@ add_executable(Chewman
         SVE/VulkanWater.h
         SVE/Water.cpp
         SVE/Water.h
+        Game/Controls/BoxSliderControl.cpp
+        Game/Controls/BoxSliderControl.h
         Game/Controls/ButtonControl.cpp
         Game/Controls/ButtonControl.h
         Game/Controls/ContainerControl.cpp
@@ -143,8 +145,8 @@ add_executable(Chewman
         Game/Controls/LevelButtonControl.h
         Game/Controls/PanelControl.cpp
         Game/Controls/PanelControl.h
-        Game/Controls/BoxSliderControl.cpp
-        Game/Controls/BoxSliderControl.h
+        Game/Controls/SliderControl.cpp
+        Game/Controls/SliderControl.h
         Game/Game.cpp
         Game/Game.h
         Game/GameDefs.h
@@ -218,6 +220,8 @@ add_executable(Chewman
         Game/Menu/PauseStateProcessor.h
         Game/Menu/ScoreStateProcessor.cpp
         Game/Menu/ScoreStateProcessor.h
+        Game/Menu/SettingsStateProcessor.cpp
+        Game/Menu/SettingsStateProcessor.h
         Game/Menu/TutorialStateProcessor.cpp
         Game/Menu/TutorialStateProcessor.h
         Game/Menu/WorldSelectionStateProcessor.cpp
@@ -227,7 +231,7 @@ add_executable(Chewman
         Game/ScoresManager.cpp
         Game/ScoresManager.h
         Game/StateProcessor.cpp
-        Game/StateProcessor.h Game/Controls/SliderControl.cpp Game/Controls/SliderControl.h Game/Menu/SettingsStateProcessor.cpp Game/Menu/SettingsStateProcessor.h)
+        Game/StateProcessor.h)
 
 if (WIN32)
     target_link_libraries(Chewman mingw32 SDL2main SDL2 vulkan-1.lib VkLayer_core_validation.lib libassimp libcppfsd libtinyxml2)

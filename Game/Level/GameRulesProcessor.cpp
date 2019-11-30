@@ -141,6 +141,10 @@ void GameRulesProcessor::update(float deltaTime)
             {
                 //gameMap->eatEffectManager->addEffect(EatEffectType::Gold, mapPos);
                 playerInfo.points += 10;
+                if (gameMap->activeCoins == 0)
+                {
+                    return;
+                }
             }
             if (auto& powerUp = gameMap->mapData[mapPos.x][mapPos.y].powerUp)
             {
@@ -306,7 +310,10 @@ void GameRulesProcessor::update(float deltaTime)
                         enemy->increaseState(EnemyState::Dead);
                     }
                     else if (enemy->isStateActive(EnemyState::Vulnerable))
+                    {
+                        playerInfo.points += 10;
                         enemy->increaseState(EnemyState::Dead);
+                    }
                     else
                     {
                         enemy->attackPlayer();

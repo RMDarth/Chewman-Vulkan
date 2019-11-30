@@ -81,7 +81,6 @@ void SettingsStateProcessor::processEvent(Control* control, IEventHandler::Event
 
         auto& graphicsManager = Game::getInstance()->getGraphicsManager();
 
-        GraphicsSettings oldSettings = graphicsManager.getSettings();
         if (control->getName() == "graphicsHigh")
         {
             graphicsManager.setSettings(_highSettings);
@@ -95,6 +94,12 @@ void SettingsStateProcessor::processEvent(Control* control, IEventHandler::Event
         if (control->getName() == "graphicsLow")
         {
             graphicsManager.setSettings(_lowSettings);
+        }
+
+        if (control->getName() == "restart")
+        {
+            // TODO: Add restart logic
+            exit(0);
         }
 
         if (graphicsManager.needRestart())
