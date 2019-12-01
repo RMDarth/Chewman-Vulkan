@@ -384,11 +384,11 @@ void buildLevelMeshes(const GameMap& level, BlockMeshGenerator& meshGenerator, c
     }
 
     auto meshSettingsT = meshGenerator.CombineMeshes("MapT" + suffix, top);
-    meshSettingsT.materialName = "CeilingNormals";
+    meshSettingsT.materialName = "CeilingNormals1";
     auto meshSettingsB = meshGenerator.CombineMeshes("MapB" + suffix, bottom);
-    meshSettingsB.materialName = "FloorParallax";
+    meshSettingsB.materialName = "FloorParallax1";
     auto meshSettingsV = meshGenerator.CombineMeshes("MapV" + suffix, vertical);
-    meshSettingsV.materialName = "WallParallax";
+    meshSettingsV.materialName = "WallParallax1";
 
     auto* engine = SVE::Engine::getInstance();
 

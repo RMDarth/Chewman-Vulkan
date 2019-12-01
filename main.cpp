@@ -88,6 +88,7 @@ int runGame()
         // load resources
         engine->getResourceManager()->loadFolder("resources/shaders");
         engine->getResourceManager()->loadFolder("resources/materials");
+        engine->getResourceManager()->loadFolder("resources/materials/skins");
         engine->getResourceManager()->loadFolder("resources/models");
         engine->getResourceManager()->loadFolder("resources/fonts");
         engine->getResourceManager()->loadFolder("resources");
