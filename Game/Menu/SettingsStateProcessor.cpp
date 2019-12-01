@@ -3,6 +3,7 @@
 // Licensed under the MIT License
 #include "SettingsStateProcessor.h"
 #include "Game/Controls/ControlDocument.h"
+#include "Game/SystemApi.h"
 
 #include <Game/Game.h>
 
@@ -98,8 +99,7 @@ void SettingsStateProcessor::processEvent(Control* control, IEventHandler::Event
 
         if (control->getName() == "restart")
         {
-            // TODO: Add restart logic
-            exit(0);
+            System::restartApp();
         }
 
         if (graphicsManager.needRestart())

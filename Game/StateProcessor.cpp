@@ -27,6 +27,14 @@ void StateProcessor::processDocument(const SDL_Event& event, ControlDocument* co
     }
 }
 
+bool StateProcessor::isWideScreen()
+{
+    auto windowSize = SVE::Engine::getInstance()->getRenderWindowSize();
+    if ((float)windowSize.x / windowSize.y < 1.4)
+        return false;
+    return true;
+}
+
 std::string timeToString(uint32_t time)
 {
     std::stringstream stream;

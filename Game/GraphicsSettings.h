@@ -3,6 +3,7 @@
 // Licensed under the MIT License
 #pragma once
 #include <string>
+#include <memory>
 
 namespace Chewman
 {
@@ -55,7 +56,7 @@ std::string getParticlesText(ParticlesSettings settings);
 class GraphicsManager
 {
 public:
-    GraphicsManager();
+    static GraphicsManager& getInstance();
     GraphicsManager(const GraphicsManager&) = delete;
 
     void setSettings(GraphicsSettings settings);
@@ -69,6 +70,10 @@ public:
     void load();
 private:
     void tuneSettings();
+
+private:
+    GraphicsManager();
+    static std::unique_ptr<GraphicsManager> _instance;
 
     GraphicsSettings _currentSettings;
     bool _needRestart = false;

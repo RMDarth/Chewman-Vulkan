@@ -45,7 +45,7 @@ private:
 
     GameState _gameState = GameState::MainMenu;
     ProgressManager _progressManager;
-    GraphicsManager _graphicsManager;
+    GraphicsManager& _graphicsManager;
     ScoresManager _scoresManager;
     std::vector<std::string> _tutorialText;
     std::unique_ptr<GameMapLoader> _mapLoader;

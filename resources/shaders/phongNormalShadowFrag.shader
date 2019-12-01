@@ -9,7 +9,6 @@
     ],
     "uniformList": [
         { "uniformType": "CameraPosition" },
-        { "uniformType": "InverseModelMatrix" },
         { "uniformType": "LightDirectional" },
         { "uniformType": "LightSpot" },
         { "uniformType": "LightLine" },

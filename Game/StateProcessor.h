@@ -26,6 +26,9 @@ public:
     virtual bool isOverlapping() = 0;
 
     static void processDocument(const SDL_Event& event, ControlDocument* controlDocument);
+
+protected:
+    static bool isWideScreen();
 };
 
 std::string timeToString(uint32_t time);

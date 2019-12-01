@@ -10,7 +10,7 @@ namespace Chewman
 {
 
 HighscoresStateProcessor::HighscoresStateProcessor()
-        : _document(std::make_unique<ControlDocument>("resources/game/GUI/highscores.xml"))
+        : _document(std::make_unique<ControlDocument>(isWideScreen() ? "resources/game/GUI/highscoresWide.xml" : "resources/game/GUI/highscores.xml"))
 {
     _document->setMouseUpHandler(this);
     _document->raisePriority(120);

@@ -1,5 +1,5 @@
 <document>
-    <Panel name="panel" alignment="center" y="0.15" width="-1.84" height="0.6" image="windows/window_wide.png">
+    <Panel name="panel" alignment="center" y="0.15" width="-1.84" height="0.7" image="windows/window_wide.png">
         <Label name="windowName" text="Tutorial" alignment="center" y = "0.045" width="0.5" height="0.06" />
 
         <Label name="text1" text="You are treasure hunting demon." x="0.02" y="0.35" width="0.96" height="0.08"/>
@@ -7,5 +7,5 @@
         <Label name="text3" text="Control demon by swiping up, down," x="0.02" y="0.55" width="0.96" height="0.08"/>
         <Label name="text4" text="left or right." x="0.02" y="0.65" width="0.96" height="0.08"/>
     </Panel>
-    <Button name="continue" text="" y="0.634" width="-1" height="0.2"  alignment="center"  image="buttons/play.png" hoverimage="buttons/play_hover.png" pressedimage="buttons/play_pressed.png" />
+    <Button name="continue" text="" y="0.734" width="-1" height="0.2"  alignment="center"  image="buttons/play.png" hoverimage="buttons/play_hover.png" pressedimage="buttons/play_pressed.png" />
 </document>

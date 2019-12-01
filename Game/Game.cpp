@@ -104,6 +104,7 @@ std::vector<std::string>& Game::getTutorialData()
 
 Game::Game()
     : _mapLoader(std::make_unique<GameMapLoader>())
+    , _graphicsManager(GraphicsManager::getInstance())
 {
 }
 
