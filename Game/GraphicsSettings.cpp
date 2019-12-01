@@ -243,7 +243,7 @@ void GraphicsManager::tuneSettings()
             _currentSettings.resolution = ResolutionSettings::Low;
         }
     }
-    
+
     store();
 }
 
