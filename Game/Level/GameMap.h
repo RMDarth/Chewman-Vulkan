@@ -37,6 +37,7 @@ struct GameMap
 
     uint16_t style;
     uint16_t waterStyle;
+    uint16_t treasureType;
     bool isNight;
 
     std::shared_ptr<Player> player;

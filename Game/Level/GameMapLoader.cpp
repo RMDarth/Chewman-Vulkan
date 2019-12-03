@@ -139,7 +139,7 @@ std::shared_ptr<GameMap> GameMapLoader::loadMap(const std::string& filename, con
     fin >> gameMap->width >> gameMap->height;
     fin >> gameMap->style >> gameMap->waterStyle;
     uint16_t light;
-    fin >> light;
+    fin >> light >> gameMap->treasureType;
     gameMap->isNight = light == 2;
 
     gameMap->mapNode = SVE::Engine::getInstance()->getSceneManager()->createSceneNode();
@@ -713,8 +713,8 @@ Coin* GameMapLoader::createCoin(GameMap& level, int row, int column)
 
     coinNode->setNodeTransformation(transform);
     level.mapNode->attachSceneNode(coinNode);
-    auto coinMesh = std::make_shared<SVE::MeshEntity>("coin");
-    coinMesh->setMaterial("CoinMaterial");
+    auto coinMesh = std::make_shared<SVE::MeshEntity>(level.treasureType == 1 ? "coin" : "gem");
+    coinMesh->setMaterial(level.treasureType == 1 ? "CoinMaterial" : "GemMaterial");
     coinNode->attachEntity(coinMesh);
 
     coin.rootNode = std::move(coinNode);

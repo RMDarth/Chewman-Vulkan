@@ -7,9 +7,9 @@
 A cross-platform 3D Pacman-style game written in pure Vulkan and C++, with minimal dependencies. 
 Main dependencies: SDL (windows initialization and controls) and assimp (3D assets loading).
 
-Game development is currently in progress (current version is 0.8a).
+Game development is currently in progress (current version is 0.8-a).
 
-![Screenshot](https://github.com/RMDarth/Chewman-Vulkan/blob/master/Screenshot_20190826.png?raw=true)
+[![Screenshot](https://github.com/RMDarth/Chewman-Vulkan/blob/master/Screenshot_20190826.png?raw=true)](https://youtu.be/kNlpxXPu8mA)
 
 ## Technology
 Game is using Vulkan API/SDK for graphics, SDL for windows creation and controls, 

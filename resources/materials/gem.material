@@ -1,0 +1,25 @@
+{
+    "name": "GemMaterial",
+    "vertexShaderName": "phongShadowInstancedVertexShader",
+    "fragmentShaderName": "phongShadowEmitFragmentShader",
+    "passType": "ScreenQuadMRTPass",
+    "useInstancing": true,
+    "instanceMaxCount": 20000,
+    "cullFace": "BackFace",
+    "textures": [
+        {
+            "samplerName": "diffuseTex",
+            "textureType": "ImageFile",
+            "filename": "textures/gem/gemsandcrystals.png"
+        },
+        {
+            "samplerName": "emitTex",
+            "textureType": "ImageFile",
+            "filename": "textures/gem/gemsandcrystals.png"
+        },
+        {
+            "samplerName": "directShadowTex",
+            "textureType": "ShadowMapDirect"
+        }
+    ]
+}
