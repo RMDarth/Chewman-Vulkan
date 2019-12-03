@@ -35,6 +35,10 @@ struct GameMap
     std::vector<std::string> tutorialText;
     bool hasTutorial;
 
+    uint16_t style;
+    uint16_t waterStyle;
+    bool isNight;
+
     std::shared_ptr<Player> player;
     std::vector<Gargoyle> gargoyles;
     std::vector<Teleport> teleports;

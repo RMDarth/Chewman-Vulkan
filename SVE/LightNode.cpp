@@ -13,6 +13,8 @@
 namespace SVE
 {
 
+constexpr size_t MaxPointLight = 20;
+
 LightNode::LightNode(LightSettings lightSettings)
     : _lightSettings(std::move(lightSettings))
 {
@@ -90,7 +92,7 @@ void LightNode::fillUniformData(UniformData& data, uint32_t lightNum, bool asVie
                 pointLight.quadratic = _lightSettings.quadAtten;
 
                 data.pointLightList.push_back(pointLight);
-                data.lightInfo.pointLightNum = data.pointLightList.size();
+                data.lightInfo.pointLightNum = std::min(data.pointLightList.size(), MaxPointLight);
             }
             case LightType::SunLight:
             {

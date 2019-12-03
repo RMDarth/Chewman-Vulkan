@@ -1,0 +1,16 @@
+{
+    "name": "AcidMaterial",
+    "vertexShaderName": "lavaVertexShader",
+    "fragmentShaderName": "acidFragmentShader",
+    "passType": "ScreenQuadMRTPass",
+    "textures": [
+        {
+            "samplerName": "mainSampler",
+            "filename": "textures/water_tex.png"
+        },
+        {
+            "samplerName": "reflectSampler",
+            "filename": "textures/water_glow.png"
+        }
+    ]
+}

@@ -7,17 +7,17 @@
         {
             "samplerName": "diffuseTex",
             "textureType": "ImageFile",
-            "filename": "../textures/level/floor1.png"
+            "filename": "../textures/level/floor1.jpg"
         },
         {
             "samplerName": "normalTex",
             "textureType": "ImageFile",
-            "filename": "../textures/level/floorNormal1.png"
+            "filename": "../textures/level/floorNormals1.jpg"
         },
         {
             "samplerName": "depthTex",
             "textureType": "ImageFile",
-            "filename": "../textures/level/floorDisp1.png"
+            "filename": "../textures/level/floorDisp1.jpg"
         },
         {
             "samplerName": "directShadowTex",

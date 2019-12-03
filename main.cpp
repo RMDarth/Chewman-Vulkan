@@ -115,7 +115,7 @@ int runGame()
         // configure light
         auto sunLight = engine->getSceneManager()->getLightManager()->getDirectionLight();
         sunLight->setNodeTransformation(
-                glm::translate(glm::mat4(1), glm::vec3(80, 80, -80)));
+                glm::translate(glm::mat4(1), glm::vec3(-20, 80, 80)));
 
         // create camera
         camera->setNearFarPlane(0.1f, 100.0f);

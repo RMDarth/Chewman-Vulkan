@@ -137,9 +137,10 @@ std::shared_ptr<GameMap> GameMapLoader::loadMap(const std::string& filename, con
 
     std::stringstream fin(SVE::Engine::getInstance()->getResourceManager()->loadFileContent(filename));
     fin >> gameMap->width >> gameMap->height;
-
-    uint8_t style, waterStyle;
-    fin >> style >> waterStyle;
+    fin >> gameMap->style >> gameMap->waterStyle;
+    uint16_t light;
+    fin >> light;
+    gameMap->isNight = light == 2;
 
     gameMap->mapNode = SVE::Engine::getInstance()->getSceneManager()->createSceneNode();
     gameMap->upperLevelMeshNode = SVE::Engine::getInstance()->getSceneManager()->createSceneNode();
@@ -162,8 +163,8 @@ std::shared_ptr<GameMap> GameMapLoader::loadMap(const std::string& filename, con
         for (auto i = 0; i < 4; ++i)
         {
             fin.getline(line, 90);
-            gameMap->tutorialText.push_back(std::string(line));
-            tutorialData.push_back(line);
+            gameMap->tutorialText.emplace_back(line);
+            tutorialData.emplace_back(line);
         }
         gameMap->hasTutorial = true;
     } else {
@@ -383,12 +384,16 @@ void buildLevelMeshes(const GameMap& level, BlockMeshGenerator& meshGenerator, c
         }
     }
 
+    auto styleStr = std::to_string(level.style);
     auto meshSettingsT = meshGenerator.CombineMeshes("MapT" + suffix, top);
-    meshSettingsT.materialName = "CeilingNormals1";
+    meshSettingsT.materialName = "CeilingNormals" + styleStr;
     auto meshSettingsB = meshGenerator.CombineMeshes("MapB" + suffix, bottom);
-    meshSettingsB.materialName = "FloorParallax1";
+    if (level.style == 4)
+        meshSettingsB.materialName = "FloorNormals4";
+    else
+        meshSettingsB.materialName = "FloorParallax" + styleStr;
     auto meshSettingsV = meshGenerator.CombineMeshes("MapV" + suffix, vertical);
-    meshSettingsV.materialName = "WallParallax1";
+    meshSettingsV.materialName = "WallParallax" + styleStr;
 
     auto* engine = SVE::Engine::getInstance();
 
@@ -736,8 +741,22 @@ void GameMapLoader::createLava(GameMap& level, const std::string& suffix) const
             glm::translate(glm::mat4(1), glm::vec3((level.width - 1) * CellSize * 0.5f, -0.5f, -((level.height - 1) * CellSize * 0.5f))));
     level.mapNode->attachSceneNode(lavaNode);
     std::shared_ptr<SVE::MeshEntity> lavaEntity = std::make_shared<SVE::MeshEntity>("LiquidMesh" + suffix);
-    lavaEntity->setMaterial("LavaMaterial");
+    switch (level.waterStyle)
+    {
+        case 1:
+            lavaEntity->setMaterial("LavaMaterial");
+            break;
+        case 2:
+            lavaEntity->setMaterial("WaterMaterial");
+            break;
+        case 3:
+            lavaEntity->setMaterial("AcidMaterial");
+            break;
+        default:
+            lavaEntity->setMaterial("LavaMaterial");
+    }
     lavaEntity->setCastShadows(false);
+    lavaEntity->getMaterialInfo()->ambient = {0.5f, 0.5f, 0.5f, 1.0f};
     lavaNode->attachEntity(lavaEntity);
 
     level.lavaEntity = std::move(lavaEntity);

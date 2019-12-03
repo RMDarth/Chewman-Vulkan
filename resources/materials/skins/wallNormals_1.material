@@ -7,12 +7,12 @@
         {
             "samplerName": "diffuseTex",
             "textureType": "ImageFile",
-            "filename": "../textures/level/wall1.png"
+            "filename": "../textures/level/wall1.jpg"
         },
         {
             "samplerName": "normalTex",
             "textureType": "ImageFile",
-            "filename": "../textures/level/wallNormal1.png"
+            "filename": "../textures/level/wallNormals1.jpg"
         },
         {
             "samplerName": "directShadowTex",
