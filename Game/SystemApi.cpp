@@ -2,7 +2,7 @@
 // Copyright (c) 2018-2019, Igor Barinov
 // Licensed under the MIT License
 #include "SystemApi.h"
-#include <SDL.h>
+#include <SDL2/SDL.h>
 #ifdef __ANDROID__
 #include <jni.h>
 #endif

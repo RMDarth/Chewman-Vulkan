@@ -1,5 +1,5 @@
 {
-    "name": "SmokeParticleMaterial",
+    "name": "SmokeMeshParticleMaterial",
     "vertexShaderName": "bombFireVertexShader",
     "fragmentShaderName": "magicFragmentShader",
     "cullFace": "None",

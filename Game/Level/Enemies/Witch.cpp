@@ -18,7 +18,7 @@ namespace Chewman
 {
 
 Witch::Witch(GameMap* map, glm::ivec2 startPos)
-    : DefaultEnemy(map, startPos, EnemyType::Knight,
+    : DefaultEnemy(map, startPos, EnemyType::Witch,
                    "witch", "WitchMaterial", 95)
 {
     createMaterials();

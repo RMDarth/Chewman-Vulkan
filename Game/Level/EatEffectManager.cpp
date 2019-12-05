@@ -38,7 +38,7 @@ EatEffectManager::EatEffectManager(Chewman::GameMap *gameMap)
             info.maxParticles = 600;
             info.percent = 0.0f;
             info.halfSize = 0.6f;
-            node->attachEntity(std::make_shared<BombFireEntity>("SmokeParticleMaterial", info));
+            node->attachEntity(std::make_shared<BombFireEntity>("SmokeMeshParticleMaterial", info));
         }
         return node;
     };
