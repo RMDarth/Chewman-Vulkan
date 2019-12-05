@@ -48,8 +48,6 @@ public:
     uint32_t registerSound(const std::string& sound, bool looped = false)
     {
         // Ogg loading code is based on http://github.com/tilkinsc
-
-        ALenum error = 0;
         ALuint buffer = 0;
         FILE* fp = nullptr;
         OggVorbis_File vf {};
@@ -68,7 +66,7 @@ public:
 
         alGenBuffers(1, &buffer);
 
-        if(ov_open_callbacks(fp, &vf, NULL, 0, OV_CALLBACKS_NOCLOSE) < 0)
+        if(ov_open_callbacks(fp, &vf, nullptr, 0, OV_CALLBACKS_NOCLOSE) < 0)
         {
             std::cerr << "Ogg sound file is not valid: " << sound << std::endl;
             fclose(fp);
@@ -81,7 +79,7 @@ public:
         size_t data_len = ov_pcm_total(&vf, -1) * vi->channels * 2;
         bufferData.resize(data_len);
 
-        for (size_t size = 0, offset = 0, sel = 0;
+        for (long size = 0, offset = 0, sel = 0;
              (size = ov_read(&vf, (char*) bufferData.data() + offset, 4096, 0, sizeof(int16_t), 1, (int*) &sel)) != 0;
              offset += size) {
             if(size < 0)
@@ -146,7 +144,7 @@ OpenALProcessor* OpenALProcessor::_instance = nullptr;
 class OpenALSound : public Sound
 {
 public:
-    OpenALSound(uint32_t id)
+    explicit OpenALSound(uint32_t id)
     {
         _id = id;
     }
