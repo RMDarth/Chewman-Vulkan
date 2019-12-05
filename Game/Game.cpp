@@ -97,6 +97,11 @@ GameMapLoader& Game::getGameMapLoader()
     return *_mapLoader;
 }
 
+GameSoundsManager& Game::getSoundsManager()
+{
+    return _soundsManager;
+}
+
 std::vector<std::string>& Game::getTutorialData()
 {
     return _tutorialText;
@@ -124,6 +129,5 @@ void Game::initStates()
 
     _stateProcessors[_gameState]->show();
 }
-
 
 } // namespace Chewman

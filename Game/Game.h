@@ -10,6 +10,7 @@
 #include "ProgressManager.h"
 #include "GraphicsSettings.h"
 #include "ScoresManager.h"
+#include "GameSoundsManager.h"
 
 union SDL_Event;
 
@@ -34,6 +35,7 @@ public:
     GraphicsManager& getGraphicsManager();
     ScoresManager& getScoresManager();
     GameMapLoader& getGameMapLoader();
+    GameSoundsManager& getSoundsManager();
     std::vector<std::string>& getTutorialData();
 
 private:
@@ -46,6 +48,7 @@ private:
     GameState _gameState = GameState::MainMenu;
     ProgressManager _progressManager;
     GraphicsManager& _graphicsManager;
+    GameSoundsManager _soundsManager;
     ScoresManager _scoresManager;
     std::vector<std::string> _tutorialText;
     std::unique_ptr<GameMapLoader> _mapLoader;

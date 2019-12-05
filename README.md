@@ -5,7 +5,10 @@
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/a631478818d7470daa422278959e6c99)](https://www.codacy.com/manual/RMDarth/Chewman-Vulkan?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=RMDarth/Chewman-Vulkan&amp;utm_campaign=Badge_Grade)
 
 A cross-platform 3D Pacman-style game written in pure Vulkan and C++, with minimal dependencies. 
-Main dependencies: SDL (windows initialization and controls) and assimp (3D assets loading).
+Main dependencies: SDL2 (windows initialization and controls) and assimp (3D assets loading).
+
+Desktop build also uses OpenAL and Ogg Vorbis for audio, and cppfs for filesystem functions (Android
+build has all those functions in Android SDK).
 
 Game development is currently in progress (current version is 0.8-a).
 

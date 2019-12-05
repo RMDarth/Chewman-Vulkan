@@ -150,6 +150,8 @@ add_executable(Chewman
         Game/Game.cpp
         Game/Game.h
         Game/GameDefs.h
+        Game/GameSoundsManager.cpp
+        Game/GameSoundsManager.h
         Game/GraphicsSettings.cpp
         Game/GraphicsSettings.h
         Game/Level/BlockMeshGenerator.cpp
@@ -230,13 +232,15 @@ add_executable(Chewman
         Game/ProgressManager.h
         Game/ScoresManager.cpp
         Game/ScoresManager.h
+        Game/SoundSystem.h
+        Game/SoundSystemDesktop.cpp
         Game/StateProcessor.cpp
         Game/StateProcessor.h
         Game/SystemApi.h
         Game/SystemApi.cpp)
 
 if (WIN32)
-    target_link_libraries(Chewman mingw32 SDL2main SDL2 vulkan-1.lib VkLayer_core_validation.lib libassimp libcppfsd libtinyxml2)
+    target_link_libraries(Chewman mingw32 SDL2main SDL2 vulkan-1.lib VkLayer_core_validation.lib libassimp libcppfsd libtinyxml2 libopenal libogg libvorbis libvorbisfile)
 endif(WIN32)
 
 if (UNIX)
@@ -252,5 +256,14 @@ if (UNIX)
     find_package(TinyXML2 REQUIRED)
     include_directories(${TinyXML2_INCLUDE_DIRS})
 
-    target_link_libraries(Chewman ${SDL2_LIBRARIES} assimp cppfs vulkan tinyxml2)
+    find_package(OpenAL REQUIRED)
+    include_directories(${OpenAL_INCLUDE_DIRS})
+
+    find_package(Ogg REQUIRED)
+    include_directories(${Ogg_INCLUDE_DIRS})
+
+    find_package(Vorbis REQUIRED)
+    include_directories(${Vorbis_INCLUDE_DIRS})
+
+    target_link_libraries(Chewman ${SDL2_LIBRARIES} assimp cppfs vulkan tinyxml2 openal ogg vorbis vorbisfile)
 endif(UNIX)
