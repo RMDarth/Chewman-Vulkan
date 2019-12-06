@@ -49,6 +49,7 @@ void MenuStateProcessor::show()
     camera->setYawPitchRoll({-0.411897, -0.614356, 0});
 
     _document->show();
+    updateSoundButtons();
     setConfigSliderVisibility(false);
 }
 
@@ -98,6 +99,20 @@ void MenuStateProcessor::processEvent(Control* control, IEventHandler::EventType
             _document->hide();
             Game::getInstance()->setState(GameState::Highscores);
         }
+        if (control->getName() == "sound")
+        {
+            auto& soundManager = Game::getInstance()->getSoundsManager();
+            Game::getInstance()->getSoundsManager().setSoundEnabled(!soundManager.isSoundEnabled());
+            updateSoundButtons();
+            soundManager.save();
+        }
+        if (control->getName() == "music")
+        {
+            auto& soundManager = Game::getInstance()->getSoundsManager();
+            soundManager.setMusicEnabled(!soundManager.isMusicEnabled());
+            updateSoundButtons();
+            soundManager.save();
+        }
     }
 }
 
@@ -138,6 +153,15 @@ void MenuStateProcessor::setConfigSliderVisibility(bool visible)
     _document->getControlByName("sound")->setVisible(visible);
     _document->getControlByName("music")->setVisible(visible);
     _document->getControlByName("info")->setVisible(visible);
+}
+
+void MenuStateProcessor::updateSoundButtons()
+{
+    auto& soundManager = Game::getInstance()->getSoundsManager();
+    _document->getControlByName("sound")->setDefaultMaterial(soundManager.isSoundEnabled() ? "buttons/Sound.png" : "buttons/NoSound.png");
+    _document->getControlByName("sound")->setHoverMaterial(soundManager.isSoundEnabled() ? "buttons/Sound.png" : "buttons/NoSound.png");
+    _document->getControlByName("music")->setDefaultMaterial(soundManager.isMusicEnabled() ? "buttons/Music.png" : "buttons/NoMusic.png");
+    _document->getControlByName("music")->setHoverMaterial(soundManager.isMusicEnabled() ? "buttons/Music.png" : "buttons/NoMusic.png");
 }
 
 } // namespace Chewman

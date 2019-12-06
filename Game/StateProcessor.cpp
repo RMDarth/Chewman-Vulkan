@@ -5,8 +5,6 @@
 #include "Game/Controls/ControlDocument.h"
 
 #include <SDL2/SDL_events.h>
-#include <sstream>
-#include <iomanip>
 
 namespace Chewman
 {
@@ -33,13 +31,6 @@ bool StateProcessor::isWideScreen()
     if ((float)windowSize.x / windowSize.y < 1.4)
         return false;
     return true;
-}
-
-std::string timeToString(uint32_t time)
-{
-    std::stringstream stream;
-    stream << time / 60 << ":" << std::setfill('0') << std::setw(2) << time % 60;
-    return stream.str();
 }
 
 } // namespace Chewman

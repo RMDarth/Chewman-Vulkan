@@ -139,7 +139,7 @@ void GameRulesProcessor::update(float deltaTime)
             auto mapPos = mapTraveller->getMapPosition();
             if (eatCoin(mapPos))
             {
-                Game::getInstance()->getSoundsManager().PlaySound(SoundType::ChewCoin);
+                Game::getInstance()->getSoundsManager().playSound(SoundType::ChewCoin);
                 //gameMap->eatEffectManager->addEffect(EatEffectType::Gold, mapPos);
                 playerInfo.points += 10;
                 if (gameMap->activeCoins == 0)

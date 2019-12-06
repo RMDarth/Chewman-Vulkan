@@ -72,6 +72,11 @@ bool SliderControl::onMouseMove(int x, int y)
 
         setProgress(progress);
 
+        std::for_each(_mouseMoveHandlerList.begin(), _mouseMoveHandlerList.end(),
+                      [&](IEventHandler* handler) {
+                          handler->processEvent(this, IEventHandler::MouseMove, x, y);
+                      });
+
         return true;
     }
 
@@ -84,6 +89,11 @@ bool SliderControl::onMouseDown(int x, int y)
     {
         _slidering = true;
 
+        std::for_each(_mouseMoveHandlerList.begin(), _mouseMoveHandlerList.end(),
+                      [&](IEventHandler* handler) {
+                          handler->processEvent(this, IEventHandler::MouseDown, x, y);
+                      });
+
         return true;
     }
 
@@ -92,8 +102,17 @@ bool SliderControl::onMouseDown(int x, int y)
 
 bool SliderControl::onMouseUp(int x, int y)
 {
-    _slidering = false;
-    return Control::onMouseUp(x, y);
+    if (_slidering)
+    {
+        _slidering = false;
+
+        std::for_each(_mouseMoveHandlerList.begin(), _mouseMoveHandlerList.end(),
+                      [&](IEventHandler* handler) {
+                          handler->processEvent(this, IEventHandler::MouseUp, x, y);
+                      });
+
+        return true;
+    }
 }
 
 } // namespace Chewman

@@ -117,6 +117,11 @@ public:
         alSourceStop(id);
     }
 
+    void setVolume(uint32_t id, float value)
+    {
+        alSourcef(id, AL_GAIN, value);
+    }
+
 private:
     static OpenALProcessor* _instance;
 
@@ -149,14 +154,19 @@ public:
         _id = id;
     }
 
-    void Play() override
+    void play() override
     {
         OpenALProcessor::getInstance()->playSound(_id);
     }
 
-    void Stop() override
+    void stop() override
     {
         OpenALProcessor::getInstance()->stopSound(_id);
+    }
+
+    void setVolume(float volume) override
+    {
+        OpenALProcessor::getInstance()->setVolume(_id, volume);
     }
 
 private:
@@ -197,14 +207,26 @@ void SoundSystem::initBackgroundMusic(const std::string& filename)
 
 void SoundSystem::startBackgroundMusic()
 {
-    if (_bgm != nullptr)
-        _bgm->Play();
+    if (_bgm != nullptr && !_isBgmPlaying)
+    {
+        _bgm->play();
+        _isBgmPlaying = true;
+    }
 }
 
 void SoundSystem::stopBackgroundMusic()
 {
     if (_bgm != nullptr)
-        _bgm->Stop();
+    {
+        _bgm->stop();
+        _isBgmPlaying = false;
+    }
+}
+
+void SoundSystem::setBackgroundMusicVolume(float volume)
+{
+    if (_bgm != nullptr)
+        _bgm->setVolume(volume);
 }
 
 } // namespace Chewman

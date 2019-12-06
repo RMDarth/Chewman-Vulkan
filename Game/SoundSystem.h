@@ -10,8 +10,9 @@ namespace Chewman
 class Sound
 {
 public:
-    virtual void Play() = 0;
-    virtual void Stop() = 0;
+    virtual void play() = 0;
+    virtual void stop() = 0;
+    virtual void setVolume(float volume) = 0;
 };
 
 class SoundSystem
@@ -27,10 +28,12 @@ public:
     void initBackgroundMusic(const std::string& filename);
     void startBackgroundMusic();
     void stopBackgroundMusic();
+    void setBackgroundMusicVolume(float volume);
 
 private:
     static SoundSystem* _instance;
     std::shared_ptr<Sound> _bgm;
+    bool _isBgmPlaying = false;
 
     SoundSystem();
 };

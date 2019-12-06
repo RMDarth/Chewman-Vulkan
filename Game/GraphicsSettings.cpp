@@ -6,6 +6,7 @@
 #include <SVE/VulkanInstance.h>
 #include "GraphicsSettings.h"
 #include "SystemApi.h"
+#include "Utils.h"
 #include "SVE/Engine.h"
 #include "SVE/SceneManager.h"
 #include "SVE/LightManager.h"
@@ -13,19 +14,8 @@
 
 namespace Chewman
 {
-namespace
-{
 
-std::string getSettingsPath()
-{
-    auto settingsPath = SVE::Engine::getInstance()->getResourceManager()->getSavePath();
-    if (settingsPath.back() != '/' || settingsPath.back() != '\\')
-        settingsPath.push_back('/');
-    settingsPath += "settings.dat";
-    return settingsPath;
-}
-
-} // namespace
+const std::string graphicsSettingsFile = "settings.dat";
 
 std::string getResolutionText(ResolutionSettings resolutionSettings)
 {
@@ -124,7 +114,7 @@ void GraphicsManager::setNeedRestart(bool value)
 
 void GraphicsManager::store()
 {
-    std::ofstream fout(getSettingsPath());
+    std::ofstream fout(Utils::getSettingsPath(graphicsSettingsFile));
     if (!fout)
     {
         throw SVE::VulkanException("Can't save settings file");
@@ -136,7 +126,7 @@ void GraphicsManager::store()
 
 void GraphicsManager::load()
 {
-    std::ifstream fin(getSettingsPath());
+    std::ifstream fin(Utils::getSettingsPath(graphicsSettingsFile));
     if (!fin)
     {
         // Load file doesn't exist

@@ -18,7 +18,10 @@ SettingsStateProcessor::SettingsStateProcessor()
         : _document(std::make_unique<ControlDocument>("resources/game/GUI/settings.xml"))
 {
     _document->setMouseUpHandler(this);
-
+    _document->getControlByName("soundSlider")->setMouseMoveHandler(this);
+    _document->getControlByName("musicSlider")->setMouseMoveHandler(this);
+    _document->getControlByName("soundSlider")->setMouseDownHandler(this);
+    _document->getControlByName("musicSlider")->setMouseDownHandler(this);
     _document->hide();
 }
 
@@ -27,6 +30,18 @@ SettingsStateProcessor::~SettingsStateProcessor() = default;
 GameState SettingsStateProcessor::update(float deltaTime)
 {
     _document->update(deltaTime);
+
+    if (_playSound)
+    {
+        if (_soundDelay >= 0)
+        {
+            _soundDelay -= deltaTime;
+        } else {
+            Game::getInstance()->getSoundsManager().playSound(SoundType::ChewCoin);
+            _soundDelay = 0.3f;
+        }
+    }
+
     return GameState::Settings;
 }
 
@@ -38,6 +53,10 @@ void SettingsStateProcessor::processInput(const SDL_Event& event)
 void SettingsStateProcessor::show()
 {
     _document->show();
+
+    auto& soundManager = Game::getInstance()->getSoundsManager();
+    _document->getControlByName("soundSlider")->setCustomAttribute("progress", std::to_string(soundManager.getSoundVolume()));
+    _document->getControlByName("musicSlider")->setCustomAttribute("progress", std::to_string(soundManager.getMusicVolume()));
 
     bool needRestart = Game::getInstance()->getGraphicsManager().needRestart();
     _document->getControlByName("restartInfo")->setVisible(needRestart);
@@ -51,6 +70,7 @@ void SettingsStateProcessor::hide()
     _document->hide();
     _document->getControlByName("restartInfo")->setVisible(false);
     _document->getControlByName("restart")->setVisible(false);
+    Game::getInstance()->getSoundsManager().save();
 }
 
 bool SettingsStateProcessor::isOverlapping()
@@ -86,20 +106,21 @@ void SettingsStateProcessor::processEvent(Control* control, IEventHandler::Event
         {
             graphicsManager.setSettings(_highSettings);
         }
-
-        if (control->getName() == "graphicsMed")
+        else if (control->getName() == "graphicsMed")
         {
             graphicsManager.setSettings(_medSettings);
         }
-
-        if (control->getName() == "graphicsLow")
+        else if (control->getName() == "graphicsLow")
         {
             graphicsManager.setSettings(_lowSettings);
         }
-
-        if (control->getName() == "restart")
+        else if (control->getName() == "restart")
         {
             System::restartApp();
+        }
+        else if (control->getName() == "soundSlider")
+        {
+            _playSound = false;
         }
 
         if (graphicsManager.needRestart())
@@ -109,6 +130,26 @@ void SettingsStateProcessor::processEvent(Control* control, IEventHandler::Event
                 _document->getControlByName("restartInfo")->setVisible(true);
                 _document->getControlByName("restart")->setVisible(true);
             }
+        }
+    }
+    if (type == IEventHandler::MouseDown)
+    {
+        if (control->getName() == "soundSlider")
+        {
+            _playSound = true;
+        }
+    }
+    if (type == IEventHandler::MouseMove)
+    {
+        auto& soundManager = Game::getInstance()->getSoundsManager();
+        if (control->getName() == "soundSlider")
+        {
+            auto progress = std::stof(control->getCustomAttribute("progress"));
+            soundManager.setSoundVolume(progress);
+        } else if(control->getName() == "musicSlider")
+        {
+            auto progress = std::stof(control->getCustomAttribute("progress"));
+            soundManager.setMusicVolume(progress);
         }
     }
 }

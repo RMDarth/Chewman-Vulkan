@@ -32,10 +32,30 @@ class GameSoundsManager
 {
 public:
     GameSoundsManager();
+    GameSoundsManager(const GameSoundsManager&) = delete;
 
-    void PlaySound(SoundType type);
+    void playSound(SoundType type);
+
+    void setSoundVolume(float value);
+    void setMusicVolume(float value);
+    float getSoundVolume() const;
+    float getMusicVolume() const;
+
+    void setSoundEnabled(bool value);
+    void setMusicEnabled(bool value);
+    bool isSoundEnabled() const;
+    bool isMusicEnabled() const;
+
+    void save();
+    void load();
+
 private:
     std::map<SoundType, std::shared_ptr<Sound>> _soundMap;
+
+    float _soundVolume = 1.0f;
+    float _musicVolume = 1.0f;
+    bool _soundEnabled = true;
+    bool _musicEnabled = true;
 };
 
 } // namespace Chewman

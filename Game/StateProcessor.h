@@ -3,7 +3,6 @@
 // Licensed under the MIT License
 #pragma once
 #include "GameDefs.h"
-#include <string>
 
 union SDL_Event;
 
@@ -30,8 +29,6 @@ public:
 protected:
     static bool isWideScreen();
 };
-
-std::string timeToString(uint32_t time);
 
 
 } // namespace Chewman

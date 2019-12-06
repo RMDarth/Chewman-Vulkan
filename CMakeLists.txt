@@ -236,8 +236,10 @@ add_executable(Chewman
         Game/SoundSystemDesktop.cpp
         Game/StateProcessor.cpp
         Game/StateProcessor.h
+        Game/SystemApi.cpp
         Game/SystemApi.h
-        Game/SystemApi.cpp)
+        Game/Utils.cpp
+        Game/Utils.h)
 
 if (WIN32)
     target_link_libraries(Chewman mingw32 SDL2main SDL2 vulkan-1.lib VkLayer_core_validation.lib libassimp libcppfsd libtinyxml2 libopenal libogg libvorbis libvorbisfile)

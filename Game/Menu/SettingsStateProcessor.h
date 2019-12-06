@@ -32,6 +32,9 @@ private:
     void setGraphicsSettingsValue();
 
     std::unique_ptr<ControlDocument> _document;
+
+    bool _playSound = false;
+    float _soundDelay = 0.0f;
 };
 
 } // namespace Chewman

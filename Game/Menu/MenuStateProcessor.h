@@ -31,6 +31,7 @@ public:
 private:
     void updateConfigSlider();
     void setConfigSliderVisibility(bool visible);
+    void updateSoundButtons();
 
 private:
     std::unique_ptr<ControlDocument> _document;

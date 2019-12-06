@@ -5,6 +5,7 @@
 #include "Game/Controls/ControlDocument.h"
 #include "Game/Controls/BoxSliderControl.h"
 #include "Game/Game.h"
+#include "Game/Utils.h"
 
 namespace Chewman
 {
@@ -48,7 +49,7 @@ void LevelSelectionStateProcessor::show()
             timeControl->setText("-:--");
             timeControl->setTextColor(glm::vec4(0.5, 0.5, 0.5, 1.0));
         } else {
-            timeControl->setText(timeToString(scoresManager.getTime(levelNumber)));
+            timeControl->setText(Utils::timeToString(scoresManager.getTime(levelNumber)));
             timeControl->setTextColor(glm::vec4(1.0, 1.0, 1.0, 1.0));
         }
     }
