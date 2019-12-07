@@ -31,6 +31,7 @@ private:
     {
         float time;
         std::shared_ptr<SVE::SceneNode> effectNode;
+        EatEffectType type;
     };
 
     GameMap* _gameMap;

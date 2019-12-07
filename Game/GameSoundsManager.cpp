@@ -18,7 +18,14 @@ GameSoundsManager::GameSoundsManager()
     auto* soundSystem = SoundSystem::getInstance();
     if (SoundSystem::getInstance()->isLoaded())
     {
-        _soundMap[SoundType::ChewCoin] = soundSystem->createSound("resources/sounds/chew2.ogg");
+        _soundMap[SoundType::ChewCoin] = soundSystem->createSound("resources/sounds/chewCoin.ogg");
+        _soundMap[SoundType::ChewEnemy] = soundSystem->createSound("resources/sounds/chewEnemy.ogg");
+        _soundMap[SoundType::ChewWall] = soundSystem->createSound("resources/sounds/chewWall.ogg");
+        _soundMap[SoundType::Bomb] = soundSystem->createSound("resources/sounds/bomb.ogg");
+        _soundMap[SoundType::MagicTeleport] = soundSystem->createSound("resources/sounds/magic.ogg");
+        _soundMap[SoundType::PowerUp] = soundSystem->createSound("resources/sounds/powerUp.ogg");
+        _soundMap[SoundType::Victory] = soundSystem->createSound("resources/sounds/win.ogg");
+        _soundMap[SoundType::Death] = soundSystem->createSound("resources/sounds/death.ogg");
 
         soundSystem->initBackgroundMusic("resources/sounds/music.ogg");
         soundSystem->startBackgroundMusic();
@@ -111,21 +118,36 @@ void GameSoundsManager::save()
 void GameSoundsManager::load()
 {
     std::ifstream fin(Utils::getSettingsPath(soundSettingsFile));
+    bool fail = false;
     if (!fin)
     {
         // Load file doesn't exist
         return;
     }
 
-    uint8_t version;
+    auto checkedRead = [&](char* dest, size_t size)
+    {
+        if (!fail && fin.read(dest, size).fail())
+        {
+            fail = true;
+        }
+    };
+
+    uint8_t version = CurrentSoundSettingsVersion;
     fin.read(reinterpret_cast<char*>(&version), sizeof(version));
     if (version != CurrentSoundSettingsVersion)
         return;
 
-    fin.read(reinterpret_cast<char*>(&_soundVolume), sizeof(_soundVolume));
-    fin.read(reinterpret_cast<char*>(&_musicVolume), sizeof(_musicVolume));
-    fin.read(reinterpret_cast<char*>(&_soundEnabled), sizeof(_soundEnabled));
-    fin.read(reinterpret_cast<char*>(&_musicEnabled), sizeof(_musicEnabled));
+    checkedRead(reinterpret_cast<char*>(&_soundVolume), sizeof(_soundVolume));
+    checkedRead(reinterpret_cast<char*>(&_musicVolume), sizeof(_musicVolume));
+    checkedRead(reinterpret_cast<char*>(&_soundEnabled), sizeof(_soundEnabled));
+    checkedRead(reinterpret_cast<char*>(&_musicEnabled), sizeof(_musicEnabled));
+
+    if (fail)
+    {
+        _musicVolume = _soundVolume = 1.0f;
+        _soundEnabled = _musicEnabled = true;
+    }
 
     setMusicVolume(_musicVolume);
     setSoundVolume(_soundVolume);

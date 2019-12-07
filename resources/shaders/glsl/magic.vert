@@ -33,14 +33,15 @@ void main() {
     int vertexId = gl_VertexIndex % 6;
 
     float radius = ubo.configuration[0].z;
+    float maxHeight = ubo.configuration[1].w;
     float polygonRandom = random(polygonId);
     float xPos = getRandomValue(-radius, radius, 1 + polygonRandom);
     float yPos = getRandomValue(-radius, radius, 2 + polygonRandom);
 
     float vertPos = -polygonRandom * 9 + ubo.time * ubo.configuration[0].y;
-    vertPos = mod(vertPos, 5.0);
+    vertPos = mod(vertPos, maxHeight);
     vec4 position =  vec4(xPos, vertPos, yPos, 1);
-    float alpha = 5.0 - vertPos;
+    float alpha = maxHeight - vertPos;
     float halfSize = ubo.configuration[0].w * alpha * 0.3;
     float sizeScale = ubo.configuration[0].x;
     float halfSizeHoriz = halfSize * sizeScale;

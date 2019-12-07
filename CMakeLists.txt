@@ -9,6 +9,7 @@ link_directories(./deps/lib/Vulkan)
 link_directories(./deps/lib/assimp)
 link_directories(./deps/lib/cppfs)
 link_directories(./deps/lib/tinyxml2)
+link_directories(./deps/lib/vorbis)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/deps")
 set(CMAKE_CXX_STANDARD 14)
@@ -242,7 +243,7 @@ add_executable(Chewman
         Game/Utils.h)
 
 if (WIN32)
-    target_link_libraries(Chewman mingw32 SDL2main SDL2 vulkan-1.lib VkLayer_core_validation.lib libassimp libcppfsd libtinyxml2 libopenal libogg libvorbis libvorbisfile)
+    target_link_libraries(Chewman mingw32 SDL2main SDL2 vulkan-1.lib VkLayer_core_validation.lib libassimp libcppfsd libtinyxml2 OpenAL32.lib vorbisfile vorbis ogg)
 endif(WIN32)
 
 if (UNIX)
