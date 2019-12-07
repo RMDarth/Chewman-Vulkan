@@ -54,8 +54,6 @@ void ControlDocument::addChildren(std::shared_ptr<Control> parent, tinyxml2::XML
         if (xmlControl->Attribute("padding") != nullptr)
         {
             padding = xmlControl->FloatAttribute("padding");
-        } else {
-            padding = 0.05f;
         }
 
         if (xmlControl->Attribute("x") != nullptr)

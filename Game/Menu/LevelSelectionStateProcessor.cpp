@@ -11,8 +11,8 @@ namespace Chewman
 {
 
 LevelSelectionStateProcessor::LevelSelectionStateProcessor()
+    : _document(std::make_unique<ControlDocument>("resources/game/GUI/levelselectmenu.xml"))
 {
-    _document = std::make_unique<ControlDocument>("resources/game/GUI/levelselectmenu.xml");
     _document->setMouseUpHandler(this);
     _document->hide();
 }

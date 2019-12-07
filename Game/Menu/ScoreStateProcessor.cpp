@@ -11,9 +11,10 @@ namespace Chewman
 {
 
 ScoreStateProcessor::ScoreStateProcessor()
-    : _progressManager(Game::getInstance()->getProgressManager())
+    : _document(std::make_unique<ControlDocument>("resources/game/GUI/scoremenu.xml"))
+    , _progressManager(Game::getInstance()->getProgressManager())
+
 {
-    _document = std::make_unique<ControlDocument>("resources/game/GUI/scoremenu.xml");
     _document->setMouseUpHandler(this);
     _document->raisePriority(120);
     _document->hide();

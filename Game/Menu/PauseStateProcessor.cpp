@@ -10,8 +10,8 @@ namespace Chewman
 {
 
 PauseStateProcessor::PauseStateProcessor()
+    : _document(std::make_unique<ControlDocument>("resources/game/GUI/pausemenu.xml"))
 {
-    _document = std::make_unique<ControlDocument>("resources/game/GUI/pausemenu.xml");
     _document->setMouseUpHandler(this);
     _document->raisePriority(120);
     _document->hide();

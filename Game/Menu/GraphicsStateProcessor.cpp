@@ -32,8 +32,8 @@ void setSettingByName(T& setting, const std::vector<std::string>& values, const 
 
 
 GraphicsStateProcessor::GraphicsStateProcessor()
+    : _document(std::make_unique<ControlDocument>("resources/game/GUI/graphics.xml"))
 {
-    _document = std::make_unique<ControlDocument>("resources/game/GUI/graphics.xml");
     _document->setMouseUpHandler(this);
     _document->hide();
 }
