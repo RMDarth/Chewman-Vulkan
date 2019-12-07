@@ -29,7 +29,20 @@ public:
     void processEvent(Control* control, EventType type, int x, int y) override;
 
 private:
-    std::unique_ptr<ControlDocument> _document;
+    ControlDocument* getCurrentDoc();
+    void updatePointsDoc();
+    void updateTimeDoc();
+    void updateCheckboxes();
+    void updateTimeScores();
+    void updatePointScores();
+
+private:
+    std::unique_ptr<ControlDocument> _documentPoints;
+    std::unique_ptr<ControlDocument> _documentTime;
+
+    bool _isPointsActive = true;
+    bool _isWeeklyActive = true;
+    bool _isFirstLevelsHalf = true;
 };
 
 } // namespace Chewman

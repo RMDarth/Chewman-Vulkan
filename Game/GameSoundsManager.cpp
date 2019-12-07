@@ -134,7 +134,7 @@ void GameSoundsManager::load()
     };
 
     uint8_t version = CurrentSoundSettingsVersion;
-    fin.read(reinterpret_cast<char*>(&version), sizeof(version));
+    checkedRead(reinterpret_cast<char*>(&version), sizeof(version));
     if (version != CurrentSoundSettingsVersion)
         return;
 
