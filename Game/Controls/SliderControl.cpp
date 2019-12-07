@@ -113,6 +113,8 @@ bool SliderControl::onMouseUp(int x, int y)
 
         return true;
     }
+
+    return false;
 }
 
 } // namespace Chewman

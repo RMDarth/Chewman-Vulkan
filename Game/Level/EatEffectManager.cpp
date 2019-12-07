@@ -72,6 +72,9 @@ EatEffectManager::EatEffectManager(Chewman::GameMap *gameMap)
 
 void EatEffectManager::addEffect(EatEffectType type, glm::ivec2 pos)
 {
+    //if (Game::getInstance()->getGraphicsManager().getSettings().resolution == ResolutionSettings::Low)
+    //    return;
+
     auto index = static_cast<uint8_t>(type);
 
     auto node = _effectsPool[index].front();

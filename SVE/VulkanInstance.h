@@ -128,16 +128,16 @@ private:
     EngineSettings _engineSettings;
     VulkanUtils _vulkanUtils;
 
-    SDL_Window *_window;
-    int _windowWidth;
-    int _windowHeight;
+    SDL_Window *_window = nullptr;
+    int _windowWidth = 0;
+    int _windowHeight = 0;
 
-    VkInstance _instance;
-    VkPhysicalDevice _gpu;
+    VkInstance _instance = VK_NULL_HANDLE;
+    VkPhysicalDevice _gpu = VK_NULL_HANDLE;
     VkPhysicalDeviceProperties _gpuProps;
-    VkDevice _device;
+    VkDevice _device = VK_NULL_HANDLE;
 
-    VmaAllocator _allocator;
+    VmaAllocator _allocator = VK_NULL_HANDLE;
 
     VkDebugReportCallbackEXT _debugCallbackHandle;
     VkDebugUtilsMessengerEXT _debugUtilsCallbackHandle;
@@ -145,35 +145,35 @@ private:
     VkSampleCountFlagBits _msaaSamples;
 
     uint32_t _queueIndex;
-    VkQueue _queue;
+    VkQueue _queue = VK_NULL_HANDLE;;
 
-    VkSurfaceKHR _surface;
+    VkSurfaceKHR _surface = VK_NULL_HANDLE;;
     VkSurfaceFormatKHR _surfaceFormat;
     VkSurfaceCapabilitiesKHR _surfaceCapabilities;
 
     VkPresentModeKHR _presentMode;
     VkExtent2D _extent;
-    VkSwapchainKHR _swapchain;
-    VkRenderPass _renderPass;
+    VkSwapchainKHR _swapchain = VK_NULL_HANDLE;;
+    VkRenderPass _renderPass = VK_NULL_HANDLE;;
 
     std::vector<VkImage> _swapchainImages;
     std::vector<VkImageView> _swapchainImageViews;
     std::vector<VkFramebuffer> _swapchainFramebuffers;
 
-    PoolID _currentPool;
+    PoolID _currentPool = 0;
     std::vector<VkCommandPool> _commandPools;
     std::vector<VkCommandBuffer> _commandBuffers;
     std::map<uint32_t, VkCommandBuffer> _externalBufferMap;
     std::map<std::pair<PoolID, BufferIndex>, VkCommandBuffer> _poolBufferMap;
 
     // color attachment for anti-aliasing
-    VkImage _colorImage;
-    VkDeviceMemory _colorImageMemory;
-    VkImageView _colorImageView;
+    VkImage _colorImage = VK_NULL_HANDLE;;
+    VkDeviceMemory _colorImageMemory = VK_NULL_HANDLE;;
+    VkImageView _colorImageView = VK_NULL_HANDLE;;
 
-    VkImage _depthImage;
-    VkDeviceMemory _depthImageMemory;
-    VkImageView _depthImageView;
+    VkImage _depthImage = VK_NULL_HANDLE;;
+    VkDeviceMemory _depthImageMemory = VK_NULL_HANDLE;;
+    VkImageView _depthImageView = VK_NULL_HANDLE;;
 
     const uint32_t MAX_FRAMES_IN_FLIGHT = 2; // max parallel processing frame
     std::vector<VkSemaphore> _computeParticlesReadySemaphore;
@@ -190,7 +190,7 @@ private:
 
     // TODO: Meh... mutable
     mutable int _currentFrame = 0;
-    mutable VkSemaphore _currentWaitSemaphore;
+    mutable VkSemaphore _currentWaitSemaphore = VK_NULL_HANDLE;;
 
     std::vector<VkFence> _inFlightFences;
     uint32_t _currentImageIndex = 0;

@@ -160,6 +160,7 @@ void GraphicsManager::tuneSettings()
             {
                 _currentSettings.effectSettings = EffectSettings::Low;
                 _currentSettings.useDynamicLights = false;
+                _currentSettings.particleEffects = ParticlesSettings::None;
             }
             if (model <= 540)
             {

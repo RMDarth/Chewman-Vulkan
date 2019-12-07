@@ -18,6 +18,24 @@ layout(location = 0) out FragData
     float fragLifePercent;
 };
 
+const vec2 positions[6] = vec2[](
+    vec2(-1.0, 1.0),
+    vec2(-1.0, -1.0),
+    vec2(1.0, 1.0),
+    vec2(1.0, 1.0),
+    vec2(-1.0, -1.0),
+    vec2(1.0, -1.0)
+);
+
+const vec2 texCoord[6] = vec2[](
+    vec2(0.0, 1.0),
+    vec2(0.0, 0.0),
+    vec2(1.0, 1.0),
+    vec2(1.0, 1.0),
+    vec2(0.0, 0.0),
+    vec2(1.0, 0.0)
+);
+
 vec2 rotateVector(float x, float y, float angle)
 {
     float cosAngle = cos(angle);
@@ -59,36 +77,9 @@ void main() {
         float halfSize = 0.4 * polyRandom + 0.2;
         halfSize *= alpha;
 
-        if (vertexId == 0)
-        {
-            gl_Position = ubo.projection * (position + vec4(rotateVector(-halfSize, halfSize, angle), 0.0, 0.0));
-            fragTexCoord = vec2(0.0, 1.0);
-        }
-        else if (vertexId == 1)
-        {
-            gl_Position = ubo.projection * (position + vec4(rotateVector(-halfSize, -halfSize, angle), 0.0, 0.0 ));
-            fragTexCoord = vec2(0.0, 0.0);
-        }
-        else if (vertexId == 2)
-        {
-            gl_Position = ubo.projection * (position + vec4(rotateVector(halfSize, halfSize, angle), 0.0, 0.0 ));
-            fragTexCoord = vec2(1.0, 1.0);
-        }
-        else if (vertexId == 3)
-        {
-            gl_Position = ubo.projection * (position + vec4(rotateVector(halfSize, halfSize, angle), 0.0, 0.0 ));
-            fragTexCoord = vec2(1.0, 1.0);
-        }
-        else if (vertexId == 4)
-        {
-            gl_Position = ubo.projection * (position + vec4(rotateVector(-halfSize, -halfSize, angle), 0.0, 0.0 ));
-            fragTexCoord = vec2(0.0, 0.0);
-        }
-        else
-        {
-            gl_Position = ubo.projection * (position + vec4(rotateVector(halfSize, -halfSize, angle), 0.0, 0.0 ));
-            fragTexCoord = vec2(1.0, 0.0);
-        }
+        gl_Position = ubo.projection * (position + vec4(rotateVector(positions[vertexId].x * halfSize, positions[vertexId].y * halfSize, angle), 0.0, 0.0));
+        fragTexCoord = texCoord[vertexId];
+
         fragColor = vec4(1,1,1,alpha);
         fragLifePercent = (1.0 - currentPercent) * alpha;
     }

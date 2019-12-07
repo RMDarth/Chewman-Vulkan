@@ -18,6 +18,24 @@ layout(location = 0) out FragData
     float fragLifePercent;
 };
 
+const vec2 positions[6] = vec2[](
+    vec2(-1.0, 1.0),
+    vec2(-1.0, -1.0),
+    vec2(1.0, 1.0),
+    vec2(1.0, 1.0),
+    vec2(-1.0, -1.0),
+    vec2(1.0, -1.0)
+);
+
+const vec2 texCoord[6] = vec2[](
+    vec2(0.0, 1.0),
+    vec2(0.0, 0.0),
+    vec2(1.0, 1.0),
+    vec2(1.0, 1.0),
+    vec2(0.0, 0.0),
+    vec2(1.0, 0.0)
+);
+
 float getRandomValue(float low, float high, float specialData)
 {
     // 0...1
@@ -46,36 +64,9 @@ void main() {
     float sizeScale = ubo.configuration[0].x;
     float halfSizeHoriz = halfSize * sizeScale;
 
-    if (vertexId == 0)
-    {
-        gl_Position = ubo.projection * ubo.view * ubo.model * (position + vec4(-halfSize, halfSizeHoriz, 0.0, 0.0));
-        fragTexCoord = vec2(0.0, 1.0);
-    }
-    else if (vertexId == 1)
-    {
-        gl_Position = ubo.projection * ubo.view * ubo.model * (position + vec4(-halfSize, -halfSizeHoriz, 0.0, 0.0 ));
-        fragTexCoord = vec2(0.0, 0.0);
-    }
-    else if (vertexId == 2)
-    {
-        gl_Position = ubo.projection * ubo.view * ubo.model * (position + vec4(halfSize, halfSizeHoriz, 0.0, 0.0 ));
-        fragTexCoord = vec2(1.0, 1.0);
-    }
-    else if (vertexId == 3)
-    {
-        gl_Position = ubo.projection * ubo.view * ubo.model * (position + vec4(halfSize, halfSizeHoriz, 0.0, 0.0 ));
-        fragTexCoord = vec2(1.0, 1.0);
-    }
-    else if (vertexId == 4)
-    {
-        gl_Position = ubo.projection * ubo.view * ubo.model * (position + vec4(-halfSize, -halfSizeHoriz, 0.0, 0.0 ));
-        fragTexCoord = vec2(0.0, 0.0);
-    }
-    else
-    {
-        gl_Position = ubo.projection * ubo.view * ubo.model * (position + vec4(halfSize, -halfSizeHoriz, 0.0, 0.0 ));
-        fragTexCoord = vec2(1.0, 0.0);
-    }
+    gl_Position = ubo.projection * ubo.view * ubo.model * (position + vec4(positions[vertexId].x * halfSize, positions[vertexId].y * halfSizeHoriz, 0.0, 0.0));
+    fragTexCoord = texCoord[vertexId];
+
     fragColor = vec4(color, alpha);
     fragLifePercent = alpha;
 }
