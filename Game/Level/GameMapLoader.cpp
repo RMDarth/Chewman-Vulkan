@@ -197,9 +197,10 @@ std::shared_ptr<GameMap> GameMapLoader::loadMap(const std::string& filename, con
 
     std::stringstream fin(SVE::Engine::getInstance()->getResourceManager()->loadFileContent(filename));
     fin >> gameMap->width >> gameMap->height;
-
-    uint8_t style, waterStyle;
-    fin >> style >> waterStyle;
+    fin >> gameMap->style >> gameMap->waterStyle;
+    uint16_t light;
+    fin >> light >> gameMap->treasureType;
+    gameMap->isNight = light == 2;
 
     gameMap->mapNode = SVE::Engine::getInstance()->getSceneManager()->createSceneNode();
     gameMap->upperLevelMeshNode = SVE::Engine::getInstance()->getSceneManager()->createSceneNode();
@@ -223,8 +224,8 @@ std::shared_ptr<GameMap> GameMapLoader::loadMap(const std::string& filename, con
         for (auto i = 0; i < 4; ++i)
         {
             fin.getline(line, 90);
-            gameMap->tutorialText.push_back(std::string(line));
-            tutorialData.push_back(line);
+            gameMap->tutorialText.emplace_back(line);
+            tutorialData.emplace_back(line);
         }
         gameMap->hasTutorial = true;
     } else {
@@ -737,8 +738,8 @@ Coin* GameMapLoader::createCoin(GameMap& level, int row, int column)
 
     coinNode->setNodeTransformation(transform);
     level.mapNode->attachSceneNode(coinNode);
-    auto coinMesh = std::make_shared<SVE::MeshEntity>("coin");
-    coinMesh->setMaterial("CoinMaterial");
+    auto coinMesh = std::make_shared<SVE::MeshEntity>(level.treasureType == 1 ? "coin" : "gem");
+    coinMesh->setMaterial(level.treasureType == 1 ? "CoinMaterial" : "GemMaterial");
     coinNode->attachEntity(coinMesh);
 
     coin.rootNode = std::move(coinNode);
@@ -765,11 +766,23 @@ void GameMapLoader::createLava(GameMap& level, const std::string& suffix) const
             glm::translate(glm::mat4(1), glm::vec3((level.width - 1) * CellSize * 0.5f, -0.5f, -((level.height - 1) * CellSize * 0.5f))));
     level.mapNode->attachSceneNode(lavaNode);
     std::shared_ptr<SVE::MeshEntity> lavaEntity = std::make_shared<SVE::MeshEntity>("LiquidMesh" + suffix);
-    if (Game::getInstance()->getGraphicsManager().getSettings().effectSettings == EffectSettings::Low)
-        lavaEntity->setMaterial("LavaSimpleMaterial");
-    else
-        lavaEntity->setMaterial("LavaMaterial");
+    bool isLowSettings = Game::getInstance()->getGraphicsManager().getSettings().effectSettings == EffectSettings::Low;
+    switch (level.waterStyle)
+    {
+        case 1:
+            lavaEntity->setMaterial(isLowSettings ? "LavaSimpleMaterial" : "LavaMaterial");
+            break;
+        case 2:
+            lavaEntity->setMaterial("WaterMaterial");
+            break;
+        case 3:
+            lavaEntity->setMaterial("AcidMaterial");
+            break;
+        default:
+            lavaEntity->setMaterial("LavaMaterial");
+    }
     lavaEntity->setCastShadows(false);
+    lavaEntity->getMaterialInfo()->ambient = {0.5f, 0.5f, 0.5f, 1.0f};
     lavaNode->attachEntity(lavaEntity);
 
     level.lavaEntity = std::move(lavaEntity);

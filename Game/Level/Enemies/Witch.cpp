@@ -18,7 +18,7 @@ namespace Chewman
 {
 
 Witch::Witch(GameMap* map, glm::ivec2 startPos)
-    : DefaultEnemy(map, startPos, EnemyType::Knight,
+    : DefaultEnemy(map, startPos, EnemyType::Witch,
                    "witch", "WitchMaterial", 95)
 {
     createMaterials();
@@ -171,6 +171,7 @@ void Witch::startMagic(MagicType magicType)
         }
         case MagicType::Teleport:
         {
+            Game::getInstance()->getSoundsManager().playSound(SoundType::MagicTeleport);
             _meshNode->attachEntity(_teleportMesh);
             _teleportMesh->resetTime(0, true);
             _castingTime = 2.1f;

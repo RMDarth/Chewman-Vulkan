@@ -31,10 +31,10 @@ CameraNode::CameraNode()
     createProjectionMatrix();
 }
 
-void CameraNode::setNearFarPlane(float near, float far)
+void CameraNode::setNearFarPlane(float nearVal, float farVal)
 {
-    _cameraSettings.nearPlane = near;
-    _cameraSettings.farPlane = far;
+    _cameraSettings.nearPlane = nearVal;
+    _cameraSettings.farPlane = farVal;
 
     createProjectionMatrix();
 }

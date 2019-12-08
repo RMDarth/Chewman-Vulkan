@@ -1,13 +1,13 @@
 {
-    "name": "Floor",
+    "name": "PotLowMaterial",
     "vertexShaderName": "phongShadowVertexShader",
     "fragmentShaderName": "phongShadowFragmentShader",
-    "ignoreShadow": false,
+    "cullFace": "BackFace",
     "textures": [
         {
             "samplerName": "diffuseTex",
             "textureType": "ImageFile",
-            "filename": "textures/trashfloor.png"
+            "filename": "textures/staticObjects/trashpot.png"
         },
         {
             "samplerName": "directShadowTex",

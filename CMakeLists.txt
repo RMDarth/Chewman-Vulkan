@@ -9,6 +9,7 @@ link_directories(./deps/lib/Vulkan)
 link_directories(./deps/lib/assimp)
 link_directories(./deps/lib/cppfs)
 link_directories(./deps/lib/tinyxml2)
+link_directories(./deps/lib/vorbis)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/deps")
 set(CMAKE_CXX_STANDARD 14)
@@ -150,6 +151,8 @@ add_executable(Chewman
         Game/Game.cpp
         Game/Game.h
         Game/GameDefs.h
+        Game/GameSoundsManager.cpp
+        Game/GameSoundsManager.h
         Game/GraphicsSettings.cpp
         Game/GraphicsSettings.h
         Game/Level/BlockMeshGenerator.cpp
@@ -230,11 +233,17 @@ add_executable(Chewman
         Game/ProgressManager.h
         Game/ScoresManager.cpp
         Game/ScoresManager.h
+        Game/SoundSystem.h
+        Game/SoundSystemDesktop.cpp
         Game/StateProcessor.cpp
-        Game/StateProcessor.h)
+        Game/StateProcessor.h
+        Game/SystemApi.cpp
+        Game/SystemApi.h
+        Game/Utils.cpp
+        Game/Utils.h)
 
 if (WIN32)
-    target_link_libraries(Chewman mingw32 SDL2main SDL2 vulkan-1.lib VkLayer_core_validation.lib libassimp libcppfsd libtinyxml2)
+    target_link_libraries(Chewman mingw32 SDL2main SDL2 vulkan-1.lib VkLayer_core_validation.lib libassimp libcppfsd libtinyxml2 OpenAL32.lib vorbisfile vorbis ogg)
 endif(WIN32)
 
 if (UNIX)
@@ -255,5 +264,14 @@ if (UNIX)
         include_directories(${TinyXML2_INCLUDE_DIRS})
     endif(APPLE)
 
-    target_link_libraries(Chewman ${SDL2_LIBRARIES} assimp cppfs vulkan tinyxml2 pthread)
+    find_package(OpenAL REQUIRED)
+    include_directories(${OpenAL_INCLUDE_DIRS})
+
+    find_package(Ogg REQUIRED)
+    include_directories(${Ogg_INCLUDE_DIRS})
+
+    find_package(Vorbis REQUIRED)
+    include_directories(${Vorbis_INCLUDE_DIRS})
+
+    target_link_libraries(Chewman ${SDL2_LIBRARIES} assimp cppfs vulkan tinyxml2 openal ogg vorbis vorbisfile pthread)
 endif(UNIX)

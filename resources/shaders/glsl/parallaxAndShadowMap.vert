@@ -2,11 +2,11 @@
 #extension GL_ARB_separate_shader_objects : enable
 layout (set = 0, binding = 0) uniform UBO
 {
-	mat4 model;
-	mat4 view;
-	mat4 projection;
-	mat4 lightDirectViewProjection;
-	vec4 clipPlane;
+    mat4 model;
+    mat4 view;
+    mat4 projection;
+    mat4 lightDirectViewProjection;
+    vec4 clipPlane;
 } uniforms;
 
 layout (location = 0) in vec3 inPosition;

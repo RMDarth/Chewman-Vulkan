@@ -1,0 +1,38 @@
+{
+    "name": "GoldDust",
+    "materialName": "TeleportStarParticleMaterial",
+    "computeShaderName": "particlesComputeShader",
+
+    "quota": 500,
+    "sort": true,
+
+    "particleEmitter":
+    {
+        "direction": [ 0.0, 1.0, 0.0 ],
+        "angle": 0.0,
+        "originRadius": 0.5,
+
+        "emissionRate": 100,
+        "minLife": 0.3,
+        "maxLife": 0.3,
+        "minSpeed": 4.1,
+        "maxSpeed": 4.3,
+        "minSize": 0.3,
+        "maxSize": 0.3,
+        "minRotate": 0,
+        "maxRotate": 0,
+        "colorRangeStart": [ 0.0, 0.0, 0.0, 0.0 ],
+        "colorRangeEnd": [ 0.0, 0.0, 0.0, 0.0 ]
+    },
+    "particleAffector":
+    {
+        "minAcceleration": 0.0,
+        "maxAcceleration": 0.2,
+        "minRotateSpeed": 0,
+        "maxRotateSpeed": 0,
+        "minScaleSpeed": -0.5,
+        "maxScaleSpeed": -0.5,
+
+        "colorChanger": [ 0.0, 0.0, 0.0, 0.0 ]
+    }
+}

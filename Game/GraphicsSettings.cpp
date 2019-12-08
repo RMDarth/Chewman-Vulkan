@@ -5,6 +5,8 @@
 #include <SVE/VulkanException.h>
 #include <SVE/VulkanInstance.h>
 #include "GraphicsSettings.h"
+#include "SystemApi.h"
+#include "Utils.h"
 #include "SVE/Engine.h"
 #include "SVE/SceneManager.h"
 #include "SVE/LightManager.h"
@@ -12,19 +14,8 @@
 
 namespace Chewman
 {
-namespace
-{
 
-std::string getSettingsPath()
-{
-    auto settingsPath = SVE::Engine::getInstance()->getResourceManager()->getSavePath();
-    if (settingsPath.back() != '/' || settingsPath.back() != '\\')
-        settingsPath.push_back('/');
-    settingsPath += "settings.dat";
-    return settingsPath;
-}
-
-} // namespace
+const std::string graphicsSettingsFile = "settings.dat";
 
 std::string getResolutionText(ResolutionSettings resolutionSettings)
 {
@@ -45,6 +36,7 @@ std::string getEffectText(EffectSettings effectSettings)
     switch (effectSettings)
     {
         case EffectSettings::Low: return "Low";
+        case EffectSettings::Medium: return "Medium";
         case EffectSettings::High: return "High";
     }
 
@@ -63,6 +55,17 @@ std::string getParticlesText(ParticlesSettings settings)
 
     assert(!"Incorrect particle effect settings");
     return "Unknown";
+}
+
+std::unique_ptr<GraphicsManager> GraphicsManager::_instance = {};
+
+GraphicsManager& GraphicsManager::getInstance()
+{
+    if (!_instance)
+    {
+        _instance = std::unique_ptr<GraphicsManager>(new GraphicsManager());
+    }
+    return *_instance;
 }
 
 GraphicsManager::GraphicsManager()
@@ -112,7 +115,7 @@ void GraphicsManager::setNeedRestart(bool value)
 
 void GraphicsManager::store()
 {
-    std::ofstream fout(getSettingsPath());
+    std::ofstream fout(Utils::getSettingsPath(graphicsSettingsFile));
     if (!fout)
     {
         throw SVE::VulkanException("Can't save settings file");
@@ -124,12 +127,13 @@ void GraphicsManager::store()
 
 void GraphicsManager::load()
 {
-    std::ifstream fin(getSettingsPath());
+    std::ifstream fin(Utils::getSettingsPath(graphicsSettingsFile));
     if (!fin)
     {
         // Load file doesn't exist
         return;
     }
+
     fin.read(reinterpret_cast<char*>(&_currentSettings), sizeof(_currentSettings));
     if (_currentSettings.version != CurrentGraphicsSettingsVersion)
     {
@@ -155,12 +159,23 @@ void GraphicsManager::tuneSettings()
 
             if (model < 630)
             {
-                _currentSettings.effectSettings = EffectSettings::Low;
+                _currentSettings.effectSettings = EffectSettings::Medium;
                 _currentSettings.useDynamicLights = false;
+                _currentSettings.particleEffects = ParticlesSettings::None;
             }
-            // if (model <= 540) & Android version < 8.0 throw exception or show warning
+            if (model <= 540)
+            {
+                if (System::getSystemVersion() < 26)
+                {
+                    if (!System::acceptQuary("Chewman doesn't support Android 7 on your device. Please upgrade to Android 8 or newer. You could still run the game, but it may not work or work incorrectly.", "Warning", "  Run  ", "  Exit  "))
+                    {
+                        throw SVE::VulkanException("Android 7 not supported");
+                    }
+                }
+            }
             if (model < 540)
             {
+                _currentSettings.effectSettings = EffectSettings::Low;
                 _currentSettings.resolution = ResolutionSettings::Low;
             }
         }
@@ -182,17 +197,25 @@ void GraphicsManager::tuneSettings()
                 {
                     if (deviceName.find("Samsung") == std::string::npos)
                     {
-                        _currentSettings.effectSettings = EffectSettings::Low;
+                        _currentSettings.effectSettings = EffectSettings::Medium;
+                        _currentSettings.useDynamicLights = false;
                     }
                 }
                 if (model < 72)
                 {
-                    // TODO: If AndroidVersion < 8.0 (API 26) then throw exception or show warning
-                    _currentSettings.effectSettings = EffectSettings::Low;
+                    if (System::getSystemVersion() < 26)
+                    {
+                        if (!System::acceptQuary("Chewman doesn't support Android 7 on your device. Please upgrade to Android 8 or newer. You could still run the game, but it may not work or work incorrectly.", "Warning", "  Run  ", "  Exit  "))
+                        {
+                            throw SVE::VulkanException("Android 7 not supported");
+                        }
+                    }
+                    _currentSettings.effectSettings = EffectSettings::Medium;
                     _currentSettings.useDynamicLights = false;
                 }
                 if (model < 57)
                 {
+                    _currentSettings.effectSettings = EffectSettings::Low;
                     _currentSettings.resolution = ResolutionSettings::Low;
                 }
 
@@ -207,11 +230,12 @@ void GraphicsManager::tuneSettings()
 
     if (_currentSettings.effectSettings == EffectSettings::Unknown)
     {
-        _currentSettings.effectSettings = EffectSettings::Low;
+        _currentSettings.effectSettings = EffectSettings::Medium;
         _currentSettings.useDynamicLights = false;
 
         if (gpuInfo.limits.maxPerStageDescriptorSamplers < 100)
         {
+            _currentSettings.effectSettings = EffectSettings::Low;
             _currentSettings.resolution = ResolutionSettings::Low;
         }
     }

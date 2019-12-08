@@ -1,0 +1,35 @@
+<document>
+    <Panel name="panel" alignment="center" y="0.07" width="-1.84" height="0.85" image="windows/window_wide.png">
+        <Label name="windowName" text="High scores" alignment="center" y = "0.045" width="0.5" height="0.06" />
+        <Image name="points" text="Points"  x="0.1" y="0.17" width="0.16" height="0.08" image="tabs/inactive.png"/>
+        <Image name="time" text="Time"  x="0.27" y="0.17" width="0.16" height="0.08" image="tabs/selected.png"/>
+        <Image name="tabView" x="0.05" y="0.245" width="0.9" height="0.62" image="tabs/panel.png" />
+
+        <Image name="left" x="0.07" y="0.5" width="0.05" height="-1" image="buttons/left.png"/>
+        <Label name="lvl01" text="L01: Player / 03:21" x="0.15" y="0.3" width="0.38" height="0.08" font-size="45" textAlignment="Left" />
+        <Label name="lvl10" text="L10: Guit88man / 14:88" x="0.51" y="0.3" width="0.38" height="0.08"  font-size="45" textAlignment="Left" />
+        <Label name="lvl02" text="L02: RM_Darth / 04:01" x="0.15" y="0.35" width="0.38" height="0.08" font-size="45" textAlignment="Left" />
+        <Label name="lvl11" text="L11: HoneyMad / 13:37" x="0.51" y="0.35" width="0.38" height="0.08"  font-size="45" textAlignment="Left" />
+        <Label name="lvl03" text="L03: FduchAlopex007 / 05:11" x="0.15" y="0.4" width="0.38" height="0.08" font-size="45" textAlignment="Left"/>
+        <Label name="lvl12" text="L12: Nuke73 / 07:03" x="0.51" y="0.4" width="0.38" height="0.08"  font-size="45" textAlignment="Left" />
+        <Label name="lvl04" text="L04: Schdoop / 03:45" x="0.15" y="0.45" width="0.38" height="0.08" font-size="45" textAlignment="Left"/>
+        <Label name="lvl13" text="L13: Welovegames / 05:05" x="0.51" y="0.45" width="0.38" height="0.08"  font-size="45" textAlignment="Left" />
+        <Label name="lvl05" text="L05: Annastein / 02:34" x="0.15" y="0.5" width="0.38" height="0.08" font-size="45" textAlignment="Left"/>
+        <Label name="lvl14" text="L14: Krabick / 00:01" x="0.51" y="0.5" width="0.38" height="0.08"  font-size="45" textAlignment="Left" />
+        <Label name="lvl06" text="L06: ArdentStarfish1596 / 01:23" x="0.15" y="0.55" width="0.38" height="0.08" font-size="45"  textAlignment="Left"/>
+        <Label name="lvl15" text="L15: AlinaRinRin / 13:13" x="0.51" y="0.55" width="0.38" height="0.08" font-size="45"  textAlignment="Left" />
+        <Label name="lvl07" text="L07: Dexter / 05:12" x="0.15" y="0.6" width="0.38" height="0.08" font-size="45"  textAlignment="Left"/>
+        <Label name="lvl16" text="L16: Alex007SC2 / 00:07" x="0.51" y="0.6" width="0.38" height="0.08" font-size="45"  textAlignment="Left" />
+        <Label name="lvl08" text="L08: Hells / 11:12" x="0.15" y="0.65" width="0.38" height="0.08" font-size="45"  textAlignment="Left"/>
+        <Label name="lvl17" text="L17: BrowJey / 01:23" x="0.51" y="0.65" width="0.38" height="0.08" font-size="45"  textAlignment="Left" />
+        <Label name="lvl09" text="L09: Valerchik / 11:22" x="0.15" y="0.7" width="0.38" height="0.08" font-size="45"  textAlignment="Left"/>
+        <Label name="lvl18" text="L18: WhiteRa / 07:06" x="0.51" y="0.7" width="0.38" height="0.08" font-size="45"  textAlignment="Left" />
+        <Image name="right" x="0.83" y="0.5" width="0.05" height="-1" image="buttons/right.png"/>
+
+        <Image name="weekly" x="0.51" y ="0.81" width="0.06" height="-1" image="buttons/checkbox_checked.png"/>
+        <Label name="weeklyLabel" text="Weekly" x="0.58" y="0.81" width="0.06" height="-1" textAlignment="Left" />
+        <Image name="alltime" x="0.73" y ="0.81" width="0.06" height="-1" image="buttons/checkbox_unchecked.png"/>
+        <Label name="alltimeLabel" text="All Time" x="0.8" y="0.81" width="0.06" height="-1" textAlignment="Left" />
+    </Panel>
+    <Button name="back"  x="0.30" y="0.82" width="0.08" height="-1" image="buttons/back.png" hoverimage="buttons/back_hover.png" pressedimage="buttons/back_pressed.png" />
+</document>

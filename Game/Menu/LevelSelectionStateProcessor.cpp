@@ -5,13 +5,14 @@
 #include "Game/Controls/ControlDocument.h"
 #include "Game/Controls/BoxSliderControl.h"
 #include "Game/Game.h"
+#include "Game/Utils.h"
 
 namespace Chewman
 {
 
 LevelSelectionStateProcessor::LevelSelectionStateProcessor()
+    : _document(std::make_unique<ControlDocument>("resources/game/GUI/levelselectmenu.xml"))
 {
-    _document = std::make_unique<ControlDocument>("resources/game/GUI/levelselectmenu.xml");
     _document->setMouseUpHandler(this);
     _document->hide();
 }
@@ -48,7 +49,7 @@ void LevelSelectionStateProcessor::show()
             timeControl->setText("-:--");
             timeControl->setTextColor(glm::vec4(0.5, 0.5, 0.5, 1.0));
         } else {
-            timeControl->setText(timeToString(scoresManager.getTime(levelNumber)));
+            timeControl->setText(Utils::timeToString(scoresManager.getTime(levelNumber)));
             timeControl->setTextColor(glm::vec4(1.0, 1.0, 1.0, 1.0));
         }
     }

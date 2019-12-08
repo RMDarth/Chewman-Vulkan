@@ -12,6 +12,7 @@
 #include "SVE/SceneManager.h"
 #include "SVE/LightManager.h"
 
+
 namespace Chewman
 {
 
@@ -47,6 +48,27 @@ void LevelStateProcessor::initMap()
     ss << "resources/game/levels/level" << levelNum << ".map";
     // TODO: Display some "Loading" message box while level is loading
     std::cout << "Start loading level " << levelNum << std::endl;
+
+    auto sunLight = SVE::Engine::getInstance()->getSceneManager()->getLightManager()->getDirectionLight();
+    if (!_gameMapProcessor->getGameMap()->isNight)
+    {
+        sunLight->getLightSettings().ambientStrength = {0.2f, 0.2f, 0.2f, 1.0f};
+        sunLight->getLightSettings().diffuseStrength = {1.0f, 1.0f, 1.0f, 1.0f};
+        sunLight->getLightSettings().specularStrength = {0.5f, 0.5f, 0.5f, 1.0f};
+        sunLight->setNodeTransformation(
+                glm::translate(glm::mat4(1), glm::vec3(80, 80, -80)));
+
+        sunLight->getLightSettings().castShadows = Game::getInstance()->getGraphicsManager().getSettings().useShadows;
+    } else {
+        sunLight->getLightSettings().ambientStrength = {0.08f, 0.08f, 0.08f, 1.0f};
+        sunLight->getLightSettings().diffuseStrength = {0.15f, 0.15f, 0.15f, 1.0f};
+        sunLight->getLightSettings().specularStrength = {0.08f, 0.08f, 0.08f, 1.0f};
+        sunLight->setNodeTransformation(
+                glm::translate(glm::mat4(1), glm::vec3(-20, 80, 80)));
+
+        sunLight->getLightSettings().castShadows = false;
+    }
+
     auto future = std::async(std::launch::async, [&]
     {
         _gameMapProcessor = std::make_unique<GameMapProcessor>(Game::getInstance()->getGameMapLoader().loadMap(ss.str()));
@@ -229,7 +251,7 @@ void LevelStateProcessor::updateHUD(float deltaTime)
     fpsList.push_back(1.0f/deltaTime);
     if (fpsList.size() > 100)
         fpsList.pop_front();
-    auto fpsValue = std::accumulate(fpsList.begin(), fpsList.end(), 0) / fpsList.size();
+    auto fpsValue = std::accumulate(fpsList.begin(), fpsList.end(), 0.0f) / fpsList.size();
     fps->setText(std::to_string((int) fpsValue));
 
 }

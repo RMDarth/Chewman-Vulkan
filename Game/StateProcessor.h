@@ -3,7 +3,6 @@
 // Licensed under the MIT License
 #pragma once
 #include "GameDefs.h"
-#include <string>
 
 union SDL_Event;
 
@@ -26,9 +25,10 @@ public:
     virtual bool isOverlapping() = 0;
 
     static void processDocument(const SDL_Event& event, ControlDocument* controlDocument);
-};
 
-std::string timeToString(uint32_t time);
+protected:
+    static bool isWideScreen();
+};
 
 
 } // namespace Chewman

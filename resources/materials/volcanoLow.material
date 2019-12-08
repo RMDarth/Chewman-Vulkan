@@ -1,13 +1,12 @@
 {
-    "name": "Ceiling",
+    "name": "VolcanoLowMaterial",
     "vertexShaderName": "phongShadowVertexShader",
     "fragmentShaderName": "phongShadowFragmentShader",
-    "ignoreShadow": false,
     "textures": [
         {
             "samplerName": "diffuseTex",
             "textureType": "ImageFile",
-            "filename": "textures/trashceiling1.png"
+            "filename": "textures/staticObjects/trashvolcano.png"
         },
         {
             "samplerName": "directShadowTex",

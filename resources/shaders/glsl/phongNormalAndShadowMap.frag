@@ -8,7 +8,6 @@ layout(set = 1, binding = 2) uniform sampler2D directShadowTex;
 layout(set = 1, binding = 3) uniform UBO
 {
 	vec4 cameraPos;
-    mat4 invModel;
 	DirLight dirLight;
 	SpotLight spotLight;
     LineLight lineLight[15];

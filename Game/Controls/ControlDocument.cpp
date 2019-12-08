@@ -54,8 +54,6 @@ void ControlDocument::addChildren(std::shared_ptr<Control> parent, tinyxml2::XML
         if (xmlControl->Attribute("padding") != nullptr)
         {
             padding = xmlControl->FloatAttribute("padding");
-        } else {
-            padding = 0.05f;
         }
 
         if (xmlControl->Attribute("x") != nullptr)
@@ -126,7 +124,8 @@ void ControlDocument::addChildren(std::shared_ptr<Control> parent, tinyxml2::XML
 
             if (xmlControl->Attribute("text") != nullptr)
             {
-                gameControl->setText(xmlControl->Attribute("text"), "NordBold", 0.5f, gameControl->getTextColor());
+                float scale = SVE::Engine::getInstance()->getRenderWindowSize().y / 1440.0f;
+                gameControl->setText(xmlControl->Attribute("text"), "NordBold", scale, gameControl->getTextColor());
             }
 
             for (auto* attribute = xmlControl->FirstAttribute(); attribute != nullptr; attribute = attribute->Next())

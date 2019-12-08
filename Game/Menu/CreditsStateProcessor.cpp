@@ -10,7 +10,7 @@ namespace Chewman
 {
 
 CreditsStateProcessor::CreditsStateProcessor()
-        : _document(std::make_unique<ControlDocument>("resources/game/GUI/credits.xml"))
+        : _document(std::make_unique<ControlDocument>(isWideScreen() ? "resources/game/GUI/creditsWide.xml" : "resources/game/GUI/credits.xml"))
 {
     _document->setMouseUpHandler(this);
     _document->hide();

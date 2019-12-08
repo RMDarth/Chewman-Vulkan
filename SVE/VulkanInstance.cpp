@@ -377,7 +377,7 @@ VkCommandBuffer VulkanInstance::createCommandBuffer(BufferIndex bufferIndex)
     commandBufferAllocateInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
     commandBufferAllocateInfo.commandBufferCount = 1;
 
-    VkCommandBuffer buffer;
+    VkCommandBuffer buffer = VK_NULL_HANDLE;
     if (vkAllocateCommandBuffers(_device, &commandBufferAllocateInfo, &buffer) != VK_SUCCESS)
     {
         throw VulkanException("Can't create Vulkan Command Buffers");

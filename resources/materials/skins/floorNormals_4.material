@@ -1,0 +1,22 @@
+{
+    "name": "FloorNormals4",
+    "vertexShaderName": "phongNormalShadowVertexShader",
+    "fragmentShaderName": "phongNormalShadowFragmentShader",
+    "ignoreShadow": false,
+    "textures": [
+        {
+            "samplerName": "diffuseTex",
+            "textureType": "ImageFile",
+            "filename": "../textures/level/floor4.jpg"
+        },
+        {
+            "samplerName": "normalTex",
+            "textureType": "ImageFile",
+            "filename": "../textures/level/floorNormals4.jpg"
+        },
+        {
+            "samplerName": "directShadowTex",
+            "textureType": "ShadowMapDirect"
+        }
+    ]
+}

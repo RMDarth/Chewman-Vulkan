@@ -5,8 +5,6 @@
 #include "Game/Controls/ControlDocument.h"
 
 #include <SDL2/SDL_events.h>
-#include <sstream>
-#include <iomanip>
 
 namespace Chewman
 {
@@ -27,11 +25,12 @@ void StateProcessor::processDocument(const SDL_Event& event, ControlDocument* co
     }
 }
 
-std::string timeToString(uint32_t time)
+bool StateProcessor::isWideScreen()
 {
-    std::stringstream stream;
-    stream << time / 60 << ":" << std::setfill('0') << std::setw(2) << time % 60;
-    return stream.str();
+    auto windowSize = SVE::Engine::getInstance()->getRenderWindowSize();
+    if ((float)windowSize.x / windowSize.y < 1.4)
+        return false;
+    return true;
 }
 
 } // namespace Chewman

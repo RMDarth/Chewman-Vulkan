@@ -142,7 +142,8 @@ void GameRulesProcessor::update(float deltaTime)
             auto mapPos = mapTraveller->getMapPosition();
             if (eatCoin(mapPos))
             {
-                //gameMap->eatEffectManager->addEffect(EatEffectType::Gold, mapPos);
+                Game::getInstance()->getSoundsManager().playSound(SoundType::ChewCoin);
+                gameMap->eatEffectManager->addEffect(EatEffectType::Gold, mapPos);
                 playerInfo.points += 10;
                 if (gameMap->activeCoins == 0)
                 {
@@ -161,6 +162,7 @@ void GameRulesProcessor::update(float deltaTime)
                     case PowerUpType::Life:
                     case PowerUpType::Jackhammer:
                     case PowerUpType::Teeth:
+                        Game::getInstance()->getSoundsManager().playSound(SoundType::PowerUp);
                         player->playPowerUpAnimation();
                         break;
                 }
@@ -194,6 +196,7 @@ void GameRulesProcessor::update(float deltaTime)
             {
                 gameMap->mapData[mapPos.x][mapPos.y].cellType = CellType::Floor;
                 gameMap->eatEffectManager->addEffect(EatEffectType::Walls, mapPos);
+                Game::getInstance()->getSoundsManager().playSound(SoundType::ChewWall);
 
                 auto& node = gameMap->mapData[mapPos.x][mapPos.y].cellBlock;
                 auto list = node->getAttachedEntities();
@@ -323,6 +326,7 @@ void GameRulesProcessor::update(float deltaTime)
                     else if (enemy->isStateActive(EnemyState::Vulnerable))
                     {
                         playerInfo.points += 10;
+                        Game::getInstance()->getSoundsManager().playSound(SoundType::ChewEnemy);
                         enemy->increaseState(EnemyState::Dead);
                     }
                     else
@@ -357,6 +361,7 @@ void GameRulesProcessor::update(float deltaTime)
         {
             _gameMapProcessor.setState(GameMapState::Animation);
             _deathTime = 0.0f;
+            Game::getInstance()->getSoundsManager().playSound(SoundType::Death);
             player->playDeathAnimation();
             _deathSecondPhase = false;
         }
@@ -513,6 +518,7 @@ void GameRulesProcessor::activatePowerUp(PowerUpType type, glm::ivec2 pos, Enemy
         case PowerUpType::Bomb:
         {
             destroyWalls(pos);
+            Game::getInstance()->getSoundsManager().playSound(SoundType::Bomb);
             for (auto& enemy : gameMap->enemies)
             {
                 if (glm::length(enemy->getPosition() - getPlayer()->getMapTraveller()->getRealPosition()) < 9.0f)
@@ -624,6 +630,7 @@ bool GameRulesProcessor::eatCoin(glm::ivec2 pos)
         if (gameMap->activeCoins == 0)
         {
             std::cout << "You won!" << std::endl;
+            Game::getInstance()->getSoundsManager().playSound(SoundType::Victory);
             _gameMapProcessor.setState(GameMapState::Victory);
         }
         return true;

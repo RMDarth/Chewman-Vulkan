@@ -1,0 +1,29 @@
+{
+    "name": "WallParallax1",
+    "vertexShaderName": "parallaxShadowInstancedVertexShader",
+    "fragmentShaderName": "parallaxShadowFragmentShader",
+    "useInstancing": true,
+    "instanceMaxCount": 20000,
+    "ignoreShadow": false,
+    "textures": [
+        {
+            "samplerName": "diffuseTex",
+            "textureType": "ImageFile",
+            "filename": "../textures/level/wall1.jpg"
+        },
+        {
+            "samplerName": "normalTex",
+            "textureType": "ImageFile",
+            "filename": "../textures/level/wallNormals1.jpg"
+        },
+        {
+            "samplerName": "depthTex",
+            "textureType": "ImageFile",
+            "filename": "../textures/level/wallDisp1.jpg"
+        },
+        {
+            "samplerName": "directShadowTex",
+            "textureType": "ShadowMapDirect"
+        }
+    ]
+}

@@ -10,8 +10,8 @@ namespace Chewman
 {
 
 WorldSelectionStateProcessor::WorldSelectionStateProcessor()
+    : _document(std::make_unique<ControlDocument>("resources/game/GUI/worldselectmenu.xml"))
 {
-    _document = std::make_unique<ControlDocument>("resources/game/GUI/worldselectmenu.xml");
     _document->setMouseUpHandler(this);
     _document->hide();
 }

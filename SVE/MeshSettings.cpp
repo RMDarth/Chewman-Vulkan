@@ -13,7 +13,7 @@ namespace SVE
 namespace
 {
 
-const aiNodeAnim* findAnimNode(const aiAnimation* animation, const std::string nodeName)
+const aiNodeAnim* findAnimNode(const aiAnimation* animation, const std::string& nodeName)
 {
     for (uint32_t i = 0; i < animation->mNumChannels; i++)
     {

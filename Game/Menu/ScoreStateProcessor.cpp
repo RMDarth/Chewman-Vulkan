@@ -4,15 +4,17 @@
 #include "ScoreStateProcessor.h"
 #include "Game/Controls/ControlDocument.h"
 #include "Game/Game.h"
+#include "Game/Utils.h"
 #include <sstream>
 
 namespace Chewman
 {
 
 ScoreStateProcessor::ScoreStateProcessor()
-    : _progressManager(Game::getInstance()->getProgressManager())
+    : _document(std::make_unique<ControlDocument>("resources/game/GUI/scoremenu.xml"))
+    , _progressManager(Game::getInstance()->getProgressManager())
+
 {
-    _document = std::make_unique<ControlDocument>("resources/game/GUI/scoremenu.xml");
     _document->setMouseUpHandler(this);
     _document->raisePriority(120);
     _document->hide();
@@ -62,7 +64,7 @@ void ScoreStateProcessor::show()
     _document->show();
     _document->getControlByName("result")->setText(_progressManager.isVictory() ? "Victory" : "You lose");
     _document->getControlByName("levelname")->setText("Level " + std::to_string(currentLevel));
-    _document->getControlByName("time")->setText("Time: " + timeToString(_progressManager.getPlayerInfo().time));
+    _document->getControlByName("time")->setText("Time: " + Utils::timeToString(_progressManager.getPlayerInfo().time));
     _document->getControlByName("score")->setText("Score: 0");
     _document->getControlByName("panel")->setDefaultMaterial("windows/gameover_0.png");
 

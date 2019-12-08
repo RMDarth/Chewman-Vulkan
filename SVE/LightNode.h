@@ -31,13 +31,13 @@ private:
     void createProjectionMatrix();
 
 private:
-    glm::vec3 _originalPos;
+    glm::vec3 _originalPos = {};
 
-    LightSettings _lightSettings;
+    LightSettings _lightSettings = {};
     glm::mat4 _viewMatrix;
     glm::mat4 _projectionMatrix;
 
-    float _distanceFromCamera;
+    float _distanceFromCamera = 0.0f;
     std::vector<glm::mat4> _projectionList; // list of projections for different layers of CSM
     std::vector<glm::mat4> _viewList; // list of view matrix for different views (cubemap) of point light
 };

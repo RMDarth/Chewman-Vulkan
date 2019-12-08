@@ -1,0 +1,22 @@
+{
+    "name": "CeilingNormals3",
+    "vertexShaderName": "phongNormalShadowVertexShader",
+    "fragmentShaderName": "phongNormalShadowFragmentShader",
+    "ignoreShadow": false,
+    "textures": [
+        {
+            "samplerName": "diffuseTex",
+            "textureType": "ImageFile",
+            "filename": "../textures/level/ceiling3.jpg"
+        },
+        {
+            "samplerName": "normalTex",
+            "textureType": "ImageFile",
+            "filename": "../textures/level/ceilingNormal3.jpg"
+        },
+        {
+            "samplerName": "directShadowTex",
+            "textureType": "ShadowMapDirect"
+        }
+    ]
+}

@@ -3,6 +3,7 @@
 // Licensed under the MIT License
 #pragma once
 #include <string>
+#include <memory>
 
 namespace Chewman
 {
@@ -18,6 +19,7 @@ enum class ResolutionSettings : uint8_t
 enum class EffectSettings : uint8_t
 {
     Low,
+    Medium,
     High,
     Unknown
 };
@@ -29,7 +31,7 @@ enum class ParticlesSettings : uint8_t
     None
 };
 
-constexpr uint8_t CurrentGraphicsSettingsVersion = 3;
+constexpr uint8_t CurrentGraphicsSettingsVersion = 4;
 
 struct GraphicsSettings
 {
@@ -55,7 +57,7 @@ std::string getParticlesText(ParticlesSettings settings);
 class GraphicsManager
 {
 public:
-    GraphicsManager();
+    static GraphicsManager& getInstance();
     GraphicsManager(const GraphicsManager&) = delete;
 
     void setSettings(GraphicsSettings settings);
@@ -69,6 +71,10 @@ public:
     void load();
 private:
     void tuneSettings();
+
+private:
+    GraphicsManager();
+    static std::unique_ptr<GraphicsManager> _instance;
 
     GraphicsSettings _currentSettings;
     bool _needRestart = false;

@@ -95,6 +95,7 @@ int runGame()
             // load resources
             engine->getResourceManager()->loadFolder("resources/shaders");
             engine->getResourceManager()->loadFolder("resources/materials");
+            engine->getResourceManager()->loadFolder("resources/materials/skins");
             engine->getResourceManager()->loadFolder("resources/models");
             engine->getResourceManager()->loadFolder("resources/fonts");
             engine->getResourceManager()->loadFolder("resources");
@@ -216,11 +217,6 @@ int runGame()
                             sunLight->getLightSettings().diffuseStrength = {0.1f, 0.1f, 0.1f, 1.0f};
                             sunLight->getLightSettings().specularStrength = {0.05f, 0.05f, 0.05f, 1.0f};
                         }
-
-                        auto pos = camera->getPosition();
-                        auto ypr = camera->getYawPitchRoll();
-                        std::cout << pos.x << " " << pos.y << " " << pos.z << std::endl;
-                        std::cout << ypr.x << " " << ypr.y << " " << ypr.z << std::endl;
                     }
                 }
                 if (event.type == SDL_MOUSEMOTION && !lockControl)

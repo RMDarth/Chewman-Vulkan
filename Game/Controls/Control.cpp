@@ -353,7 +353,10 @@ void Control::setCustomAttribute(const std::string& name, std::string value)
         str >> size;
         auto* font = _overlay->getInfo().textInfo.font;
         if (font)
-            setText(_text, font->fontName, (size / font->size) * 0.5f, _overlay->getInfo().textInfo.color);
+        {
+            float scale = SVE::Engine::getInstance()->getRenderWindowSize().y / 1440.0f;
+            setText(_text, font->fontName, (size / font->size) * scale, _overlay->getInfo().textInfo.color);
+        }
     }
 }
 

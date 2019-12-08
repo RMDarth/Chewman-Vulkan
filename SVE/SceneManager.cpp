@@ -14,8 +14,8 @@ namespace SVE
 {
 
 SceneManager::SceneManager()
+    : _root(std::make_shared<SceneNode>("root"))
 {
-    _root = std::make_shared<SceneNode>("root");
 }
 
 SceneManager::~SceneManager() = default;

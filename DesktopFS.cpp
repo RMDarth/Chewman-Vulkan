@@ -8,6 +8,8 @@
 #include <cppfs/FilePath.h>
 #include <SDL2/SDL_filesystem.h>
 #include <SVE/VulkanException.h>
+#include <ios>
+#include <iterator>
 
 namespace SVE
 {
@@ -68,7 +70,9 @@ FSEntityList DesktopFS::getFileList(std::shared_ptr<FileSystemEntity> dir) const
 
 std::string DesktopFS::getFileContent(std::shared_ptr<FileSystemEntity> file) const
 {
-    return std::static_pointer_cast<DesktopFSEntity>(file)->Handle.readFile();
+    auto stream = std::static_pointer_cast<DesktopFSEntity>(file)->Handle.createInputStream(std::ios::in | std::ios::binary);
+    std::string s(std::istreambuf_iterator<char>(*stream), {});
+    return s;
 }
 
 std::shared_ptr<FileSystemEntity> DesktopFS::getEntity(const std::string& localPath, bool /*isDirectory*/) const
