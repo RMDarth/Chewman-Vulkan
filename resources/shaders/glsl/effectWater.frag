@@ -22,12 +22,12 @@ layout (location = 5) in vec3 fragPos;
 layout(location = 0) out vec4 outColor;
 layout(location = 1) out vec4 outColorBloom;
 
-float waterMix = 0.001;
-float waterSpeed = 0.004;
-float waveLength = 100;
+float waterMix = 0.1;
+float waterSpeed = 0.5;
+float waveLength = 1;
 float waterDir = 0;
-float reflection = 0.7;
-float textureSize = 5;
+float reflection = 0.8;
+float textureSize = 1000;
 
 vec3 unpackNormal(vec4 color)
 {
@@ -36,16 +36,16 @@ vec3 unpackNormal(vec4 color)
 
 vec3 getColor()
 {
-    vec2 scrollMain = fragTexCoord;
-    vec2 scrollSec = fragTexCoord;
-    vec2 scrollRef1 = fragTexCoord;
-    vec2 scrollRef2 = fragTexCoord;
-    float waterSpeedX =waterSpeed * 500.0 / textureSize;
+    vec2 scrollMain = fragTexCoord * 0.01;
+    vec2 scrollSec = fragTexCoord* 0.01;
+    vec2 scrollRef1 = fragTexCoord* 0.01;
+    vec2 scrollRef2 = fragTexCoord* 0.01;
+    float waterSpeedX = waterSpeed * 500.0 / textureSize;
     float x1s = sin(waterDir * 0.0174533) * (cos(ubo.time * waterSpeedX ) * waveLength * 0.01); //onda
     float y1s = cos(waterDir * 0.0174533) * (cos(ubo.time * waterSpeedX ) * waveLength * 0.01);
     float refX1 = sin((waterDir + 25) * 0.0174533) * ubo.time * waterSpeedX; //riflesso
     float refY1 = cos((waterDir + 25) * 0.0174533) * ubo.time * waterSpeedX;
-    float refX2 = sin((waterDir - 25) * 0.0174533) * ubo.time * waterSpeedX; //riflesso
+    float refX2 = sin((waterDir - 25) * 0.0174533) * ubo.time * 2 * waterSpeedX; //riflesso
     float refY2 = cos((waterDir - 25) * 0.0174533) * ubo.time * waterSpeedX;
     scrollMain += vec2(x1s * 0.01, y1s * 0.01 );
     scrollSec += vec2(-x1s * 0.01 * 5, -y1s * 0.01 * 5);
@@ -59,12 +59,14 @@ vec3 getColor()
     vec3 viewDir = normalize(ubo.cameraPos.xyz - fragPos);
     vec3 lightEffect = CalcDirLight(ubo.dirLight, normal, viewDir, ubo.materialInfo);
 
-    return lightEffect * 1.5 * diffuse.rgb;
+    vec3 finalLight = mix(lightEffect, vec3(1,1,1), step(0.5, ubo.dirLight.diffuse.r));
+
+    return finalLight * diffuse.rgb;
 }
 
 void main() {
     vec3 color = getColor();
 
-    outColor = vec4(color, 0.7);
+    outColor = vec4(color, 1.0);
     outColorBloom = vec4(color * 0, 0.0);
 }

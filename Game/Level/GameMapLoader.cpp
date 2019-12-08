@@ -130,9 +130,7 @@ void initLevelBlocks(BlockMeshGenerator& meshGenerator)
     //auto lavaTop = meshGenerator.GenerateLiquid(glm::vec3(0,0,0), Top);
 
     auto meshSettingsWallT = meshGenerator.CombineMeshes("WallTop", wallTop);
-    meshSettingsWallT.materialName = "CeilingNormals";
     auto meshSettingsWallV = meshGenerator.CombineMeshes("WallVert", wallVert);
-    meshSettingsWallV.materialName = "WallNormalsInstanced";
 
     auto wallMeshT = std::make_shared<SVE::Mesh>(meshSettingsWallT);
     auto wallMeshV = std::make_shared<SVE::Mesh>(meshSettingsWallV);
@@ -171,10 +169,11 @@ void buildFloorMesh(const GameMap& level, BlockMeshGenerator& meshGenerator, std
     auto liquid = meshGenerator.GenerateLiquidBorder(level.width, level.height);
     vertical.insert(vertical.end(), liquid.begin(), liquid.end());
 
+    auto styleStr = std::to_string(level.style);
     auto meshSettingsB = meshGenerator.CombineMeshes("AllFloorTop" + suffix, top);
-    meshSettingsB.materialName = "FloorNormals";
+    meshSettingsB.materialName = "FloorNormals" + styleStr;
     auto meshSettingsV = meshGenerator.CombineMeshes("AllFloorVert" + suffix, vertical);
-    meshSettingsV.materialName = "WallNormals";
+    meshSettingsV.materialName = "WallNormals" + styleStr;
 
     auto* engine = SVE::Engine::getInstance();
     engine->getMeshManager()->registerMesh(std::make_shared<SVE::Mesh>(meshSettingsB));
@@ -398,6 +397,8 @@ void GameMapLoader::initMeshes(GameMap& level, const std::string& suffix)
 {
     buildFloorMesh(level, _meshGenerator, suffix);
 
+    auto skinId = std::to_string(level.style);
+
     for (auto x = 0; x < level.height; ++x)
     {
         for (auto y = 0; y < level.width; ++y)
@@ -411,8 +412,12 @@ void GameMapLoader::initMeshes(GameMap& level, const std::string& suffix)
                     level.upperLevelMeshNode->attachSceneNode(node);
                     node->setNodeTransformation(glm::translate(glm::mat4(1), position));
 
-                    node->attachEntity(std::make_shared<SVE::MeshEntity>("WallTop"));
-                    node->attachEntity(std::make_shared<SVE::MeshEntity>("WallVert"));
+                    auto wallTop = std::make_shared<SVE::MeshEntity>("WallTop");
+                    wallTop->setMaterial("CeilingNormals" + skinId);
+                    node->attachEntity(std::move(wallTop));
+                    auto wallVert = std::make_shared<SVE::MeshEntity>("WallVert");
+                    wallVert->setMaterial("WallNormalsInstanced" + skinId);
+                    node->attachEntity(wallVert);
 
                     level.mapData[x][y].cellBlock = std::move(node);
                     break;
@@ -783,6 +788,7 @@ void GameMapLoader::createLava(GameMap& level, const std::string& suffix) const
     }
     lavaEntity->setCastShadows(false);
     lavaEntity->getMaterialInfo()->ambient = {0.5f, 0.5f, 0.5f, 1.0f};
+    lavaEntity->getMaterialInfo()->diffuse = {1.0f, 1.0f, 1.0f, 1.0f};
     lavaNode->attachEntity(lavaEntity);
 
     level.lavaEntity = std::move(lavaEntity);

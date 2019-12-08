@@ -1,6 +1,6 @@
 {
     "name": "waterFragmentShader",
-    "filename": "glsl/effectWater2.frag.spv",
+    "filename": "glsl/effectWater3.frag.spv",
     "shaderType": "FragmentShader",
     "samplerNamesList": [
         "mainSampler",

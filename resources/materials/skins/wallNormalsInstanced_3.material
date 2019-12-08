@@ -1,8 +1,7 @@
 {
-    "name": "CeilingNormals3",
+    "name": "WallNormalsInstanced3",
     "vertexShaderName": "phongNormalShadowInstancedVertexShader",
     "fragmentShaderName": "phongNormalShadowFragmentShader",
-    "ignoreShadow": false,
     "useInstancing": true,
     "instanceMaxCount": 20000,
     "ignoreShadow": false,
@@ -10,12 +9,12 @@
         {
             "samplerName": "diffuseTex",
             "textureType": "ImageFile",
-            "filename": "../textures/level/ceiling3.jpg"
+            "filename": "../textures/level/wall3.jpg"
         },
         {
             "samplerName": "normalTex",
             "textureType": "ImageFile",
-            "filename": "../textures/level/ceilingNormal3.jpg"
+            "filename": "../textures/level/wallNormals3.jpg"
         },
         {
             "samplerName": "directShadowTex",

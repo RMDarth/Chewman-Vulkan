@@ -49,31 +49,34 @@ void LevelStateProcessor::initMap()
     // TODO: Display some "Loading" message box while level is loading
     std::cout << "Start loading level " << levelNum << std::endl;
 
-    auto sunLight = SVE::Engine::getInstance()->getSceneManager()->getLightManager()->getDirectionLight();
-    if (!_gameMapProcessor->getGameMap()->isNight)
-    {
-        sunLight->getLightSettings().ambientStrength = {0.2f, 0.2f, 0.2f, 1.0f};
-        sunLight->getLightSettings().diffuseStrength = {1.0f, 1.0f, 1.0f, 1.0f};
-        sunLight->getLightSettings().specularStrength = {0.5f, 0.5f, 0.5f, 1.0f};
-        sunLight->setNodeTransformation(
-                glm::translate(glm::mat4(1), glm::vec3(80, 80, -80)));
-
-        sunLight->getLightSettings().castShadows = Game::getInstance()->getGraphicsManager().getSettings().useShadows;
-    } else {
-        sunLight->getLightSettings().ambientStrength = {0.08f, 0.08f, 0.08f, 1.0f};
-        sunLight->getLightSettings().diffuseStrength = {0.15f, 0.15f, 0.15f, 1.0f};
-        sunLight->getLightSettings().specularStrength = {0.08f, 0.08f, 0.08f, 1.0f};
-        sunLight->setNodeTransformation(
-                glm::translate(glm::mat4(1), glm::vec3(-20, 80, 80)));
-
-        sunLight->getLightSettings().castShadows = false;
-    }
-
     auto future = std::async(std::launch::async, [&]
     {
         _gameMapProcessor = std::make_unique<GameMapProcessor>(Game::getInstance()->getGameMapLoader().loadMap(ss.str()));
+
+        auto sunLight = SVE::Engine::getInstance()->getSceneManager()->getLightManager()->getDirectionLight();
+        if (!_gameMapProcessor->getGameMap()->isNight)
+        {
+            sunLight->getLightSettings().ambientStrength = {0.2f, 0.2f, 0.2f, 1.0f};
+            sunLight->getLightSettings().diffuseStrength = {1.0f, 1.0f, 1.0f, 1.0f};
+            sunLight->getLightSettings().specularStrength = {0.5f, 0.5f, 0.5f, 1.0f};
+            sunLight->setNodeTransformation(
+                    glm::translate(glm::mat4(1), glm::vec3(80, 80, -80)));
+
+            sunLight->getLightSettings().castShadows = Game::getInstance()->getGraphicsManager().getSettings().useShadows;
+        } else {
+            sunLight->getLightSettings().ambientStrength = {0.08f, 0.08f, 0.08f, 1.0f};
+            sunLight->getLightSettings().diffuseStrength = {0.15f, 0.15f, 0.15f, 1.0f};
+            sunLight->getLightSettings().specularStrength = {0.08f, 0.08f, 0.08f, 1.0f};
+            sunLight->setNodeTransformation(
+                    glm::translate(glm::mat4(1), glm::vec3(-20, 80, 80)));
+
+            sunLight->getLightSettings().castShadows = false;
+        }
+
         _loadingFinished = true;
         _gameMapProcessor->setVisible(true);
+
+
     });
 }
 

@@ -1,7 +1,10 @@
 {
     "name": "CeilingNormals6",
-    "vertexShaderName": "phongNormalShadowVertexShader",
+    "vertexShaderName": "phongNormalShadowInstancedVertexShader",
     "fragmentShaderName": "phongNormalShadowFragmentShader",
+    "ignoreShadow": false,
+    "useInstancing": true,
+    "instanceMaxCount": 20000,
     "ignoreShadow": false,
     "textures": [
         {

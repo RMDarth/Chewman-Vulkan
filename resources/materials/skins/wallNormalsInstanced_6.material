@@ -1,5 +1,5 @@
 {
-    "name": "WallNormalsInstanced",
+    "name": "WallNormalsInstanced6",
     "vertexShaderName": "phongNormalShadowInstancedVertexShader",
     "fragmentShaderName": "phongNormalShadowFragmentShader",
     "useInstancing": true,
@@ -9,12 +9,12 @@
         {
             "samplerName": "diffuseTex",
             "textureType": "ImageFile",
-            "filename": "textures/wall1.png"
+            "filename": "../textures/level/wall6.jpg"
         },
         {
             "samplerName": "normalTex",
             "textureType": "ImageFile",
-            "filename": "textures/wallNormal1.png"
+            "filename": "../textures/level/wallNormals6.jpg"
         },
         {
             "samplerName": "directShadowTex",
