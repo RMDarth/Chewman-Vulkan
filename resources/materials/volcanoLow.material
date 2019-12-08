@@ -1,0 +1,16 @@
+{
+    "name": "VolcanoLowMaterial",
+    "vertexShaderName": "phongShadowVertexShader",
+    "fragmentShaderName": "phongShadowFragmentShader",
+    "textures": [
+        {
+            "samplerName": "diffuseTex",
+            "textureType": "ImageFile",
+            "filename": "textures/staticObjects/trashvolcano.png"
+        },
+        {
+            "samplerName": "directShadowTex",
+            "textureType": "ShadowMapDirect"
+        }
+    ]
+}

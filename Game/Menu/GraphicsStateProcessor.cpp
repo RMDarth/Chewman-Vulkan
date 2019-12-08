@@ -100,7 +100,7 @@ void GraphicsStateProcessor::processEvent(Control* control, IEventHandler::Event
         static const std::vector<std::string> shadowValues = { "shadowOff", "shadowOn" };
         static const std::vector<std::string> lightValues = { "lightsOff", "lightsOn" };
         static const std::vector<std::string> resValues = { "resLow", "resHigh" };
-        static const std::vector<std::string> effectsValues = { "effectsLow", "effectsHigh" };
+        static const std::vector<std::string> effectsValues = { "effectsLow", "effectsMed", "effectsHigh" };
         static const std::vector<std::string> gargoyleValues = { "particlesFull", "particlesPartial", "particlesNone" };
         setSettingByName(_settings.useShadows, shadowValues, control->getName());
         setSettingByName(_settings.useDynamicLights, lightValues, control->getName());

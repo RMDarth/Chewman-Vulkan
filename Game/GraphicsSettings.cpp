@@ -36,6 +36,7 @@ std::string getEffectText(EffectSettings effectSettings)
     switch (effectSettings)
     {
         case EffectSettings::Low: return "Low";
+        case EffectSettings::Medium: return "Medium";
         case EffectSettings::High: return "High";
     }
 
@@ -158,7 +159,7 @@ void GraphicsManager::tuneSettings()
 
             if (model < 630)
             {
-                _currentSettings.effectSettings = EffectSettings::Low;
+                _currentSettings.effectSettings = EffectSettings::Medium;
                 _currentSettings.useDynamicLights = false;
                 _currentSettings.particleEffects = ParticlesSettings::None;
             }
@@ -174,6 +175,7 @@ void GraphicsManager::tuneSettings()
             }
             if (model < 540)
             {
+                _currentSettings.effectSettings = EffectSettings::Low;
                 _currentSettings.resolution = ResolutionSettings::Low;
             }
         }
@@ -195,7 +197,8 @@ void GraphicsManager::tuneSettings()
                 {
                     if (deviceName.find("Samsung") == std::string::npos)
                     {
-                        _currentSettings.effectSettings = EffectSettings::Low;
+                        _currentSettings.effectSettings = EffectSettings::Medium;
+                        _currentSettings.useDynamicLights = false;
                     }
                 }
                 if (model < 72)
@@ -207,11 +210,12 @@ void GraphicsManager::tuneSettings()
                             throw SVE::VulkanException("Android 7 not supported");
                         }
                     }
-                    _currentSettings.effectSettings = EffectSettings::Low;
+                    _currentSettings.effectSettings = EffectSettings::Medium;
                     _currentSettings.useDynamicLights = false;
                 }
                 if (model < 57)
                 {
+                    _currentSettings.effectSettings = EffectSettings::Low;
                     _currentSettings.resolution = ResolutionSettings::Low;
                 }
 
@@ -226,11 +230,12 @@ void GraphicsManager::tuneSettings()
 
     if (_currentSettings.effectSettings == EffectSettings::Unknown)
     {
-        _currentSettings.effectSettings = EffectSettings::Low;
+        _currentSettings.effectSettings = EffectSettings::Medium;
         _currentSettings.useDynamicLights = false;
 
         if (gpuInfo.limits.maxPerStageDescriptorSamplers < 100)
         {
+            _currentSettings.effectSettings = EffectSettings::Low;
             _currentSettings.resolution = ResolutionSettings::Low;
         }
     }

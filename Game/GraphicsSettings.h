@@ -19,6 +19,7 @@ enum class ResolutionSettings : uint8_t
 enum class EffectSettings : uint8_t
 {
     Low,
+    Medium,
     High,
     Unknown
 };
@@ -30,7 +31,7 @@ enum class ParticlesSettings : uint8_t
     None
 };
 
-constexpr uint8_t CurrentGraphicsSettingsVersion = 3;
+constexpr uint8_t CurrentGraphicsSettingsVersion = 4;
 
 struct GraphicsSettings
 {

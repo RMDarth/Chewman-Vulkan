@@ -8,6 +8,7 @@
 #include "SVE/SceneManager.h"
 
 #include <glm/gtc/matrix_transform.hpp>
+#include <Game/Game.h>
 
 namespace Chewman
 {
@@ -39,6 +40,8 @@ std::shared_ptr<SVE::MeshEntity> getStaticObjectEntity(StaticObjectType type)
     std::string meshName;
     std::string materialName;
 
+    const auto& graphicSettings = Game::getInstance()->getGraphicsManager().getSettings();
+
     switch (type)
     {
         case StaticObjectType::Tomb:
@@ -47,7 +50,7 @@ std::shared_ptr<SVE::MeshEntity> getStaticObjectEntity(StaticObjectType type)
             break;
         case StaticObjectType::Volcano:
             meshName = "volcano";
-            materialName = "VolcanoMaterial";
+            materialName = graphicSettings.effectSettings != EffectSettings::Low ? "VolcanoMaterial" : "VolcanoLowMaterial";
             break;
         case StaticObjectType::Dragon:
             meshName = "dragon";
@@ -55,7 +58,7 @@ std::shared_ptr<SVE::MeshEntity> getStaticObjectEntity(StaticObjectType type)
             break;
         case StaticObjectType::Pot:
             meshName = "pot";
-            materialName = "PotMaterial";
+            materialName = graphicSettings.effectSettings != EffectSettings::Low ? "PotMaterial" : "PotLowMaterial";
             break;
         case StaticObjectType::Mouth:
             meshName = "throat";

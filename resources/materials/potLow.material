@@ -1,0 +1,17 @@
+{
+    "name": "PotLowMaterial",
+    "vertexShaderName": "phongShadowVertexShader",
+    "fragmentShaderName": "phongShadowFragmentShader",
+    "cullFace": "BackFace",
+    "textures": [
+        {
+            "samplerName": "diffuseTex",
+            "textureType": "ImageFile",
+            "filename": "textures/staticObjects/trashpot.png"
+        },
+        {
+            "samplerName": "directShadowTex",
+            "textureType": "ShadowMapDirect"
+        }
+    ]
+}

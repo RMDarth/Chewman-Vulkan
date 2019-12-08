@@ -23,6 +23,7 @@
         <Label name="effectsLabel" text="Effects:" x="0.02" y="0.5" width="0.38" height="0.08"/>
         <DropDown name="effects" text="High" font-size="55" x="0.42" y="0.495" width="-5.34065" height="0.1">
             <Button name="effectsHigh" text="High" font-size="45"/>
+            <Button name="effectsMed" text="Medium" font-size="45"/>
             <Button name="effectsLow" text="Low" font-size="45"/>
         </DropDown>
 
