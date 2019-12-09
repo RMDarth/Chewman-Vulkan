@@ -21,7 +21,6 @@ layout (location = 4) in vec3 fragTangent;
 layout (location = 5) in vec3 fragPos;
 
 layout(location = 0) out vec4 outColor;
-layout(location = 1) out vec4 outColorBloom;
 
 const float waveStrength = 0.005; // 0.02
 
@@ -52,5 +51,4 @@ void main() {
     vec3 color = getColor();
 
     outColor = vec4(color, 1.0);
-    outColorBloom = vec4(color * 0, 0.0);
 }

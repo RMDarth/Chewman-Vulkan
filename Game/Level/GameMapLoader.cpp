@@ -778,13 +778,13 @@ void GameMapLoader::createLava(GameMap& level, const std::string& suffix) const
             lavaEntity->setMaterial(isLowSettings ? "LavaSimpleMaterial" : "LavaMaterial");
             break;
         case 2:
-            lavaEntity->setMaterial("WaterMaterial");
+            lavaEntity->setMaterial(isLowSettings ? "WaterSimpleMaterial" : "WaterMaterial");
             break;
         case 3:
-            lavaEntity->setMaterial("AcidMaterial");
+            lavaEntity->setMaterial(isLowSettings ? "AcidSimpleMaterial" : "AcidMaterial");
             break;
         default:
-            lavaEntity->setMaterial("LavaMaterial");
+            lavaEntity->setMaterial(isLowSettings ? "LavaSimpleMaterial" : "LavaMaterial");
     }
     lavaEntity->setCastShadows(false);
     lavaEntity->getMaterialInfo()->ambient = {0.5f, 0.5f, 0.5f, 1.0f};

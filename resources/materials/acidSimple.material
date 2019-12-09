@@ -1,0 +1,12 @@
+{
+    "name": "AcidSimpleMaterial",
+    "vertexShaderName": "lavaVertexShader",
+    "fragmentShaderName": "lavaSimpleFragmentShader",
+    "passType": "ScreenQuadMRTPass",
+    "textures": [
+        {
+            "samplerName": "lavaSampler",
+            "filename": "textures/acid.jpg"
+        }
+    ]
+}

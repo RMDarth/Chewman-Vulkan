@@ -5,7 +5,6 @@
     "ignoreShadow": false,
     "useInstancing": true,
     "instanceMaxCount": 20000,
-    "ignoreShadow": false,
     "textures": [
         {
             "samplerName": "diffuseTex",

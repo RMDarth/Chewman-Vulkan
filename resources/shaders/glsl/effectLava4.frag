@@ -19,8 +19,8 @@ layout(location = 1) out vec4 outColorBloom;
 
 
 void main() {
-    vec2 texCoord = fragTexCoord * 10;
-    float time = ubo.time * 0.03;
+    vec2 texCoord = fragTexCoord * 2;
+    float time = ubo.time * 0.005;
     texCoord.x += time;
     texCoord.y += time * 0.5;
     vec3 color = texture(lavaSampler, texCoord, 0).rgb;
