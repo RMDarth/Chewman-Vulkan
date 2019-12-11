@@ -73,7 +73,6 @@ void LightNode::fillUniformData(UniformData& data, uint32_t lightNum, bool asVie
                 pointLight.quadratic = _lightSettings.quadAtten;
 
                 data.shadowPointLightList.push_back(pointLight);
-                data.lightInfo.lightFlags |= (LightInfo::PointLight1 << (data.shadowPointLightList.size() - 1));
                 if (_lightSettings.castShadows)
                     data.lightInfo.enableShadows |= (LightInfo::PointLight1 << (data.shadowPointLightList.size() - 1));
 
@@ -93,6 +92,7 @@ void LightNode::fillUniformData(UniformData& data, uint32_t lightNum, bool asVie
 
                 data.pointLightList.push_back(pointLight);
                 data.lightInfo.pointLightNum = std::min(data.pointLightList.size(), MaxPointLight);
+                data.lightInfo.isSimpleLight = _lightSettings.isSimple;
             }
             case LightType::SunLight:
             {
@@ -107,7 +107,6 @@ void LightNode::fillUniformData(UniformData& data, uint32_t lightNum, bool asVie
                 data.dirLight.ambient = glm::vec4(_lightSettings.ambientStrength);
                 data.dirLight.direction = glm::vec4(-glm::normalize(model[3]));
 
-                data.lightInfo.lightFlags |= LightInfo::DirectionalLight;
                 if (_lightSettings.castShadows)
                     data.lightInfo.enableShadows |= LightInfo::DirectionalLight;
                 break;
@@ -120,7 +119,6 @@ void LightNode::fillUniformData(UniformData& data, uint32_t lightNum, bool asVie
                 data.spotLight.ambient = glm::vec4(_lightSettings.ambientStrength);
                 //data.spotLight.direction = glm::vec4(-glm::normalize(model[3]));
 
-                data.lightInfo.lightFlags |= LightInfo::SpotLight;
                 if (_lightSettings.castShadows)
                     data.lightInfo.enableShadows |= LightInfo::SpotLight;
                 break;
@@ -136,6 +134,8 @@ void LightNode::fillUniformData(UniformData& data, uint32_t lightNum, bool asVie
                 lineLight.constant = _lightSettings.constAtten;
                 lineLight.linear = _lightSettings.linearAtten;
                 lineLight.quadratic = _lightSettings.quadAtten;
+
+                data.lightInfo.isSimpleLight = _lightSettings.isSimple;
 
                 data.lineLightList.push_back(lineLight);
                 data.lightInfo.lightLineNum = data.lineLightList.size();

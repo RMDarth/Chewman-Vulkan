@@ -52,6 +52,7 @@ void OverlayEntity::updateUniforms(UniformDataList uniformDataList) const
     uniformData.overlayInfo.width = _overlayInfo.width;
     uniformData.overlayInfo.height = _overlayInfo.height;
     uniformData.overlayInfo.texCoord = _overlayInfo.texCoord;
+    uniformData.customVec4 = _customVec4;
     if (_material)
         _material->getVulkanMaterial()->setUniformData(_materialIndex, uniformData);
 
@@ -168,6 +169,11 @@ void OverlayEntity::setMaterial(const std::string& materialName)
 void OverlayEntity::setVisible(bool visible)
 {
     _isVisible = visible;
+}
+
+bool OverlayEntity::isVisible() const
+{
+    return _isVisible;
 }
 
 } // namespace SVE

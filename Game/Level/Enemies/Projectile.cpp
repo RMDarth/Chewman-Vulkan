@@ -42,7 +42,7 @@ Projectile::Projectile(GameMap* map, glm::ivec2 startPos)
         _isParticles = true;
     }
 
-    if (Game::getInstance()->getGraphicsManager().getSettings().useDynamicLights)
+    if (Game::getInstance()->getGraphicsManager().getSettings().dynamicLights != LightSettings::Off)
         _rootNode->attachSceneNode(addEnemyLightEffect(engine, 2.0));
 
     _state[(uint8_t)EnemyState::Dead] = 1;

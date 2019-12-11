@@ -33,6 +33,10 @@ std::shared_ptr<SVE::LightNode> addLightEffect(SVE::Engine* engine)
     lightSettings.constAtten = 1.0f * 1.8f;
     lightSettings.linearAtten = 0.35f * 0.15f;
     lightSettings.quadAtten = 0.44f * 0.15f;
+
+    if (Game::getInstance()->getGraphicsManager().getSettings().dynamicLights == LightSettings::Simple)
+        lightSettings.isSimple = true;
+
     auto lightNode = std::make_shared<SVE::LightNode>(lightSettings);
     lightNode->setNodeTransformation(glm::translate(glm::mat4(1), glm::vec3(0, 2.5, 0)));
 
@@ -66,7 +70,7 @@ Player::Player(GameMap* gameMap, glm::ivec2 startPos)
     _trashmanEntity->setMaterial("Yellow");
     _rotateNode->attachEntity(_trashmanEntity);
 
-    if (Game::getInstance()->getGraphicsManager().getSettings().useDynamicLights)
+    if (Game::getInstance()->getGraphicsManager().getSettings().dynamicLights != LightSettings::Off && gameMap->isNight)
         _rootNode->attachSceneNode(addLightEffect(engine));
 
     createAppearEffect();

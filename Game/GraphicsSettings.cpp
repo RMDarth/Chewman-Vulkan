@@ -44,6 +44,19 @@ std::string getEffectText(EffectSettings effectSettings)
     return "Unknown";
 }
 
+std::string getLightText(LightSettings lightSettings)
+{
+    switch (lightSettings)
+    {
+        case LightSettings::High: return "High";
+        case LightSettings::Simple: return "Simple";
+        case LightSettings::Off: return "Off";
+    }
+
+    assert(!"Incorrect light settings");
+    return "Unknown";
+}
+
 std::string getParticlesText(ParticlesSettings settings)
 {
     switch (settings)
@@ -160,7 +173,7 @@ void GraphicsManager::tuneSettings()
             if (model < 630)
             {
                 _currentSettings.effectSettings = EffectSettings::Medium;
-                _currentSettings.useDynamicLights = false;
+                _currentSettings.dynamicLights = LightSettings::Simple;
                 _currentSettings.particleEffects = ParticlesSettings::None;
             }
             if (model <= 540)
@@ -177,6 +190,10 @@ void GraphicsManager::tuneSettings()
             {
                 _currentSettings.effectSettings = EffectSettings::Low;
                 _currentSettings.resolution = ResolutionSettings::Low;
+            }
+            if (model < 510)
+            {
+                _currentSettings.dynamicLights = LightSettings::Off;
             }
         }
     }
@@ -198,7 +215,7 @@ void GraphicsManager::tuneSettings()
                     if (deviceName.find("Samsung") == std::string::npos)
                     {
                         _currentSettings.effectSettings = EffectSettings::Medium;
-                        _currentSettings.useDynamicLights = false;
+                        _currentSettings.dynamicLights = LightSettings::Simple;
                     }
                 }
                 if (model < 72)
@@ -211,7 +228,7 @@ void GraphicsManager::tuneSettings()
                         }
                     }
                     _currentSettings.effectSettings = EffectSettings::Medium;
-                    _currentSettings.useDynamicLights = false;
+                    _currentSettings.dynamicLights = LightSettings::Simple;
                 }
                 if (model < 57)
                 {
@@ -223,7 +240,7 @@ void GraphicsManager::tuneSettings()
         } else if (deviceName.find("Mali-T") != std::string::npos)
         {
             _currentSettings.effectSettings = EffectSettings::Low;
-            _currentSettings.useDynamicLights = false;
+            _currentSettings.dynamicLights = LightSettings::Off;
             _currentSettings.resolution = ResolutionSettings::Low;
         }
     }
@@ -231,12 +248,13 @@ void GraphicsManager::tuneSettings()
     if (_currentSettings.effectSettings == EffectSettings::Unknown)
     {
         _currentSettings.effectSettings = EffectSettings::Medium;
-        _currentSettings.useDynamicLights = false;
+        _currentSettings.dynamicLights = LightSettings::Simple;
 
         if (gpuInfo.limits.maxPerStageDescriptorSamplers < 100)
         {
             _currentSettings.effectSettings = EffectSettings::Low;
             _currentSettings.resolution = ResolutionSettings::Low;
+            _currentSettings.dynamicLights = LightSettings::Off;
         }
     }
 

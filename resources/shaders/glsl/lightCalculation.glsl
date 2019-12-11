@@ -72,9 +72,19 @@ vec3 calculateLight(vec3 normal, vec3 viewDir)
         lightEffect += CalcLineLight(ubo.lineLight[i], normal, fragPos, viewDir, ubo.materialInfo);
     }
 
-    for (uint i = 0; i < ubo.lightInfo.lightPointsNum; i++)
+    if (ubo.lightInfo.isSimpleLight != 0)
     {
-        lightEffect += CalcPointLight(ubo.pointLight[i], normal, fragPos, viewDir, ubo.materialInfo);
+        for (uint i = 0; i < ubo.lightInfo.lightPointsNum; i++)
+        {
+            lightEffect += CalcSimplePointLight(ubo.pointLight[i], fragPos, ubo.materialInfo);
+        }
+    }
+    else
+    {
+        for (uint i = 0; i < ubo.lightInfo.lightPointsNum; i++)
+        {
+            lightEffect += CalcPointLight(ubo.pointLight[i], normal, fragPos, viewDir, ubo.materialInfo);
+        }
     }
 
     //if ((ubo.lightInfo.lightFlags & LI_SpotLight) != 0)

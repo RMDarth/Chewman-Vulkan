@@ -48,7 +48,8 @@ void OverlayManager::updateUniforms(UniformDataList uniformDataList) const
 {
     for (auto& overlay : _overlayList)
     {
-        overlay.second->updateUniforms(uniformDataList);
+        if (overlay.second->isVisible())
+            overlay.second->updateUniforms(uniformDataList);
     }
 }
 

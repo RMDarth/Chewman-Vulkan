@@ -46,6 +46,7 @@ public:
     virtual void setHoverMaterial(const std::string& textureName);
     virtual void setPushMaterial(const std::string& textureName);
     virtual void setDisabledMaterial(const std::string& textureName);
+    virtual void setRawMaterial(const std::string& materialName);
 
     virtual void setRenderOrder(uint32_t order);
     virtual uint32_t getRenderOrder() const;
@@ -90,6 +91,8 @@ public:
     virtual bool onMouseDown(int x, int y);
     virtual bool onMouseUp(int x, int y);
     bool isInside(int x, int y) const;
+
+    std::shared_ptr<SVE::OverlayEntity>& getOverlay();
 
     static std::string getDefaultOverlayFolder();
 

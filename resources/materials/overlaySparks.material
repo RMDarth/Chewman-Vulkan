@@ -1,0 +1,19 @@
+{
+    "name": "OverlaySparksMaterial",
+    "vertexShaderName": "overlayVertexShader",
+    "fragmentShaderName": "overlaySpritesheetFragmentShader",
+    "cullFace": "FrontFace",
+    "useAlphaBlending": true,
+    "srcBlendFactor": "SrcAlpha",
+    "dstBlendFactor": "OneMinusSrcAlpha",
+    "useDepthWrite": true,
+    "useDepthTest": false,
+    "textures": [
+            {
+                "samplerName": "texSampler",
+                "textureType": "ImageFile",
+                "filename": "textures/spritesheets/sparks3.png",
+                "spritesheetSize": [ 5, 5 ]
+            }
+        ]
+}

@@ -6,6 +6,7 @@
 #include "SVE/Engine.h"
 #include "SVE/LightNode.h"
 #include <glm/gtc/matrix_transform.hpp>
+#include <Game/Game.h>
 
 
 namespace Chewman
@@ -34,6 +35,10 @@ std::shared_ptr<SVE::LightNode> addEnemyLightEffect(SVE::Engine* engine, float h
     lightSettings.constAtten = 1.0f * 1.8f;
     lightSettings.linearAtten = 0.35f * 0.25f;
     lightSettings.quadAtten = 0.44f * 0.25f;
+
+    if (Game::getInstance()->getGraphicsManager().getSettings().dynamicLights == LightSettings::Simple)
+        lightSettings.isSimple = true;
+
     auto lightNode = std::make_shared<SVE::LightNode>(lightSettings);
     lightNode->setNodeTransformation(glm::translate(glm::mat4(1), glm::vec3(0, height, 0)));
 

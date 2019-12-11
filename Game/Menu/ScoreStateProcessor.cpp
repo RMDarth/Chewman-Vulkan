@@ -20,6 +20,10 @@ ScoreStateProcessor::ScoreStateProcessor()
     _document->hide();
 
     _restartX = _document->getControlByName("restart")->getPosition().x;
+    for (auto i = 0; i < 3; ++i)
+    {
+        _document->getControlByName("starSpark" + std::to_string(i+1))->setRawMaterial("OverlaySparksMaterial");
+    }
 }
 
 ScoreStateProcessor::~ScoreStateProcessor() = default;
@@ -50,6 +54,20 @@ GameState ScoreStateProcessor::update(float deltaTime)
         _document->getControlByName("panel")->setDefaultMaterial(ss.str());
     }
 
+    if (_time < 4.0f)
+    {
+        if (_stars > 0 && _countStars > 0)
+        {
+            for (auto i = 0; i < _countStars; ++i)
+            {
+                _startStars[i] += deltaTime;
+                if (_startStars[i] > 1.0f) _startStars[i] = 1.0f;
+                _document->getControlByName("starSpark" + std::to_string(i + 1))->getOverlay()->setCustomData(
+                        glm::vec4(5, 5, _startStars[i], 0));
+            }
+        }
+    }
+
     return GameState::Score;
 }
 
@@ -67,6 +85,12 @@ void ScoreStateProcessor::show()
     _document->getControlByName("time")->setText("Time: " + Utils::timeToString(_progressManager.getPlayerInfo().time));
     _document->getControlByName("score")->setText("Score: 0");
     _document->getControlByName("panel")->setDefaultMaterial("windows/gameover_0.png");
+
+    for (auto i = 0; i < 3; ++i)
+    {
+        _startStars[i] = 0;
+        _document->getControlByName("starSpark" + std::to_string(i+1))->getOverlay()->setCustomData(glm::vec4(5, 5, 0, 0));
+    }
 
     auto restartBtn = _document->getControlByName("restart");
     if (!_progressManager.isVictory())

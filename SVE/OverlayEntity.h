@@ -23,6 +23,7 @@ public:
     void setMaterial(const std::string& materialName) override;
 
     void setVisible(bool visible);
+    bool isVisible() const;
 
     void updateUniforms(UniformDataList uniformDataList) const override;
     void applyDrawingCommands(uint32_t bufferIndex, uint32_t imageIndex) const override;
