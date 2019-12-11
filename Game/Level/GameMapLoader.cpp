@@ -432,8 +432,10 @@ void GameMapLoader::initMeshes(GameMap& level, const std::string& suffix)
 
     level.floor[0] = std::make_shared<SVE::MeshEntity>("AllFloorTop" + suffix);
     level.floor[1] = std::make_shared<SVE::MeshEntity>("AllFloorVert" + suffix);
-    level.mapNode->attachEntity(level.floor[0]);
-    level.mapNode->attachEntity(level.floor[1]);
+    auto floorNode = SVE::Engine::getInstance()->getSceneManager()->createSceneNode();
+    level.mapNode->attachSceneNode(floorNode);
+    floorNode->attachEntity(level.floor[0]);
+    floorNode->attachEntity(level.floor[1]);
 }
 
 void GameMapLoader::createGargoyle(GameMap& level, int row, int column, char mapType)
