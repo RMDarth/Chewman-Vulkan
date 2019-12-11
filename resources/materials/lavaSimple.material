@@ -1,8 +1,7 @@
 {
     "name": "LavaSimpleMaterial",
-    "vertexShaderName": "lavaVertexShader",
+    "vertexShaderName": "lavaSimpleVertexShader",
     "fragmentShaderName": "lavaSimpleFragmentShader",
-    "passType": "ScreenQuadMRTPass",
     "textures": [
         {
             "samplerName": "lavaSampler",

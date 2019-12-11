@@ -54,7 +54,7 @@ void LevelStateProcessor::initMap()
         _gameMapProcessor = std::make_unique<GameMapProcessor>(Game::getInstance()->getGameMapLoader().loadMap(ss.str()));
 
         auto sunLight = SVE::Engine::getInstance()->getSceneManager()->getLightManager()->getDirectionLight();
-        if (!_gameMapProcessor->getGameMap()->isNight)
+        if (!_gameMapProcessor->getGameMap()->isNight || Game::getInstance()->getGraphicsManager().getSettings().dynamicLights == LightSettings::Off)
         {
             sunLight->getLightSettings().ambientStrength = {0.2f, 0.2f, 0.2f, 1.0f};
             sunLight->getLightSettings().diffuseStrength = {1.0f, 1.0f, 1.0f, 1.0f};
