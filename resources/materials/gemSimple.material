@@ -1,0 +1,19 @@
+{
+    "name": "GemSimpleMaterial",
+    "vertexShaderName": "simpleColorInstancedVertexShader",
+    "fragmentShaderName": "simpleColorFragmentShader",
+    "useInstancing": true,
+    "instanceMaxCount": 20000,
+    "cullFace": "BackFace",
+    "textures": [
+        {
+            "samplerName": "texSampler",
+            "textureType": "ImageFile",
+            "filename": "textures/gem/gemsandcrystals.png"
+        },
+        {
+            "samplerName": "directShadowTex",
+            "textureType": "ShadowMapDirect"
+        }
+    ]
+}

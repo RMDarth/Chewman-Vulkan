@@ -430,6 +430,10 @@ void GameMapLoader::createGargoyle(GameMap& level, int row, int column, char map
     // Add model
     std::shared_ptr<SVE::Entity> meshEntity = std::make_shared<SVE::MeshEntity>("gargoyle");
     meshEntity->setMaterial(gargoyle.type == GargoyleType::Fire ? "FireGargoyle" : "FrostGargoyle");
+    if (Game::getInstance()->getGraphicsManager().getSettings().dynamicLights == LightSettings::Simple)
+    {
+        meshEntity->getMaterialInfo()->ambient = {0.2, 0.2, 0.2, 1.0};
+    }
     auto gargoyleMeshNode = engine->getSceneManager()->createSceneNode();
     gargoyleMeshNode->setNodeTransformation(glm::translate(glm::mat4(1), glm::vec3(0.0f, 0.15f, 0.0f)));
     gargoyleMeshNode->attachEntity(meshEntity);
@@ -492,7 +496,10 @@ void GameMapLoader::createGargoyle(GameMap& level, int row, int column, char map
     lightSettings.constAtten = 1.0f * 0.8f;
     lightSettings.linearAtten = 0.35f * 0.15f;
     lightSettings.quadAtten = 0.44f * 0.15f;
-    if (Game::getInstance()->getGraphicsManager().getSettings().useDynamicLights)
+    if (Game::getInstance()->getGraphicsManager().getSettings().dynamicLights == LightSettings::Simple)
+        lightSettings.isSimple = true;
+
+    if (Game::getInstance()->getGraphicsManager().getSettings().dynamicLights == LightSettings::High)
     {
         auto lightNode = std::make_shared<SVE::LightNode>(lightSettings);
         rootGargoyleNode->attachSceneNode(lightNode);
@@ -673,7 +680,7 @@ void GameMapLoader::createTeleport(GameMap& level, int row, int column, char map
         lightSettings.constAtten = 1.0f * 1.8f;
         lightSettings.linearAtten = 0.35f * 0.25f;
         lightSettings.quadAtten = 0.44f * 0.25f;
-        if (Game::getInstance()->getGraphicsManager().getSettings().useDynamicLights)
+        if (Game::getInstance()->getGraphicsManager().getSettings().dynamicLights == LightSettings::High)
         {
             auto lightNode = std::make_shared<SVE::LightNode>(lightSettings);
             teleportLightNode->attachSceneNode(lightNode);
@@ -714,7 +721,10 @@ Coin* GameMapLoader::createCoin(GameMap& level, int row, int column)
     coinNode->setNodeTransformation(transform);
     level.mapNode->attachSceneNode(coinNode);
     auto coinMesh = std::make_shared<SVE::MeshEntity>(level.treasureType == 1 ? "coin" : "gem");
-    coinMesh->setMaterial(level.treasureType == 1 ? "CoinMaterial" : "GemMaterial");
+    if (Game::getInstance()->getGraphicsManager().getSettings().effectSettings == EffectSettings::Low)
+        coinMesh->setMaterial(level.treasureType == 1 ? "CoinSimpleMaterial" : "GemSimpleMaterial");
+    else
+        coinMesh->setMaterial(level.treasureType == 1 ? "CoinMaterial" : "GemMaterial");
     coinNode->attachEntity(coinMesh);
 
     coin.rootNode = std::move(coinNode);

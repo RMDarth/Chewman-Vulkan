@@ -27,15 +27,14 @@ void main() {
     vec3 viewDir = normalize(ubo.cameraPos.xyz - fragPos);
 
     vec3 lightEffect = vec3(0);
-    if ((ubo.lightInfo.lightFlags & LI_DirectionalLight) != 0)
+    //if ((ubo.lightInfo.lightFlags & LI_DirectionalLight) != 0)
         lightEffect += CalcDirLight(ubo.dirLight, norm, viewDir, ubo.materialInfo);
-    for (uint i = 0; i < 4; i++)
+    for (uint i = 0; i < ubo.lightInfo.lightPointsNum; i++)
     {
-        if ((ubo.lightInfo.lightFlags & LI_PointLight[i]) != 0)
-            lightEffect += CalcPointLight(ubo.pointLight[i], norm, fragPos, viewDir, ubo.materialInfo);
+        lightEffect += CalcPointLight(ubo.pointLight[i], norm, fragPos, viewDir, ubo.materialInfo);
     }
-    if ((ubo.lightInfo.lightFlags & LI_SpotLight) != 0)
-        lightEffect += CalcSpotLight(ubo.spotLight, norm, fragPos, viewDir, ubo.materialInfo);
+    //if ((ubo.lightInfo.lightFlags & LI_SpotLight) != 0)
+    //    lightEffect += CalcSpotLight(ubo.spotLight, norm, fragPos, viewDir, ubo.materialInfo);
 
     vec3 result = diffuse.rgb * lightEffect * fragColor;
     outColor = vec4(result, diffuse.a);

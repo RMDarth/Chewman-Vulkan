@@ -35,6 +35,7 @@ private:
     ProgressManager& _progressManager;
     int _restartX;
     float _time = 0;
+    float _startStars[3] = {};
     uint16_t _stars = 0;
     uint16_t _countStars = 0;
     bool _countingFinished = false;

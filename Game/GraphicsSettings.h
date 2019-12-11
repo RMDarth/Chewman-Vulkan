@@ -16,6 +16,13 @@ enum class ResolutionSettings : uint8_t
     Custom
 };
 
+enum class LightSettings : uint8_t
+{
+    Off,
+    Simple,
+    High
+};
+
 enum class EffectSettings : uint8_t
 {
     Low,
@@ -38,19 +45,20 @@ struct GraphicsSettings
     uint8_t version = CurrentGraphicsSettingsVersion;
     ResolutionSettings resolution = ResolutionSettings::High;
     bool useShadows = true;
-    bool useDynamicLights = true;
+    LightSettings dynamicLights = LightSettings::High;
     ParticlesSettings particleEffects = ParticlesSettings::Full;
     EffectSettings effectSettings = EffectSettings::High;
 
     bool operator==(const GraphicsSettings& other)
     {
         return resolution == other.resolution && useShadows == other.useShadows &&
-               useDynamicLights == other.useDynamicLights && particleEffects == other.particleEffects &&
+               dynamicLights == other.dynamicLights && particleEffects == other.particleEffects &&
                effectSettings == other.effectSettings;
     }
 };
 
 std::string getResolutionText(ResolutionSettings resolutionSettings);
+std::string getLightText(LightSettings lightSettings);
 std::string getEffectText(EffectSettings effectSettings);
 std::string getParticlesText(ParticlesSettings settings);
 

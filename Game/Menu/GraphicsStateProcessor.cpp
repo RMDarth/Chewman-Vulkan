@@ -61,7 +61,7 @@ void GraphicsStateProcessor::show()
     auto effectsControl = _document->getControlByName("effects");
     effectsControl->setText(getEffectText(_settings.effectSettings));
     auto lightsControl = _document->getControlByName("lights");
-    lightsControl->setText(boolToText(_settings.useDynamicLights));
+    lightsControl->setText(getLightText(_settings.dynamicLights));
     auto shadowsControl = _document->getControlByName("shadows");
     shadowsControl->setText(boolToText(_settings.useShadows));
     auto particleControl = _document->getControlByName("partEffect");
@@ -98,12 +98,12 @@ void GraphicsStateProcessor::processEvent(Control* control, IEventHandler::Event
 
         // settings //
         static const std::vector<std::string> shadowValues = { "shadowOff", "shadowOn" };
-        static const std::vector<std::string> lightValues = { "lightsOff", "lightsOn" };
+        static const std::vector<std::string> lightValues = { "lightsOff", "lightsSimple", "lightsHigh" };
         static const std::vector<std::string> resValues = { "resLow", "resHigh" };
         static const std::vector<std::string> effectsValues = { "effectsLow", "effectsMed", "effectsHigh" };
         static const std::vector<std::string> gargoyleValues = { "particlesFull", "particlesPartial", "particlesNone" };
         setSettingByName(_settings.useShadows, shadowValues, control->getName());
-        setSettingByName(_settings.useDynamicLights, lightValues, control->getName());
+        setSettingByName(_settings.dynamicLights, lightValues, control->getName());
         setSettingByName(_settings.effectSettings, effectsValues, control->getName());
         setSettingByName(_settings.resolution, resValues, control->getName());
         setSettingByName(_settings.particleEffects, gargoyleValues, control->getName());

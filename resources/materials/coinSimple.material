@@ -1,0 +1,18 @@
+{
+    "name": "CoinSimpleMaterial",
+    "vertexShaderName": "simpleColorInstancedVertexShader",
+    "fragmentShaderName": "simpleColorFragmentShader",
+    "useInstancing": true,
+    "instanceMaxCount": 20000,
+    "textures": [
+        {
+            "samplerName": "texSampler",
+            "textureType": "ImageFile",
+            "filename": "textures/coin/coinMerged.jpg"
+        },
+        {
+            "samplerName": "directShadowTex",
+            "textureType": "ShadowMapDirect"
+        }
+    ]
+}

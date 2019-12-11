@@ -34,6 +34,7 @@ struct LightSettings
     float quadAtten = 0.44f * 0.05f;
 
     bool castShadows = true;
+    bool isSimple = false;
 };
 
 struct DirLight
@@ -103,7 +104,7 @@ struct LightInfo
         SpotLight =          1 << 5,
     };
 
-    uint32_t lightFlags = 0;
+    uint32_t isSimpleLight = 0;
     uint32_t enableShadows = 0;
     uint32_t lightLineNum = 0;
     uint32_t pointLightNum = 0;

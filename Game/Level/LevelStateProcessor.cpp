@@ -53,6 +53,7 @@ void LevelStateProcessor::initMap()
         sunLight->getLightSettings().specularStrength = {0.5f, 0.5f, 0.5f, 1.0f};
         sunLight->setNodeTransformation(
                 glm::translate(glm::mat4(1), glm::vec3(80, 80, -80)));
+        auto sunLight = SVE::Engine::getInstance()->getSceneManager()->getLightManager()->getDirectionLight();
 
         sunLight->getLightSettings().castShadows = Game::getInstance()->getGraphicsManager().getSettings().useShadows;
     } else {

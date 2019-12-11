@@ -111,6 +111,13 @@ void Control::setDisabledMaterial(const std::string& textureName)
     _disabledMaterial = createMaterial(textureName);
 }
 
+
+void Control::setRawMaterial(const std::string& materialName)
+{
+    _defaultMaterial = materialName;
+    _overlay->setMaterial(_defaultMaterial);
+}
+
 void Control::setRenderOrder(uint32_t order)
 {
     SVE::Engine::getInstance()->getOverlayManager()->changeOverlayOrder(_overlay->getInfo().name, order);
@@ -401,6 +408,11 @@ std::string Control::createMaterial(const std::string& textureFile)
 std::string Control::getDefaultOverlayFolder()
 {
     return "resources/materials/textures/overlay/";
+}
+
+std::shared_ptr<SVE::OverlayEntity>& Control::getOverlay()
+{
+    return _overlay;
 }
 
 void Control::setPosition(glm::ivec2 pos)

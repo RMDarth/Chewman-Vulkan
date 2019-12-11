@@ -16,7 +16,8 @@
 
         <Label name="lightsLabel" text="Lights:" x="0.02" y="0.4" width="0.38" height="0.08"/>
         <DropDown name="lights" text="On" font-size="55" x="0.42" y="0.395" width="-5.34065" height="0.1">
-            <Button name="lightsOn" text="On" font-size="45"/>
+            <Button name="lightsHigh" text="High" font-size="45"/>
+            <Button name="lightsSimple" text="Simple" font-size="45"/>
             <Button name="lightsOff" text="Off" font-size="45"/>
         </DropDown>
 

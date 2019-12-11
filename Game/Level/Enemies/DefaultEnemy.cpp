@@ -58,7 +58,7 @@ DefaultEnemy::DefaultEnemy(GameMap* map, glm::ivec2 startPos, EnemyType enemyTyp
     debuffEntity->getMaterialInfo()->diffuse = {1.0, 1.0, 1.0, 0.5 };
     _debuffNode->attachEntity(debuffEntity);
 
-    if (Game::getInstance()->getGraphicsManager().getSettings().useDynamicLights)
+    if (Game::getInstance()->getGraphicsManager().getSettings().dynamicLights != LightSettings::Off && map->isNight)
         _rootNode->attachSceneNode(addEnemyLightEffect(engine, lightHeight));
 }
 
