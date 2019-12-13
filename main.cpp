@@ -89,22 +89,27 @@ int runGame()
         }
         engine->renderFrame(0.0f);
 
-        auto future = std::async(std::launch::async, [&] {
+        //auto future = std::async(std::launch::async, [&] {
             std::cout << "Start loading resources..." << std::endl;
 
             // load resources
+#ifdef FLATTEN_FS
+            engine->getResourceManager()->loadFolder("resflat");
+#else
             engine->getResourceManager()->loadFolder("resources/shaders");
             engine->getResourceManager()->loadFolder("resources/materials");
             engine->getResourceManager()->loadFolder("resources/materials/skins");
             engine->getResourceManager()->loadFolder("resources/models");
             engine->getResourceManager()->loadFolder("resources/fonts");
             engine->getResourceManager()->loadFolder("resources");
+#endif
             std::cout << "Resources loading finished." << std::endl;
 
-            return 0;
-        });
 
-        auto status = future.wait_for(0ms);
+        //    return 0;
+        //});
+
+        /*auto status = future.wait_for(0ms);
         while (status != std::future_status::ready)
         {
             //engine->renderFrame(0.0f);
@@ -113,7 +118,7 @@ int runGame()
             status = future.wait_for(0ms);
         }
 
-        future.get();
+        future.get();*/
         loadingScreen->hide();
 
         // Create game controller

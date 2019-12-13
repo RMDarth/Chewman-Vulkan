@@ -11,7 +11,7 @@
     "textures": [
         {
             "samplerName": "smokeSampler",
-            "filename": "textures/smoke.png"
+            "filename": "textures/smokeFloor.png"
         }
     ]
 }

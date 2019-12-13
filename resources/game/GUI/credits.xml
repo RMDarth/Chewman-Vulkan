@@ -1,5 +1,5 @@
 <document>
-    <Panel name="panel" y="0" alignment="сenter" width="-1.333" height="1"  image="credits.jpg" >
+    <Panel name="panel" y="0" width="-1.333" height="1"  image="credits.jpg" >
         <Button name="facebook" text="" x="0.85" y="0.07" width="0.05" height="-1" image="buttons/Facebook.png" hoverimage="buttons/Facebook.png" pressedimage="buttons/Facebook.png" />
     </Panel>
 

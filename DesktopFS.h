@@ -2,6 +2,7 @@
 // Copyright (c) 2018-2019, Igor Barinov
 // Licensed under the MIT License
 #pragma once
+//#define FLATTEN_FS
 
 #include <cppfs/FileHandle.h>
 #include "SVE/FileSystem.h"

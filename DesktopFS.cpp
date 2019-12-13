@@ -75,8 +75,15 @@ std::string DesktopFS::getFileContent(std::shared_ptr<FileSystemEntity> file) co
     return s;
 }
 
-std::shared_ptr<FileSystemEntity> DesktopFS::getEntity(const std::string& localPath, bool /*isDirectory*/) const
+std::shared_ptr<FileSystemEntity> DesktopFS::getEntity(const std::string& localPath, bool isDirectory) const
 {
+#ifdef FLATTEN_FS
+    if (!isDirectory)
+    {
+        auto fixedPath = "resflat" + localPath.substr(localPath.find_last_of('/'));
+        return std::make_shared<DesktopFSEntity>(cppfs::fs::open(fixedPath));
+    }
+#endif
     return std::make_shared<DesktopFSEntity>(cppfs::fs::open(localPath));
 }
 
