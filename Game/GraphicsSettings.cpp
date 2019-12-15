@@ -12,10 +12,33 @@
 #include "SVE/LightManager.h"
 #include "SVE/ResourceManager.h"
 
+#if defined(__ANDROID__)
+#include <sys/system_properties.h>
+#endif
+
 namespace Chewman
 {
 
 const std::string graphicsSettingsFile = "settings.dat";
+
+#if defined(__ANDROID__)
+std::string getSystemProperty(const char* propName)
+{
+    char prop[PROP_VALUE_MAX+1];
+    int len = __system_property_get(propName, prop);
+    if (len > 0) {
+        return std::string(prop);
+    } else {
+        return "";
+    }
+}
+#else
+std::string getSystemProperty(const char* propName)
+{
+    // TODO: Get Desktop property
+    return "";
+}
+#endif
 
 std::string getResolutionText(ResolutionSettings resolutionSettings)
 {
@@ -212,10 +235,13 @@ void GraphicsManager::tuneSettings()
 
                 if (model == 72)
                 {
-                    if (deviceName.find("Samsung") == std::string::npos)
+                    auto manufacturer = getSystemProperty("ro.product.manufacturer");
+                    if (manufacturer != "samsung")
                     {
                         _currentSettings.effectSettings = EffectSettings::Medium;
                         _currentSettings.dynamicLights = LightSettings::Simple;
+                        _currentSettings.resolution = ResolutionSettings::Low;
+                        _currentSettings.particleEffects = ParticlesSettings::None;
                     }
                 }
                 if (model < 72)
@@ -229,6 +255,8 @@ void GraphicsManager::tuneSettings()
                     }
                     _currentSettings.effectSettings = EffectSettings::Medium;
                     _currentSettings.dynamicLights = LightSettings::Simple;
+                    _currentSettings.resolution = ResolutionSettings::Low;
+                    _currentSettings.particleEffects = ParticlesSettings::None;
                 }
                 if (model < 57)
                 {
@@ -242,6 +270,7 @@ void GraphicsManager::tuneSettings()
             _currentSettings.effectSettings = EffectSettings::Low;
             _currentSettings.dynamicLights = LightSettings::Off;
             _currentSettings.resolution = ResolutionSettings::Low;
+            _currentSettings.particleEffects = ParticlesSettings::None;
         }
     }
 
@@ -249,6 +278,8 @@ void GraphicsManager::tuneSettings()
     {
         _currentSettings.effectSettings = EffectSettings::Medium;
         _currentSettings.dynamicLights = LightSettings::Simple;
+        _currentSettings.resolution = ResolutionSettings::Low;
+        _currentSettings.particleEffects = ParticlesSettings::None;
 
         if (gpuInfo.limits.maxPerStageDescriptorSamplers < 100)
         {
