@@ -23,6 +23,7 @@ class ParticleSystemManager;
 class PostEffectManager;
 class FontManager;
 class OverlayManager;
+class PipelineCacheManager;
 
 enum class CommandsType : uint8_t
 {
@@ -61,6 +62,7 @@ public:
     PostEffectManager* getPostEffectManager();
     FontManager* getFontManager();
     OverlayManager* getOverlayManager();
+    PipelineCacheManager* getPipelineCacheManager();
 
     void resizeWindow();
     glm::ivec2 getRenderWindowSize();
@@ -99,6 +101,7 @@ private:
     std::unique_ptr<PostEffectManager> _postEffectManager;
     std::unique_ptr<FontManager> _fontManager;
     std::unique_ptr<OverlayManager> _overlayManager;
+    std::unique_ptr<PipelineCacheManager> _pipelineCacheManager;
 
     std::chrono::high_resolution_clock::time_point _startTime = std::chrono::high_resolution_clock::now();
     std::chrono::high_resolution_clock::time_point _currentTime = std::chrono::high_resolution_clock::now();

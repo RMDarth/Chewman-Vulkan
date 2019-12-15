@@ -38,7 +38,7 @@ enum class ParticlesSettings : uint8_t
     None
 };
 
-constexpr uint8_t CurrentGraphicsSettingsVersion = 4;
+constexpr uint8_t CurrentGraphicsSettingsVersion = 8;
 
 struct GraphicsSettings
 {
@@ -72,6 +72,7 @@ public:
     const GraphicsSettings& getSettings() const;
 
     bool needRestart() const;
+    bool needTune() const;
     void setNeedRestart(bool value = true);
     bool changesRequireRestart(GraphicsSettings& settings);
 
@@ -86,6 +87,7 @@ private:
 
     GraphicsSettings _currentSettings;
     bool _needRestart = false;
+    bool _needTune = true;
 };
 
 } // namespace Chewman

@@ -11,8 +11,8 @@ namespace Chewman
 {
 
 const GraphicsSettings _highSettings = { CurrentGraphicsSettingsVersion, ResolutionSettings::High, true, LightSettings::High, ParticlesSettings::Partial, EffectSettings::High};
-const GraphicsSettings _medSettings = { CurrentGraphicsSettingsVersion, ResolutionSettings::High, true, LightSettings::Simple, ParticlesSettings::Partial, EffectSettings::Medium};
-const GraphicsSettings _lowSettings = { CurrentGraphicsSettingsVersion, ResolutionSettings::Low, true, LightSettings::Off, ParticlesSettings::Partial, EffectSettings::Low};
+const GraphicsSettings _medSettings = { CurrentGraphicsSettingsVersion, ResolutionSettings::Low, true, LightSettings::Simple, ParticlesSettings::None, EffectSettings::Medium};
+const GraphicsSettings _lowSettings = { CurrentGraphicsSettingsVersion, ResolutionSettings::Low, true, LightSettings::Off, ParticlesSettings::None, EffectSettings::Low};
 
 SettingsStateProcessor::SettingsStateProcessor()
         : _document(std::make_unique<ControlDocument>("resources/game/GUI/settings.xml"))
