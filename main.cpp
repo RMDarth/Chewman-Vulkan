@@ -5,6 +5,7 @@
 #include "SVE/ResourceManager.h"
 #include "SVE/LightManager.h"
 #include "SVE/PostEffectManager.h"
+#include "SVE/PipelineCacheManager.h"
 #include "SVE/FontManager.h"
 
 #include "Game/Game.h"
@@ -86,17 +87,29 @@ int runGame()
         engine->renderFrame(0.0f);
 
         // load resources
+        engine->getPipelineCacheManager()->load();
+#ifdef FLATTEN_FS
+        engine->getResourceManager()->loadFolder("resflat");
+#else
         engine->getResourceManager()->loadFolder("resources/shaders");
         engine->getResourceManager()->loadFolder("resources/materials");
         engine->getResourceManager()->loadFolder("resources/materials/skins");
         engine->getResourceManager()->loadFolder("resources/models");
         engine->getResourceManager()->loadFolder("resources/fonts");
         engine->getResourceManager()->loadFolder("resources");
+#endif
         std::cout << "Resources loading finished." << std::endl;
         loadingScreen->hide();
 
         // Create game controller
         auto* game = Chewman::Game::getInstance();
+
+        // Store all cache
+        if (engine->getPipelineCacheManager()->isNew())
+        {
+            std::cout << "Storing pipeline cache." << std::endl;
+            engine->getPipelineCacheManager()->store();
+        }
 
         if (game->getGraphicsManager().getSettings().effectSettings == Chewman::EffectSettings::High)
         {

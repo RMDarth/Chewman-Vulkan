@@ -68,6 +68,8 @@ add_executable(Chewman
         SVE/ParticleSystemManager.h
         SVE/ParticleSystemSettings.cpp
         SVE/ParticleSystemSettings.h
+        SVE/PipelineCacheManager.cpp
+        SVE/PipelineCacheManager.h
         SVE/PostEffectManager.cpp
         SVE/PostEffectManager.h
         SVE/ResourceManager.cpp

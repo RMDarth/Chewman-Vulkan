@@ -207,6 +207,50 @@ void LevelStateProcessor::updateHUD(float deltaTime)
     auto fpsValue = std::accumulate(fpsList.begin(), fpsList.end(), 0.0f) / fpsList.size();
     fps->setText(std::to_string((int) fpsValue));
 
+    updatePowerUps();
+}
+
+void LevelStateProcessor::updatePowerUps()
+{
+    static const std::map<PowerUpType, std::pair<std::string /*Material*/, float /*maxTime*/>> iconInfo =
+        {
+            { PowerUpType::Acceleration, { "IconSpeedMaterial",         AccelerationTotalTime}},
+            { PowerUpType::Slow,         { "IconSlowMaterial",          SlowTotalTime}},
+            { PowerUpType::Freeze,       { "IconFreezeMaterial",        FreezeTotalTime}},
+            { PowerUpType::Pentagram,    { "IconPentagramMaterial",     PentagrammTotalTime}},
+            { PowerUpType::Teeth,        { "IconTeethMaterial",         TeethTotalTime}},
+            { PowerUpType::Jackhammer,   { "IconJackhammerMaterial",    JackhammerTotalTime}}
+
+        };
+    auto affectorMap = _gameMapProcessor->getCurrentAffectors();
+    int size = affectorMap.size();
+    int controlId = 1;
+
+    using ElementType = std::pair<const PowerUpType, float>;
+    while (size > 0)
+    {
+        auto minIter = std::min_element(affectorMap.begin(), affectorMap.end(), [](const ElementType& e1, const ElementType& e2) { return e1.second > e2.second; });
+        PowerUpType curType = minIter->first;
+        float remainingTime = minIter->second;
+        float maxTime = iconInfo.at(curType).second;
+        affectorMap.erase(minIter);
+
+        std::string controlName = "powerup";
+        controlName.push_back('0' + controlId);
+        auto control = _document->getControlByName(controlName);
+        control->setRawMaterial(iconInfo.at(curType).first);
+        control->getOverlay()->setCustomData(1.0 - remainingTime / maxTime);
+        ++controlId;
+
+        size = affectorMap.size();
+    }
+
+    for (; controlId <= 5; ++controlId)
+    {
+        std::string controlName = "powerup";
+        controlName.push_back('0' + controlId);
+        _document->getControlByName(controlName)->setRawMaterial("");
+    }
 }
 
 } // namespace Chewman

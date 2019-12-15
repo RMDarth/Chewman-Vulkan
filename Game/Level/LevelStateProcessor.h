@@ -34,6 +34,7 @@ public:
 
 private:
     void updateHUD(float deltaTime);
+    void updatePowerUps();
 
 private:
     ProgressManager& _progressManager;

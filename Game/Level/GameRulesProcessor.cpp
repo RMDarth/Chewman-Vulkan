@@ -464,6 +464,33 @@ void GameRulesProcessor::deactivatePowerUp(PowerUpType type)
     }
 }
 
+std::map<PowerUpType, float> GameRulesProcessor::getCurrentAffectors() const
+{
+    std::map<PowerUpType, float> affectorMap;
+
+    for (const auto& affector : _gameAffectors)
+    {
+        if (affector.powerUp == PowerUpType::Slow || affector.powerUp == PowerUpType::Acceleration)
+        {
+            if (_lastSpeedPowerUp != affector.powerUp)
+                continue;
+        }
+
+        auto iter = affectorMap.find(affector.powerUp);
+        if (iter == affectorMap.end())
+        {
+            affectorMap[affector.powerUp] = affector.remainingTime;
+        } else {
+            if (iter->second < affector.remainingTime)
+            {
+                iter->second = affector.remainingTime;
+            }
+        }
+    }
+
+    return affectorMap;
+}
+
 void GameRulesProcessor::activatePowerUp(PowerUpType type, glm::ivec2 pos, Enemy* eater)
 {
     ++_activeState[static_cast<uint8_t>(type)];
