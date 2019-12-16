@@ -11,8 +11,8 @@ namespace Chewman
 {
 
 const GraphicsSettings _highSettings = { CurrentGraphicsSettingsVersion, ResolutionSettings::High, true, LightSettings::High, ParticlesSettings::Partial, EffectSettings::High};
-const GraphicsSettings _medSettings = { CurrentGraphicsSettingsVersion, ResolutionSettings::High, true, LightSettings::Simple, ParticlesSettings::Partial, EffectSettings::Medium};
-const GraphicsSettings _lowSettings = { CurrentGraphicsSettingsVersion, ResolutionSettings::Low, true, LightSettings::Off, ParticlesSettings::Partial, EffectSettings::Low};
+const GraphicsSettings _medSettings = { CurrentGraphicsSettingsVersion, ResolutionSettings::Low, true, LightSettings::Simple, ParticlesSettings::None, EffectSettings::Medium};
+const GraphicsSettings _lowSettings = { CurrentGraphicsSettingsVersion, ResolutionSettings::Low, true, LightSettings::Off, ParticlesSettings::None, EffectSettings::Low};
 
 SettingsStateProcessor::SettingsStateProcessor()
         : _document(std::make_unique<ControlDocument>("resources/game/GUI/settings.xml"))
@@ -63,6 +63,11 @@ void SettingsStateProcessor::show()
     _document->getControlByName("restart")->setVisible(needRestart);
 
     setGraphicsSettingsValue();
+
+    _document->getControlByName("gamepadCheckbox")->setDefaultMaterial(
+            Game::getInstance()->getGameSettingsManager().getSettings().showOnScreenControls
+                 ? "buttons/checkbox_checked.png"
+                 : "buttons/checkbox_unchecked.png");
 }
 
 void SettingsStateProcessor::hide()
@@ -121,6 +126,15 @@ void SettingsStateProcessor::processEvent(Control* control, IEventHandler::Event
         else if (control->getName() == "soundSlider")
         {
             _playSound = false;
+        }
+        else if (control->getName() == "gamepadCheckbox")
+        {
+            auto& gameSettingsManager = Game::getInstance()->getGameSettingsManager();
+            gameSettingsManager.getSettings().showOnScreenControls = !gameSettingsManager.getSettings().showOnScreenControls;
+            control->setDefaultMaterial(gameSettingsManager.getSettings().showOnScreenControls
+                                            ? "buttons/checkbox_checked.png"
+                                            : "buttons/checkbox_unchecked.png");
+            gameSettingsManager.store();
         }
 
         if (graphicsManager.needRestart())

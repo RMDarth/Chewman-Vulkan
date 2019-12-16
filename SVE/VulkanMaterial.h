@@ -60,6 +60,10 @@ private:
     void createPipeline();
     void deletePipeline();
 
+    void createAndStorePipelineCache();
+    void loadPipelineCache();
+    void deletePipelineCache();
+
     void createTextureImages();
     void createCubemapTextureImages();
     void deleteTextureImages();
@@ -105,6 +109,7 @@ private:
 
     VkPipelineLayout _pipelineLayout = VK_NULL_HANDLE;
     VkPipeline _pipeline;
+    VkPipelineCache _pipelineCache = VK_NULL_HANDLE;
 
     std::vector<uint32_t> _mipLevels;
     std::vector<VkImage> _textureImages;
@@ -114,6 +119,7 @@ private:
     std::vector<std::string> _textureNames;
 
     bool _hasExternals;
+    bool _useCache = true;
     struct TextureData
     {
         bool external;

@@ -42,6 +42,8 @@ public:
     void runStartLevelAnimation();
     void update(float deltaTime);
 
+    std::map<PowerUpType, float> getCurrentAffectors() const;
+
 private:
     void playDeath(float deltaTime);
 

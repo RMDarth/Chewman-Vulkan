@@ -26,6 +26,11 @@ LevelStateProcessor::LevelStateProcessor()
     _counterControl->setDefaultMaterial("counter2.png");
     _counterControl->setDefaultMaterial("counter3.png");
 
+    _document->getControlByName("upStick")->setMouseDownHandler(this);
+    _document->getControlByName("downStick")->setMouseDownHandler(this);
+    _document->getControlByName("leftStick")->setMouseDownHandler(this);
+    _document->getControlByName("rightStick")->setMouseDownHandler(this);
+
     _document->hide();
 
     _loadingFinished = false;
@@ -181,6 +186,12 @@ void LevelStateProcessor::show()
     std::stringstream ss;
     ss << "Level " << _progressManager.getCurrentLevel() << ": " << _gameMapProcessor->getGameMap()->name;
     _document->getControlByName("level")->setText(ss.str());
+
+    _useOnScreenControl = Game::getInstance()->getGameSettingsManager().getSettings().showOnScreenControls;
+    _document->getControlByName("upStick")->setVisible(_useOnScreenControl);
+    _document->getControlByName("downStick")->setVisible(_useOnScreenControl);
+    _document->getControlByName("leftStick")->setVisible(_useOnScreenControl);
+    _document->getControlByName("rightStick")->setVisible(_useOnScreenControl);
 }
 
 void LevelStateProcessor::hide()
@@ -229,6 +240,22 @@ void LevelStateProcessor::processEvent(Control* control, IEventHandler::EventTyp
             }
         }
     }
+    if (type == IEventHandler::MouseDown)
+    {
+        if (control->getName() == "leftStick")
+        {
+            _gameMapProcessor->setNextMove(MoveDirection::Down);
+        } else if (control->getName() == "rightStick")
+        {
+            _gameMapProcessor->setNextMove(MoveDirection::Up);
+        } else if (control->getName() == "upStick")
+        {
+            _gameMapProcessor->setNextMove(MoveDirection::Right);
+        } else if (control->getName() == "downStick")
+        {
+            _gameMapProcessor->setNextMove(MoveDirection::Left);
+        }
+    }
 }
 
 void LevelStateProcessor::updateHUD(float deltaTime)
@@ -257,6 +284,81 @@ void LevelStateProcessor::updateHUD(float deltaTime)
     auto fpsValue = std::accumulate(fpsList.begin(), fpsList.end(), 0.0f) / fpsList.size();
     fps->setText(std::to_string((int) fpsValue));
 
+    updatePowerUps();
+    if (_useOnScreenControl)
+        updateArrows();
+}
+
+void LevelStateProcessor::updatePowerUps()
+{
+    static const std::map<PowerUpType, std::pair<std::string /*Material*/, float /*maxTime*/>> iconInfo =
+        {
+            { PowerUpType::Acceleration, { "IconSpeedMaterial",         AccelerationTotalTime}},
+            { PowerUpType::Slow,         { "IconSlowMaterial",          SlowTotalTime}},
+            { PowerUpType::Freeze,       { "IconFreezeMaterial",        FreezeTotalTime}},
+            { PowerUpType::Pentagram,    { "IconPentagramMaterial",     PentagrammTotalTime}},
+            { PowerUpType::Teeth,        { "IconTeethMaterial",         TeethTotalTime}},
+            { PowerUpType::Jackhammer,   { "IconJackhammerMaterial",    JackhammerTotalTime}}
+
+        };
+    auto affectorMap = _gameMapProcessor->getCurrentAffectors();
+    int size = affectorMap.size();
+    int controlId = 1;
+
+    using ElementType = std::pair<const PowerUpType, float>;
+    while (size > 0)
+    {
+        auto minIter = std::min_element(affectorMap.begin(), affectorMap.end(), [](const ElementType& e1, const ElementType& e2) { return e1.second > e2.second; });
+        PowerUpType curType = minIter->first;
+        float remainingTime = minIter->second;
+        float maxTime = iconInfo.at(curType).second;
+        affectorMap.erase(minIter);
+
+        std::string controlName = "powerup";
+        controlName.push_back('0' + controlId);
+        auto control = _document->getControlByName(controlName);
+        control->setRawMaterial(iconInfo.at(curType).first);
+        control->getOverlay()->setCustomData(1.0 - remainingTime / maxTime);
+        ++controlId;
+
+        size = affectorMap.size();
+    }
+
+    for (; controlId <= 5; ++controlId)
+    {
+        std::string controlName = "powerup";
+        controlName.push_back('0' + controlId);
+        _document->getControlByName(controlName)->setRawMaterial("");
+    }
+}
+
+void LevelStateProcessor::updateArrows()
+{
+    static auto upArrow = _document->getControlByName("upStick");
+    static auto downArrow = _document->getControlByName("downStick");
+    static auto leftArrow = _document->getControlByName("leftStick");
+    static auto rightArrow = _document->getControlByName("rightStick");
+
+    upArrow->setColor(glm::vec4(1));
+    downArrow->setColor(glm::vec4(1));
+    leftArrow->setColor(glm::vec4(1));
+    rightArrow->setColor(glm::vec4(1));
+
+    switch (_gameMapProcessor->getNextMove())
+    {
+        case MoveDirection::Left:
+            downArrow->setColor(glm::vec4(1.0f, 0.5f, 0.0f, 1.0f));
+            break;
+        case MoveDirection::Up:
+            rightArrow->setColor(glm::vec4(1.0f, 0.5f, 0.0f, 1.0f));
+            break;
+        case MoveDirection::Right:
+            upArrow->setColor(glm::vec4(1.0f, 0.5f, 0.0f, 1.0f));
+            break;
+        case MoveDirection::Down:
+            leftArrow->setColor(glm::vec4(1.0f, 0.5f, 0.0f, 1.0f));
+            break;
+    }
 }
 
 } // namespace Chewman

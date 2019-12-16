@@ -47,6 +47,7 @@ public:
     virtual void setPushMaterial(const std::string& textureName);
     virtual void setDisabledMaterial(const std::string& textureName);
     virtual void setRawMaterial(const std::string& materialName);
+    virtual void setColor(glm::vec4 color);
 
     virtual void setRenderOrder(uint32_t order);
     virtual uint32_t getRenderOrder() const;
@@ -113,10 +114,13 @@ protected:
     std::string _text;
     glm::ivec2 _textShift = {0, 0};
 
+    glm::vec4 _color = {};
+
     bool _visible = true;
     bool _enabled = true;
     bool _pressed = false;
     bool _mouseTransparent = false;
+    bool _useColor = false;
 
     std::vector<std::shared_ptr<Control>> _children;
     Control* _parent;

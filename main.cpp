@@ -5,6 +5,7 @@
 #include "SVE/ResourceManager.h"
 #include "SVE/LightManager.h"
 #include "SVE/PostEffectManager.h"
+#include "SVE/PipelineCacheManager.h"
 #include "SVE/FontManager.h"
 
 #include "Game/Game.h"
@@ -89,10 +90,11 @@ int runGame()
         }
         engine->renderFrame(0.0f);
 
-        //auto future = std::async(std::launch::async, [&] {
+        auto future = std::async(std::launch::async, [&] {
             std::cout << "Start loading resources..." << std::endl;
 
             // load resources
+            engine->getPipelineCacheManager()->load();
 #ifdef FLATTEN_FS
             engine->getResourceManager()->loadFolder("resflat");
 #else
@@ -106,10 +108,10 @@ int runGame()
             std::cout << "Resources loading finished." << std::endl;
 
 
-        //    return 0;
-        //});
+            return 0;
+        });
 
-        /*auto status = future.wait_for(0ms);
+        auto status = future.wait_for(0ms);
         while (status != std::future_status::ready)
         {
             //engine->renderFrame(0.0f);
@@ -118,11 +120,18 @@ int runGame()
             status = future.wait_for(0ms);
         }
 
-        future.get();*/
+        future.get();
         loadingScreen->hide();
 
         // Create game controller
         auto* game = Chewman::Game::getInstance();
+
+        // Store all cache
+        if (engine->getPipelineCacheManager()->isNew())
+        {
+            std::cout << "Storing pipeline cache." << std::endl;
+            engine->getPipelineCacheManager()->store();
+        }
 
         if (game->getGraphicsManager().getSettings().effectSettings == Chewman::EffectSettings::High)
         {

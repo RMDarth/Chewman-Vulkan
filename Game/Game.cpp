@@ -92,6 +92,11 @@ ScoresManager& Game::getScoresManager()
     return _scoresManager;
 }
 
+GameSettingsManager& Game::getGameSettingsManager()
+{
+    return _gameSettings;
+}
+
 GameMapLoader& Game::getGameMapLoader()
 {
     return *_mapLoader;

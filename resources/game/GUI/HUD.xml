@@ -17,6 +17,17 @@
 
     <Image name="Counter" y="0.4" height="0.2" width="-0.67" alignment="center" image="counter3.png"/>
 
+    <Image name="upStick" x="0.11" y="0.55" height="0.12" width="-1" color="1 1 1 1" image="buttons/upStick.png" />
+    <Image name="leftStick" x="0.05" y="0.67" height="0.12" width="-1" color="1 1 1 1" image="buttons/leftStick.png"  />
+    <Image name="rightStick" x="0.17" y="0.67" height="0.12" width="-1" color="1 1 1 1" image="buttons/rightStick.png"  />
+    <Image name="downStick" x="0.11" y="0.79" height="0.12" width="-1" color="1 1 1 1" image="buttons/downStick.png" />
+
+    <Image name="powerup1" x="0.90" y="0.8" height="-1" width="0.08" />
+    <Image name="powerup2" x="0.82" y="0.8" height="-1" width="0.08" />
+    <Image name="powerup3" x="0.74" y="0.8" height="-1" width="0.08" />
+    <Image name="powerup4" x="0.66" y="0.8" height="-1" width="0.08" />
+    <Image name="powerup5" x="0.58" y="0.8" height="-1" width="0.08" />
+
     <Button name="pause" text="" x="0.87" y="0.01" width="0.08" height="-1" image="buttons/pause.png"
             hoverimage="buttons/pause_hover.png" pressedimage="buttons/pause_pressed.png"/>
 </document>

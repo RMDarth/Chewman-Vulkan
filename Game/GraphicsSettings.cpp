@@ -10,6 +10,7 @@
 #include "SVE/Engine.h"
 #include "SVE/SceneManager.h"
 #include "SVE/LightManager.h"
+#include "SVE/PipelineCacheManager.h"
 #include "SVE/ResourceManager.h"
 
 #if defined(__ANDROID__)
@@ -108,7 +109,7 @@ GraphicsManager::GraphicsManager()
 {
     load();
 
-    if (SVE::Engine::getInstance()->isFirstRun())
+    if (SVE::Engine::getInstance()->isFirstRun() || _needTune)
     {
         tuneSettings();
     }
@@ -163,6 +164,7 @@ void GraphicsManager::store()
 
 void GraphicsManager::load()
 {
+    _needTune = true;
     std::ifstream fin(Utils::getSettingsPath(graphicsSettingsFile));
     if (!fin)
     {
@@ -174,6 +176,12 @@ void GraphicsManager::load()
     if (_currentSettings.version != CurrentGraphicsSettingsVersion)
     {
         _currentSettings = {};
+        _needTune = true;
+        SVE::Engine::getInstance()->getPipelineCacheManager()->reset();
+        SVE::Engine::getInstance()->getPipelineCacheManager()->store();
+    } else
+    {
+        _needTune = false;
     }
     SVE::Engine::getInstance()->getVulkanInstance()->disableParticles(_currentSettings.particleEffects == ParticlesSettings::None);
 
@@ -290,6 +298,11 @@ void GraphicsManager::tuneSettings()
     }
 
     store();
+}
+
+bool GraphicsManager::needTune() const
+{
+    return _needTune;
 }
 
 } // namespace Chewman

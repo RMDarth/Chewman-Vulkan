@@ -12,6 +12,7 @@
 #include "ShaderManager.h"
 #include "ResourceManager.h"
 #include "PostEffectManager.h"
+#include "PipelineCacheManager.h"
 #include "ShaderInfo.h"
 #include "SceneManager.h"
 #include "LightManager.h"
@@ -33,6 +34,7 @@ namespace SVE
 {
 namespace
 {
+
 VkSamplerAddressMode getAddressMode(TextureAddressMode mode)
 {
     static const std::map<TextureAddressMode, VkSamplerAddressMode> addressModeMap {
@@ -121,6 +123,7 @@ VulkanMaterial::~VulkanMaterial()
     deleteTextureImageView();
     deleteTextureImages();
 
+    deletePipelineCache();
     deletePipeline();
     deletePipelineLayout();
 }
@@ -470,7 +473,12 @@ void VulkanMaterial::createPipeline()
     pipelineCreateInfo.basePipelineHandle = VK_NULL_HANDLE; // no deriving from other pipeline
     pipelineCreateInfo.basePipelineIndex = -1;
 
-    auto result = vkCreateGraphicsPipelines(_device, VK_NULL_HANDLE, 1, &pipelineCreateInfo, nullptr, &_pipeline);
+    if (_useCache && !Engine::getInstance()->getPipelineCacheManager()->isNew())
+    {
+        loadPipelineCache();
+    }
+
+    auto result = vkCreateGraphicsPipelines(_device, _pipelineCache, 1, &pipelineCreateInfo, nullptr, &_pipeline);
     if (result != VK_SUCCESS)
     {
         throw VulkanException("Can't create Vulkan Graphics Pipeline", result);
@@ -480,6 +488,12 @@ void VulkanMaterial::createPipeline()
     {
         shader->freeShaderModule();
     }
+
+    if (_useCache && _pipelineCache == VK_NULL_HANDLE)
+    {
+        createAndStorePipelineCache();
+    }
+
 }
 
 void VulkanMaterial::deletePipeline()
@@ -487,6 +501,57 @@ void VulkanMaterial::deletePipeline()
     vkDestroyPipeline(_device, _pipeline, nullptr);
 }
 
+void VulkanMaterial::createAndStorePipelineCache()
+{
+    VkPipelineCacheCreateInfo pipelineCacheCreateInfo = {};
+    pipelineCacheCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_CACHE_CREATE_INFO;
+    auto result = vkCreatePipelineCache(_device, &pipelineCacheCreateInfo, nullptr, &_pipelineCache);
+    if (result == VK_SUCCESS && _pipelineCache != VK_NULL_HANDLE)
+    {
+        size_t cacheSize = 0;
+        if (vkGetPipelineCacheData(_device, _pipelineCache, &cacheSize, nullptr) == VK_SUCCESS && cacheSize > 0)
+        {
+            std::vector<uint8_t> cacheData(cacheSize);
+            result = vkGetPipelineCacheData(_device, _pipelineCache, &cacheSize, cacheData.data());
+            if (result == VK_SUCCESS)
+            {
+                Engine::getInstance()->getPipelineCacheManager()->addCache(_materialSettings.name, cacheData);
+            }
+        }
+    }
+
+    if (result != VK_SUCCESS)
+    {
+        std::cout << "Failed to create and store pipeline cache for " << _materialSettings.name << std::endl;
+    }
+}
+
+void VulkanMaterial::loadPipelineCache()
+{
+    auto cache = Engine::getInstance()->getPipelineCacheManager()->getCache(_materialSettings.name);
+    if (cache.empty())
+    {
+        _pipelineCache = VK_NULL_HANDLE;
+        return;
+    }
+
+    VkPipelineCacheCreateInfo pipelineCacheCreateInfo = {};
+    pipelineCacheCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_CACHE_CREATE_INFO;
+    pipelineCacheCreateInfo.initialDataSize = cache.size();
+    pipelineCacheCreateInfo.pInitialData = cache.data();
+    auto result = vkCreatePipelineCache(_device, &pipelineCacheCreateInfo, nullptr, &_pipelineCache);
+    if (result != VK_SUCCESS)
+    {
+        std::cout << "Failed to init pipeline cache for " << _materialSettings.name << std::endl;
+        _pipelineCache = VK_NULL_HANDLE;
+    }
+}
+
+void VulkanMaterial::deletePipelineCache()
+{
+    if (_pipelineCache != VK_NULL_HANDLE)
+        vkDestroyPipelineCache(_device, _pipelineCache, nullptr);
+}
 
 void VulkanMaterial::createPipelineLayout()
 {
@@ -1314,6 +1379,5 @@ uint32_t VulkanMaterial::getInstanceCount() const
 {
     return _currentInstanceCount;//_instanceData.size() - 1;
 }
-
 
 } // namespace SVE

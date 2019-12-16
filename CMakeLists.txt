@@ -68,6 +68,8 @@ add_executable(Chewman
         SVE/ParticleSystemManager.h
         SVE/ParticleSystemSettings.cpp
         SVE/ParticleSystemSettings.h
+        SVE/PipelineCacheManager.cpp
+        SVE/PipelineCacheManager.h
         SVE/PostEffectManager.cpp
         SVE/PostEffectManager.h
         SVE/ResourceManager.cpp
@@ -151,6 +153,8 @@ add_executable(Chewman
         Game/Game.cpp
         Game/Game.h
         Game/GameDefs.h
+        Game/GameSettings.cpp
+        Game/GameSettings.h
         Game/GameSoundsManager.cpp
         Game/GameSoundsManager.h
         Game/GraphicsSettings.cpp

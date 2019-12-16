@@ -39,6 +39,9 @@ public:
     void setIsDying(bool isDying);
     bool isDying();
 
+    void setNextMove(MoveDirection direction);
+    MoveDirection getNextMove() const;
+
 private:
     void updateMovement(float deltaTime);
     void createAppearEffect();

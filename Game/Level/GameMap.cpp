@@ -240,4 +240,19 @@ float GameMapProcessor::getDeltaTime()
     return _deltaTime;
 }
 
+std::map<PowerUpType, float> GameMapProcessor::getCurrentAffectors() const
+{
+    return _gameRulesProcessor.getCurrentAffectors();
+}
+
+void GameMapProcessor::setNextMove(MoveDirection direction)
+{
+    _gameMap->player->setNextMove(direction);
+}
+
+MoveDirection GameMapProcessor::getNextMove() const
+{
+    return _gameMap->player->getNextMove();
+}
+
 } // namespace Chewman

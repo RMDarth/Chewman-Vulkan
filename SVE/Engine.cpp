@@ -19,6 +19,7 @@
 #include "ResourceManager.h"
 #include "FontManager.h"
 #include "OverlayManager.h"
+#include "PipelineCacheManager.h"
 #include "Entity.h"
 #include "Skybox.h"
 #include "ShadowMap.h"
@@ -106,6 +107,7 @@ Engine::Engine(SDL_Window* window, EngineSettings settings, std::shared_ptr<File
     , _postEffectManager(std::make_unique<PostEffectManager>())
     , _fontManager(std::make_unique<FontManager>())
     , _overlayManager(std::make_unique<OverlayManager>())
+    , _pipelineCacheManager(std::make_unique<PipelineCacheManager>())
 {
     getTime();
 }
@@ -167,6 +169,11 @@ FontManager* Engine::getFontManager()
 OverlayManager* Engine::getOverlayManager()
 {
     return _overlayManager.get();
+}
+
+PipelineCacheManager* Engine::getPipelineCacheManager()
+{
+    return _pipelineCacheManager.get();
 }
 
 void Engine::resizeWindow()
