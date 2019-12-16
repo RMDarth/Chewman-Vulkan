@@ -153,6 +153,8 @@ add_executable(Chewman
         Game/Game.cpp
         Game/Game.h
         Game/GameDefs.h
+        Game/GameSettings.cpp
+        Game/GameSettings.h
         Game/GameSoundsManager.cpp
         Game/GameSoundsManager.h
         Game/GraphicsSettings.cpp

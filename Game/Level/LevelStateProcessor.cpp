@@ -25,6 +25,11 @@ LevelStateProcessor::LevelStateProcessor()
     _counterControl->setDefaultMaterial("counter2.png");
     _counterControl->setDefaultMaterial("counter3.png");
 
+    _document->getControlByName("upStick")->setMouseDownHandler(this);
+    _document->getControlByName("downStick")->setMouseDownHandler(this);
+    _document->getControlByName("leftStick")->setMouseDownHandler(this);
+    _document->getControlByName("rightStick")->setMouseDownHandler(this);
+
     _document->hide();
 }
 
@@ -156,6 +161,12 @@ void LevelStateProcessor::show()
     std::stringstream ss;
     ss << "Level " << _progressManager.getCurrentLevel() << ": " << _gameMapProcessor->getGameMap()->name;
     _document->getControlByName("level")->setText(ss.str());
+
+    _useOnScreenControl = Game::getInstance()->getGameSettingsManager().getSettings().showOnScreenControls;
+    _document->getControlByName("upStick")->setVisible(_useOnScreenControl);
+    _document->getControlByName("downStick")->setVisible(_useOnScreenControl);
+    _document->getControlByName("leftStick")->setVisible(_useOnScreenControl);
+    _document->getControlByName("rightStick")->setVisible(_useOnScreenControl);
 }
 
 void LevelStateProcessor::hide()
@@ -177,6 +188,22 @@ void LevelStateProcessor::processEvent(Control* control, IEventHandler::EventTyp
         {
             _gameMapProcessor->setState(GameMapState::Pause);
             Game::getInstance()->setState(GameState::Pause);
+        }
+    }
+    if (type == IEventHandler::MouseDown)
+    {
+        if (control->getName() == "leftStick")
+        {
+            _gameMapProcessor->setNextMove(MoveDirection::Down);
+        } else if (control->getName() == "rightStick")
+        {
+            _gameMapProcessor->setNextMove(MoveDirection::Up);
+        } else if (control->getName() == "upStick")
+        {
+            _gameMapProcessor->setNextMove(MoveDirection::Right);
+        } else if (control->getName() == "downStick")
+        {
+            _gameMapProcessor->setNextMove(MoveDirection::Left);
         }
     }
 }
@@ -208,6 +235,8 @@ void LevelStateProcessor::updateHUD(float deltaTime)
     fps->setText(std::to_string((int) fpsValue));
 
     updatePowerUps();
+    if (_useOnScreenControl)
+        updateArrows();
 }
 
 void LevelStateProcessor::updatePowerUps()
@@ -250,6 +279,35 @@ void LevelStateProcessor::updatePowerUps()
         std::string controlName = "powerup";
         controlName.push_back('0' + controlId);
         _document->getControlByName(controlName)->setRawMaterial("");
+    }
+}
+
+void LevelStateProcessor::updateArrows()
+{
+    static auto upArrow = _document->getControlByName("upStick");
+    static auto downArrow = _document->getControlByName("downStick");
+    static auto leftArrow = _document->getControlByName("leftStick");
+    static auto rightArrow = _document->getControlByName("rightStick");
+
+    upArrow->setColor(glm::vec4(1));
+    downArrow->setColor(glm::vec4(1));
+    leftArrow->setColor(glm::vec4(1));
+    rightArrow->setColor(glm::vec4(1));
+
+    switch (_gameMapProcessor->getNextMove())
+    {
+        case MoveDirection::Left:
+            downArrow->setColor(glm::vec4(1.0f, 0.5f, 0.0f, 1.0f));
+            break;
+        case MoveDirection::Up:
+            rightArrow->setColor(glm::vec4(1.0f, 0.5f, 0.0f, 1.0f));
+            break;
+        case MoveDirection::Right:
+            upArrow->setColor(glm::vec4(1.0f, 0.5f, 0.0f, 1.0f));
+            break;
+        case MoveDirection::Down:
+            leftArrow->setColor(glm::vec4(1.0f, 0.5f, 0.0f, 1.0f));
+            break;
     }
 }
 

@@ -346,6 +346,13 @@ void Control::setCustomAttribute(const std::string& name, std::string value)
         str >> color[0] >> color[1] >> color[2] >> color[3];
         setDiffuseColor(color);
     }*/
+    if (name == "color")
+    {
+        std::stringstream str(value);
+        glm::vec4 color;
+        str >> color[0] >> color[1] >> color[2] >> color[3];
+        setColor(color);
+    }
     if (name == "font-color")
     {
         std::stringstream str(value);
@@ -385,7 +392,7 @@ std::string Control::createMaterial(const std::string& textureFile)
         SVE::MaterialSettings materialSettings{};
         materialSettings.name = name;
         materialSettings.vertexShaderName = "overlayVertexShader";
-        materialSettings.fragmentShaderName = "overlayFragmentShader";
+        materialSettings.fragmentShaderName = _useColor ? "overlayColorFragmentShader" : "overlayFragmentShader";
         materialSettings.cullFace = SVE::MaterialCullFace::FrontFace;
         materialSettings.useAlphaBlending = true;
         materialSettings.srcBlendFactor = SVE::BlendFactor::SrcAlpha;
@@ -450,6 +457,13 @@ void Control::setTextAlignment(SVE::TextAlignment alignment)
 bool Control::isClickProcessed()
 {
     return false;
+}
+
+void Control::setColor(glm::vec4 color)
+{
+    _color = color;
+    _overlay->setCustomData(color);
+    _useColor = true;
 }
 
 } // namespace Chewman

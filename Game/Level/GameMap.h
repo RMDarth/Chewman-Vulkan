@@ -82,6 +82,9 @@ public:
     std::shared_ptr<GameMap> getGameMap();
     std::map<PowerUpType, float> getCurrentAffectors() const;
 
+    void setNextMove(MoveDirection direction);
+    MoveDirection getNextMove() const;
+
     float getDeltaTime();
 
 private:

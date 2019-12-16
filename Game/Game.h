@@ -11,6 +11,7 @@
 #include "GraphicsSettings.h"
 #include "ScoresManager.h"
 #include "GameSoundsManager.h"
+#include "GameSettings.h"
 
 union SDL_Event;
 
@@ -34,6 +35,7 @@ public:
     ProgressManager& getProgressManager();
     GraphicsManager& getGraphicsManager();
     ScoresManager& getScoresManager();
+    GameSettingsManager& getGameSettingsManager();
     GameMapLoader& getGameMapLoader();
     GameSoundsManager& getSoundsManager();
     std::vector<std::string>& getTutorialData();
@@ -50,6 +52,7 @@ private:
     GraphicsManager& _graphicsManager;
     GameSoundsManager _soundsManager;
     ScoresManager _scoresManager;
+    GameSettingsManager _gameSettings;
     std::vector<std::string> _tutorialText;
     std::unique_ptr<GameMapLoader> _mapLoader;
     std::map<GameState, std::shared_ptr<StateProcessor>> _stateProcessors;

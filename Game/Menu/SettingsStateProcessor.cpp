@@ -63,6 +63,11 @@ void SettingsStateProcessor::show()
     _document->getControlByName("restart")->setVisible(needRestart);
 
     setGraphicsSettingsValue();
+
+    _document->getControlByName("gamepadCheckbox")->setDefaultMaterial(
+            Game::getInstance()->getGameSettingsManager().getSettings().showOnScreenControls
+                 ? "buttons/checkbox_checked.png"
+                 : "buttons/checkbox_unchecked.png");
 }
 
 void SettingsStateProcessor::hide()
@@ -121,6 +126,15 @@ void SettingsStateProcessor::processEvent(Control* control, IEventHandler::Event
         else if (control->getName() == "soundSlider")
         {
             _playSound = false;
+        }
+        else if (control->getName() == "gamepadCheckbox")
+        {
+            auto& gameSettingsManager = Game::getInstance()->getGameSettingsManager();
+            gameSettingsManager.getSettings().showOnScreenControls = !gameSettingsManager.getSettings().showOnScreenControls;
+            control->setDefaultMaterial(gameSettingsManager.getSettings().showOnScreenControls
+                                            ? "buttons/checkbox_checked.png"
+                                            : "buttons/checkbox_unchecked.png");
+            gameSettingsManager.store();
         }
 
         if (graphicsManager.needRestart())

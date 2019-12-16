@@ -319,6 +319,19 @@ bool Player::isDying()
     return _isDying;
 }
 
+void Player::setNextMove(MoveDirection direction)
+{
+    if (_followMode)
+    {
+        _nextMove = direction;
+    }
+}
+
+MoveDirection Player::getNextMove() const
+{
+    return _nextMove;
+}
+
 void Player::createDisappearEffect()
 {
     auto* engine = SVE::Engine::getInstance();
