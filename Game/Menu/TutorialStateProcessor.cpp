@@ -28,6 +28,12 @@ GameState TutorialStateProcessor::update(float deltaTime)
 void TutorialStateProcessor::processInput(const SDL_Event& event)
 {
     processDocument(event, _document.get());
+
+    if (event.type == SDL_KEYDOWN &&
+        event.key.keysym.scancode == SDL_SCANCODE_AC_BACK)
+    {
+        Game::getInstance()->setState(GameState::Level);
+    }
 }
 
 void TutorialStateProcessor::show()

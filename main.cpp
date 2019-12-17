@@ -146,6 +146,7 @@ int runGame()
         bool quit = false;
         bool skipRendering = false;
         bool lockControl = true;
+        bool isMusicEnabled = game->getSoundsManager().isMusicEnabled();
 
         uint32_t frames = 0;
         auto startTime = std::chrono::high_resolution_clock::now();
@@ -172,10 +173,13 @@ int runGame()
                     if (event.window.event == SDL_WINDOWEVENT_MINIMIZED)
                     {
                         skipRendering = true;
+                        isMusicEnabled = game->getSoundsManager().isMusicEnabled();
+                        game->getSoundsManager().setMusicEnabled(false);
                         std::cout << "skip rendering" << std::endl;
                     }
                     if (event.window.event == SDL_WINDOWEVENT_RESTORED)
                     {
+                        game->getSoundsManager().setMusicEnabled(isMusicEnabled);
                         skipRendering = false;
                     }
                 }

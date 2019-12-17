@@ -27,6 +27,12 @@ GameState CreditsStateProcessor::update(float deltaTime)
 void CreditsStateProcessor::processInput(const SDL_Event& event)
 {
     processDocument(event, _document.get());
+
+    if (event.type == SDL_KEYDOWN &&
+        event.key.keysym.scancode == SDL_SCANCODE_AC_BACK)
+    {
+        Game::getInstance()->setState(GameState::MainMenu);
+    }
 }
 
 void CreditsStateProcessor::show()
