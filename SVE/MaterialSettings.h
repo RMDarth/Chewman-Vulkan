@@ -55,6 +55,13 @@ enum class BlendFactor : uint8_t
     Zero
 };
 
+enum class MaterialQuality : uint8_t
+{
+    Low, // Loaded by low, med and high
+    Medium, // loaded by med and high
+    High // loaded by only high quality settings
+};
+
 struct TextureInfo
 {
     TextureType textureType = TextureType::ImageFile;
@@ -91,6 +98,7 @@ struct MaterialSettings
     BlendFactor dstBlendFactor = BlendFactor::OneMinusSrcAlpha;
     MaterialCullFace cullFace = MaterialCullFace::FrontFace;
     CommandsType passType = CommandsType::MainPass; // used to select correct renderpass
+    MaterialQuality loadQuality = MaterialQuality::Low; // load always
 };
 
 } // namespace SVE

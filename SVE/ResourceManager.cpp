@@ -405,6 +405,12 @@ MaterialSettings loadMaterial(FSEntityPtr directory, const std::string& data)
             {"Zero",                BlendFactor::Zero }
     };
 
+    static const std::map<std::string, MaterialQuality> materialQuality {
+            {"Low",            MaterialQuality::Low },
+            {"High",           MaterialQuality::High },
+            {"Medium",         MaterialQuality::Medium }
+    };
+
     rj::Document document;
     document.Parse(data.c_str());
 
@@ -428,6 +434,7 @@ MaterialSettings loadMaterial(FSEntityPtr directory, const std::string& data)
     setOptional(materialSettings.geometryShaderName = document["geometryShaderName"].GetString());
     setOptional(materialSettings.vertexShaderName = document["vertexShaderName"].GetString());
     setOptional(materialSettings.textures = getTextureInfos(directory, document));
+    setOptional(materialSettings.loadQuality = materialQuality.at(document["loadQuality"].GetString()));
 
     return materialSettings;
 }
@@ -521,6 +528,8 @@ void ResourceManager::initializeResources(LoadData& data)
     }
     for (auto& materialSettings : data.materialsList)
     {
+        if (static_cast<uint8_t>(materialSettings.loadQuality) > static_cast<uint8_t>(_maxLoadQuality))
+            continue;
         std::shared_ptr<SVE::Material> material = std::make_shared<SVE::Material>(materialSettings);
         engine->getMaterialManager()->registerMaterial(material);
     }
@@ -658,6 +667,11 @@ void ResourceManager::loadFile(FSEntityPtr file, LoadData& loadData, const std::
 std::string ResourceManager::getSavePath() const
 {
     return _fileSystem->getSavePath();
+}
+
+void ResourceManager::setMaxMaterialLoadQuality(MaterialQuality quality)
+{
+    _maxLoadQuality = quality;
 }
 
 } // namespace SVE
