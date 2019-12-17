@@ -2,6 +2,7 @@
     "name": "BloomEffect",
     "vertexShaderName": "quadRenderVertexShader",
     "fragmentShaderName": "bloomFragmentShader",
+    "loadQuality": "High",
     "cullFace": "FrontFace",
     "textures": [
             {

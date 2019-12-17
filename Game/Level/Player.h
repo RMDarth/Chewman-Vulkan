@@ -58,6 +58,7 @@ private:
     bool _isCameraFollow = true;
     int _startSlideX;
     int _startSlideY;
+    bool _isSliding = false;
 
     float _appearTime = 0.0f;
     bool _appearing = false;

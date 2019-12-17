@@ -2,6 +2,7 @@
     "name": "GrayscaleEffect",
     "vertexShaderName": "quadRenderVertexShader",
     "fragmentShaderName": "grayscaleFragmentShader",
+    "loadQuality": "High",
     "cullFace": "FrontFace",
     "textures": [
             {

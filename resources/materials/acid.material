@@ -2,5 +2,6 @@
     "name": "AcidMaterial",
     "vertexShaderName": "lavaVertexShader",
     "fragmentShaderName": "acidFragmentShader",
-    "passType": "ScreenQuadMRTPass"
+    "passType": "ScreenQuadMRTPass",
+    "loadQuality": "Medium"
 }

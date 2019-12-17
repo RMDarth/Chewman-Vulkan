@@ -3,6 +3,7 @@
     "vertexShaderName": "lavaVertexShader",
     "fragmentShaderName": "lavaFragmentShader",
     "passType": "ScreenQuadMRTPass",
+    "loadQuality": "Medium",
     "textures": [
         {
             "samplerName": "noiseSampler",

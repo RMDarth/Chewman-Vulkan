@@ -2,6 +2,7 @@
     "name": "HBlurEffect",
     "vertexShaderName": "HBlurVertexShader",
     "fragmentShaderName": "BlurFragmentShader",
+    "loadQuality": "High",
     "cullFace": "FrontFace",
     "textures": [
             {

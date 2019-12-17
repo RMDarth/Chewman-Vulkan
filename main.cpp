@@ -98,12 +98,18 @@ int runGame()
             engine->renderFrame();
         };
 
+        auto& graphicsManager = Chewman::GraphicsManager::getInstance();
+
         auto future = std::async(std::launch::async, [&] {
             std::cout << "Start loading resources..." << std::endl;
             updateProgress(0);
 
             // load resources
             engine->getPipelineCacheManager()->load();
+            if (graphicsManager.getSettings().effectSettings == Chewman::EffectSettings::Low)
+                engine->getResourceManager()->setMaxMaterialLoadQuality(SVE::MaterialQuality::Low);
+            else if (graphicsManager.getSettings().effectSettings == Chewman::EffectSettings::Medium)
+                engine->getResourceManager()->setMaxMaterialLoadQuality(SVE::MaterialQuality::Medium);
 #ifdef FLATTEN_FS
             engine->getResourceManager()->loadFolder("resflat");
 #else

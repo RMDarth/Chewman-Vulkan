@@ -23,6 +23,7 @@ private:
     void createTeleport(GameMap& level, int row, int column, char mapType);
     Coin* createCoin(GameMap& level, int row, int column);
 
+    void createLevelMaterial(const std::string& id);
     void createLava(GameMap& level, const std::string& suffix) const;
     void createSmoke(GameMap& level) const;
 

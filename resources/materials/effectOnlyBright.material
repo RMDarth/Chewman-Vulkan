@@ -2,6 +2,7 @@
     "name": "OnlyBrightEffect",
     "vertexShaderName": "quadRenderVertexShader",
     "fragmentShaderName": "onlyBrightFragmentShader",
+    "loadQuality": "High",
     "cullFace": "FrontFace",
     "textures": [
             {

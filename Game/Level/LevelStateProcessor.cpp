@@ -30,6 +30,8 @@ LevelStateProcessor::LevelStateProcessor()
     _document->getControlByName("downStick")->setMouseDownHandler(this);
     _document->getControlByName("leftStick")->setMouseDownHandler(this);
     _document->getControlByName("rightStick")->setMouseDownHandler(this);
+    _document->getControlByName("stickBackground")->setMouseDownHandler(this);
+    _document->getControlByName("stickBackground")->setMouseMoveHandler(this);
 
     _document->hide();
 
@@ -176,6 +178,7 @@ void LevelStateProcessor::show()
         _progressManager.setStarted(true);
         _progressManager.setVictory(false);
         _loadingFinished = false;
+        _lastDirection = MoveDirection::None;
         initMap();
         _time = 0.0f;
         _counterTime = 0.01f;
@@ -252,20 +255,34 @@ void LevelStateProcessor::processEvent(Control* control, IEventHandler::EventTyp
             }
         }
     }
-    if (type == IEventHandler::MouseDown)
+    if (type == IEventHandler::MouseDown || type == IEventHandler::MouseUp)
     {
         if (control->getName() == "leftStick")
         {
             _gameMapProcessor->setNextMove(MoveDirection::Down);
+            _lastDirection = MoveDirection::Down;
         } else if (control->getName() == "rightStick")
         {
             _gameMapProcessor->setNextMove(MoveDirection::Up);
+            _lastDirection = MoveDirection::Up;
         } else if (control->getName() == "upStick")
         {
             _gameMapProcessor->setNextMove(MoveDirection::Right);
+            _lastDirection = MoveDirection::Right;
         } else if (control->getName() == "downStick")
         {
             _gameMapProcessor->setNextMove(MoveDirection::Left);
+            _lastDirection = MoveDirection::Left;
+        } else if (control->getName() == "stickBackground")
+        {
+            _gameMapProcessor->setNextMove(_lastDirection);
+        }
+    }
+    if (type == IEventHandler::MouseMove)
+    {
+        if (control->getName() == "stickBackground")
+        {
+            _gameMapProcessor->setNextMove(_lastDirection);
         }
     }
 }

@@ -384,7 +384,7 @@ std::string Control::createMaterial(const std::string& textureFile)
     if (textureFile.empty())
         return std::string();
 
-    std::string name = std::string("ControlTexture_") + textureFile;
+    std::string name = std::string("ControlTexture") + (_useColor ? "Color" : "") + textureFile;
     auto* materialManager = SVE::Engine::getInstance()->getMaterialManager();
     auto* material = materialManager->getMaterial(name, true);
     if (!material)

@@ -3,6 +3,7 @@
     "vertexShaderName": "phongShadowInstancedVertexShader",
     "fragmentShaderName": "phongShadowEmitFragmentShader",
     "passType": "ScreenQuadMRTPass",
+    "loadQuality": "Medium",
     "useInstancing": true,
     "instanceMaxCount": 20000,
     "cullFace": "BackFace",

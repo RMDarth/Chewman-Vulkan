@@ -398,6 +398,7 @@ void GameMapLoader::initMeshes(GameMap& level, const std::string& suffix)
     buildFloorMesh(level, _meshGenerator, suffix);
 
     auto skinId = std::to_string(level.style);
+    createLevelMaterial(skinId);
 
     for (auto x = 0; x < level.height; ++x)
     {
@@ -764,6 +765,54 @@ Coin* GameMapLoader::createCoin(GameMap& level, int row, int column)
     level.coins.push_back(std::move(coin));
 
     return &level.coins.back();
+}
+
+void GameMapLoader::createLevelMaterial(const std::string& id)
+{
+    std::string skinTexturesFolder = "resources/materials/textures/level/";
+    auto* materialManager = SVE::Engine::getInstance()->getMaterialManager();
+
+    const auto createMaterial = [&](bool isInstanced, const std::string& name, const std::string& diffuse, const std::string& normals)
+    {
+        std::string materialName = name + id;
+        auto* material = materialManager->getMaterial(materialName, true);
+        if (!material)
+        {
+            SVE::MaterialSettings materialSettings{};
+            materialSettings.name = materialName;
+            materialSettings.vertexShaderName = isInstanced ? "phongNormalShadowInstancedVertexShader" : "phongNormalShadowVertexShader";
+            materialSettings.fragmentShaderName = "phongNormalShadowFragmentShader";
+            materialSettings.ignoreShadow = false;
+            if (isInstanced)
+            {
+                materialSettings.useInstancing = true;
+                materialSettings.instanceMaxCount = 20000;
+            }
+
+            SVE::TextureInfo textureInfo1 {};
+            textureInfo1.samplerName = "diffuseTex";
+            textureInfo1.filename = skinTexturesFolder + diffuse + id + ".jpg";
+
+            SVE::TextureInfo textureInfo2 {};
+            textureInfo2.samplerName = "normalTex";
+            textureInfo2.filename = skinTexturesFolder + normals + id + ".jpg";
+
+            SVE::TextureInfo textureInfo3 {};
+            textureInfo3.samplerName = "directShadowTex";
+            textureInfo3.textureType = SVE::TextureType::ShadowMapDirect;
+
+            materialSettings.textures.push_back(textureInfo1);
+            materialSettings.textures.push_back(textureInfo2);
+            materialSettings.textures.push_back(textureInfo3);
+
+            materialManager->registerMaterial(std::make_shared<SVE::Material>(materialSettings));
+        }
+    };
+
+    createMaterial(true, "CeilingNormals", "ceiling", "ceilingNormal");
+    createMaterial(false, "FloorNormals", "floor", "floorNormals");
+    createMaterial(false, "WallNormals", "wall", "wallNormals");
+    createMaterial(true, "WallNormalsInstanced", "wall", "wallNormals");
 }
 
 void GameMapLoader::createLava(GameMap& level, const std::string& suffix) const

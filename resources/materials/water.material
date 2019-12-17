@@ -2,6 +2,7 @@
     "name": "WaterMaterial",
     "vertexShaderName": "lavaVertexShader",
     "fragmentShaderName": "waterFragmentShader",
+    "loadQuality": "Medium",
     "textures": [
         {
             "samplerName": "mainSampler",

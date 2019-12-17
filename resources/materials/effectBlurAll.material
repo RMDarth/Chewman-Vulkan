@@ -2,6 +2,7 @@
     "name": "BlurAllEffect",
     "vertexShaderName": "VBlurVertexShader",
     "fragmentShaderName": "BlurFragmentShader",
+    "loadQuality": "High",
     "cullFace": "FrontFace",
     "textures": [
             {

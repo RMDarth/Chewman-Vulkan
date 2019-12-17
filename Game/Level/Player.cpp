@@ -158,18 +158,42 @@ void Player::processInput(const SDL_Event& event)
 
         if (event.type == SDL_MOUSEBUTTONDOWN)
         {
+            _isSliding = true;
             _startSlideX = event.button.x;
             _startSlideY = event.button.y;
         }
-        if (event.type == SDL_MOUSEBUTTONUP)
+        if (event.type == SDL_MOUSEMOTION && _isSliding)
         {
             auto windowSize = SVE::Engine::getInstance()->getRenderWindowSize();
-            /*if (abs(_startSlideX - event.button.x) < windowSize.x * 0.002
+            if (abs(_startSlideX - event.button.x) < windowSize.x * 0.002
+                || abs(_startSlideY - event.button.y) < windowSize.y * 0.002)
+            {
+                return;
+            }
+
+            if (abs(event.motion.x - _startSlideX) > abs(event.motion.y - _startSlideY))
+            {
+                if (_startSlideX > event.motion.x)
+                    _nextMove = MoveDirection::Down;
+                else
+                    _nextMove = MoveDirection::Up;
+            } else {
+                if (_startSlideY > event.motion.y)
+                    _nextMove = MoveDirection::Right;
+                else
+                    _nextMove = MoveDirection::Left;
+            }
+        }
+        if (event.type == SDL_MOUSEBUTTONUP)
+        {
+            /* auto windowSize = SVE::Engine::getInstance()->getRenderWindowSize();
+            if (abs(_startSlideX - event.button.x) < windowSize.x * 0.002
                 || abs(_startSlideY - event.button.y) < windowSize.y * 0.002)
             {
                 return;
             }*/
 
+            _isSliding = false;
             if (abs(event.button.x - _startSlideX) > abs(event.button.y - _startSlideY))
             {
                 if (_startSlideX > event.button.x)

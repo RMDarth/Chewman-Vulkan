@@ -3,6 +3,7 @@
     "vertexShaderName": "phongShadowVertexShader",
     "fragmentShaderName": "phongLavaInfusedShadowFragmentShader",
     "passType": "ScreenQuadMRTPass",
+    "loadQuality": "Medium",
     "cullFace": "BackFace",
     "textures": [
         {
