@@ -31,6 +31,12 @@ GameState HighscoresStateProcessor::update(float deltaTime)
 void HighscoresStateProcessor::processInput(const SDL_Event& event)
 {
     processDocument(event, getCurrentDoc());
+
+    if (event.type == SDL_KEYDOWN &&
+        event.key.keysym.scancode == SDL_SCANCODE_AC_BACK)
+    {
+        Game::getInstance()->setState(GameState::MainMenu);
+    }
 }
 
 void HighscoresStateProcessor::show()

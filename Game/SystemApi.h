@@ -11,6 +11,7 @@ namespace System
 int getSystemVersion();
 bool acceptQuary(const std::string& message, const std::string& title, const std::string& accept, const std::string& decline);
 void restartApp();
+void exitApp();
 
 } // namespace System
 } // namespace Chewman

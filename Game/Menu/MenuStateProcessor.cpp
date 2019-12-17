@@ -5,6 +5,7 @@
 #include "Game/Controls/ControlDocument.h"
 #include "Game/Level/GameMapLoader.h"
 #include "Game/Game.h"
+#include "Game/SystemApi.h"
 #include "SVE/SceneManager.h"
 
 namespace Chewman
@@ -32,6 +33,12 @@ GameState MenuStateProcessor::update(float deltaTime)
 void MenuStateProcessor::processInput(const SDL_Event& event)
 {
     processDocument(event, _document.get());
+
+    if (event.type == SDL_KEYDOWN &&
+        event.key.keysym.scancode == SDL_SCANCODE_AC_BACK)
+    {
+        System::exitApp();
+    }
 }
 
 void MenuStateProcessor::show()

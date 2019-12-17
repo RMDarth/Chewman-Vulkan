@@ -75,5 +75,10 @@ void restartApp()
 #endif
 }
 
+void exitApp()
+{
+    exit(0);
+}
+
 } // namespace System
 } // namespace Chewman

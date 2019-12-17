@@ -7,6 +7,7 @@
 #include <vector>
 #include <memory>
 #include "FileSystem.h"
+#include "MaterialSettings.h"
 
 namespace SVE
 {
@@ -34,6 +35,7 @@ public:
 
     explicit ResourceManager(std::shared_ptr<FileSystem> fileSystem);
 
+    void setMaxMaterialLoadQuality(MaterialQuality quality);
     void loadFolder(const std::string& folder);
     static LoadData getLoadDataFromFolder(const std::string& folder, bool isFolder, const std::shared_ptr<FileSystem>& fileSystem);
     const std::vector<std::string> getFolderList() const;
@@ -62,6 +64,7 @@ private:
 private:
     std::vector<std::string> _folderList;
     std::shared_ptr<FileSystem> _fileSystem;
+    MaterialQuality _maxLoadQuality = MaterialQuality::High;
 };
 
 } // namespace SVE

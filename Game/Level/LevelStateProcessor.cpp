@@ -155,6 +155,18 @@ void LevelStateProcessor::processInput(const SDL_Event& event)
 
     _gameMapProcessor->processInput(event);
     processDocument(event, _document.get());
+
+    if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_MINIMIZED)
+    {
+        _gameMapProcessor->setState(GameMapState::Pause);
+        Game::getInstance()->setState(GameState::Pause);
+    }
+    if (event.type == SDL_KEYDOWN &&
+        event.key.keysym.scancode == SDL_SCANCODE_AC_BACK)
+    {
+        _gameMapProcessor->setState(GameMapState::Pause);
+        Game::getInstance()->setState(GameState::Pause);
+    }
 }
 
 void LevelStateProcessor::show()
