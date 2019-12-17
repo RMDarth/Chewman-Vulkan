@@ -90,21 +90,36 @@ int runGame()
         }
         engine->renderFrame(0.0f);
 
+        auto progressControl = loadingScreen->getControlByName("progress");
+        auto progressSize = loadingScreen->getControlByName("progressAll")->getSize();
+        auto updateProgress = [&](float percent)
+        {
+            progressControl->setSize({progressSize.x * percent, progressSize.y});
+            engine->renderFrame();
+        };
+
         auto future = std::async(std::launch::async, [&] {
             std::cout << "Start loading resources..." << std::endl;
+            updateProgress(0);
 
             // load resources
             engine->getPipelineCacheManager()->load();
 #ifdef FLATTEN_FS
             engine->getResourceManager()->loadFolder("resflat");
 #else
+            updateProgress(0.05f);
             engine->getResourceManager()->loadFolder("resources/shaders");
+            updateProgress(0.15f);
             engine->getResourceManager()->loadFolder("resources/materials");
-            engine->getResourceManager()->loadFolder("resources/materials/skins");
+            updateProgress(0.45f);
+            //engine->getResourceManager()->loadFolder("resources/materials/skins");
             engine->getResourceManager()->loadFolder("resources/models");
+            updateProgress(0.65f);
             engine->getResourceManager()->loadFolder("resources/fonts");
+            updateProgress(0.75f);
             engine->getResourceManager()->loadFolder("resources");
 #endif
+            updateProgress(0.85f);
             std::cout << "Resources loading finished." << std::endl;
 
 
@@ -121,10 +136,11 @@ int runGame()
         }
 
         future.get();
-        loadingScreen->hide();
 
         // Create game controller
         auto* game = Chewman::Game::getInstance();
+        updateProgress(1.0f);
+        loadingScreen->hide();
 
         // Store all cache
         if (engine->getPipelineCacheManager()->isNew())
