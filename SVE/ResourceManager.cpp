@@ -514,47 +514,74 @@ void ResourceManager::loadResources()
     initializeResources(data);
 }
 
-void ResourceManager::initializeResources(LoadData& data)
+void ResourceManager::initializeResources(LoadData& data, CallbackFunc callback)
 {
     auto* engine = Engine::getInstance();
+
+    uint32_t totalCount = 0;
+    uint32_t currCount = 0;
+    if (callback)
+    {
+        totalCount = data.materialsList.size() + data.engine.size() + data.shaderList.size() + data.meshList.size()
+                     + data.lightList.size() + data.particleSystemList.size() + data.fontList.size();
+        callback(0);
+    }
+    auto provideCallback = [&]()
+    {
+        if (callback)
+        {
+            ++currCount;
+            callback((float)currCount / totalCount);
+        }
+    };
+
     for (auto& shaderSettings : data.shaderList)
     {
         std::shared_ptr<SVE::ShaderInfo> vertexShader = std::make_shared<SVE::ShaderInfo>(shaderSettings);
         engine->getShaderManager()->registerShader(vertexShader);
+        provideCallback();
     }
     for (auto& lightSettings : data.lightList)
     {
         engine->getSceneManager()->createLight(lightSettings);
+        provideCallback();
     }
     for (auto& materialSettings : data.materialsList)
     {
         if (static_cast<uint8_t>(materialSettings.loadQuality) > static_cast<uint8_t>(_maxLoadQuality))
+        {
+            provideCallback();
             continue;
+        }
         std::shared_ptr<SVE::Material> material = std::make_shared<SVE::Material>(materialSettings);
         engine->getMaterialManager()->registerMaterial(material);
+        provideCallback();
     }
     for (auto& meshLoadSettings : data.meshList)
     {
         std::shared_ptr<SVE::Mesh> mesh = std::make_shared<SVE::Mesh>(meshLoadSettings);
         engine->getMeshManager()->registerMesh(mesh);
+        provideCallback();
     }
     for (auto& particleSystemSettings : data.particleSystemList)
     {
         engine->getParticleSystemManager()->registerParticleSystem(particleSystemSettings);
+        provideCallback();
     }
     for (auto& font : data.fontList)
     {
         engine->getFontManager()->addFont(font);
+        provideCallback();
     }
 }
 
-void ResourceManager::loadFolder(const std::string& folder)
+void ResourceManager::loadFolder(const std::string& folder, CallbackFunc callback)
 {
     _folderList.push_back(folder);
 
     LoadData loadData {};
     loadDirectory(folder, loadData, _fileSystem);
-    initializeResources(loadData);
+    initializeResources(loadData, callback);
 }
 
 ResourceManager::LoadData ResourceManager::getLoadDataFromFolder(const std::string& folder, bool isFolder, const std::shared_ptr<FileSystem>& fileSystem)

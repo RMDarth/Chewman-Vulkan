@@ -194,6 +194,9 @@ std::shared_ptr<GameMap> GameMapLoader::loadMap(const std::string& filename, con
 {
     auto gameMap = std::make_shared<GameMap>();
 
+    if (_callback)
+        _callback(0);
+
     std::stringstream fin(SVE::Engine::getInstance()->getResourceManager()->loadFileContent(filename));
     fin >> gameMap->width >> gameMap->height;
     fin >> gameMap->style >> gameMap->waterStyle;
@@ -368,6 +371,9 @@ std::shared_ptr<GameMap> GameMapLoader::loadMap(const std::string& filename, con
     gameMap->activeCoins = gameMap->coins.size();
     gameMap->totalCoins = gameMap->coins.size();
 
+    if (_callback)
+        _callback(0.1);
+
     //fin.getline(line, 100);
     initMeshes(*gameMap, suffix);
     for (auto& gargoyle : gameMap->gargoyles)
@@ -390,12 +396,17 @@ std::shared_ptr<GameMap> GameMapLoader::loadMap(const std::string& filename, con
     createSmoke(*gameMap);
     createLava(*gameMap, suffix);
 
+    if (_callback) _callback(1.0);
+    _callback = nullptr;
+
     return gameMap;
 }
 
 void GameMapLoader::initMeshes(GameMap& level, const std::string& suffix)
 {
     buildFloorMesh(level, _meshGenerator, suffix);
+    if (_callback)
+        _callback(0.15);
 
     auto skinId = std::to_string(level.style);
     createLevelMaterial(skinId);
@@ -437,6 +448,8 @@ void GameMapLoader::initMeshes(GameMap& level, const std::string& suffix)
     level.mapNode->attachSceneNode(floorNode);
     floorNode->attachEntity(level.floor[0]);
     floorNode->attachEntity(level.floor[1]);
+
+    if (_callback) _callback(0.9);
 }
 
 void GameMapLoader::createGargoyle(GameMap& level, int row, int column, char mapType)
@@ -744,7 +757,8 @@ Coin* GameMapLoader::createCoin(GameMap& level, int row, int column)
 
     Coin coin {};
 
-    auto position = getWorldPos(row, column, 1.0f);
+    float y = level.treasureType == 1 ? 1.0f : 0.5f;
+    auto position = getWorldPos(row, column, y);
 
     auto coinNode = engine->getSceneManager()->createSceneNode();
     auto transform = glm::translate(glm::mat4(1), position);
@@ -810,9 +824,13 @@ void GameMapLoader::createLevelMaterial(const std::string& id)
     };
 
     createMaterial(true, "CeilingNormals", "ceiling", "ceilingNormal");
+    if (_callback) _callback(0.3);
     createMaterial(false, "FloorNormals", "floor", "floorNormals");
+    if (_callback) _callback(0.45);
     createMaterial(false, "WallNormals", "wall", "wallNormals");
+    if (_callback) _callback(0.6);
     createMaterial(true, "WallNormalsInstanced", "wall", "wallNormals");
+    if (_callback) _callback(0.75);
 }
 
 void GameMapLoader::createLava(GameMap& level, const std::string& suffix) const
@@ -877,6 +895,11 @@ void GameMapLoader::createSmoke(GameMap& level) const
     smokeNode2->attachEntity(smokeEntity2);
 
     level.smokeNAEntity = std::move(smokeEntity2);*/
+}
+
+void GameMapLoader::setCallback(CallbackFunc callback)
+{
+    _callback = callback;
 }
 
 } // namespace Chewman

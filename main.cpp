@@ -97,6 +97,10 @@ int runGame()
             progressControl->setSize({progressSize.x * percent, progressSize.y});
             engine->renderFrame();
         };
+        auto updateProgressBetween = [&](float start, float end, float percent)
+        {
+            updateProgress(start + (end-start)*percent);
+        };
 
         auto& graphicsManager = Chewman::GraphicsManager::getInstance();
 
@@ -113,13 +117,14 @@ int runGame()
 #ifdef FLATTEN_FS
             engine->getResourceManager()->loadFolder("resflat");
 #else
+            using namespace std::placeholders;
             updateProgress(0.05f);
             engine->getResourceManager()->loadFolder("resources/shaders");
             updateProgress(0.15f);
-            engine->getResourceManager()->loadFolder("resources/materials");
+            engine->getResourceManager()->loadFolder("resources/materials", std::bind(updateProgressBetween, 0.15, 0.45, _1));
             updateProgress(0.45f);
             //engine->getResourceManager()->loadFolder("resources/materials/skins");
-            engine->getResourceManager()->loadFolder("resources/models");
+            engine->getResourceManager()->loadFolder("resources/models", std::bind(updateProgressBetween, 0.45, 0.65, _1));
             updateProgress(0.65f);
             engine->getResourceManager()->loadFolder("resources/fonts");
             updateProgress(0.75f);
@@ -144,8 +149,9 @@ int runGame()
         future.get();
 
         // Create game controller
-        auto* game = Chewman::Game::getInstance();
+        auto* game = Chewman::Game::createInstance(std::bind(updateProgressBetween, 0.85f, 1.0f, std::placeholders::_1));
         updateProgress(1.0f);
+        SDL_Delay(100);
         loadingScreen->hide();
 
         // Store all cache
@@ -186,8 +192,7 @@ int runGame()
 
         // create skybox
         engine->getSceneManager()->setSkybox("Skybox4");
-
-
+        
         // Add text
         auto textEntity = std::make_shared<SVE::TextEntity>(
                 engine->getFontManager()->generateText("Hello world", "NordBold"));

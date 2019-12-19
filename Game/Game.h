@@ -23,6 +23,7 @@ class Game
 {
 public:
     static Game* getInstance();
+    static Game* createInstance(CallbackFunc callback = nullptr);
 
     void update(float deltaTime);
     void setState(GameState newState);

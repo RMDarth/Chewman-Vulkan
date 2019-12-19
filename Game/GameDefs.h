@@ -3,11 +3,14 @@
 // Licensed under the MIT License
 #pragma once
 #include <cstdint>
+#include <functional>
 
 namespace Chewman
 {
 
 constexpr uint16_t LevelsCount = 36;
+
+using CallbackFunc = std::function<void(float)>;
 
 enum class GameState
 {

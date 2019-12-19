@@ -3,6 +3,7 @@
 // Licensed under the MIT License
 #pragma once
 #include "GameMap.h"
+#include "Game/GameDefs.h"
 #include <array>
 
 namespace Chewman
@@ -11,8 +12,11 @@ namespace Chewman
 class GameMapLoader
 {
 public:
+
     GameMapLoader();
     std::shared_ptr<GameMap> loadMap(const std::string& filename, const std::string& suffix = "");
+
+    void setCallback(CallbackFunc func);
 
 private:
     void initMeshes(GameMap& level, const std::string& suffix);
@@ -29,6 +33,7 @@ private:
 
 private:
     BlockMeshGenerator _meshGenerator;
+    CallbackFunc _callback = nullptr;
 };
 
 
