@@ -12,8 +12,16 @@ class ChewmanEnemy : public DefaultEnemy
 public:
     ChewmanEnemy(GameMap* map, glm::ivec2 startPos);
 
+    void resetAll() override;
+
+    void update(float deltaTime) override;
+
     void increaseState(EnemyState state) override;
     void decreaseState(EnemyState state) override;
+
+private:
+    float _deathAnimation = 0;
+    bool _isDeathAnimation = false;
 };
 
 } // namespace Chewman

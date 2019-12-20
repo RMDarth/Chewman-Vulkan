@@ -14,6 +14,8 @@ class MeshEntity;
 namespace Chewman
 {
 
+constexpr float ReviveTime = 70.0f;
+
 class DefaultEnemy : public Enemy
 {
 public:

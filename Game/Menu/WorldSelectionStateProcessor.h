@@ -11,6 +11,7 @@ namespace Chewman
 {
 
 class ControlDocument;
+class BoxSliderControl;
 
 class WorldSelectionStateProcessor : public StateProcessor, public IEventHandler
 {
@@ -31,6 +32,8 @@ public:
 
 private:
     std::unique_ptr<ControlDocument> _document;
+    BoxSliderControl* _slider;
+    uint32_t _currentWorld = 0;
 };
 
 } // namespace Chewman

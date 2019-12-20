@@ -18,8 +18,6 @@
 namespace Chewman
 {
 
-constexpr float ReviveTime = 70.0f;
-
 DefaultEnemy::DefaultEnemy(GameMap* map, glm::ivec2 startPos, EnemyType enemyType,
                            const std::string& meshName, std::string normalMaterial,
                            int noReturnWayChance, float lightHeight)

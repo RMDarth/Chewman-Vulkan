@@ -77,6 +77,7 @@ void restartApp()
 
 void exitApp()
 {
+    SDL_Quit();
     exit(0);
 }
 

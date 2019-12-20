@@ -25,7 +25,9 @@ GameSoundsManager::GameSoundsManager()
         _soundMap[SoundType::MagicTeleport] = soundSystem->createSound("resources/sounds/magic.ogg");
         _soundMap[SoundType::PowerUp] = soundSystem->createSound("resources/sounds/powerUp.ogg");
         _soundMap[SoundType::Victory] = soundSystem->createSound("resources/sounds/win.ogg");
+        _soundMap[SoundType::Star1] = soundSystem->createSound("resources/sounds/star.ogg");
         _soundMap[SoundType::Death] = soundSystem->createSound("resources/sounds/death.ogg");
+        _soundMap[SoundType::GargoyleStart] = soundSystem->createSound("resources/sounds/flame.ogg");
 
         soundSystem->initBackgroundMusic("resources/sounds/music.ogg");
         soundSystem->startBackgroundMusic();

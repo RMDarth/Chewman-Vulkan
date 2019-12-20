@@ -97,6 +97,7 @@ void GraphicsManager::setSettings(GraphicsSettings settings)
     auto* engine = SVE::Engine::getInstance();
 
     _needRestart = changesRequireRestart(settings);
+    _oldSettings = _currentSettings;
     _currentSettings = settings;
 
     auto sunLight = engine->getSceneManager()->getLightManager()->getDirectionLight();
@@ -114,6 +115,8 @@ bool GraphicsManager::changesRequireRestart(GraphicsSettings& settings)
 
 const GraphicsSettings& GraphicsManager::getSettings() const
 {
+    if (_needRestart)
+        return _oldSettings;
     return _currentSettings;
 }
 
@@ -161,6 +164,7 @@ void GraphicsManager::load()
         _needTune = false;
     }
     SVE::Engine::getInstance()->getVulkanInstance()->disableParticles(_currentSettings.particleEffects == ParticlesSettings::None);
+    _oldSettings = _currentSettings;
 
     fin.close();
 }
@@ -265,6 +269,8 @@ void GraphicsManager::tuneSettings()
             _currentSettings.dynamicLights = LightSettings::Off;
         }
     }
+
+    _oldSettings = _currentSettings;
 
     store();
 }

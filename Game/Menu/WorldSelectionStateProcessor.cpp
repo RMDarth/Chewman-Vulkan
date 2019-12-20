@@ -14,13 +14,26 @@ WorldSelectionStateProcessor::WorldSelectionStateProcessor()
 {
     _document->setMouseUpHandler(this);
     _document->hide();
+
+    _slider = static_cast<BoxSliderControl*>(_document->getControlByName("slider").get());
 }
 
 WorldSelectionStateProcessor::~WorldSelectionStateProcessor() = default;
 
 GameState WorldSelectionStateProcessor::update(float deltaTime)
 {
+    static std::string campaignNames[] = {
+            "Exordium",
+            "Deeper dungeons",
+            "Hell's gate"
+    };
     _document->update(deltaTime);
+
+    if (_slider->getSelectedObject() != _currentWorld)
+    {
+        _currentWorld = _slider->getSelectedObject();
+        _document->getControlByName("campaignName")->setText(campaignNames[_currentWorld]);
+    }
     return GameState::WorldSelection;
 }
 
