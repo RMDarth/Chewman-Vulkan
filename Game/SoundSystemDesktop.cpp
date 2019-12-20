@@ -10,6 +10,8 @@
 #include <string>
 #include <iostream>
 #include <vector>
+#include <unordered_map>
+#include <list>
 
 namespace Chewman
 {
@@ -95,31 +97,50 @@ public:
         fclose(fp);
         ov_clear(&vf);
 
-        ALuint source;
-        alGenSources((ALuint)1, &source);
-        alSourcef(source, AL_PITCH, 1);
-        alSourcef(source, AL_GAIN, 1);
-        alSource3f(source, AL_POSITION, 0, 0, 0);
-        alSource3f(source, AL_VELOCITY, 0, 0, 0);
-        alSourcei(source, AL_LOOPING, looped ? AL_TRUE : AL_FALSE);
-        alSourcei(source, AL_BUFFER, buffer);
+        std::array<ALuint, 4> sources {};
+        alGenSources((ALuint) 4, sources.data());
+        for (auto i = 0; i < 4; ++i)
+        {
+            alSourcef(sources[i], AL_PITCH, 1);
+            alSourcef(sources[i], AL_GAIN, 1);
+            alSource3f(sources[i], AL_POSITION, 0, 0, 0);
+            alSource3f(sources[i], AL_VELOCITY, 0, 0, 0);
+            alSourcei(sources[i], AL_LOOPING, looped ? AL_TRUE : AL_FALSE);
+            alSourcei(sources[i], AL_BUFFER, buffer);
+        }
 
-        return source;
+        std::list<ALuint> sourcesList(sources.begin(), sources.end());
+        _sourcesMap[_lastSound++] = std::move(sourcesList);
+
+        return _lastSound - 1;
     }
 
     void playSound(uint32_t id)
     {
-        alSourcePlay(id);
+        auto& sourcesList = _sourcesMap[id];
+        auto currentSource = sourcesList.front();
+        ALenum state;
+        alGetSourcei(currentSource, AL_SOURCE_STATE, &state);
+        if (state != AL_PLAYING)
+        {
+            alSourcePlay(currentSource);
+            sourcesList.pop_front();
+            sourcesList.push_back(currentSource);
+        }
     }
 
     void stopSound(uint32_t id)
     {
-        alSourceStop(id);
+        auto& sourcesList = _sourcesMap[id];
+        for (auto source : sourcesList)
+            alSourceStop(source);
     }
 
     void setVolume(uint32_t id, float value)
     {
-        alSourcef(id, AL_GAIN, value);
+        auto& sourcesList = _sourcesMap[id];
+        for (auto source : sourcesList)
+            alSourcef(source, AL_GAIN, value);
     }
 
 private:
@@ -142,6 +163,9 @@ private:
 
     ALCdevice* _device;
     ALCcontext* _context;
+
+    std::unordered_map<uint32_t, std::list<ALuint>> _sourcesMap;
+    int _lastSound = 0;
 };
 
 OpenALProcessor* OpenALProcessor::_instance = nullptr;
