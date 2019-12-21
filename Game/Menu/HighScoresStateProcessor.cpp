@@ -6,6 +6,7 @@
 
 #include <Game/Game.h>
 #include <Game/Utils.h>
+#include <Game/SystemApi.h>
 
 namespace Chewman
 {
@@ -25,6 +26,26 @@ HighscoresStateProcessor::~HighscoresStateProcessor() = default;
 
 GameState HighscoresStateProcessor::update(float deltaTime)
 {
+    auto logged = System::isLoggedServices();
+    if (_logged != logged)
+    {
+        _logged = logged;
+        if (_logged)
+        {
+            // TODO: Submit only if it wasn't submitted already
+            System::updateScore(Game::getInstance()->getScoresManager().getBestScore());
+        }
+        updateBoard();
+    }
+
+    if (_logged)
+    {
+        if (System::isScoresUpdated())
+        {
+            updateBoard();
+        }
+    }
+
     return GameState::Highscores;
 }
 
@@ -85,11 +106,13 @@ void HighscoresStateProcessor::processEvent(Control* control, IEventHandler::Eve
         {
             _isWeeklyActive = true;
             updateCheckboxes();
+            updateBoard();
         }
         if (control->getName() == "alltime" || control->getName() == "alltimeLabel")
         {
             _isWeeklyActive = false;
             updateCheckboxes();
+            updateBoard();
         }
         if (control->getName() == "left" && !_isFirstLevelsHalf)
         {
@@ -108,6 +131,14 @@ void HighscoresStateProcessor::processEvent(Control* control, IEventHandler::Eve
 ControlDocument* HighscoresStateProcessor::getCurrentDoc()
 {
     return _isPointsActive ? _documentPoints.get() : _documentTime.get();
+}
+
+void HighscoresStateProcessor::updateBoard()
+{
+    if (_isPointsActive)
+        updatePointsDoc();
+    else
+        updateTimeScores();
 }
 
 void HighscoresStateProcessor::updatePointsDoc()
@@ -132,6 +163,7 @@ void HighscoresStateProcessor::updateCheckboxes()
 void HighscoresStateProcessor::updateTimeScores()
 {
     int shift = _isFirstLevelsHalf ? 0 : 18;
+    auto timeData = System::getTimes(_isWeeklyActive);
 
     auto getLevelStr = [](int num)
     {
@@ -145,14 +177,28 @@ void HighscoresStateProcessor::updateTimeScores()
     {
         auto controlName = "lvl" + getLevelStr(i + 1);
 
-        auto& scoresManager= Game::getInstance()->getScoresManager();
+        auto& scoresManager = Game::getInstance()->getScoresManager();
         std::string time = "-:--";
-        if (scoresManager.getTime(i + 1 + shift) != 0)
+        std::string playerName = "Player";
+        uint32_t levelNum = i + 1 + shift;
+
+        if (System::isLoggedServices() && timeData.size() >= levelNum)
         {
-            time = Utils::timeToString(scoresManager.getTime(i + 1 + shift));
+            if (timeData[levelNum - 1].second != 0)
+            {
+                time = Utils::timeToString(timeData[levelNum - 1].second);
+                playerName = timeData[levelNum - 1].first;
+            }
+        } else
+        {
+            if (scoresManager.getTime(i + 1 + shift) != 0)
+            {
+                time = Utils::timeToString(scoresManager.getTime(i + 1 + shift));
+            }
         }
 
-        _documentTime->getControlByName(controlName)->setText("L" + getLevelStr(i + 1 + shift) + ": Player / " + time);
+        std::string level = "L" + getLevelStr(levelNum);
+        _documentTime->getControlByName(controlName)->setText(level.append(": ").append(playerName).append(" / ").append(time));
     }
 
     _documentTime->getControlByName("left")->setVisible(!_isFirstLevelsHalf);
@@ -161,16 +207,38 @@ void HighscoresStateProcessor::updateTimeScores()
 
 void HighscoresStateProcessor::updatePointScores()
 {
-    for (auto i = 1; i <= 5; i++)
+    if (System::isLoggedServices())
     {
-        // TODO: Implement high scores manager for several values
-        auto indexStr = std::to_string(i);
-        _documentPoints->getControlByName("name" + indexStr)->setText(" ");
-        _documentPoints->getControlByName("score" + indexStr)->setText(" ");
-    }
+        auto scoreData = System::getScores(_isWeeklyActive);
 
-    _documentPoints->getControlByName("name1")->setText("1. Player");
-    _documentPoints->getControlByName("score1")->setText(std::to_string(Game::getInstance()->getScoresManager().getBestScore()));
+        for (auto i = 1; i <= 5; i++)
+        {
+            auto indexStr = std::to_string(i);
+            if (i <= scoreData.size())
+            {
+                _documentPoints->getControlByName("name" + indexStr)->setText(
+                        indexStr.append(". ").append(scoreData[i - 1].first));
+                _documentPoints->getControlByName("score" + indexStr)->setText(std::to_string(scoreData[i - 1].second));
+            } else {
+                _documentPoints->getControlByName("name" + indexStr)->setText(" ");
+                _documentPoints->getControlByName("score" + indexStr)->setText(" ");
+            }
+        }
+    }
+    else
+    {
+        for (auto i = 1; i <= 5; i++)
+        {
+            // TODO: Implement high scores manager for several values
+            auto indexStr = std::to_string(i);
+            _documentPoints->getControlByName("name" + indexStr)->setText(" ");
+            _documentPoints->getControlByName("score" + indexStr)->setText(" ");
+        }
+
+        _documentPoints->getControlByName("name1")->setText("1. Player");
+        _documentPoints->getControlByName("score1")->setText(
+                std::to_string(Game::getInstance()->getScoresManager().getBestScore()));
+    }
 }
 
 } // namespace Chewman

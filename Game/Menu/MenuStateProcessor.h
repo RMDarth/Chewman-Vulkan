@@ -38,6 +38,8 @@ private:
     std::unique_ptr<GameMapProcessor> _gameMapProcessor;
     std::shared_ptr<Control> _configPanel;
     bool _configPanelVisible = false;
+
+    bool _logged = false;
 };
 
 } // namespace Chewman

@@ -20,6 +20,7 @@ public:
     uint16_t getStars(uint16_t level) const;
     uint32_t getTime(uint16_t level) const;
     uint32_t getBestScore() const;
+    uint16_t getTotalStars() const;
 
     void setStars(uint16_t level, uint16_t stars);
     void setTime(uint16_t level, uint32_t time);

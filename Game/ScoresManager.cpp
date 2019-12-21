@@ -88,6 +88,15 @@ uint16_t ScoresManager::getStars(uint16_t level) const
     return _stars[level - 1];
 }
 
+uint16_t ScoresManager::getTotalStars() const
+{
+    uint16_t sum = 0;
+    for (auto stars : _stars)
+        sum += stars;
+
+    return sum;
+}
+
 uint32_t ScoresManager::getTime(uint16_t level) const
 {
     assert(level <= _timeScores.size());
@@ -116,4 +125,5 @@ void ScoresManager::setBestScore(uint32_t score)
     assert(score >= _bestScore);
     _bestScore = score;
 }
+
 } // namespace Chewman

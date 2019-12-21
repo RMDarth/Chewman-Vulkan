@@ -27,6 +27,19 @@ MenuStateProcessor::~MenuStateProcessor() = default;
 GameState MenuStateProcessor::update(float deltaTime)
 {
     _gameMapProcessor->update(deltaTime);
+
+    if (!_logged && System::isLoggedServices())
+    {
+        if (!_logged)
+        {
+            // UpdateServicesIcon(_document->GetControlByName("googleplay").get());
+            System::syncAchievements();
+            // TODO: Submit only if it wasn't submitted already
+            System::updateScore(Game::getInstance()->getScoresManager().getBestScore());
+        }
+        _logged = true;
+    }
+
     return GameState::MainMenu;
 }
 
@@ -58,6 +71,29 @@ void MenuStateProcessor::show()
     _document->show();
     updateSoundButtons();
     setConfigSliderVisibility(false);
+
+    // System services
+    auto& settingsManager = Game::getInstance()->getGameSettingsManager();
+    if (System::isLoggedServices())
+    {
+        if (!_logged)
+        {
+            // UpdateServicesIcon(_document->GetControlByName("googleplay").get());
+            System::syncAchievements();
+            // TODO: Submit only if it wasn't submitted already
+            System::updateScore(Game::getInstance()->getScoresManager().getBestScore());
+        }
+        _logged = true;
+    }
+    else
+    {
+        if (_logged)
+            //UpdateServicesIcon(_document->GetControlByName("googleplay").get());
+        _logged = false;
+
+        if (System::isServicesAvailable())
+            System::logInServices();
+    }
 }
 
 void MenuStateProcessor::hide()

@@ -30,6 +30,7 @@ public:
 
 private:
     ControlDocument* getCurrentDoc();
+    void updateBoard();
     void updatePointsDoc();
     void updateTimeDoc();
     void updateCheckboxes();
@@ -43,6 +44,8 @@ private:
     bool _isPointsActive = true;
     bool _isWeeklyActive = true;
     bool _isFirstLevelsHalf = true;
+
+    bool _logged = false;
 };
 
 } // namespace Chewman

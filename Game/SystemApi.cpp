@@ -81,5 +81,109 @@ void exitApp()
     exit(0);
 }
 
+// This is temporary to test buying functionality on Desktop build
+bool isBought = false;
+bool isLogged = false;
+
+void buyItem(const std::string& id)
+{
+    isBought = !isBought;
+}
+
+bool isItemBought(const std::string& id)
+{
+    return isBought;
+}
+
+void initServices()
+{
+
+}
+
+void logInServices()
+{
+    isLogged = true;
+}
+
+void logOutServices()
+{
+    isLogged = false;
+}
+
+bool isLoggedServices()
+{
+    return isLogged;
+}
+
+bool isServicesAvailable()
+{
+    return true;
+}
+
+void showAchievements()
+{
+
+}
+
+void showLeaderboard()
+{
+
+}
+
+bool isScoresUpdated()
+{
+    return false;
+}
+
+void updateScore(int score)
+{
+
+}
+
+void updateLevelTime(int level, int timeSeconds)
+{
+
+}
+
+std::vector<std::pair<std::string, int>> getScores(bool weekly)
+{
+    return std::vector<std::pair<std::string, int>>();
+}
+
+std::vector<std::pair<std::string, int>> getTimes(bool weekly)
+{
+    return std::vector<std::pair<std::string, int>>();
+}
+
+bool showVideoAds()
+{
+    return false;
+}
+
+void requestBackup()
+{
+
+}
+
+void requestRestore()
+{
+
+}
+
+void syncAchievements()
+{
+
+}
+
+void rateApp()
+{
+
+}
+
+void openLink(const std::string& link)
+{
+
+}
+
 } // namespace System
 } // namespace Chewman
