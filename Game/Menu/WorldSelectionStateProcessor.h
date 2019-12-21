@@ -11,6 +11,7 @@ namespace Chewman
 {
 
 class ControlDocument;
+class BoxSliderControl;
 
 class WorldSelectionStateProcessor : public StateProcessor, public IEventHandler
 {
@@ -30,7 +31,13 @@ public:
     void processEvent(Control* control, EventType type, int x, int y) override;
 
 private:
+    void setLockControlsVisible(bool visible);
+
     std::unique_ptr<ControlDocument> _document;
+    BoxSliderControl* _slider;
+    Control* _lockControl;
+    uint32_t _currentWorld = 0;
+    bool _isLockedLevels = true;
 };
 
 } // namespace Chewman

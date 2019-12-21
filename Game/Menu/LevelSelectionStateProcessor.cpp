@@ -12,17 +12,36 @@ namespace Chewman
 
 LevelSelectionStateProcessor::LevelSelectionStateProcessor()
     : _document(std::make_unique<ControlDocument>("resources/game/GUI/levelselectmenu.xml"))
+    , _loadingSign(std::make_unique<ControlDocument>("resources/game/GUI/loadingSign.xml"))
 {
     _document->setMouseUpHandler(this);
     _document->hide();
+    _loadingSign->hide();
 }
 
 LevelSelectionStateProcessor::~LevelSelectionStateProcessor() = default;
 
 GameState LevelSelectionStateProcessor::update(float deltaTime)
 {
-    _document->update(deltaTime);
-    return GameState::LevelSelection;
+    if (_isLoading == 2)
+    {
+        auto& progressManager = Game::getInstance()->getProgressManager();
+        progressManager.setCurrentLevel(_levelNum);
+        progressManager.setVictory(false);
+        progressManager.setStarted(false);
+        progressManager.resetPlayerInfo();
+        //Game::getInstance()->setState(GameState::Level);
+        _isLoading = false;
+        return GameState::Level;
+
+    }
+    else
+    {
+        if (_isLoading == 1)
+            _isLoading = 2;
+        _document->update(deltaTime);
+        return GameState::LevelSelection;
+    }
 }
 
 void LevelSelectionStateProcessor::processInput(const SDL_Event& event)
@@ -39,6 +58,8 @@ void LevelSelectionStateProcessor::processInput(const SDL_Event& event)
 void LevelSelectionStateProcessor::show()
 {
     _document->show();
+    _loadingSign->hide();
+    _isLoading = 0;
 
     auto& scoresManager= Game::getInstance()->getScoresManager();
     auto worldNum = Game::getInstance()->getProgressManager().getCurrentWorld();
@@ -64,6 +85,7 @@ void LevelSelectionStateProcessor::show()
 void LevelSelectionStateProcessor::hide()
 {
     _document->hide();
+    _loadingSign->hide();
 }
 
 bool LevelSelectionStateProcessor::isOverlapping()
@@ -82,13 +104,10 @@ void LevelSelectionStateProcessor::processEvent(Control* control, IEventHandler:
         }
         else if (control->getType() == ControlType::LevelButton)
         {
-            auto levelNum = std::stoul(control->getText());
-            auto& progressManager = Game::getInstance()->getProgressManager();
-            progressManager.setCurrentLevel(levelNum);
-            progressManager.setVictory(false);
-            progressManager.setStarted(false);
-            progressManager.resetPlayerInfo();
-            Game::getInstance()->setState(GameState::Level);
+            _loadingSign->show();
+            _document->hide();
+            _levelNum = std::stoul(control->getText());
+            _isLoading = 1;
         }
     }
 }

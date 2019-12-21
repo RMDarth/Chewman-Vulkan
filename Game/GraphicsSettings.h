@@ -86,6 +86,7 @@ private:
     static std::unique_ptr<GraphicsManager> _instance;
 
     GraphicsSettings _currentSettings;
+    GraphicsSettings _oldSettings;
     bool _needRestart = false;
     bool _needTune = true;
 };

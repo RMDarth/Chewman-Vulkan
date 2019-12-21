@@ -5,7 +5,8 @@
 #include "SVE/Engine.h"
 #include "SVE/SceneManager.h"
 #include "SVE/LightManager.h"
-
+#include "Game/GameSoundsManager.h"
+#include "Game/Game.h"
 #include <glm/gtc/matrix_transform.hpp>
 
 namespace Chewman
@@ -175,6 +176,8 @@ void GameMapProcessor::updateGargoyle(float time, Gargoyle& gargoyle)
                     updateGargoyleParticles(gargoyle, gargoyle.fireTime + gargoyle.restTime, 0.0f, 0.0f);
                 else
                     gargoyle.fireLine->getInfo().alpha = 1.0f;
+
+                Game::getInstance()->getSoundsManager().playSound(SoundType::GargoyleStart);
             }
             break;
         }

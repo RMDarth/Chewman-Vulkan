@@ -2,10 +2,18 @@
     <!--Label name="unlockstars" text="5/150" x="0.3" y="0.8" width="0.1" height="0.05" />
     <Image name="star" image="Star.png" x="0.42" y="0.775" width="-1" height="0.08" />
     <Label name="unlockmoney" text="or 0.99$" x="0.55" y="0.8" width="0.1" height="0.05" /-->
+
     <BoxSlider name="slider" x="0" y="0" width="1.0" height="0.9">
         <Image name="world1" width="-1.33" height="0.7" image="worlds/world1.jpg" />
         <Image name="world2" width="-1.33" height="0.7" image="worlds/world2.jpg" />
         <Image name="world3" width="-1.33" height="0.7" image="worlds/world3.jpg" />
     </BoxSlider>
+    <Label name="campaignName" text="The beginning" x="0.1" y="0.05" width="0.8" height="0.1" />
+    <Image name="lock" alignment="center" height="0.4" y="0.22" width="-1" image="lock.png" />
+
+    <Label name="unlockstars" text="5/70" x="0.3" y="0.65" width="0.1" height="0.05" font-color="0.3 0.9 0.3 1" />
+    <Image name="star" image="star.png" x="0.4" y="0.63" width="-1" height="0.08" />
+    <Label name="unlockmoney" text="or 0.99$" x="0.55" y="0.65" width="0.1" height="0.05" font-color="0.3 0.9 0.3 1"/>
+
     <Button name="back"  x="0.05" y="0.85" width="0.08" height="-1" image="buttons/back.png" hoverimage="buttons/back_hover.png" pressedimage="buttons/back_pressed.png" />
 </document>

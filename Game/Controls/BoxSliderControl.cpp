@@ -122,4 +122,9 @@ uint32_t BoxSliderControl::getSelectedObject() const
     return _currentObject;
 }
 
+bool BoxSliderControl::isSliding() const
+{
+    return _isMoving;
+}
+
 } // namespace Chewman

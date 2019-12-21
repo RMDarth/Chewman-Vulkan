@@ -19,6 +19,7 @@ public:
     bool onMouseUp(int x, int y) override;
 
     uint32_t getSelectedObject() const;
+    bool isSliding() const;
 
 private:
     uint32_t _currentObject = 0;

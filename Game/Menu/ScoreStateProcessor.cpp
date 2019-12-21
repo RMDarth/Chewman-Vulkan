@@ -36,12 +36,17 @@ GameState ScoreStateProcessor::update(float deltaTime)
         auto scoreText = std::to_string(static_cast<int>(_progressManager.getPlayerInfo().points * std::min(_time, 2.0f) * 0.5f));
         _document->getControlByName("score")->setText("Score: " + scoreText);
 
+        auto prevCountStars = _countStars;
         if (_stars > 0)
         {
             std::stringstream ss;
             ss << "windows/gameover_" << _countStars << ".png";
             _document->getControlByName("panel")->setDefaultMaterial(ss.str());
             _countStars = std::min(_time * 1.5f, 3.0f) / (3.0 / _stars);
+        }
+        if (_countStars > prevCountStars)
+        {
+            Game::getInstance()->getSoundsManager().playSound(SoundType::Star1);
         }
     }
     else if (!_countingFinished)

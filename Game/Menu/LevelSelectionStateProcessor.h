@@ -31,6 +31,9 @@ public:
 
 private:
     std::unique_ptr<ControlDocument> _document;
+    std::unique_ptr<ControlDocument> _loadingSign;
+    uint32_t _isLoading = 0;
+    uint32_t _levelNum = 0;
 };
 
 } // namespace Chewman
