@@ -32,12 +32,16 @@ GameState MenuStateProcessor::update(float deltaTime)
     {
         if (!_logged)
         {
-            // UpdateServicesIcon(_document->GetControlByName("googleplay").get());
+            updateServicesIcon();
             System::syncAchievements();
             // TODO: Submit only if it wasn't submitted already
-            System::updateScore(Game::getInstance()->getScoresManager().getBestScore());
+            System::submitScore(Game::getInstance()->getScoresManager().getBestScore());
         }
         _logged = true;
+    } else if (_logged && !System::isLoggedServices())
+    {
+        updateServicesIcon();
+        _logged = false;
     }
 
     return GameState::MainMenu;
@@ -78,22 +82,22 @@ void MenuStateProcessor::show()
     {
         if (!_logged)
         {
-            // UpdateServicesIcon(_document->GetControlByName("googleplay").get());
             System::syncAchievements();
             // TODO: Submit only if it wasn't submitted already
-            System::updateScore(Game::getInstance()->getScoresManager().getBestScore());
+            System::submitScore(Game::getInstance()->getScoresManager().getBestScore());
         }
         _logged = true;
     }
     else
     {
-        if (_logged)
-            //UpdateServicesIcon(_document->GetControlByName("googleplay").get());
         _logged = false;
 
-        if (System::isServicesAvailable())
+        if (System::isServicesAvailable() && System::isSignedServices())
             System::logInServices();
     }
+
+    updateServicesIcon();
+    System::showAds(System::AdHorizontalLayout::Center, System::AdVerticalLayout::Top);
 }
 
 void MenuStateProcessor::hide()
@@ -156,6 +160,13 @@ void MenuStateProcessor::processEvent(Control* control, IEventHandler::EventType
             updateSoundButtons();
             soundManager.save();
         }
+        if (control->getName() == "googleplay")
+        {
+            if (!System::isLoggedServices())
+                System::logInServices();
+            else
+                System::showAchievementUI();
+        }
     }
 }
 
@@ -205,6 +216,13 @@ void MenuStateProcessor::updateSoundButtons()
     _document->getControlByName("sound")->setHoverMaterial(soundManager.isSoundEnabled() ? "buttons/Sound.png" : "buttons/NoSound.png");
     _document->getControlByName("music")->setDefaultMaterial(soundManager.isMusicEnabled() ? "buttons/Music.png" : "buttons/NoMusic.png");
     _document->getControlByName("music")->setHoverMaterial(soundManager.isMusicEnabled() ? "buttons/Music.png" : "buttons/NoMusic.png");
+}
+
+void MenuStateProcessor::updateServicesIcon()
+{
+    // TODO: Change it to multiplatform code
+    _document->getControlByName("googleplay")->setDefaultMaterial(
+            System::isLoggedServices() ? "buttons/googleplay.png" : "buttons/googleplay_gray.png");
 }
 
 } // namespace Chewman

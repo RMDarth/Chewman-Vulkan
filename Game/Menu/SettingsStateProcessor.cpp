@@ -74,6 +74,8 @@ void SettingsStateProcessor::show()
             Game::getInstance()->getGameSettingsManager().getSettings().showOnScreenControls
                  ? "buttons/checkbox_checked.png"
                  : "buttons/checkbox_unchecked.png");
+
+    System::showAds(System::AdHorizontalLayout::Right, System::AdVerticalLayout::Bottom);
 }
 
 void SettingsStateProcessor::hide()

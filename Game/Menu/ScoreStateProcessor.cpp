@@ -5,6 +5,7 @@
 #include "Game/Controls/ControlDocument.h"
 #include "Game/Game.h"
 #include "Game/Utils.h"
+#include "Game/SystemApi.h"
 #include <sstream>
 
 namespace Chewman
@@ -140,9 +141,40 @@ void ScoreStateProcessor::show()
         scoresManager.setBestScore(_progressManager.getPlayerInfo().points);
     scoresManager.store();
 
+    if (System::isLoggedServices())
+    {
+        if (bestTime > 0)
+            System::submitLevelTime(currentLevel - 1, bestTime);
+
+        if (scoresManager.getStars(1) > 0 && scoresManager.getStars(2) > 0)
+            System::unlockAchievement(System::AchievementType::Newcomer);
+        uint32_t totalLevels = 0;
+        uint32_t total3StarLevels = 0;
+        uint32_t totalStars = scoresManager.getTotalStars();
+        for (auto i = 1; i <= 36; i++)
+        {
+            if (scoresManager.getStars(i) > 0) ++totalLevels;
+            if (scoresManager.getStars(i) == 3) ++total3StarLevels;
+        }
+
+        System::updateAchievement(System::AchievementType::Good_start, totalLevels);
+        System::updateAchievement(System::AchievementType::Treasure_hunter, totalLevels);
+        System::updateAchievement(System::AchievementType::Dungeon_master, totalLevels);
+        System::updateAchievement(System::AchievementType::Dungeon_emperor, totalLevels);
+
+        System::updateAchievement(System::AchievementType::Star_collector, totalStars);
+        System::updateAchievement(System::AchievementType::Star_hunter, totalStars);
+        System::updateAchievement(System::AchievementType::Supernova, totalStars);
+
+        System::updateAchievement(System::AchievementType::Gold_rush, total3StarLevels);
+        System::updateAchievement(System::AchievementType::Mission_accomplished, total3StarLevels);
+    }
+
     _time = 0;
     _countStars = 0;
     _countingFinished = false;
+
+    System::showAds(System::AdHorizontalLayout::Right, System::AdVerticalLayout::Top);
 }
 
 void ScoreStateProcessor::hide()

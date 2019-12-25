@@ -6,6 +6,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include "LevelStateProcessor.h"
 #include "Game/Game.h"
+#include "Game/SystemApi.h"
 #include "Game/Level/GameMapLoader.h"
 #include "Game/Controls/ControlDocument.h"
 #include "SVE/SceneManager.h"
@@ -179,6 +180,8 @@ void LevelStateProcessor::show()
     _document->getControlByName("downStick")->setVisible(_useOnScreenControl);
     _document->getControlByName("leftStick")->setVisible(_useOnScreenControl);
     _document->getControlByName("rightStick")->setVisible(_useOnScreenControl);
+
+    System::hideAds();
 }
 
 void LevelStateProcessor::hide()

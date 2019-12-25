@@ -5,6 +5,7 @@
 #include "Game/Controls/ControlDocument.h"
 
 #include <Game/Game.h>
+#include <Game/SystemApi.h>
 
 namespace Chewman
 {
@@ -37,6 +38,7 @@ void PauseStateProcessor::processInput(const SDL_Event& event)
 void PauseStateProcessor::show()
 {
     _document->show();
+    System::showAds(System::AdHorizontalLayout::Center, System::AdVerticalLayout::Bottom);
 }
 
 void PauseStateProcessor::hide()

@@ -51,7 +51,6 @@ void rotateCamera(SDL_MouseMotionEvent& event, std::shared_ptr<SVE::CameraNode>&
 
 int runGame()
 {
-
     SDL_Window *window;
     SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS);
 
@@ -136,7 +135,6 @@ int runGame()
 
         // create skybox
         engine->getSceneManager()->setSkybox("Skybox4");
-
 
         // Add text
         auto textEntity = std::make_shared<SVE::TextEntity>(

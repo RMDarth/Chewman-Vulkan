@@ -9,6 +9,33 @@ namespace Chewman
 namespace System
 {
 
+enum class AdHorizontalLayout : int
+{
+    Left = 9,
+    Center = 14,
+    Right = 11
+};
+
+enum class AdVerticalLayout : int
+{
+    Top = 10,
+    Bottom = 12
+};
+
+enum class AchievementType : int
+{
+    Newcomer,
+    Good_start,
+    Treasure_hunter,
+    Dungeon_master,
+    Dungeon_emperor,
+    Star_collector,
+    Star_hunter,
+    Supernova,
+    Gold_rush,
+    Mission_accomplished,
+};
+
 const std::string levelsProduct = "levels";
 
 int getSystemVersion();
@@ -23,14 +50,25 @@ void initServices();
 void logInServices();
 void logOutServices();
 bool isLoggedServices();
+bool isSignedServices();
 bool isServicesAvailable();
 
 void showAchievements();
 void showLeaderboard();
 
+void showAds(AdHorizontalLayout horizontalLayout, AdVerticalLayout verticalLayout);
+void hideAds();
+
+void unlockAchievement(AchievementType achievementType);
+void updateAchievement(AchievementType achievementType, int score);
+void showAchievementUI();
+
 bool isScoresUpdated();
-void updateScore(int score);
-void updateLevelTime(int level, int timeSeconds);
+bool hasNewTimeScores();
+void updateScores();
+void refreshScores();
+void submitScore(int score);
+void submitLevelTime(int level, int timeSeconds);
 std::vector<std::pair<std::string, int>> getScores(bool weekly);
 std::vector<std::pair<std::string, int>> getTimes(bool weekly);
 

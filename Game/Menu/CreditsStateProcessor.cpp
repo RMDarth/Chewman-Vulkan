@@ -5,6 +5,7 @@
 #include "Game/Controls/ControlDocument.h"
 
 #include <Game/Game.h>
+#include <Game/SystemApi.h>
 
 namespace Chewman
 {
@@ -38,6 +39,7 @@ void CreditsStateProcessor::processInput(const SDL_Event& event)
 void CreditsStateProcessor::show()
 {
     _document->show();
+    System::showAds(System::AdHorizontalLayout::Right, System::AdVerticalLayout::Top);
 }
 
 void CreditsStateProcessor::hide()

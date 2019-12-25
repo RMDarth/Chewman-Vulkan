@@ -32,4 +32,5 @@
         <Label name="alltimeLabel" text="All Time" x="0.8" y="0.81" width="0.06" height="-1" textAlignment="Left" />
     </Panel>
     <Button name="back"  x="0.30" y="0.82" width="0.08" height="-1" image="buttons/back.png" hoverimage="buttons/back_hover.png" pressedimage="buttons/back_pressed.png" />
+    <Button name="refresh" x="0.6" y="0.82" width="0.08" height="-1"  image="buttons/restart.png" hoverimage="buttons/restart_hover.png" pressedimage="buttons/restart_pressed.png"/>
 </document>
