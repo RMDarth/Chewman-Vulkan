@@ -5,6 +5,7 @@
 #include "Game/Controls/ControlDocument.h"
 #include "Game/Controls/BoxSliderControl.h"
 #include "Game/Game.h"
+#include "Game/SystemApi.h"
 #include "Game/Utils.h"
 
 namespace Chewman
@@ -80,6 +81,8 @@ void LevelSelectionStateProcessor::show()
             timeControl->setTextColor(glm::vec4(1.0, 1.0, 1.0, 1.0));
         }
     }
+
+    System::showAds(System::AdHorizontalLayout::Right, System::AdVerticalLayout::Bottom);
 }
 
 void LevelSelectionStateProcessor::hide()

@@ -5,6 +5,7 @@
 #include "Game/Controls/ControlDocument.h"
 
 #include <Game/Game.h>
+#include <Game/SystemApi.h>
 
 namespace Chewman
 {
@@ -44,6 +45,8 @@ void TutorialStateProcessor::show()
         _document->getControlByName("text" + std::to_string(i + 1))->setText(tutorialData[i]);
     }
     _document->show();
+
+    System::showAds(System::AdHorizontalLayout::Center, System::AdVerticalLayout::Top);
 }
 
 void TutorialStateProcessor::hide()

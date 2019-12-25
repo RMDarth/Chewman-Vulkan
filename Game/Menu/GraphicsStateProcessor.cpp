@@ -5,6 +5,7 @@
 #include "Game/Controls/ControlDocument.h"
 
 #include <Game/Game.h>
+#include <Game/SystemApi.h>
 
 namespace Chewman
 {
@@ -74,6 +75,7 @@ void GraphicsStateProcessor::show()
     particleControl->setText(getParticlesText(_settings.particleEffects));
 
     _document->getControlByName("restartInfo")->setVisible(false);
+    System::hideAds();
 }
 
 void GraphicsStateProcessor::hide()

@@ -40,6 +40,8 @@ private:
     bool _configPanelVisible = false;
 
     bool _logged = false;
+
+    void updateServicesIcon();
 };
 
 } // namespace Chewman

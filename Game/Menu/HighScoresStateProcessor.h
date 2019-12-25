@@ -44,6 +44,7 @@ private:
     bool _isPointsActive = true;
     bool _isWeeklyActive = true;
     bool _isFirstLevelsHalf = true;
+    bool _isScoresUpdated = false;
 
     bool _logged = false;
 };

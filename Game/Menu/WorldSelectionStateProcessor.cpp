@@ -74,6 +74,8 @@ void WorldSelectionStateProcessor::show()
 {
     _document->show();
     setLockControlsVisible(_currentWorld == 2 && _isLockedLevels);
+
+    System::showAds(System::AdHorizontalLayout::Center, System::AdVerticalLayout::Bottom);
 }
 
 void WorldSelectionStateProcessor::hide()

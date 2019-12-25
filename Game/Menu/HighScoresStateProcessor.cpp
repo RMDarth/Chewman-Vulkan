@@ -33,14 +33,20 @@ GameState HighscoresStateProcessor::update(float deltaTime)
         if (_logged)
         {
             // TODO: Submit only if it wasn't submitted already
-            System::updateScore(Game::getInstance()->getScoresManager().getBestScore());
+            System::submitScore(Game::getInstance()->getScoresManager().getBestScore());
         }
         updateBoard();
     }
 
     if (_logged)
     {
-        if (System::isScoresUpdated())
+        if (!_isScoresUpdated && System::isScoresUpdated())
+        {
+            _isScoresUpdated = true;
+            updateBoard();
+        }
+
+        if (System::hasNewTimeScores())
         {
             updateBoard();
         }
@@ -66,7 +72,13 @@ void HighscoresStateProcessor::show()
     _isPointsActive = true;
     _isWeeklyActive = true;
     _isFirstLevelsHalf = true;
+    _isScoresUpdated = false;
+    if (System::isLoggedServices())
+        System::updateScores();
+
     updatePointsDoc();
+
+    System::showAds(System::AdHorizontalLayout::Right, System::AdVerticalLayout::Top);
 }
 
 void HighscoresStateProcessor::hide()
@@ -124,6 +136,11 @@ void HighscoresStateProcessor::processEvent(Control* control, IEventHandler::Eve
         {
             _isFirstLevelsHalf = false;
             updateTimeScores();
+        }
+        if (control->getName() == "refresh")
+        {
+            if (System::isLoggedServices())
+                System::refreshScores();
         }
     }
 }
@@ -186,7 +203,7 @@ void HighscoresStateProcessor::updateTimeScores()
         {
             if (timeData[levelNum - 1].second != 0)
             {
-                time = Utils::timeToString(timeData[levelNum - 1].second);
+                time = Utils::timeToString(timeData[levelNum - 1].second / 1000);
                 playerName = timeData[levelNum - 1].first;
             }
         } else
@@ -214,10 +231,10 @@ void HighscoresStateProcessor::updatePointScores()
         for (auto i = 1; i <= 5; i++)
         {
             auto indexStr = std::to_string(i);
-            if (i <= scoreData.size())
+            if (i <= scoreData.size() && scoreData[i - 1].second != 0)
             {
                 _documentPoints->getControlByName("name" + indexStr)->setText(
-                        indexStr.append(". ").append(scoreData[i - 1].first));
+                        indexStr + ". " + scoreData[i - 1].first);
                 _documentPoints->getControlByName("score" + indexStr)->setText(std::to_string(scoreData[i - 1].second));
             } else {
                 _documentPoints->getControlByName("name" + indexStr)->setText(" ");

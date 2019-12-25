@@ -12,6 +12,7 @@
         <Button name="info" text="" x="0.05" y="0.8" width="0.9" height="-1" image="buttons/Info.png" hoverimage="buttons/Info.png" pressedimage="buttons/Info.png" />
     </Panel>
 
+    <Image name="googleplay" x="0.85" y="0.83" width="0.08" height="-1" image="buttons/googleplay_gray.png"/>
     <Button name="config" text="" x="0.05" y="0.85" width="0.08" height="-1"
             image="buttons/config.png" hoverimage="buttons/config_hover.png" pressedimage="buttons/config_pressed.png" />
 </document>
