@@ -38,6 +38,7 @@ public:
 
 private:
     void playDeath(float deltaTime);
+    void resetLevel();
 
     void updateAffectors(float deltaTime);
     void activatePowerUp(PowerUpType type, glm::ivec2 pos, Enemy* eater = nullptr);

@@ -224,6 +224,12 @@ void GameMapProcessor::setState(GameMapState gameState)
             if (!gargoyle.isFireline)
                 gargoyle.particleSystem->unpauseTime();
         }
+    } else if (_state == GameMapState::GameOver)
+    {
+        _gameMap->player->resetPosition();
+        _gameMap->player->update(0);
+        for (auto& enemy : _gameMap->enemies)
+            enemy->resetAll();
     }
 
     _state = gameState;

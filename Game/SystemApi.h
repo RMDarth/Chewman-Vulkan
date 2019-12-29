@@ -58,6 +58,8 @@ void showLeaderboard();
 
 void showAds(AdHorizontalLayout horizontalLayout, AdVerticalLayout verticalLayout);
 void hideAds();
+bool showVideoAds(); /* returns true if video ad lauched successfully */
+bool wasVideoAdsWatched();
 
 void unlockAchievement(AchievementType achievementType);
 void updateAchievement(AchievementType achievementType, int score);
@@ -65,14 +67,16 @@ void showAchievementUI();
 
 bool isScoresUpdated();
 bool hasNewTimeScores();
+bool hasTimeScoresUpdated();
 void updateScores();
 void refreshScores();
 void submitScore(int score);
 void submitLevelTime(int level, int timeSeconds);
 std::vector<std::pair<std::string, int>> getScores(bool weekly);
 std::vector<std::pair<std::string, int>> getTimes(bool weekly);
+int getPlayerPlace(bool weekly);
+std::pair<std::string, int> getPlayerScore(bool weekly);
 
-bool showVideoAds();
 void requestBackup();
 void requestRestore();
 

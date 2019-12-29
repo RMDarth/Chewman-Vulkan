@@ -664,4 +664,15 @@ bool GameRulesProcessor::eatCoin(glm::ivec2 pos)
     return false;
 }
 
+void GameRulesProcessor::resetLevel()
+{
+    auto player = getPlayer();
+    player->resetPosition();
+    player->update(0);
+
+    auto& enemies = _gameMapProcessor.getGameMap()->enemies;
+    for (auto& enemy : enemies)
+        enemy->resetAll();
+}
+
 } // namespace Chewman

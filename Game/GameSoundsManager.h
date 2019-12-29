@@ -43,6 +43,8 @@ public:
 
     void setSoundEnabled(bool value);
     void setMusicEnabled(bool value);
+    void pauseMusic();
+    void unpauseMusic();
     bool isSoundEnabled() const;
     bool isMusicEnabled() const;
 

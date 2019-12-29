@@ -47,6 +47,7 @@ private:
     float _counterTime = 0.0;
 
     bool _useOnScreenControl = true;
+    bool _reviveUsed = false;
 
     // As prev game map could be still in some commands, we need to finish rendering them all before release
     // TODO: Fix this in Engine so it won't destroy until all commands are finished
