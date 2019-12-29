@@ -120,10 +120,20 @@ GameState LevelStateProcessor::update(float deltaTime)
             _progressManager.getPlayerInfo().time = (int)_time;
             return GameState::Score;
         case GameMapState::GameOver:
+        {
             _progressManager.setVictory(false);
-            _progressManager.setStarted(false);
-            _progressManager.getPlayerInfo().time = (int)_time;
-            return GameState::Score;
+            _progressManager.getPlayerInfo().time = (int) _time;
+            if (_reviveUsed)
+            {
+                Game::getInstance()->getProgressManager().setStarted(false);
+                return GameState::Score;
+            }
+            else
+            {
+                _reviveUsed = true;
+                return GameState::Revive;
+            }
+        }
         case GameMapState::LevelStart:
         {
             _counterTime += deltaTime;
@@ -180,6 +190,7 @@ void LevelStateProcessor::show()
         _progressManager.setVictory(false);
         _loadingFinished = false;
         _lastDirection = MoveDirection::None;
+        _reviveUsed = false;
         initMap();
         _time = 0.0f;
         _counterTime = 0.01f;

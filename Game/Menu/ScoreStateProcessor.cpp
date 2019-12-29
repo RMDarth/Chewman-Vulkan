@@ -134,7 +134,10 @@ void ScoreStateProcessor::show()
         if (_stars > bestStars)
             scoresManager.setStars(currentLevel, _stars);
         if (bestTime == 0 || bestTime > _progressManager.getPlayerInfo().time)
+        {
             scoresManager.setTime(currentLevel, _progressManager.getPlayerInfo().time);
+            bestTime = _progressManager.getPlayerInfo().time;
+        }
     }
 
     if (scoresManager.getBestScore() < _progressManager.getPlayerInfo().points)

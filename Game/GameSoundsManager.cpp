@@ -91,6 +91,19 @@ void GameSoundsManager::setMusicEnabled(bool value)
         SoundSystem::getInstance()->stopBackgroundMusic();
 }
 
+
+void GameSoundsManager::pauseMusic()
+{
+    if (_musicEnabled)
+        SoundSystem::getInstance()->stopBackgroundMusic();
+}
+
+void GameSoundsManager::unpauseMusic()
+{
+    if (_musicEnabled)
+        SoundSystem::getInstance()->startBackgroundMusic();
+}
+
 bool GameSoundsManager::isSoundEnabled() const
 {
     return _soundEnabled;

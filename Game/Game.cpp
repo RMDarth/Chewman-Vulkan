@@ -17,6 +17,7 @@
 #include "Game/Menu/HighScoresStateProcessor.h"
 #include "Game/Menu/CreditsStateProcessor.h"
 #include "Game/Menu/SettingsStateProcessor.h"
+#include "Game/Menu/ReviveStateProcessor.h"
 
 
 namespace Chewman
@@ -141,6 +142,7 @@ void Game::initStates()
     registerStateProcessor(GameState::Highscores, std::make_shared<HighscoresStateProcessor>());
     registerStateProcessor(GameState::Credits, std::make_shared<CreditsStateProcessor>());
     registerStateProcessor(GameState::Settings, std::make_shared<SettingsStateProcessor>());
+    registerStateProcessor(GameState::Revive, std::make_shared<ReviveStateProcessor>());
 
     _stateProcessors[_gameState]->show();
 }

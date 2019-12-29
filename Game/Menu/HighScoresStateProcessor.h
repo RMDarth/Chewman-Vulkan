@@ -45,7 +45,12 @@ private:
     bool _isWeeklyActive = true;
     bool _isFirstLevelsHalf = true;
     bool _isScoresUpdated = false;
+    bool _isRefreshIcon = false;
 
+    float _refreshTime = 0;
+    int _refreshIconIndex = 1;
+
+    //bool _scoresUpdated = false;
     bool _logged = false;
 };
 

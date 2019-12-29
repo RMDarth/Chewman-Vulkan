@@ -225,6 +225,8 @@ add_executable(Chewman
         Game/Menu/MenuStateProcessor.h
         Game/Menu/PauseStateProcessor.cpp
         Game/Menu/PauseStateProcessor.h
+        Game/Menu/ReviveStateProcessor.cpp
+        Game/Menu/ReviveStateProcessor.h
         Game/Menu/ScoreStateProcessor.cpp
         Game/Menu/ScoreStateProcessor.h
         Game/Menu/SettingsStateProcessor.cpp

@@ -110,12 +110,22 @@ bool isLogged = false;
 
 void buyItem(const std::string& id)
 {
+#ifdef __ANDROID__
+    if (id == "levels")
+        callVoidMethod("purchaseCampaign");
+#else
     isBought = !isBought;
+#endif
 }
 
 bool isItemBought(const std::string& id)
 {
+#ifdef __ANDROID__
+    if (id == "levels")
+        return callBoolMethod("isCampaignPurchased");
+#else
     return isBought;
+#endif
 }
 
 void initServices()
@@ -155,7 +165,7 @@ bool isSignedServices()
 #ifdef __ANDROID__
     return callBoolMethod("isGoogleEverSigned");
 #else
-    return true;
+    return false;
 #endif
 }
 
@@ -198,6 +208,24 @@ void hideAds()
 {
 #ifdef __ANDROID__
     callVoidMethod("hideAds");
+#endif
+}
+
+bool showVideoAds()
+{
+#ifdef __ANDROID__
+    return callBoolMethod("showVideoAds");
+#else
+    return false;
+#endif
+}
+
+bool wasVideoAdsWatched()
+{
+#ifdef __ANDROID__
+    return callBoolMethod("wasVideoAdsWatched");
+#else
+    return false;
 #endif
 }
 
@@ -339,8 +367,8 @@ std::vector<std::pair<std::string, int>> getScores(bool weekly)
     {
         auto nameObj = (jstring)env->CallObjectMethod(activity, methodIdName, i, weekly);
         const char *name = env->GetStringUTFChars(nameObj, nullptr);
-        int version = env->CallIntMethod(activity, methodIdScore, i, weekly);
-        scoresList.emplace_back(name, version);
+        int score = env->CallIntMethod(activity, methodIdScore, i, weekly);
+        scoresList.emplace_back(name, score);
 
         env->ReleaseStringUTFChars(nameObj, name);
     }
@@ -349,6 +377,53 @@ std::vector<std::pair<std::string, int>> getScores(bool weekly)
     env->DeleteLocalRef(activityClass);
 #endif
     return scoresList;
+}
+
+int getPlayerPlace(bool weekly)
+{
+#ifdef __ANDROID__
+    JNIEnv* env = (JNIEnv*)SDL_AndroidGetJNIEnv();
+    jobject activity = (jobject)SDL_AndroidGetActivity();
+    jclass activityClass = env->GetObjectClass(activity);
+
+    jmethodID methodId = env->GetMethodID(activityClass, "getPlayerPlace", "(Z)I");
+
+    int result = env->CallIntMethod(activity, methodId, weekly);
+
+    env->DeleteLocalRef(activity);
+    env->DeleteLocalRef(activityClass);
+
+    return result;
+#else
+    return 1;
+#endif
+}
+
+std::pair<std::string, int> getPlayerScore(bool weekly)
+{
+#ifdef __ANDROID__
+    JNIEnv* env = (JNIEnv*)SDL_AndroidGetJNIEnv();
+    jobject activity = (jobject)SDL_AndroidGetActivity();
+    jclass activityClass = env->GetObjectClass(activity);
+
+    jmethodID methodIdName = env->GetMethodID(activityClass, "getPlayerName", "(Z)Ljava/lang/String;");
+    jmethodID methodIdScore = env->GetMethodID(activityClass, "getPlayerScore", "(Z)I");
+
+    auto nameObj = (jstring)env->CallObjectMethod(activity, methodIdName, weekly);
+    const char *name = env->GetStringUTFChars(nameObj, nullptr);
+    int score = env->CallIntMethod(activity, methodIdScore, weekly);
+
+    std::pair<std::string, int> result = { name, score };
+
+    env->ReleaseStringUTFChars(nameObj, name);
+
+    env->DeleteLocalRef(activity);
+    env->DeleteLocalRef(activityClass);
+
+    return result;
+#else
+    return {"Player", 0};
+#endif
 }
 
 std::vector<std::pair<std::string, int>> getTimes(bool weekly)
@@ -387,11 +462,6 @@ bool hasNewTimeScores()
 #endif
 }
 
-bool showVideoAds()
-{
-    return false;
-}
-
 void requestBackup()
 {
 
@@ -415,6 +485,15 @@ void rateApp()
 void openLink(const std::string& link)
 {
 
+}
+
+bool hasTimeScoresUpdated()
+{
+#ifdef __ANDROID__
+    return callBoolMethod("hasTimescoresUpdated");
+#else
+    return false;
+#endif
 }
 
 } // namespace System

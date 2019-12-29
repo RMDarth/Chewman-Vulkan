@@ -7,14 +7,17 @@
 
         <Label name="name1" text="1. Player" x="0.15" y="0.3" width="0.38" height="0.08" textAlignment="Left" font-size="55" />
         <Label name="score1" text="5000" x="0.7" y="0.3" width="0.38" height="0.08"  textAlignment="Left" font-size="55" />
-        <Label name="name2" text="2. Darth" x="0.15" y="0.4" width="0.38" height="0.08" textAlignment="Left" font-size="55"/>
-        <Label name="score2" text="4000" x="0.7" y="0.4" width="0.38" height="0.08"  textAlignment="Left" font-size="55" />
-        <Label name="name3" text="3. Fduch" x="0.15" y="0.5" width="0.38" height="0.08" textAlignment="Left" font-size="55" />
-        <Label name="score3" text="3000" x="0.7" y="0.5" width="0.38" height="0.08"  textAlignment="Left" font-size="55" />
-        <Label name="name4" text="4. Schdoop" x="0.15" y="0.6" width="0.38" height="0.08" textAlignment="Left" font-size="55"  />
-        <Label name="score4" text="2000" x="0.7" y="0.6" width="0.38" height="0.08"  textAlignment="Left" font-size="55"/>
-        <Label name="name5" text="5. Dexter" x="0.15" y="0.7" width="0.38" height="0.08" textAlignment="Left" font-size="55"/>
-        <Label name="score5" text="1000" x="0.7" y="0.7" width="0.38" height="0.08"  textAlignment="Left" font-size="55" />
+        <Label name="name2" text="2. Darth" x="0.15" y="0.37" width="0.38" height="0.08" textAlignment="Left" font-size="55"/>
+        <Label name="score2" text="4000" x="0.7" y="0.37" width="0.38" height="0.08"  textAlignment="Left" font-size="55" />
+        <Label name="name3" text="3. Fduch" x="0.15" y="0.44" width="0.38" height="0.08" textAlignment="Left" font-size="55" />
+        <Label name="score3" text="3000" x="0.7" y="0.44" width="0.38" height="0.08"  textAlignment="Left" font-size="55" />
+        <Label name="name4" text="4. Schdoop" x="0.15" y="0.51" width="0.38" height="0.08" textAlignment="Left" font-size="55"  />
+        <Label name="score4" text="2000" x="0.7" y="0.51" width="0.38" height="0.08"  textAlignment="Left" font-size="55"/>
+        <Label name="name5" text="5. Dexter" x="0.15" y="0.58" width="0.38" height="0.08" textAlignment="Left" font-size="55"/>
+        <Label name="score5" text="1000" x="0.7" y="0.58" width="0.38" height="0.08"  textAlignment="Left" font-size="55" />
+
+        <Label name="name6" text="123. Kavior" x="0.15" y="0.67" width="0.38" height="0.08" textAlignment="Left" font-size="55"/>
+        <Label name="score6" text="500" x="0.7" y="0.67" width="0.38" height="0.08"  textAlignment="Left" font-size="55" />
 
         <Image name="weekly" x="0.35" y ="0.83" width="0.06" height="-1" image="buttons/checkbox_checked.png"/>
         <Label name="weeklyLabel" text="Weekly" x="0.42" y="0.83" width="0.07" height="-1" textAlignment="Left" />

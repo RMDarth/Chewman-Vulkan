@@ -20,6 +20,9 @@ HighscoresStateProcessor::HighscoresStateProcessor()
 
     _documentTime->setMouseUpHandler(this);
     _documentTime->hide();
+
+    _documentPoints->getControlByName("refresh")->setDefaultMaterial("refreshing1.png");
+    _documentTime->getControlByName("refresh")->setDefaultMaterial("refreshing2.png");
 }
 
 HighscoresStateProcessor::~HighscoresStateProcessor() = default;
@@ -50,6 +53,44 @@ GameState HighscoresStateProcessor::update(float deltaTime)
         {
             updateBoard();
         }
+
+        if (System::hasTimeScoresUpdated())
+        {
+            if (_isRefreshIcon)
+            {
+                _documentPoints->getControlByName("refresh")->setDefaultMaterial("buttons/restart.png");
+                _documentTime->getControlByName("refresh")->setDefaultMaterial("buttons/restart.png");
+                _isRefreshIcon = false;
+            }
+        } else {
+            if (!_isRefreshIcon)
+            {
+                _isRefreshIcon = true;
+                _refreshTime = -1.0f;
+            }
+        }
+
+        if (_isRefreshIcon)
+        {
+            _refreshTime -= deltaTime;
+            if (_refreshTime < 0)
+            {
+                _refreshTime = 0.4;
+                if (_refreshIconIndex == 1)
+                {
+                    _refreshIconIndex = 2;
+                    _documentPoints->getControlByName("refresh")->setDefaultMaterial("refreshing1.png");
+                    _documentTime->getControlByName("refresh")->setDefaultMaterial("refreshing1.png");
+                } else {
+                    _refreshIconIndex = 1;
+                    _documentPoints->getControlByName("refresh")->setDefaultMaterial("refreshing2.png");
+                    _documentTime->getControlByName("refresh")->setDefaultMaterial("refreshing2.png");
+                }
+            }
+        }
+    } else {
+        _documentPoints->getControlByName("refresh")->setVisible(false);
+        _documentTime->getControlByName("refresh")->setVisible(false);
     }
 
     return GameState::Highscores;
@@ -73,9 +114,11 @@ void HighscoresStateProcessor::show()
     _isWeeklyActive = true;
     _isFirstLevelsHalf = true;
     _isScoresUpdated = false;
-    if (System::isLoggedServices())
-        System::updateScores();
-
+    //if (System::isLoggedServices() && !_scoresUpdated)
+    //{
+    //    System::updateScores();
+    //    _scoresUpdated = true;
+    //}
     updatePointsDoc();
 
     System::showAds(System::AdHorizontalLayout::Right, System::AdVerticalLayout::Top);
@@ -139,7 +182,7 @@ void HighscoresStateProcessor::processEvent(Control* control, IEventHandler::Eve
         }
         if (control->getName() == "refresh")
         {
-            if (System::isLoggedServices())
+            if (System::isLoggedServices() && System::hasTimeScoresUpdated())
                 System::refreshScores();
         }
     }
@@ -205,6 +248,10 @@ void HighscoresStateProcessor::updateTimeScores()
             {
                 time = Utils::timeToString(timeData[levelNum - 1].second / 1000);
                 playerName = timeData[levelNum - 1].first;
+            } else if (scoresManager.getTime(i + 1 + shift) != 0)
+            {
+                time = Utils::timeToString(scoresManager.getTime(i + 1 + shift));
+                playerName = System::getPlayerScore(_isWeeklyActive).first;
             }
         } else
         {
@@ -241,10 +288,21 @@ void HighscoresStateProcessor::updatePointScores()
                 _documentPoints->getControlByName("score" + indexStr)->setText(" ");
             }
         }
+
+        auto playerPlace = System::getPlayerPlace(_isWeeklyActive);
+        if (playerPlace <= 5)
+        {
+            _documentPoints->getControlByName("name6")->setText(" ");
+            _documentPoints->getControlByName("score6")->setText(" ");
+        } else {
+            auto playerScore = System::getPlayerScore(_isWeeklyActive);
+            _documentPoints->getControlByName("name6")->setText(std::to_string(playerPlace) + ". " + playerScore.first);
+            _documentPoints->getControlByName("score6")->setText(std::to_string(playerScore.second));
+        }
     }
     else
     {
-        for (auto i = 1; i <= 5; i++)
+        for (auto i = 1; i <= 6; i++)
         {
             // TODO: Implement high scores manager for several values
             auto indexStr = std::to_string(i);

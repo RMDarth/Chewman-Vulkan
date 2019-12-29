@@ -24,7 +24,8 @@ enum class GameState
     Tutorial,
     Highscores,
     Credits,
-    Settings
+    Settings,
+    Revive
 };
 
 } // namespace Chewman

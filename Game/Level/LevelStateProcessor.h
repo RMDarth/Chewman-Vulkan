@@ -50,6 +50,7 @@ private:
     std::atomic_bool _loadingFinished;
 
     bool _useOnScreenControl = true;
+    bool _reviveUsed = false;
     MoveDirection _lastDirection = MoveDirection::None;
 
     // As prev game map could be still in some commands, we need to finish rendering them all before release
