@@ -54,6 +54,7 @@ private:
     void updateWallsDown(float deltaTime);
     void regenerateMap();
     bool eatCoin(glm::ivec2 pos);
+    void setShadowCamera(bool isZoomed);
 
 private:
     GameMapProcessor& _gameMapProcessor;

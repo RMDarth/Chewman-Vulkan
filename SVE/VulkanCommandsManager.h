@@ -10,6 +10,8 @@ namespace SVE
 class VulkanCommandsManager
 {
 public:
+    virtual ~VulkanCommandsManager() {}
+
     virtual void reallocateCommandBuffers() = 0;
     virtual uint32_t startRenderCommandBufferCreation(uint32_t bufferNumber, uint32_t imageIndex) = 0;
     virtual void endRenderCommandBufferCreation(uint32_t bufferIndex) = 0;

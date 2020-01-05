@@ -237,9 +237,10 @@ void LightNode::createProjectionMatrix()
             } else {
                 far = _distanceFromCamera + 100;
 
-                float distance = near * powf(far / near, 1.0f);
-                auto projectionMatrix = glm::ortho(-distance, distance, -distance, distance, 0.01f,
-                                                   distance * 2 + 30);
+                //float distance = near * powf(far / near, 1.0f);
+                auto shadowOrthoData = Engine::getInstance()->getSceneManager()->getLightManager()->getDirectShadowOrtho();
+                auto frame = shadowOrthoData.first;
+                auto projectionMatrix = glm::ortho(frame.x, frame.y, frame.z, frame.w, shadowOrthoData.second.x, shadowOrthoData.second.y);
                 projectionMatrix[1][1] *= -1;
                 _projectionList.push_back(projectionMatrix);
             }
