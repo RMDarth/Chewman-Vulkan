@@ -161,8 +161,8 @@ private:
         }
     }
 
-    ALCdevice* _device;
-    ALCcontext* _context;
+    ALCdevice* _device = nullptr;
+    ALCcontext* _context = nullptr;
 
     std::unordered_map<uint32_t, std::list<ALuint>> _sourcesMap;
     int _lastSound = 0;

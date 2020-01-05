@@ -43,11 +43,11 @@ private:
     void stopCasting();
 
 private:
-    Projectile* _projectile;
+    Projectile* _projectile = nullptr;
 
     float _castingTime = -1.0f;
     MagicType _magicType = MagicType::Fireball;
-    MoveDirection _magicDirection;
+    MoveDirection _magicDirection = MoveDirection::None;
     std::shared_ptr<SVE::MeshEntity> _castMesh;
 
     std::shared_ptr<SVE::MeshEntity> _teleportMesh;

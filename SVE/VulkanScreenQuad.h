@@ -49,22 +49,22 @@ private:
 
     const VulkanUtils& _vulkanUtils;
 
-    VkRenderPass _renderPass[ScreenQuadBufferCount];
+    VkRenderPass _renderPass[ScreenQuadBufferCount] = {};
 
-    VkImage _colorImage[2];
-    VkImage _resolveImage[2];
-    VkImage _depthImage[2];
-    VkDeviceMemory _colorImageMemory[2];
-    VkDeviceMemory _resolveImageMemory[2];
-    VkDeviceMemory _depthImageMemory[2];
-    VkImageView _colorImageView[2];
-    VkImageView _resolveImageView[2];
-    VkImageView _depthImageView[2];
-    VkSampler _colorSampler[2];
-    VkSampler _depthSampler;
+    VkImage _colorImage[2] = {};
+    VkImage _resolveImage[2] = {};
+    VkImage _depthImage[2] = {};
+    VkDeviceMemory _colorImageMemory[2] = {};
+    VkDeviceMemory _resolveImageMemory[2] = {};
+    VkDeviceMemory _depthImageMemory[2] = {};
+    VkImageView _colorImageView[2] = {};
+    VkImageView _resolveImageView[2] = {};
+    VkImageView _depthImageView[2] = {};
+    VkSampler _colorSampler[2] = {};
+    VkSampler _depthSampler = VK_NULL_HANDLE;
 
-    VkFramebuffer _framebuffer[ScreenQuadBufferCount];
-    VkCommandBuffer _commandBuffer[ScreenQuadBufferCount];
+    VkFramebuffer _framebuffer[ScreenQuadBufferCount] = {};
+    VkCommandBuffer _commandBuffer[ScreenQuadBufferCount] = {};
 };
 
 } // namespace SVE

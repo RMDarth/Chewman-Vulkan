@@ -52,18 +52,18 @@ private:
 private:
     ComputeSettings _computeSettings;
 
-    VulkanInstance* _vulkanInstance;
-    VkDevice _device;
+    VulkanInstance* _vulkanInstance = nullptr;
+    VkDevice _device = VK_NULL_HANDLE;
     const VulkanUtils& _vulkanUtils;
 
     VulkanShaderInfo* _computeShader = nullptr;
 
-    VkPipelineLayout _pipelineLayout;
+    VkPipelineLayout _pipelineLayout = VK_NULL_HANDLE;
     VkPipeline _pipeline = VK_NULL_HANDLE;
 
-    VmaAllocation _bufferMemory;
-    VkBuffer _buffer;
-    VkBufferView _bufferView;
+    VmaAllocation _bufferMemory = VK_NULL_HANDLE;
+    VkBuffer _buffer = VK_NULL_HANDLE;
+    VkBufferView _bufferView = VK_NULL_HANDLE;
 
     std::vector<VmaAllocation> _uniformBuffersMemory;
     std::vector<VkBuffer> _uniformBuffers;
@@ -72,9 +72,9 @@ private:
     std::vector<VkBuffer> _storageBuffers;
 
     std::vector<VkDescriptorSet> _descriptorSets;
-    VkDescriptorPool _descriptorPool;
+    VkDescriptorPool _descriptorPool = VK_NULL_HANDLE;
 
-    VkCommandBuffer _commandBuffer;
+    VkCommandBuffer _commandBuffer = VK_NULL_HANDLE;
     bool _computeShaderNotSupported = false;
 
 };

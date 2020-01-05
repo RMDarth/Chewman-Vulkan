@@ -39,9 +39,9 @@ private:
     VkDevice _device;
     ShaderSettings _shaderSettings;
     VkShaderStageFlagBits _shaderStage;
-    VkShaderModule _shaderModule;
+    VkShaderModule _shaderModule = VK_NULL_HANDLE;
 
-    VkDescriptorSetLayout _descriptorSetLayout;
+    VkDescriptorSetLayout _descriptorSetLayout = VK_NULL_HANDLE;
 };
 
 } // namespace SVE

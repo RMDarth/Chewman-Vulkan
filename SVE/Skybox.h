@@ -26,11 +26,11 @@ private:
 
 private:
     std::shared_ptr<Mesh> _mesh;
-    Material* _material;
+    Material* _material = nullptr;
 
-    uint32_t _materialIndex;
-    uint32_t _reflectionMaterialIndex;
-    uint32_t _refractionMaterialIndex;
+    uint32_t _materialIndex = 0;
+    uint32_t _reflectionMaterialIndex = 0;
+    uint32_t _refractionMaterialIndex = 0;
 };
 
 } // namespace SVE

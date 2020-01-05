@@ -63,8 +63,8 @@ private:
     VkImageView _depthImageView[2];
     VkSampler _colorSampler[2];
 
-    VkFramebuffer _framebuffer[2];
-    VkCommandBuffer _commandBuffer[2];
+    VkFramebuffer _framebuffer[2] = {};
+    VkCommandBuffer _commandBuffer[2] = {};
 
 };
 

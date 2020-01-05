@@ -36,6 +36,7 @@ GameRulesProcessor::GameRulesProcessor(GameMapProcessor& gameMapProcessor)
 
 void GameRulesProcessor::runStartLevelAnimation()
 {
+    setShadowCamera(false);
     auto camera = SVE::Engine::getInstance()->getSceneManager()->getMainCamera();
     _cameraStart[0] = glm::vec3((_gameMapProcessor.getGameMap()->width - 1) * CellSize * 0.5, 41, 16);
     _cameraStart[1] = glm::vec3(0, -0.86, 0);
@@ -108,6 +109,7 @@ void GameRulesProcessor::update(float deltaTime)
             }
             else
             {
+                setShadowCamera(false);
                 _gameMapProcessor.setState(GameMapState::GameOver);
             }
         }

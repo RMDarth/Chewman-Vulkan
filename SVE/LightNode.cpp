@@ -7,6 +7,7 @@
 #include "Engine.h"
 #include "SceneManager.h"
 #include "LightManager.h"
+#include "VulkanException.h"
 
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -24,9 +25,15 @@ LightNode::LightNode(LightSettings lightSettings)
 
 LightNode::~LightNode() noexcept
 {
-    if (Engine::getInstance()->getSceneManager() != nullptr)
+    try
     {
-        Engine::getInstance()->getSceneManager()->getLightManager()->removeLight(this);
+        if (Engine::getInstance()->getSceneManager() != nullptr)
+        {
+            Engine::getInstance()->getSceneManager()->getLightManager()->removeLight(this);
+        }
+    } catch (VulkanException& ex)
+    {
+        std::cout << "Exception: " << ex.what() << std::endl;
     }
 }
 
@@ -93,6 +100,7 @@ void LightNode::fillUniformData(UniformData& data, uint32_t lightNum, bool asVie
                 data.pointLightList.push_back(pointLight);
                 data.lightInfo.pointLightNum = std::min(data.pointLightList.size(), MaxPointLight);
                 data.lightInfo.isSimpleLight = _lightSettings.isSimple;
+                break;
             }
             case LightType::SunLight:
             {
