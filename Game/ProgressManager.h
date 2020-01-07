@@ -30,7 +30,7 @@ public:
     void setCurrentLevel(uint32_t level);
 
     const LevelInfo& getCurrentLevelInfo() const;
-    void setCurrentLevelInfo(LevelInfo levelInfo);
+    void setCurrentLevelInfo(const LevelInfo& levelInfo);
 
     uint32_t getCurrentWorld() const;
     void setCurrentWorld(uint32_t world);
