@@ -43,6 +43,7 @@ public:
     glm::ivec2 getMapPosition() const;
     static glm::ivec2 getMapPosition(glm::vec2 realPos);
     glm::vec2 getRealPosition() const;
+    float getSpeed() const;
     bool isTargetReached() const;
 
     glm::vec2 getStartPos() const;

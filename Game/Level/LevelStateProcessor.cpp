@@ -50,6 +50,10 @@ void LevelStateProcessor::initMap()
     std::stringstream ss;
     ss << "resources/game/levels/level" << levelNum << ".map";
     _gameMapProcessor = std::make_unique<GameMapProcessor>(Game::getInstance()->getGameMapLoader().loadMap(ss.str()));
+    _progressManager.setCurrentLevelInfo({
+              _gameMapProcessor->getGameMap()->timeFor2Stars,
+              _gameMapProcessor->getGameMap()->timeFor3Stars,
+              _gameMapProcessor->getGameMap()->name } );
 
     auto sunLight = SVE::Engine::getInstance()->getSceneManager()->getLightManager()->getDirectionLight();
     if (!_gameMapProcessor->getGameMap()->isNight)
@@ -94,6 +98,8 @@ GameState LevelStateProcessor::update(float deltaTime)
         case GameMapState::Pause:
             break;
         case GameMapState::Animation:
+            if (_gameMapProcessor->getGameMap()->player->isDying())
+                _time += deltaTime * 2;
             break;
         case GameMapState::Victory:
             // TODO: Display victory menu

@@ -117,6 +117,11 @@ glm::vec2 MapTraveller::getRealPosition() const
     return _position;
 }
 
+float MapTraveller::getSpeed() const
+{
+    return _moveSpeed;
+}
+
 bool MapTraveller::isFreePosition(glm::ivec2 position)
 {
     if (position.x < 0 || position.x >= _map->mapData.size() ||

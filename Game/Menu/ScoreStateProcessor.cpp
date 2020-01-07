@@ -94,10 +94,17 @@ void ScoreStateProcessor::show()
     auto currentLevel = _progressManager.getCurrentLevel();
     _document->show();
     _document->getControlByName("result")->setText(_progressManager.isVictory() ? "Victory" : "You lose");
-    _document->getControlByName("levelname")->setText("Level " + std::to_string(currentLevel));
+    _document->getControlByName("levelname")->setText("L" + std::to_string(currentLevel) + ": " + _progressManager.getCurrentLevelInfo().levelName);
     _document->getControlByName("time")->setText("Time: " + Utils::timeToString(_progressManager.getPlayerInfo().time));
     _document->getControlByName("score")->setText("Score: 0");
     _document->getControlByName("panel")->setDefaultMaterial("windows/gameover_0.png");
+
+    _document->getControlByName("highscoreScore")->setVisible(false);
+    _document->getControlByName("highscoreTime")->setVisible(false);
+
+    _document->getControlByName("scoreTime2")->setText(Utils::timeToString(_progressManager.getCurrentLevelInfo().timeFor2Stars));
+    _document->getControlByName("scoreTime3")->setText(Utils::timeToString(_progressManager.getCurrentLevelInfo().timeFor3Stars));
+
 
     for (auto i = 0; i < 3; ++i)
     {
@@ -126,9 +133,9 @@ void ScoreStateProcessor::show()
     {
         // TODO: Add stars logic
         _stars = 3;
-        if (_progressManager.getPlayerInfo().time > 200)
+        if (_progressManager.getPlayerInfo().time > _progressManager.getCurrentLevelInfo().timeFor3Stars)
             --_stars;
-        if (_progressManager.getPlayerInfo().time > 250)
+        if (_progressManager.getPlayerInfo().time > _progressManager.getCurrentLevelInfo().timeFor2Stars)
             --_stars;
 
         if (_stars > bestStars)
@@ -137,11 +144,16 @@ void ScoreStateProcessor::show()
         {
             scoresManager.setTime(currentLevel, _progressManager.getPlayerInfo().time);
             bestTime = _progressManager.getPlayerInfo().time;
+
+            _document->getControlByName("highscoreTime")->setVisible(true);
         }
     }
 
     if (scoresManager.getBestScore() < _progressManager.getPlayerInfo().points)
+    {
         scoresManager.setBestScore(_progressManager.getPlayerInfo().points);
+        _document->getControlByName("highscoreScore")->setVisible(true);
+    }
     scoresManager.store();
 
     if (System::isLoggedServices())

@@ -137,6 +137,9 @@ std::shared_ptr<GameMap> GameMapLoader::loadMap(const std::string& filename, con
 
     std::stringstream fin(SVE::Engine::getInstance()->getResourceManager()->loadFileContent(filename));
     fin >> gameMap->width >> gameMap->height;
+
+    fin >> gameMap->timeFor3Stars >> gameMap->timeFor2Stars;
+
     fin >> gameMap->style >> gameMap->waterStyle;
     uint16_t light;
     fin >> light >> gameMap->treasureType;

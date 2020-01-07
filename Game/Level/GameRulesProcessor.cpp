@@ -390,6 +390,8 @@ void GameRulesProcessor::playDeath(float deltaTime)
             _cameraStart[1] = camera->getYawPitchRoll();
 
             player->resetPosition();
+            while (player->getMapTraveller()->getSpeed() < MoveSpeed)
+                deactivatePowerUp(PowerUpType::Slow);
             player->update(0);
             camera->setLookAt(glm::vec3(0.0f, 16.0f, 19.0f), glm::vec3(0), glm::vec3(0, 1, 0));
             _cameraEnd[0] = camera->getPosition();
