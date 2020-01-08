@@ -39,21 +39,21 @@ private:
 
     const VulkanUtils& _vulkanUtils;
 
-    VkRenderPass _renderPass;
+    VkRenderPass _renderPass = VK_NULL_HANDLE;
 
-    VkImage _colorImage;
-    VkImage _resolveImage;
-    VkImage _depthImage;
-    VkDeviceMemory _colorImageMemory;
-    VkDeviceMemory _resolveImageMemory;
-    VkDeviceMemory _depthImageMemory;
-    VkImageView _colorImageView;
-    VkImageView _resolveImageView;
-    VkImageView _depthImageView;
-    VkSampler _colorSampler;
+    VkImage _colorImage = VK_NULL_HANDLE;
+    VkImage _resolveImage = VK_NULL_HANDLE;
+    VkImage _depthImage = VK_NULL_HANDLE;
+    VkDeviceMemory _colorImageMemory = VK_NULL_HANDLE;
+    VkDeviceMemory _resolveImageMemory = VK_NULL_HANDLE;
+    VkDeviceMemory _depthImageMemory = VK_NULL_HANDLE;
+    VkImageView _colorImageView = VK_NULL_HANDLE;
+    VkImageView _resolveImageView = VK_NULL_HANDLE;
+    VkImageView _depthImageView = VK_NULL_HANDLE;
+    VkSampler _colorSampler = VK_NULL_HANDLE;
 
-    VkFramebuffer _framebuffer;
-    VkCommandBuffer _commandBuffer;
+    VkFramebuffer _framebuffer = VK_NULL_HANDLE;
+    VkCommandBuffer _commandBuffer = VK_NULL_HANDLE;
 };
 
 } // namespace SVE

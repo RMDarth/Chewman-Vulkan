@@ -9,6 +9,7 @@
 #include "Game/Level/Enemies/Knight.h"
 #include "SVE/Engine.h"
 #include "SVE/SceneManager.h"
+#include "SVE/LightManager.h"
 #include "SVE/MeshManager.h"
 #include "SVE/CameraNode.h"
 
@@ -35,6 +36,7 @@ GameRulesProcessor::GameRulesProcessor(GameMapProcessor& gameMapProcessor)
 
 void GameRulesProcessor::runStartLevelAnimation()
 {
+    setShadowCamera(false);
     auto camera = SVE::Engine::getInstance()->getSceneManager()->getMainCamera();
     _cameraStart[0] = glm::vec3((_gameMapProcessor.getGameMap()->width - 1) * CellSize * 0.5, 41, 16);
     _cameraStart[1] = glm::vec3(0, -0.86, 0);
@@ -107,6 +109,7 @@ void GameRulesProcessor::update(float deltaTime)
             }
             else
             {
+                setShadowCamera(false);
                 _gameMapProcessor.setState(GameMapState::GameOver);
             }
         }
@@ -129,6 +132,7 @@ void GameRulesProcessor::update(float deltaTime)
             }
         }
 
+        setShadowCamera(false);
         updateAffectors(deltaTime);
 
         if (_wallsDownTime > 0.0f)
@@ -374,12 +378,15 @@ void GameRulesProcessor::playDeath(float deltaTime)
 
     if (_deathTime <= 0.5f)
     {
+        setShadowCamera(true);
         auto camera = SVE::Engine::getInstance()->getSceneManager()->getMainCamera();
         auto pos = glm::mix(glm::vec3(0.0f, 16.0f, 19.0f), glm::vec3(-7.0f, 4.0f, 3.0f), smoothStep(_deathTime / 0.5f));
         camera->setLookAt(pos, glm::vec3(0), glm::vec3(0, 1, 0));
     }
     if (_deathTime > 3.8f)
     {
+        setShadowCamera(false);
+        SVE::Engine::getInstance()->getSceneManager()->getLightManager()->setDirectShadowOrtho({-10.0f, 70.0f, -18.0f, 30.0f}, {5.0f, 200.0f});
         auto camera = SVE::Engine::getInstance()->getSceneManager()->getMainCamera();
         if (!_deathSecondPhase)
         {
@@ -393,6 +400,8 @@ void GameRulesProcessor::playDeath(float deltaTime)
             _cameraStart[1] = camera->getYawPitchRoll();
 
             player->resetPosition();
+            while (player->getMapTraveller()->getSpeed() < MoveSpeed)
+                deactivatePowerUp(PowerUpType::Slow);
             player->update(0);
             camera->setLookAt(glm::vec3(0.0f, 16.0f, 19.0f), glm::vec3(0), glm::vec3(0, 1, 0));
             _cameraEnd[0] = camera->getPosition();
@@ -663,6 +672,14 @@ bool GameRulesProcessor::eatCoin(glm::ivec2 pos)
         return true;
     }
     return false;
+}
+
+void GameRulesProcessor::setShadowCamera(bool isZoomed)
+{
+    if (isZoomed)
+        SVE::Engine::getInstance()->getSceneManager()->getLightManager()->setDirectShadowOrtho({-20.0f, 20.0f, -30.0f, 30.0f}, {5.0f, 200.0f});
+    else
+        SVE::Engine::getInstance()->getSceneManager()->getLightManager()->setDirectShadowOrtho({-10.0f, 70.0f, -18.0f, 30.0f}, {5.0f, 200.0f});
 }
 
 void GameRulesProcessor::resetLevel()

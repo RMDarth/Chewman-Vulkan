@@ -484,7 +484,30 @@ void rateApp()
 
 void openLink(const std::string& link)
 {
+#ifdef __ANDROID_
+    JNIEnv* env = (JNIEnv*)SDL_AndroidGetJNIEnv();
+    jobject activity = (jobject)SDL_AndroidGetActivity();
+    jclass activityClass = env->GetObjectClass(activity);
 
+    jmethodID methodId = env->GetMethodID(activityClass, "openLink", "(Ljava/lang/String;)V");
+    jstring jstr = env->NewStringUTF(link.c_str());
+
+    env->CallVoidMethod(activity, methodId, jstr);
+
+    env->DeleteLocalRef(jstr);
+    env->DeleteLocalRef(activity);
+    env->DeleteLocalRef(activityClass);
+#else
+    std::string openCommand =
+#ifdef WIN32
+        "start ";
+#elif __linux__
+        "xdg-open ";
+#else
+        "open ";
+#endif
+    system((openCommand + link).c_str());
+#endif
 }
 
 bool hasTimeScoresUpdated()

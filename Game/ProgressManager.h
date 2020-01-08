@@ -2,7 +2,7 @@
 // Copyright (c) 2018-2019, Igor Barinov
 // Licensed under the MIT License
 #pragma once
-#include <cstdint>
+#include <string>
 
 namespace Chewman
 {
@@ -14,6 +14,13 @@ struct PlayerInfo
     uint32_t time = 0;
 };
 
+struct LevelInfo
+{
+    uint16_t timeFor2Stars = 0;
+    uint16_t timeFor3Stars = 0;
+    std::string levelName;
+};
+
 class ProgressManager
 {
 public:
@@ -21,6 +28,9 @@ public:
 
     uint32_t getCurrentLevel() const;
     void setCurrentLevel(uint32_t level);
+
+    const LevelInfo& getCurrentLevelInfo() const;
+    void setCurrentLevelInfo(const LevelInfo& levelInfo);
 
     uint32_t getCurrentWorld() const;
     void setCurrentWorld(uint32_t world);
@@ -41,6 +51,7 @@ private:
     bool _isVictory = false;
 
     PlayerInfo _playerInfo;
+    LevelInfo _levelInfo;
 };
 
 } // namespace Chewman

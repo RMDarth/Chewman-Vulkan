@@ -251,8 +251,8 @@ std::vector<Submesh> BlockMeshGenerator::GenerateWall(glm::vec3 position, ModelT
                                                      height, _size, VerticalPlaneType::Left, 1.0f, 1.4,  0.0f,  0.0f));
         floorMeshes.push_back(constructVerticalPlane(position + glm::vec3(0,          mainheight/2 - subheight / 2,  _size / 2),
                                                      height, _size, VerticalPlaneType::Top, 1.0f, 1.4,  0.0f,  0.0f));
-        //floorMeshes.push_back(constructVerticalPlane(position + glm::vec3(0,          mainheight/2 - subheight / 2,  -_size / 2),
-        //                                             height, _size, VerticalPlaneType::Bottom, 1.0f, 1.4,  0.0f,  0.0f));
+        floorMeshes.push_back(constructVerticalPlane(position + glm::vec3(0,          mainheight/2 - subheight / 2,  -_size / 2),
+                                                     height, _size, VerticalPlaneType::Bottom, 1.0f, 1.4,  0.0f,  0.0f));
     }
 
     return floorMeshes;

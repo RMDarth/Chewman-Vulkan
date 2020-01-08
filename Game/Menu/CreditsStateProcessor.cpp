@@ -56,6 +56,38 @@ void CreditsStateProcessor::processEvent(Control* control, IEventHandler::EventT
 {
     if (type == IEventHandler::MouseUp)
     {
+        if (control->getName() == "credits1" || control->getName() == "credits2")
+        {
+            System::openLink("http://turbulentsoft.com/");
+        }
+        if (control->getName() == "credits4" || control->getName() == "credits6")
+        {
+            System::openLink("mailto:igor.barinov@gmail.com");
+        }
+        if (control->getName() == "credits7")
+        {
+            System::openLink("http://portfolios.ru/alopex");
+        }
+        if (control->getName() == "credits9")
+        {
+            System::openLink("https://www.patreon.com/texic");
+        }
+        if (control->getName() == "credits10")
+        {
+            System::openLink("https://www.freepik.com/");
+        }
+        if (control->getName() == "credits12")
+        {
+            System::openLink("https://audiojungle.net/user/livemusics/portfolio");
+        }
+        if (control->getName() == "credits19")
+        {
+            System::openLink("https://github.com/RMDarth/Chewman-Vulkan");
+        }
+        if (control->getName() == "facebook")
+        {
+            System::openLink("https://fb.me/chewmangame");
+        }
         if (control->getName() == "back")
         {
             Game::getInstance()->setState(GameState::MainMenu);

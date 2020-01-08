@@ -56,15 +56,15 @@ private:
     bool _isReflected = true;
     bool _castShadows = true;
 
-    uint32_t _materialIndex;
-    uint32_t _reflectionMaterialIndex;
-    uint32_t _refractionMaterialIndex;
+    uint32_t _materialIndex = 0;
+    uint32_t _reflectionMaterialIndex = 0;
+    uint32_t _refractionMaterialIndex = 0;
 
     Material* _shadowMaterial = nullptr;
-    uint32_t _shadowIndex;
-    uint32_t _depthIndex;
+    uint32_t _shadowIndex = 0;
+    uint32_t _depthIndex = 0;
     Material* _pointLightShadowMaterial = nullptr;
-    std::unique_ptr<Material> _bloomMaterial;
+    //std::unique_ptr<Material> _bloomMaterial;
     //std::vector<uint32_t> _shadowMaterialIndexes;
 
     // TODO: Move to animation class

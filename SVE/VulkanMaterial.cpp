@@ -84,7 +84,10 @@ SVE::VulkanMaterial::VulkanMaterial(MaterialSettings materialSettings)
     {
         _vertexShader = shaderManager->getShader(_materialSettings.vertexShaderName)->getVulkanShaderInfo();
         _shaderList.push_back(_vertexShader);
+    } else {
+        throw VulkanException("Vertex shader is mandatory");
     }
+
     if (!_materialSettings.geometryShaderName.empty())
     {
         _geometryShader = shaderManager->getShader(_materialSettings.geometryShaderName)->getVulkanShaderInfo();

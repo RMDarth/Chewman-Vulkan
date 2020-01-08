@@ -43,8 +43,8 @@ private:
     CameraSettings _cameraSettings;
     glm::vec3 _yawPitchRoll {};
     glm::vec3 _position {};
-    glm::mat4 _projection;
-    glm::mat4 _view;
+    glm::mat4 _projection {};
+    glm::mat4 _view {};
 };
 
 } // namespace SVE

@@ -109,7 +109,7 @@ Engine::Engine(SDL_Window* window, EngineSettings settings, std::shared_ptr<File
     , _overlayManager(std::make_unique<OverlayManager>())
     , _pipelineCacheManager(std::make_unique<PipelineCacheManager>())
 {
-    getTime();
+    updateTime();
 }
 
 Engine::~Engine()

@@ -18,7 +18,7 @@ class VulkanDirectShadowMap : public VulkanCommandsManager
 {
 public:
     VulkanDirectShadowMap(uint32_t layersCount, uint32_t shadowMapSize);
-    ~VulkanDirectShadowMap();
+    ~VulkanDirectShadowMap() override;
 
     void reallocateCommandBuffers() override;
     uint32_t startRenderCommandBufferCreation(uint32_t bufferNumber, uint32_t imageIndex) override;

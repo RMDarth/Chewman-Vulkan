@@ -53,12 +53,12 @@ VulkanScreenQuad::~VulkanScreenQuad()
 
 VkSampler VulkanScreenQuad::getSampler()
 {
-    return _colorSampler[ScreenQuadPass::Late];
+    return _colorSampler[0];
 }
 
 VkImageView VulkanScreenQuad::getImageView()
 {
-    return _resolveImageView[ScreenQuadPass::Late];
+    return _resolveImageView[0];
 }
 
 void VulkanScreenQuad::reallocateCommandBuffers(ScreenQuadPass screenQuadPass)
@@ -364,9 +364,9 @@ void VulkanScreenQuad::createRenderPass()
 
 void VulkanScreenQuad::deleteRenderPass()
 {
-    for (auto i = 0; i < 4; ++i)
+    for (auto & _renderPas : _renderPass)
     {
-        vkDestroyRenderPass(_vulkanInstance->getLogicalDevice(), _renderPass[i], nullptr);
+        vkDestroyRenderPass(_vulkanInstance->getLogicalDevice(), _renderPas, nullptr);
     }
 }
 
@@ -578,9 +578,9 @@ void VulkanScreenQuad::createFramebuffers()
 
 void VulkanScreenQuad::deleteFramebuffers()
 {
-    for (auto i = 0; i < 4; ++i)
+    for (auto & framebuffer : _framebuffer)
     {
-        vkDestroyFramebuffer(_vulkanInstance->getLogicalDevice(), _framebuffer[i], nullptr);
+        vkDestroyFramebuffer(_vulkanInstance->getLogicalDevice(), framebuffer, nullptr);
     }
 }
 

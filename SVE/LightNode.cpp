@@ -7,6 +7,7 @@
 #include "Engine.h"
 #include "SceneManager.h"
 #include "LightManager.h"
+#include "VulkanException.h"
 
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -24,9 +25,15 @@ LightNode::LightNode(LightSettings lightSettings)
 
 LightNode::~LightNode() noexcept
 {
-    if (Engine::getInstance()->getSceneManager() != nullptr)
+    try
     {
-        Engine::getInstance()->getSceneManager()->getLightManager()->removeLight(this);
+        if (Engine::getInstance()->getSceneManager() != nullptr)
+        {
+            Engine::getInstance()->getSceneManager()->getLightManager()->removeLight(this);
+        }
+    } catch (VulkanException& ex)
+    {
+        std::cout << "Exception: " << ex.what() << std::endl;
     }
 }
 
@@ -93,6 +100,7 @@ void LightNode::fillUniformData(UniformData& data, uint32_t lightNum, bool asVie
                 data.pointLightList.push_back(pointLight);
                 data.lightInfo.pointLightNum = std::min(data.pointLightList.size(), MaxPointLight);
                 data.lightInfo.isSimpleLight = _lightSettings.isSimple;
+                break;
             }
             case LightType::SunLight:
             {
@@ -237,10 +245,10 @@ void LightNode::createProjectionMatrix()
             } else {
                 far = _distanceFromCamera + 50;
 
-                float distance = near * powf(far / near, 1.0f);
-                // TODO: This values are only for current game, they should be set from outside or calculated
-                auto projectionMatrix = glm::ortho(-10.0f, 70.0f, -18.0f, 30.0f, 5.0f,
-                                                   200.0f);
+                //float distance = near * powf(far / near, 1.0f);
+                auto shadowOrthoData = Engine::getInstance()->getSceneManager()->getLightManager()->getDirectShadowOrtho();
+                auto frame = shadowOrthoData.first;
+                auto projectionMatrix = glm::ortho(frame.x, frame.y, frame.z, frame.w, shadowOrthoData.second.x, shadowOrthoData.second.y);
                 projectionMatrix[1][1] *= -1;
                 _projectionList.push_back(projectionMatrix);
                 _projectionMatrix = projectionMatrix;

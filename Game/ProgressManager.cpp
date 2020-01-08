@@ -58,4 +58,14 @@ void ProgressManager::resetPlayerInfo()
     _playerInfo = {};
 }
 
+const LevelInfo& ProgressManager::getCurrentLevelInfo() const
+{
+    return _levelInfo;
+}
+
+void ProgressManager::setCurrentLevelInfo(const LevelInfo& levelInfo)
+{
+    _levelInfo = levelInfo;
+}
+
 } // namespace Chewman

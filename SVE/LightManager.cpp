@@ -82,6 +82,17 @@ std::shared_ptr<ShadowMap> LightManager::getDirectLightShadowMap()
     return _directLightShadowMap;
 }
 
+void LightManager::setDirectShadowOrtho(glm::vec4 frame, glm::vec2 nearFar)
+{
+    _shadowCameraFrame = frame;
+    _shadowCameraNearFar = nearFar;
+}
+
+std::pair<glm::vec4, glm::vec2> LightManager::getDirectShadowOrtho() const
+{
+    return { _shadowCameraFrame, _shadowCameraNearFar };
+}
+
 void LightManager::fillUniformData(UniformData& data, LightType viewSourceLightType)
 {
     data.lightPointViewProjectionList.resize(MAX_LIGHTS);

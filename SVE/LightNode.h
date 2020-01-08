@@ -34,8 +34,8 @@ private:
     glm::vec3 _originalPos = {};
 
     LightSettings _lightSettings = {};
-    glm::mat4 _viewMatrix;
-    glm::mat4 _projectionMatrix;
+    glm::mat4 _viewMatrix = {};
+    glm::mat4 _projectionMatrix = {};
 
     float _distanceFromCamera = 0.0f;
     std::vector<glm::mat4> _projectionList; // list of projections for different layers of CSM

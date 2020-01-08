@@ -38,6 +38,9 @@ struct GameMap
     std::vector<std::string> tutorialText;
     bool hasTutorial;
 
+    uint16_t timeFor2Stars;
+    uint16_t timeFor3Stars;
+
     uint16_t style;
     uint16_t waterStyle;
     uint16_t treasureType;

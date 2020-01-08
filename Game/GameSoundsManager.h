@@ -55,7 +55,7 @@ private:
     std::map<SoundType, std::shared_ptr<Sound>> _soundMap;
 
     float _soundVolume = 1.0f;
-    float _musicVolume = 1.0f;
+    float _musicVolume = 0.4f;
     bool _soundEnabled = true;
     bool _musicEnabled = true;
 };
