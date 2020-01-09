@@ -236,10 +236,10 @@ void HighscoresStateProcessor::updateTimeScores()
     for (auto i = 0; i < 18; i++)
     {
         auto controlName = "lvl" + getLevelStr(i + 1);
-
+        glm::vec4 textColor = { 1.0f, 1.0f, 1.0f, 1.0f };
         auto& scoresManager = Game::getInstance()->getScoresManager();
         std::string time = "-:--";
-        std::string playerName = "Player";
+        std::string playerName = System::getPlayerName();
         uint32_t levelNum = i + 1 + shift;
 
         if (System::isLoggedServices() && timeData.size() >= levelNum)
@@ -251,10 +251,13 @@ void HighscoresStateProcessor::updateTimeScores()
             } else if (scoresManager.getTime(i + 1 + shift) != 0)
             {
                 time = Utils::timeToString(scoresManager.getTime(i + 1 + shift));
-                playerName = System::getPlayerScore(_isWeeklyActive).first;
+                textColor = { 0.6f, 0.6f, 0.8f, 1.0f };
+            } else {
+                textColor = { 0.6f, 0.6f, 0.8f, 1.0f };
             }
         } else
         {
+            textColor = { 0.8f, 0.8f, 0.9f, 1.0f };
             if (scoresManager.getTime(i + 1 + shift) != 0)
             {
                 time = Utils::timeToString(scoresManager.getTime(i + 1 + shift));
@@ -263,6 +266,7 @@ void HighscoresStateProcessor::updateTimeScores()
 
         std::string level = "L" + getLevelStr(levelNum);
         _documentTime->getControlByName(controlName)->setText(level.append(": ").append(playerName).append(" / ").append(time));
+        _documentTime->getControlByName(controlName)->setTextColor(textColor);
     }
 
     _documentTime->getControlByName("left")->setVisible(!_isFirstLevelsHalf);
