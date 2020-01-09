@@ -50,6 +50,8 @@ private:
     float _refreshTime = 0;
     int _refreshIconIndex = 1;
 
+    float _updateTime = 0.0f;
+
     //bool _scoresUpdated = false;
     bool _logged = false;
 };

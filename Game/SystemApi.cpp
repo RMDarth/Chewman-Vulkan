@@ -395,7 +395,7 @@ int getPlayerPlace(bool weekly)
 
     return result;
 #else
-    return 1;
+    return 10;
 #endif
 }
 
@@ -423,6 +423,31 @@ std::pair<std::string, int> getPlayerScore(bool weekly)
     return result;
 #else
     return {"Player", 0};
+#endif
+}
+
+std::string getPlayerName()
+{
+#ifdef __ANDROID__
+    JNIEnv* env = (JNIEnv*)SDL_AndroidGetJNIEnv();
+    jobject activity = (jobject)SDL_AndroidGetActivity();
+    jclass activityClass = env->GetObjectClass(activity);
+
+    jmethodID methodIdName = env->GetMethodID(activityClass, "getPlayerDisplayName", "()Ljava/lang/String;");
+
+    auto nameObj = (jstring)env->CallObjectMethod(activity, methodIdName);
+    const char *name = env->GetStringUTFChars(nameObj, nullptr);
+
+    std::string result = name;
+
+    env->ReleaseStringUTFChars(nameObj, name);
+
+    env->DeleteLocalRef(activity);
+    env->DeleteLocalRef(activityClass);
+
+    return result;
+#else
+    return "Player";
 #endif
 }
 
@@ -484,7 +509,7 @@ void rateApp()
 
 void openLink(const std::string& link)
 {
-#ifdef __ANDROID_
+#ifdef __ANDROID__
     JNIEnv* env = (JNIEnv*)SDL_AndroidGetJNIEnv();
     jobject activity = (jobject)SDL_AndroidGetActivity();
     jclass activityClass = env->GetObjectClass(activity);

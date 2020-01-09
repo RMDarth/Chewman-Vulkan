@@ -76,6 +76,7 @@ std::vector<std::pair<std::string, int>> getScores(bool weekly);
 std::vector<std::pair<std::string, int>> getTimes(bool weekly);
 int getPlayerPlace(bool weekly);
 std::pair<std::string, int> getPlayerScore(bool weekly);
+std::string getPlayerName();
 
 void requestBackup();
 void requestRestore();

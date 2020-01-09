@@ -29,6 +29,12 @@ HighscoresStateProcessor::~HighscoresStateProcessor() = default;
 
 GameState HighscoresStateProcessor::update(float deltaTime)
 {
+    _updateTime -= deltaTime;
+    if (_updateTime > 0)
+        return GameState::Highscores;
+
+    _updateTime = 1.5f;
+
     auto logged = System::isLoggedServices();
     if (_logged != logged)
     {
@@ -236,25 +242,35 @@ void HighscoresStateProcessor::updateTimeScores()
     for (auto i = 0; i < 18; i++)
     {
         auto controlName = "lvl" + getLevelStr(i + 1);
-
+        glm::vec4 textColor = { 1.0f, 1.0f, 1.0f, 1.0f };
         auto& scoresManager = Game::getInstance()->getScoresManager();
         std::string time = "-:--";
-        std::string playerName = "Player";
+        std::string playerName = System::getPlayerName();
         uint32_t levelNum = i + 1 + shift;
 
         if (System::isLoggedServices() && timeData.size() >= levelNum)
         {
-            if (timeData[levelNum - 1].second != 0)
+            auto playerScore = scoresManager.getTime(i + 1 + shift);
+            if (timeData[levelNum - 1].second != 0 )
             {
-                time = Utils::timeToString(timeData[levelNum - 1].second / 1000);
-                playerName = timeData[levelNum - 1].first;
-            } else if (scoresManager.getTime(i + 1 + shift) != 0)
+                if (playerScore != 0 && playerScore < timeData[levelNum - 1].second)
+                {
+                    time = Utils::timeToString(playerScore);
+                } else
+                {
+                    time = Utils::timeToString(timeData[levelNum - 1].second / 1000);
+                    playerName = timeData[levelNum - 1].first;
+                }
+            } else if (playerScore != 0)
             {
-                time = Utils::timeToString(scoresManager.getTime(i + 1 + shift));
-                playerName = System::getPlayerScore(_isWeeklyActive).first;
+                time = Utils::timeToString(playerScore);
+                textColor = { 0.6f, 0.6f, 0.8f, 1.0f };
+            } else {
+                textColor = { 0.6f, 0.6f, 0.8f, 1.0f };
             }
         } else
         {
+            textColor = { 0.8f, 0.8f, 0.9f, 1.0f };
             if (scoresManager.getTime(i + 1 + shift) != 0)
             {
                 time = Utils::timeToString(scoresManager.getTime(i + 1 + shift));
@@ -263,6 +279,7 @@ void HighscoresStateProcessor::updateTimeScores()
 
         std::string level = "L" + getLevelStr(levelNum);
         _documentTime->getControlByName(controlName)->setText(level.append(": ").append(playerName).append(" / ").append(time));
+        _documentTime->getControlByName(controlName)->setTextColor(textColor);
     }
 
     _documentTime->getControlByName("left")->setVisible(!_isFirstLevelsHalf);
@@ -274,6 +291,24 @@ void HighscoresStateProcessor::updatePointScores()
     if (System::isLoggedServices())
     {
         auto scoreData = System::getScores(_isWeeklyActive);
+        bool playerInserted = false;
+        auto bestScore = Game::getInstance()->getScoresManager().getBestScore();
+
+        if (bestScore != 0 &&
+            (scoreData.empty() || scoreData.size() < 5 || bestScore > scoreData.back().second))
+        {
+            std::string playerName = System::getPlayerName();
+
+            auto playerPos = std::find_if(scoreData.begin(), scoreData.end(), [&](auto item) { return item.first == playerName; });
+            if (playerPos != scoreData.end())
+            {
+                (*playerPos).second = bestScore;
+            } else {
+                scoreData.emplace_back(playerName, bestScore);
+            }
+            std::sort(scoreData.begin(), scoreData.end(), [](auto a, auto b) { return a.second > b.second; });
+            playerInserted = true;
+        }
 
         for (auto i = 1; i <= 5; i++)
         {
@@ -289,15 +324,25 @@ void HighscoresStateProcessor::updatePointScores()
             }
         }
 
-        auto playerPlace = System::getPlayerPlace(_isWeeklyActive);
-        if (playerPlace <= 5)
+        if (!playerInserted)
         {
+            auto playerPlace = System::getPlayerPlace(_isWeeklyActive);
+            if (playerPlace <= 5)
+            {
+                _documentPoints->getControlByName("name6")->setText(" ");
+                _documentPoints->getControlByName("score6")->setText(" ");
+            } else
+            {
+                auto playerScore = System::getPlayerScore(_isWeeklyActive);
+                if (!_isWeeklyActive && playerScore.second < bestScore)
+                    playerScore.second = bestScore;
+                _documentPoints->getControlByName("name6")->setText(
+                        std::to_string(playerPlace) + ". " + playerScore.first);
+                _documentPoints->getControlByName("score6")->setText(std::to_string(playerScore.second));
+            }
+        } else {
             _documentPoints->getControlByName("name6")->setText(" ");
             _documentPoints->getControlByName("score6")->setText(" ");
-        } else {
-            auto playerScore = System::getPlayerScore(_isWeeklyActive);
-            _documentPoints->getControlByName("name6")->setText(std::to_string(playerPlace) + ". " + playerScore.first);
-            _documentPoints->getControlByName("score6")->setText(std::to_string(playerScore.second));
         }
     }
     else
