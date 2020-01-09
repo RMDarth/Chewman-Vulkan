@@ -395,7 +395,7 @@ int getPlayerPlace(bool weekly)
 
     return result;
 #else
-    return 1;
+    return 10;
 #endif
 }
 
