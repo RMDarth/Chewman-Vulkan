@@ -187,13 +187,13 @@ void Player::processInput(const SDL_Event& event)
         if (event.type == SDL_MOUSEBUTTONUP)
         {
             auto windowSize = SVE::Engine::getInstance()->getRenderWindowSize();
+            _isSliding = false;
             if (abs(_startSlideX - event.button.x) < windowSize.x * 0.001
                 || abs(_startSlideY - event.button.y) < windowSize.y * 0.001)
             {
                 return;
             }
 
-            _isSliding = false;
             if (abs(event.button.x - _startSlideX) > abs(event.button.y - _startSlideY))
             {
                 if (_startSlideX > event.button.x)

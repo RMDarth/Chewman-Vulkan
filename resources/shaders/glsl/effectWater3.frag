@@ -30,7 +30,7 @@ vec3 getColor()
     vec3 viewDir = normalize(ubo.cameraPos.xyz - fragPos);
 
     vec3 lightEffect = CalcDirLight(ubo.dirLight, norm, viewDir, ubo.materialInfo);
-    vec3 finalLight = mix(lightEffect * 2, vec3(1,1,1), step(0.5, ubo.dirLight.diffuse.r));
+    vec3 finalLight = mix(lightEffect * 4, vec3(1,1,1), step(0.5, ubo.dirLight.diffuse.r));
 
     vec2 reflectionCoord = fragTexCoord * 3;
 

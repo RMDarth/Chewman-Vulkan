@@ -1,6 +1,6 @@
 <document>
     <Image name="loading" image="loading.jpg" x="0" y="0" alignment="center" width="-1.778" height="1.0">
-        <Image name="progressAll" color="1 1 1 0.4" image="gray.png" x="0.51" y="0.94" width="0.26" height="0.032">
+        <Image name="progressAll" color="1 1 1 0.4" image="gray.png" x="0.51" y="0.94" width="0.2654" height="0.032">
             <Image name="progress" image="gray.png" x="0" y="0" width="0.5" height="1" />
         </Image>
     </Image>
