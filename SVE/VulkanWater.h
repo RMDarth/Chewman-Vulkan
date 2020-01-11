@@ -42,26 +42,26 @@ private:
     void deleteFramebuffers();
 
 private:
-    VulkanInstance* _vulkanInstance;
-    uint32_t _width[2];
-    uint32_t _height[2];
+    VulkanInstance* _vulkanInstance = nullptr;
+    uint32_t _width[2] = {};
+    uint32_t _height[2] = {};
 
-    float _waterHeight;
+    float _waterHeight = 0;
 
     const VulkanUtils& _vulkanUtils;
 
-    VkRenderPass _renderPass[2];
+    VkRenderPass _renderPass[2] = {};
 
-    VkImage _colorImage[2];
-    VkImage _resolveImage[2];
-    VkImage _depthImage[2];
-    VkDeviceMemory _colorImageMemory[2];
-    VkDeviceMemory _resolveImageMemory[2];
-    VkDeviceMemory _depthImageMemory[2];
-    VkImageView _colorImageView[2];
-    VkImageView _resolveImageView[2];
-    VkImageView _depthImageView[2];
-    VkSampler _colorSampler[2];
+    VkImage _colorImage[2] = {};
+    VkImage _resolveImage[2] = {};
+    VkImage _depthImage[2] = {};
+    VkDeviceMemory _colorImageMemory[2] = {};
+    VkDeviceMemory _resolveImageMemory[2] = {};
+    VkDeviceMemory _depthImageMemory[2] = {};
+    VkImageView _colorImageView[2] = {};
+    VkImageView _resolveImageView[2] = {};
+    VkImageView _depthImageView[2] = {};
+    VkSampler _colorSampler[2] = {};
 
     VkFramebuffer _framebuffer[2] = {};
     VkCommandBuffer _commandBuffer[2] = {};

@@ -375,36 +375,40 @@ void GameRulesProcessor::playDeath(float deltaTime)
         auto camera = SVE::Engine::getInstance()->getSceneManager()->getMainCamera();
         if (!_deathSecondPhase)
         {
-            if (Game::getInstance()->getProgressManager().getPlayerInfo().lives == 0)
-                return;
-
             _deathSecondPhase = true;
-            auto& player = getPlayer();
+            if (Game::getInstance()->getProgressManager().getPlayerInfo().lives > 0)
+            {
+                auto& player = getPlayer();
 
-            _cameraStart[0] = camera->getPosition();
-            _cameraStart[1] = camera->getYawPitchRoll();
+                _cameraStart[0] = camera->getPosition();
+                _cameraStart[1] = camera->getYawPitchRoll();
 
-            player->resetPosition();
+                player->resetPosition();
 
-            for (auto& affector : _gameAffectors)
-                if (affector.powerUp == PowerUpType::Slow || affector.powerUp == PowerUpType::Freeze || affector.powerUp == PowerUpType::Pentagram)
-                    affector.remainingTime = -1;
+                for (auto& affector : _gameAffectors)
+                    if (affector.powerUp == PowerUpType::Slow || affector.powerUp == PowerUpType::Freeze ||
+                        affector.powerUp == PowerUpType::Pentagram)
+                        affector.remainingTime = -1;
 
-            player->update(0);
-            camera->setLookAt(glm::vec3(0.0f, 16.0f, 19.0f), glm::vec3(0), glm::vec3(0, 1, 0));
-            _cameraEnd[0] = camera->getPosition();
-            _cameraEnd[1] = camera->getYawPitchRoll();
+                player->update(0);
+                camera->setLookAt(glm::vec3(0.0f, 16.0f, 19.0f), glm::vec3(0), glm::vec3(0, 1, 0));
+                _cameraEnd[0] = camera->getPosition();
+                _cameraEnd[1] = camera->getYawPitchRoll();
 
-            _cameraSpeed = 1.1111f;
-            _cameraTime = 0.0f;
-            _isCameraMoving = true;
+                _cameraSpeed = 1.1111f;
+                _cameraTime = 0.0f;
+                _isCameraMoving = true;
 
-            auto& enemies = _gameMapProcessor.getGameMap()->enemies;
-            for (auto& enemy : enemies)
-                enemy->resetAll();
+                auto& enemies = _gameMapProcessor.getGameMap()->enemies;
+                for (auto& enemy : enemies)
+                    enemy->resetAll();
+
+                updateCameraAnimation(deltaTime);
+            }
+        } else if (Game::getInstance()->getProgressManager().getPlayerInfo().lives > 0)
+        {
+            updateCameraAnimation(deltaTime);
         }
-
-        updateCameraAnimation(deltaTime);
     }
     if (_deathTime > 4.7f)
     {
