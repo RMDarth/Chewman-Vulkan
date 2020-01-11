@@ -34,8 +34,11 @@ GameState MenuStateProcessor::update(float deltaTime)
         {
             updateServicesIcon();
             System::syncAchievements();
-            // TODO: Submit only if it wasn't submitted already
-            System::submitScore(Game::getInstance()->getScoresManager().getBestScore());
+            if (Game::getInstance()->getScoresManager().isNewBestScore())
+            {
+                System::submitScore(Game::getInstance()->getScoresManager().getBestScore());
+                Game::getInstance()->getScoresManager().setIsNewScore(false);
+            }
         }
         _logged = true;
     } else if (_logged && !System::isLoggedServices())
@@ -83,8 +86,12 @@ void MenuStateProcessor::show()
         if (!_logged)
         {
             System::syncAchievements();
-            // TODO: Submit only if it wasn't submitted already
-            System::submitScore(Game::getInstance()->getScoresManager().getBestScore());
+
+            if (Game::getInstance()->getScoresManager().isNewBestScore())
+            {
+                System::submitScore(Game::getInstance()->getScoresManager().getBestScore());
+                Game::getInstance()->getScoresManager().setIsNewScore(false);
+            }
         }
         _logged = true;
     }

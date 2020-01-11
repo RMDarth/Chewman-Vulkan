@@ -154,12 +154,19 @@ void ScoreStateProcessor::show()
         scoresManager.setBestScore(_progressManager.getPlayerInfo().points);
         _document->getControlByName("highscoreScore")->setVisible(true);
     }
-    scoresManager.store();
 
     if (System::isLoggedServices())
     {
-        if (bestTime > 0)
+        if (bestTime > 0 && scoresManager.isNewTime(currentLevel))
+        {
             System::submitLevelTime(currentLevel - 1, bestTime);
+            scoresManager.setIsNewTimeScore(currentLevel, false);
+        } else if (_progressManager.isVictory())
+        {
+            System::submitLevelTime(currentLevel - 1, _progressManager.getPlayerInfo().time, false);
+        }
+
+        System::submitScore(_progressManager.getPlayerInfo().points, false);
 
         if (scoresManager.getStars(1) > 0 && scoresManager.getStars(2) > 0)
             System::unlockAchievement(System::AchievementType::Newcomer);
@@ -183,7 +190,11 @@ void ScoreStateProcessor::show()
 
         System::updateAchievement(System::AchievementType::Gold_rush, total3StarLevels);
         System::updateAchievement(System::AchievementType::Mission_accomplished, total3StarLevels);
+    } else {
+        _document->getControlByName("googleplay")->setVisible(false);
     }
+
+    scoresManager.store();
 
     _time = 0;
     _countStars = 0;
@@ -229,6 +240,11 @@ void ScoreStateProcessor::processEvent(Control* control, IEventHandler::EventTyp
             _progressManager.setVictory(false);
             _progressManager.setStarted(false);
             Game::getInstance()->setState(GameState::MainMenu);
+        }
+
+        if (control->getName() == "googleplay")
+        {
+            System::showTimeLeaderboard(_progressManager.getCurrentLevel() - 1, false);
         }
     }
 }

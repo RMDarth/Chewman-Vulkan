@@ -178,14 +178,36 @@ bool isServicesAvailable()
 #endif
 }
 
-void showAchievements()
+void showLeaderboard(bool weekly)
 {
+#ifdef __ANDROID__
+    JNIEnv* env = (JNIEnv*)SDL_AndroidGetJNIEnv();
+    jobject activity = (jobject)SDL_AndroidGetActivity();
+    jclass activityClass = env->GetObjectClass(activity);
 
+    jmethodID methodId = env->GetMethodID(activityClass, "showLeaderboard", "(Z)V");
+
+    env->CallVoidMethod(activity, methodId, weekly);
+
+    env->DeleteLocalRef(activity);
+    env->DeleteLocalRef(activityClass);
+#endif
 }
 
-void showLeaderboard()
+void showTimeLeaderboard(int level, bool weekly)
 {
+#ifdef __ANDROID__
+    JNIEnv* env = (JNIEnv*)SDL_AndroidGetJNIEnv();
+    jobject activity = (jobject)SDL_AndroidGetActivity();
+    jclass activityClass = env->GetObjectClass(activity);
 
+    jmethodID methodId = env->GetMethodID(activityClass, "showTimeLeaderboard", "(IZ)V");
+
+    env->CallVoidMethod(activity, methodId, level, weekly);
+
+    env->DeleteLocalRef(activity);
+    env->DeleteLocalRef(activityClass);
+#endif
 }
 
 void showAds(AdHorizontalLayout horizontalLayout, AdVerticalLayout verticalLayout)
@@ -320,36 +342,67 @@ void refreshScores()
 #endif
 }
 
-void submitScore(int score)
+void submitScore(int score, bool best)
 {
 #ifdef __ANDROID__
     JNIEnv* env = (JNIEnv*)SDL_AndroidGetJNIEnv();
     jobject activity = (jobject)SDL_AndroidGetActivity();
     jclass activityClass = env->GetObjectClass(activity);
 
-    jmethodID methodId = env->GetMethodID(activityClass, "submitScore", "(I)V");
+    jmethodID methodId = env->GetMethodID(activityClass, "submitScore", "(IZ)V");
 
-    env->CallVoidMethod(activity, methodId, score);
+    env->CallVoidMethod(activity, methodId, score, best);
 
     env->DeleteLocalRef(activity);
     env->DeleteLocalRef(activityClass);
 #endif
 }
 
-void submitLevelTime(int level, int timeSeconds)
+void submitLevelTime(int level, int timeSeconds, bool best)
 {
 #ifdef __ANDROID__
     JNIEnv* env = (JNIEnv*)SDL_AndroidGetJNIEnv();
     jobject activity = (jobject)SDL_AndroidGetActivity();
     jclass activityClass = env->GetObjectClass(activity);
 
-    jmethodID methodId = env->GetMethodID(activityClass, "submitTimeScore", "(II)V");
+    jmethodID methodId = env->GetMethodID(activityClass, "submitTimeScore", "(IIZ)V");
 
-    env->CallVoidMethod(activity, methodId, level, timeSeconds);
+    env->CallVoidMethod(activity, methodId, level, timeSeconds, best);
 
     env->DeleteLocalRef(activity);
     env->DeleteLocalRef(activityClass);
 #endif
+}
+
+std::vector<bool> getIsScoresSubmitted()
+{
+    std::vector<bool> scores(37, true);
+
+#ifdef __ANDROID__
+    JNIEnv* env = (JNIEnv*)SDL_AndroidGetJNIEnv();
+    jobject activity = (jobject)SDL_AndroidGetActivity();
+    jclass activityClass = env->GetObjectClass(activity);
+    
+    jmethodID methodIdName = env->GetMethodID(activityClass, "getSubmitState", "()[Z");
+
+    auto resultArray = (jbooleanArray)env->CallObjectMethod(activity, methodIdName);
+
+    jsize resultSize = env->GetArrayLength(resultArray);
+    jboolean* resultElements = env->GetBooleanArrayElements(resultArray, nullptr);
+
+    if (resultElements && resultSize == scores.size())
+    {
+        for (auto i = 0; i < scores.size(); ++i)
+            scores[i] = resultElements[i];
+    }
+
+    env->ReleaseBooleanArrayElements(resultArray, resultElements, JNI_ABORT);
+
+    env->DeleteLocalRef(activity);
+    env->DeleteLocalRef(activityClass);
+#endif
+
+    return scores;
 }
 
 std::vector<std::pair<std::string, int>> getScores(bool weekly)
@@ -371,6 +424,7 @@ std::vector<std::pair<std::string, int>> getScores(bool weekly)
         scoresList.emplace_back(name, score);
 
         env->ReleaseStringUTFChars(nameObj, name);
+        env->DeleteLocalRef(nameObj);
     }
 
     env->DeleteLocalRef(activity);
@@ -416,6 +470,7 @@ std::pair<std::string, int> getPlayerScore(bool weekly)
     std::pair<std::string, int> result = { name, score };
 
     env->ReleaseStringUTFChars(nameObj, name);
+    env->DeleteLocalRef(nameObj);
 
     env->DeleteLocalRef(activity);
     env->DeleteLocalRef(activityClass);
@@ -442,6 +497,7 @@ std::string getPlayerName()
 
     env->ReleaseStringUTFChars(nameObj, name);
 
+    env->DeleteLocalRef(nameObj);
     env->DeleteLocalRef(activity);
     env->DeleteLocalRef(activityClass);
 
@@ -470,6 +526,7 @@ std::vector<std::pair<std::string, int>> getTimes(bool weekly)
         scoresList.emplace_back(name, version);
 
         env->ReleaseStringUTFChars(nameObj, name);
+        env->DeleteLocalRef(nameObj);
     }
 
     env->DeleteLocalRef(activity);
@@ -495,6 +552,61 @@ void requestBackup()
 void requestRestore()
 {
 
+}
+
+#ifdef __ANDROID__
+std::vector<uint8_t> callByteArrayMethod(const std::vector<uint8_t>& data, const char* const name)
+{
+    JNIEnv* env = (JNIEnv*)SDL_AndroidGetJNIEnv();
+    jobject activity = (jobject)SDL_AndroidGetActivity();
+    jclass activityClass = env->GetObjectClass(activity);
+
+    jbyteArray byteArray = env->NewByteArray(data.size());
+    env->SetByteArrayRegion(byteArray, 0, data.size(), reinterpret_cast<const jbyte*>(data.data()));
+
+    jmethodID methodIdName = env->GetMethodID(activityClass, name, "([B)[B");
+
+    auto resultArray = (jbyteArray)env->CallObjectMethod(activity, methodIdName, byteArray);
+
+    jsize resultSize = env->GetArrayLength(resultArray);
+    jbyte* resultElements = env->GetByteArrayElements(resultArray, nullptr);
+
+    if (!resultElements)
+        resultSize = 0;
+
+    std::vector<uint8_t> result(resultSize);
+
+    if (resultSize > 0)
+        std::memcpy(result.data(), resultElements, resultSize);
+
+    env->ReleaseByteArrayElements(resultArray, resultElements, JNI_ABORT);
+
+    env->DeleteLocalRef(byteArray);
+    env->DeleteLocalRef(activity);
+    env->DeleteLocalRef(activityClass);
+
+    return result;
+}
+#endif
+
+std::vector<uint8_t> encryptData(const std::vector<uint8_t>& data)
+{
+#ifdef __ANDROID__
+    return callByteArrayMethod(data, "encrypt");
+
+#else
+    // TODO: Add some basic encryption
+    return data;
+#endif
+}
+
+std::vector<uint8_t> decryptData(const std::vector<uint8_t>& data)
+{
+#ifdef __ANDROID__
+    return callByteArrayMethod(data, "decrypt");
+#else
+    return data;
+#endif
 }
 
 void syncAchievements()

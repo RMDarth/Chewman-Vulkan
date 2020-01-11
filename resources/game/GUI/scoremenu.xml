@@ -5,6 +5,7 @@
         <Label name="scoreTime3" text="1:50" x="0.75" y="0.4" width="0.6" height="0.1" textAlignment="Left" font-size="35" />
         <Label name="result" text="Victory!" alignment="center" y="0.5" width="0.6" height="0.1"/>
         <Label name="score" text="Score: " alignment="center" y="0.6" width="0.6" height="0.1"/>
+        <Image name="googleplay" x="0.1" y ="0.7" width="-1" height="0.1" image="buttons/googleplay.png"/>
         <Label name="time" text="Time: " alignment="center" y="0.7" width="0.6" height="0.1"/>
         <Label name="levelname" text="Level 1-1" alignment="center" y="0.8" width="0.6" height="0.1"/>
         <Image name="highscoreScore" x="0.75" y="0.6" width="0.4" height="-0.76" image="scorerecord.png"/>
