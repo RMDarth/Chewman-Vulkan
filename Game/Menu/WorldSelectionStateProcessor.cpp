@@ -19,7 +19,7 @@ WorldSelectionStateProcessor::WorldSelectionStateProcessor()
     _document->hide();
 
     _slider = static_cast<BoxSliderControl*>(_document->getControlByName("slider").get());
-    _lockControl = _document->getControlByName("lock").get();
+    _lockControl = _document->getControlByName("star").get();
     _isLockedLevels = !System::isItemBought(System::levelsProduct);
     if (Game::getInstance()->getScoresManager().getTotalStars() >= unlockStarCount)
         _isLockedLevels = false;
@@ -53,7 +53,10 @@ GameState WorldSelectionStateProcessor::update(float deltaTime)
     {
         _isLockedLevels = !System::isItemBought(System::levelsProduct);
         if (!_isLockedLevels && _lockControl->isVisible())
+        {
+            _document->getControlByName("world3")->setDefaultMaterial("worlds/world3.jpg");
             setLockControlsVisible(false);
+        }
     }
 
     return GameState::WorldSelection;
@@ -73,7 +76,11 @@ void WorldSelectionStateProcessor::processInput(const SDL_Event& event)
 void WorldSelectionStateProcessor::show()
 {
     _document->show();
+    if (Game::getInstance()->getScoresManager().getTotalStars() >= unlockStarCount)
+        _isLockedLevels = false;
+
     setLockControlsVisible(_currentWorld == 2 && _isLockedLevels);
+    _document->getControlByName("world3")->setDefaultMaterial(_isLockedLevels ? "worlds/world3lock.jpg" : "worlds/world3.jpg");
 
     System::showAds(System::AdHorizontalLayout::Center, System::AdVerticalLayout::Bottom);
 }
@@ -119,7 +126,6 @@ void WorldSelectionStateProcessor::setLockControlsVisible(bool visible)
     {
         _lockControl->setVisible(visible);
         _document->getControlByName("unlockstars")->setVisible(visible);
-        _document->getControlByName("star")->setVisible(visible);
         _document->getControlByName("unlockmoney")->setVisible(visible);
 
         if (visible)

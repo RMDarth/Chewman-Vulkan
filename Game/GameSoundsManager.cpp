@@ -10,7 +10,7 @@
 namespace Chewman
 {
 
-const std::string soundSettingsFile = "sound.dat";
+const char* const SoundSettingsFile = "sound.dat";
 constexpr uint8_t CurrentSoundSettingsVersion = 1;
 
 GameSoundsManager::GameSoundsManager()
@@ -116,7 +116,7 @@ bool GameSoundsManager::isMusicEnabled() const
 
 void GameSoundsManager::save()
 {
-    std::ofstream fout(Utils::getSettingsPath(soundSettingsFile));
+    std::ofstream fout(Utils::getSettingsPath(SoundSettingsFile));
     if (!fout)
     {
         throw SVE::VulkanException("Can't save sound settings file");
@@ -132,7 +132,7 @@ void GameSoundsManager::save()
 
 void GameSoundsManager::load()
 {
-    std::ifstream fin(Utils::getSettingsPath(soundSettingsFile));
+    std::ifstream fin(Utils::getSettingsPath(SoundSettingsFile));
     bool fail = false;
     if (!fin)
     {

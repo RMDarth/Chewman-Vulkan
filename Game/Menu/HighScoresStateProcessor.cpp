@@ -33,7 +33,7 @@ GameState HighscoresStateProcessor::update(float deltaTime)
     if (_updateTime > 0)
         return GameState::Highscores;
 
-    _updateTime = 1.5f;
+    _updateTime = 2.0f;
 
     auto logged = System::isLoggedServices();
     if (_logged != logged)
@@ -41,8 +41,11 @@ GameState HighscoresStateProcessor::update(float deltaTime)
         _logged = logged;
         if (_logged)
         {
-            // TODO: Submit only if it wasn't submitted already
-            System::submitScore(Game::getInstance()->getScoresManager().getBestScore());
+            if (Game::getInstance()->getScoresManager().isNewBestScore())
+            {
+                System::submitScore(Game::getInstance()->getScoresManager().getBestScore());
+                Game::getInstance()->getScoresManager().setIsNewScore(false);
+            }
         }
         updateBoard();
     }
@@ -163,6 +166,13 @@ void HighscoresStateProcessor::processEvent(Control* control, IEventHandler::Eve
             _isPointsActive = false;
             updateTimeDoc();
         }
+        if (control->getName() == "googleplay")
+        {
+            if (System::isLoggedServices())
+                System::showLeaderboard(_isWeeklyActive);
+            else
+                System::logInServices();
+        }
         if (control->getName() == "weekly" || control->getName() == "weeklyLabel")
         {
             _isWeeklyActive = true;
@@ -253,7 +263,7 @@ void HighscoresStateProcessor::updateTimeScores()
             auto playerScore = scoresManager.getTime(i + 1 + shift);
             if (timeData[levelNum - 1].second != 0 )
             {
-                if (playerScore != 0 && playerScore < timeData[levelNum - 1].second)
+                if (!_isWeeklyActive && playerScore != 0 && playerScore < timeData[levelNum - 1].second)
                 {
                     time = Utils::timeToString(playerScore);
                 } else

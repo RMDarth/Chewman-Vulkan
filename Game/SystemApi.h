@@ -53,8 +53,8 @@ bool isLoggedServices();
 bool isSignedServices();
 bool isServicesAvailable();
 
-void showAchievements();
-void showLeaderboard();
+void showLeaderboard(bool weekly);
+void showTimeLeaderboard(int level, bool weekly);
 
 void showAds(AdHorizontalLayout horizontalLayout, AdVerticalLayout verticalLayout);
 void hideAds();
@@ -70,13 +70,17 @@ bool hasNewTimeScores();
 bool hasTimeScoresUpdated();
 void updateScores();
 void refreshScores();
-void submitScore(int score);
-void submitLevelTime(int level, int timeSeconds);
+void submitScore(int score, bool best = true);
+void submitLevelTime(int level, int timeSeconds, bool best = true);
+std::vector<bool> getIsScoresSubmitted();
 std::vector<std::pair<std::string, int>> getScores(bool weekly);
 std::vector<std::pair<std::string, int>> getTimes(bool weekly);
 int getPlayerPlace(bool weekly);
 std::pair<std::string, int> getPlayerScore(bool weekly);
 std::string getPlayerName();
+
+std::vector<uint8_t> encryptData(const std::vector<uint8_t>& data);
+std::vector<uint8_t> decryptData(const std::vector<uint8_t>& data);
 
 void requestBackup();
 void requestRestore();
