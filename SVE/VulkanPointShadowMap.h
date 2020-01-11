@@ -50,7 +50,7 @@ private:
     std::vector<VkDeviceMemory> _depthImageMemory;
 
     std::vector<VkSampler> _shadowSampler;
-    VkRenderPass _renderPass;
+    VkRenderPass _renderPass = VK_NULL_HANDLE;
 
     std::vector<VkFramebuffer> _framebuffers;
     std::vector<VkCommandBuffer> _commandBuffers;
