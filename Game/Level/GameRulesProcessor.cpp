@@ -98,21 +98,6 @@ void GameRulesProcessor::update(float deltaTime)
     if (player->isDying())
     {
         playDeath(deltaTime);
-        if (_deathTime > 4.7f)
-        {
-            player->resetPlaying();
-
-            if (playerInfo.lives)
-            {
-                _gameMapProcessor.setState(GameMapState::Game);
-                --playerInfo.lives;
-            }
-            else
-            {
-                setShadowCamera(false);
-                _gameMapProcessor.setState(GameMapState::GameOver);
-            }
-        }
     }
     else
     {
@@ -392,7 +377,7 @@ void GameRulesProcessor::playDeath(float deltaTime)
             player->resetPosition();
 
             for (auto& affector : _gameAffectors)
-                if (affector.powerUp == PowerUpType::Slow)
+                if (affector.powerUp == PowerUpType::Slow || affector.powerUp == PowerUpType::Freeze || affector.powerUp == PowerUpType::Pentagram)
                     affector.remainingTime = -1;
 
             player->update(0);
@@ -410,6 +395,22 @@ void GameRulesProcessor::playDeath(float deltaTime)
         }
 
         updateCameraAnimation(deltaTime);
+    }
+    if (_deathTime > 4.7f)
+    {
+        getPlayer()->resetPlaying();
+
+        auto& playerInfo = Game::getInstance()->getProgressManager().getPlayerInfo();
+        if (playerInfo.lives)
+        {
+            _gameMapProcessor.setState(GameMapState::Game);
+            --playerInfo.lives;
+        }
+        else
+        {
+            setShadowCamera(false);
+            _gameMapProcessor.setState(GameMapState::GameOver);
+        }
     }
 }
 
