@@ -6,6 +6,7 @@
 #include <string>
 #include <vector>
 #include <memory>
+#include <functional>
 #include "FileSystem.h"
 #include "MaterialSettings.h"
 
@@ -22,6 +23,8 @@ struct Font;
 class ResourceManager
 {
 public:
+    using CallbackFunc = std::function<void(float)>;
+
     struct LoadData
     {
         std::vector<MaterialSettings> materialsList;
@@ -36,7 +39,7 @@ public:
     explicit ResourceManager(std::shared_ptr<FileSystem> fileSystem);
 
     void setMaxMaterialLoadQuality(MaterialQuality quality);
-    void loadFolder(const std::string& folder);
+    void loadFolder(const std::string& folder, CallbackFunc callback = nullptr);
     static LoadData getLoadDataFromFolder(const std::string& folder, bool isFolder, const std::shared_ptr<FileSystem>& fileSystem);
     const std::vector<std::string> getFolderList() const;
     std::string loadFileContent(const std::string& file) const;
@@ -56,7 +59,7 @@ private:
 
 private:
     void loadResources();
-    void initializeResources(LoadData& loadData);
+    void initializeResources(LoadData& loadData, CallbackFunc callback = nullptr);
 
     static void loadDirectory(const std::string& directory, LoadData& loadData, const std::shared_ptr<FileSystem>& fileSystem);
     static void loadFile(FSEntityPtr file, LoadData& loadData, const std::shared_ptr<FileSystem>& fileSystem);

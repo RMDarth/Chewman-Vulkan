@@ -39,7 +39,7 @@ vec4 getTextColor()
     TextSymbolInfo symbolInfo = ubo.textSymbolInfo[currentSymbol];
     GlyphInfo glyph = ubo.font[symbolInfo.symbolInfoIndex];
 
-    if (currentPos.x > symbolInfo.x + (ubo.font[symbolInfo.symbolInfoIndex].width - glyph.originX) * ubo.textInfo.scale)
+    if (currentPos.x > symbolInfo.x + (glyph.width - glyph.originX) * ubo.textInfo.scale)
         return vec4(0);
     float symbolY = symbolInfo.y + (ubo.textInfo.maxHeight - glyph.originY) * ubo.textInfo.scale;
     if (currentPos.y < symbolY)
@@ -49,7 +49,9 @@ vec4 getTextColor()
 
     vec2 ub = vec2(glyph.x, glyph.y) / ubo.textInfo.fontImageSize;
     ub += vec2(currentPos.x - symbolInfo.x + glyph.originX * ubo.textInfo.scale, currentPos.y - symbolY) / ubo.textInfo.scale / ubo.textInfo.fontImageSize ;
-    return texture(texSampler, ub).rgba * ubo.textInfo.color;
+    vec4 finalColor = texture(texSampler, ub).rgba;
+    finalColor.a = step(0.5, finalColor.r) * finalColor.a;
+    return finalColor * ubo.textInfo.color;
 }
 
 void main()
