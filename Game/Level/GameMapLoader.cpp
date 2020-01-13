@@ -135,6 +135,9 @@ std::shared_ptr<GameMap> GameMapLoader::loadMap(const std::string& filename, con
 {
     auto gameMap = std::make_shared<GameMap>();
 
+    if (_callback)
+        _callback(0);
+
     std::stringstream fin(SVE::Engine::getInstance()->getResourceManager()->loadFileContent(filename));
     fin >> gameMap->width >> gameMap->height;
 
@@ -338,13 +341,21 @@ std::shared_ptr<GameMap> GameMapLoader::loadMap(const std::string& filename, con
 
 void GameMapLoader::initMeshes(GameMap& level, const std::string& suffix)
 {
+    if (_callback)
+        _callback(0.15);
     buildLevelMeshes(level, _meshGenerator, suffix);
+
+    if (_callback)
+        _callback(0.7);
 
     level.mapEntity[0] = std::make_shared<SVE::MeshEntity>("MapT" + suffix);
     level.mapEntity[1] = std::make_shared<SVE::MeshEntity>("MapB" + suffix);
     level.mapEntity[2] = std::make_shared<SVE::MeshEntity>("MapV" + suffix);
     for (auto i = 0; i < 3; ++i)
         level.mapEntity[i]->setRenderToDepth(true);
+
+    if (_callback)
+        _callback(0.9);
 
     level.upperLevelMeshNode->attachEntity(level.mapEntity[0]);
     level.mapNode->attachEntity(level.mapEntity[1]);
@@ -797,6 +808,11 @@ void GameMapLoader::createSmoke(GameMap& level) const
     smokeNode2->attachEntity(smokeEntity2);
 
     level.smokeNAEntity = std::move(smokeEntity2);*/
+}
+
+void GameMapLoader::setCallback(CallbackFunc callback)
+{
+    _callback = callback;
 }
 
 } // namespace Chewman

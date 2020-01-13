@@ -34,6 +34,15 @@ Game* Game::getInstance()
     return _instance.get();
 }
 
+Game* Game::createInstance(CallbackFunc callback)
+{
+    _instance = std::unique_ptr<Game>(new Game());
+    _instance->_mapLoader->setCallback(callback);
+    _instance->initStates();
+
+    return _instance.get();
+}
+
 void Game::update(float deltaTime)
 {
     auto newState = _stateProcessors[_gameState]->update(deltaTime);

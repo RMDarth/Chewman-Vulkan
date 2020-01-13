@@ -197,6 +197,16 @@ void Engine::finishRendering()
     _vulkanInstance->finishRendering();
 }
 
+void Engine::onPause()
+{
+
+}
+
+void Engine::onResume()
+{
+
+}
+
 void createNodeStageDrawCommands(const std::shared_ptr<SceneNode>& node, uint32_t bufferIndex, uint32_t imageIndex, PassStage stage)
 {
     auto passType = Engine::getInstance()->getPassType();
