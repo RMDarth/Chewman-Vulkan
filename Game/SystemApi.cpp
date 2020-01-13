@@ -387,6 +387,14 @@ std::vector<bool> getIsScoresSubmitted()
 
     auto resultArray = (jbooleanArray)env->CallObjectMethod(activity, methodIdName);
 
+    if (resultArray == nullptr)
+    {
+        env->DeleteLocalRef(activity);
+        env->DeleteLocalRef(activityClass);
+
+        return scores;
+    }
+
     jsize resultSize = env->GetArrayLength(resultArray);
     jboolean* resultElements = env->GetBooleanArrayElements(resultArray, nullptr);
 
@@ -419,6 +427,12 @@ std::vector<std::pair<std::string, int>> getScores(bool weekly)
     for (auto i = 0; i < 5; ++i)
     {
         auto nameObj = (jstring)env->CallObjectMethod(activity, methodIdName, i, weekly);
+        if (nameObj == nullptr)
+        {
+            scoresList.emplace_back("", 0);
+            continue;
+        }
+
         const char *name = env->GetStringUTFChars(nameObj, nullptr);
         int score = env->CallIntMethod(activity, methodIdScore, i, weekly);
         scoresList.emplace_back(name, score);
@@ -464,18 +478,26 @@ std::pair<std::string, int> getPlayerScore(bool weekly)
     jmethodID methodIdScore = env->GetMethodID(activityClass, "getPlayerScore", "(Z)I");
 
     auto nameObj = (jstring)env->CallObjectMethod(activity, methodIdName, weekly);
-    const char *name = env->GetStringUTFChars(nameObj, nullptr);
-    int score = env->CallIntMethod(activity, methodIdScore, weekly);
 
-    std::pair<std::string, int> result = { name, score };
+    if (nameObj != nullptr) {
+        const char *name = env->GetStringUTFChars(nameObj, nullptr);
+        int score = env->CallIntMethod(activity, methodIdScore, weekly);
 
-    env->ReleaseStringUTFChars(nameObj, name);
-    env->DeleteLocalRef(nameObj);
+        std::pair<std::string, int> result = {name, score};
 
-    env->DeleteLocalRef(activity);
-    env->DeleteLocalRef(activityClass);
+        env->ReleaseStringUTFChars(nameObj, name);
+        env->DeleteLocalRef(nameObj);
 
-    return result;
+        env->DeleteLocalRef(activity);
+        env->DeleteLocalRef(activityClass);
+
+        return result;
+    } else {
+        env->DeleteLocalRef(activity);
+        env->DeleteLocalRef(activityClass);
+
+        return {"Player", 0};
+    }
 #else
     return {"Player", 0};
 #endif
@@ -484,6 +506,7 @@ std::pair<std::string, int> getPlayerScore(bool weekly)
 std::string getPlayerName()
 {
 #ifdef __ANDROID__
+
     JNIEnv* env = (JNIEnv*)SDL_AndroidGetJNIEnv();
     jobject activity = (jobject)SDL_AndroidGetActivity();
     jclass activityClass = env->GetObjectClass(activity);
@@ -491,17 +514,24 @@ std::string getPlayerName()
     jmethodID methodIdName = env->GetMethodID(activityClass, "getPlayerDisplayName", "()Ljava/lang/String;");
 
     auto nameObj = (jstring)env->CallObjectMethod(activity, methodIdName);
-    const char *name = env->GetStringUTFChars(nameObj, nullptr);
+    if (nameObj != nullptr) {
+        const char *name = env->GetStringUTFChars(nameObj, nullptr);
 
-    std::string result = name;
+        std::string result = name;
 
-    env->ReleaseStringUTFChars(nameObj, name);
+        env->ReleaseStringUTFChars(nameObj, name);
 
-    env->DeleteLocalRef(nameObj);
-    env->DeleteLocalRef(activity);
-    env->DeleteLocalRef(activityClass);
+        env->DeleteLocalRef(nameObj);
+        env->DeleteLocalRef(activity);
+        env->DeleteLocalRef(activityClass);
 
-    return result;
+        return result;
+    } else {
+        env->DeleteLocalRef(activity);
+        env->DeleteLocalRef(activityClass);
+
+        return "Player";
+    }
 #else
     return "Player";
 #endif
@@ -521,12 +551,17 @@ std::vector<std::pair<std::string, int>> getTimes(bool weekly)
     for (auto i = 0; i < 36; ++i)
     {
         auto nameObj = (jstring)env->CallObjectMethod(activity, methodIdName, i, weekly);
-        const char *name = env->GetStringUTFChars(nameObj, nullptr);
-        int version = env->CallIntMethod(activity, methodIdScore, i, weekly);
-        scoresList.emplace_back(name, version);
+        if (nameObj == nullptr)
+        {
+            scoresList.emplace_back("", 0);
+        } else {
+            const char *name = env->GetStringUTFChars(nameObj, nullptr);
+            int version = env->CallIntMethod(activity, methodIdScore, i, weekly);
+            scoresList.emplace_back(name, version);
 
-        env->ReleaseStringUTFChars(nameObj, name);
-        env->DeleteLocalRef(nameObj);
+            env->ReleaseStringUTFChars(nameObj, name);
+            env->DeleteLocalRef(nameObj);
+        }
     }
 
     env->DeleteLocalRef(activity);
@@ -567,6 +602,12 @@ std::vector<uint8_t> callByteArrayMethod(const std::vector<uint8_t>& data, const
     jmethodID methodIdName = env->GetMethodID(activityClass, name, "([B)[B");
 
     auto resultArray = (jbyteArray)env->CallObjectMethod(activity, methodIdName, byteArray);
+
+    if (resultArray == nullptr) {
+        env->DeleteLocalRef(activity);
+        env->DeleteLocalRef(activityClass);
+        return std::vector<uint8_t>();
+    }
 
     jsize resultSize = env->GetArrayLength(resultArray);
     jbyte* resultElements = env->GetByteArrayElements(resultArray, nullptr);

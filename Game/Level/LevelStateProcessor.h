@@ -43,6 +43,7 @@ private:
 
     std::unique_ptr<ControlDocument> _document;
     std::shared_ptr<Control> _counterControl;
+    std::shared_ptr<Control> _loadingControl;
     float _time = 0.0f;
     float _counterTime = 0.0;
 
