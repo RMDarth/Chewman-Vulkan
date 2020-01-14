@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Chewman</string>
+    <string name="signin_other_error">There was an issue with sign in.  Please try again later.</string>
+</resources>

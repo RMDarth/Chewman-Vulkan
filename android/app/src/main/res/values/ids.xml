@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+Google Play game services IDs.
+Save this file as res/values/games-ids.xml in your project.
+-->
+<resources>
+    <!-- app_id -->
+    <string name="app_id" translatable="false">1234567890</string>
+    <!-- package_name -->
+    <string name="package_name" translatable="false">com.turbulent.chewman</string>
+    <!-- achievement Newcomer -->
+    <string name="achievement_newcomer" translatable="false">CgkIisXEzLoEEAIQDg</string>
+    <!-- achievement Good start -->
+    <string name="achievement_good_start" translatable="false">CgkIisXEzLoEEAIQDw</string>
+    <!-- achievement Treasure hunter -->
+    <string name="achievement_treasure_hunter" translatable="false">CgkIisXEzLoEEAIQEA</string>
+    <!-- achievement Dungeon Master -->
+    <string name="achievement_dungeon_master" translatable="false">CgkIisXEzLoEEAIQEQ</string>
+    <!-- achievement Dungeon Emperor -->
+    <string name="achievement_dungeon_emperor" translatable="false">CgkIisXEzLoEEAIQEg</string>
+    <!-- achievement Star collector -->
+    <string name="achievement_star_collector" translatable="false">CgkIisXEzLoEEAIQEw</string>
+    <!-- achievement Star hunter -->
+    <string name="achievement_star_hunter" translatable="false">CgkIisXEzLoEEAIQFA</string>
+    <!-- achievement Supernova -->
+    <string name="achievement_supernova" translatable="false">CgkIisXEzLoEEAIQFQ</string>
+    <!-- achievement Gold Rush -->
+    <string name="achievement_gold_rush" translatable="false">CgkIisXEzLoEEAIQFg</string>
+    <!-- achievement Mission accomplished -->
+    <string name="achievement_mission_accomplished" translatable="false">CgkIisXEzLoEEAIQFw</string>
+    <!-- leaderboard scores -->
+    <string name="leaderboard_scores" translatable="false">CgkIisXEzLoEEAIQAQ</string>
+    <!-- leaderboard level01time -->
+    <string name="leaderboard_level01time" translatable="false">CgkIisXEzLoEEAIQAg</string>
+    <!-- leaderboard level02time -->
+    <string name="leaderboard_level02time" translatable="false">CgkIisXEzLoEEAIQAw</string>
+    <!-- leaderboard level03time -->
+    <string name="leaderboard_level03time" translatable="false">CgkIisXEzLoEEAIQBA</string>
+    <!-- leaderboard level04time -->
+    <string name="leaderboard_level04time" translatable="false">CgkIisXEzLoEEAIQBQ</string>
+    <!-- leaderboard level05time -->
+    <string name="leaderboard_level05time" translatable="false">CgkIisXEzLoEEAIQBg</string>
+    <!-- leaderboard level06time -->
+    <string name="leaderboard_level06time" translatable="false">CgkIisXEzLoEEAIQBw</string>
+    <!-- leaderboard level07time -->
+    <string name="leaderboard_level07time" translatable="false">CgkIisXEzLoEEAIQCA</string>
+    <!-- leaderboard level08time -->
+    <string name="leaderboard_level08time" translatable="false">CgkIisXEzLoEEAIQCQ</string>
+    <!-- leaderboard level09time -->
+    <string name="leaderboard_level09time" translatable="false">CgkIisXEzLoEEAIQCg</string>
+    <!-- leaderboard level10time -->
+    <string name="leaderboard_level10time" translatable="false">CgkIisXEzLoEEAIQCw</string>
+    <!-- leaderboard level11time -->
+    <string name="leaderboard_level11time" translatable="false">CgkIisXEzLoEEAIQDA</string>
+    <!-- leaderboard level12time -->
+    <string name="leaderboard_level12time" translatable="false">CgkIisXEzLoEEAIQDQ</string>
+    <!-- leaderboard level13time -->
+    <string name="leaderboard_level13time" translatable="false">CgkIisXEzLoEEAIQGA</string>
+    <!-- leaderboard level14time -->
+    <string name="leaderboard_level14time" translatable="false">CgkIisXEzLoEEAIQGQ</string>
+    <!-- leaderboard level15time -->
+    <string name="leaderboard_level15time" translatable="false">CgkIisXEzLoEEAIQGg</string>
+    <!-- leaderboard level16time -->
+    <string name="leaderboard_level16time" translatable="false">CgkIisXEzLoEEAIQGw</string>
+    <!-- leaderboard level17time -->
+    <string name="leaderboard_level17time" translatable="false">CgkIisXEzLoEEAIQHA</string>
+    <!-- leaderboard level18time -->
+    <string name="leaderboard_level18time" translatable="false">CgkIisXEzLoEEAIQHQ</string>
+    <!-- leaderboard level19time -->
+    <string name="leaderboard_level19time" translatable="false">CgkIisXEzLoEEAIQHg</string>
+    <!-- leaderboard level20time -->
+    <string name="leaderboard_level20time" translatable="false">CgkIisXEzLoEEAIQHw</string>
+    <!-- leaderboard level21time -->
+    <string name="leaderboard_level21time" translatable="false">CgkIisXEzLoEEAIQIA</string>
+    <!-- leaderboard level22time -->
+    <string name="leaderboard_level22time" translatable="false">CgkIisXEzLoEEAIQIQ</string>
+    <!-- leaderboard level23time -->
+    <string name="leaderboard_level23time" translatable="false">CgkIisXEzLoEEAIQIg</string>
+    <!-- leaderboard level24time -->
+    <string name="leaderboard_level24time" translatable="false">CgkIisXEzLoEEAIQIw</string>
+    <!-- leaderboard level25time -->
+    <string name="leaderboard_level25time" translatable="false">CgkIisXEzLoEEAIQJA</string>
+    <!-- leaderboard level26time -->
+    <string name="leaderboard_level26time" translatable="false">CgkIisXEzLoEEAIQJQ</string>
+    <!-- leaderboard level27time -->
+    <string name="leaderboard_level27time" translatable="false">CgkIisXEzLoEEAIQJg</string>
+    <!-- leaderboard level28time -->
+    <string name="leaderboard_level28time" translatable="false">CgkIisXEzLoEEAIQJw</string>
+    <!-- leaderboard level29time -->
+    <string name="leaderboard_level29time" translatable="false">CgkIisXEzLoEEAIQKA</string>
+    <!-- leaderboard level30time -->
+    <string name="leaderboard_level30time" translatable="false">CgkIisXEzLoEEAIQKQ</string>
+    <!-- leaderboard level31time -->
+    <string name="leaderboard_level31time" translatable="false">CgkIisXEzLoEEAIQKg</string>
+    <!-- leaderboard level32time -->
+    <string name="leaderboard_level32time" translatable="false">CgkIisXEzLoEEAIQKw</string>
+    <!-- leaderboard level33time -->
+    <string name="leaderboard_level33time" translatable="false">CgkIisXEzLoEEAIQLA</string>
+    <!-- leaderboard level34time -->
+    <string name="leaderboard_level34time" translatable="false">CgkIisXEzLoEEAIQLQ</string>
+    <!-- leaderboard level35time -->
+    <string name="leaderboard_level35time" translatable="false">CgkIisXEzLoEEAIQLg</string>
+    <!-- leaderboard level36time -->
+    <string name="leaderboard_level36time" translatable="false">CgkIisXEzLoEEAIQLw</string>
+</resources>
