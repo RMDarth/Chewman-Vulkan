@@ -263,7 +263,7 @@ void HighscoresStateProcessor::updateTimeScores()
             auto playerScore = scoresManager.getTime(i + 1 + shift);
             if (timeData[levelNum - 1].second != 0 )
             {
-                if (!_isWeeklyActive && playerScore != 0 && playerScore < timeData[levelNum - 1].second)
+                if (!_isWeeklyActive && playerScore != 0 && playerScore < (timeData[levelNum - 1].second / 1000))
                 {
                     time = Utils::timeToString(playerScore);
                 } else

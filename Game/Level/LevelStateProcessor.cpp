@@ -27,6 +27,8 @@ LevelStateProcessor::LevelStateProcessor()
     _counterControl->setDefaultMaterial("counter2.png");
     _counterControl->setDefaultMaterial("counter3.png");
 
+    _loadingControl = _document->getControlByName("loading");
+
     _document->getControlByName("upStick")->setMouseDownHandler(this);
     _document->getControlByName("downStick")->setMouseDownHandler(this);
     _document->getControlByName("leftStick")->setMouseDownHandler(this);
@@ -108,6 +110,7 @@ GameState LevelStateProcessor::update(float deltaTime)
             if (_counterTime > 0)
             {
                 _counterControl->setVisible(false);
+                _loadingControl->setVisible(false);
                 _counterTime = -1;
             }
             break;
@@ -145,6 +148,8 @@ GameState LevelStateProcessor::update(float deltaTime)
                 _counterControl->setDefaultMaterial("counter1.png");
             else if (_counterTime > 0.67f)
                 _counterControl->setDefaultMaterial("counter2.png");
+            else if (_counterTime > 0.15)
+                _loadingControl->setVisible(false);
             else
                 _counterControl->setDefaultMaterial("counter3.png");
         }
@@ -212,7 +217,10 @@ void LevelStateProcessor::show()
     _gameMapProcessor->setVisible(true);
     _document->show();
     if (_gameMapProcessor->getState() != GameMapState::LevelStart)
+    {
+        _loadingControl->setVisible(false);
         _counterControl->setVisible(false);
+    }
 
     std::stringstream ss;
     ss << "Level " << _progressManager.getCurrentLevel() << ": " << _gameMapProcessor->getGameMap()->name;

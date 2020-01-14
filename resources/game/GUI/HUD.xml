@@ -16,6 +16,7 @@
     <Label name="FPS" text="0" x="0.6" y="0.10" width="0.1" height="0.05" mousetransparent="true"/>
 
     <Image name="Counter" y="0.4" height="0.2" width="-0.67" alignment="center" image="counter3.png"/>
+    <Image name="loading" x="0.2" y="0.62" alignment="center" width="-3.37" height="0.12" image="loadingText.png"/>
 
     <Container name="stickBackground" x="0.04" y="0.53" height="0.4" width="-1">
         <Image name="upStick" x="0.33" y="0.05" height="0.333" width="0.333" color="1 1 1 1" image="buttons/upStick.png" />
