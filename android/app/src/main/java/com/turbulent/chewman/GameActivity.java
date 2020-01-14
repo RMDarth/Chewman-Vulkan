@@ -1,3 +1,6 @@
+// Chewman Vulkan game
+// Copyright (c) 2018-2020, Igor Barinov
+// Licensed under the MIT License
 package com.turbulent.chewman;
 
 import android.app.ActivityManager;
