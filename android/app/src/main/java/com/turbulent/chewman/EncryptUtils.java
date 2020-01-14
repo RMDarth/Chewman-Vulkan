@@ -1,20 +1,23 @@
 package com.turbulent.chewman;
 
 import android.content.Context;
-import android.os.Build;
-import android.provider.Settings;
 
-import com.google.android.gms.common.util.ArrayUtils;
-
-import java.nio.ByteBuffer;
 import java.security.Key;
-import java.util.Arrays;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
 
 class EncryptUtils
 {
+    private static byte[] reverse(byte[] data)
+    {
+        byte[] newData = new byte[data.length];
+        for(int i=0; i<data.length; i++){
+            newData[i] = data[data.length - i - 1];
+        }
+        return newData;
+    }
+
     private static String getKey(Context context)
     {
         return "DummyKey";
@@ -32,15 +35,13 @@ class EncryptUtils
             return cipher.doFinal(data);
         } catch (java.security.GeneralSecurityException ex)
         {
-            return ArrayUtils.reverse(byteArr);
+            return reverse(data);
         }
     }
 
     static byte[] decrypt(Context context, byte[] data)
     {
         String key = getKey(context);
-
-        byte[] decryptedData;
 
         try {
             Key aesKey = new SecretKeySpec(key.getBytes(), "AES");
@@ -51,7 +52,7 @@ class EncryptUtils
 
         } catch (java.security.GeneralSecurityException ex)
         {
-            return ArrayUtils.reverse(byteArr);
+            return reverse(data);
         }
     }
 }
