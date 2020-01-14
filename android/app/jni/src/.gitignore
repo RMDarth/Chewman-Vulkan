@@ -1,2 +1,5 @@
 /deps
 vulkan_wrapper.*
+SVE
+SDL2
+Game
