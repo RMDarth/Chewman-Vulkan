@@ -28,6 +28,16 @@ void ProgressManager::setCurrentWorld(uint32_t world)
     _currentWorld = world;
 }
 
+IGameMapService* ProgressManager::getGameMapService()
+{
+    return _gameMapService;
+}
+
+void ProgressManager::setGameMapService(IGameMapService* service)
+{
+    _gameMapService = service;
+}
+
 bool ProgressManager::isStarted() const
 {
     return _isStarted;

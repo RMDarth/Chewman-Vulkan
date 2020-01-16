@@ -6,12 +6,13 @@
 namespace Chewman
 {
 
-constexpr uint8_t CurrentGameSettingsVersion = 1;
+constexpr uint8_t CurrentGameSettingsVersion = 2;
 
 struct GameSettings
 {
     uint8_t version = CurrentGameSettingsVersion;
     bool showOnScreenControls = false;
+    bool switchLight[36] = {};
 };
 
 class GameSettingsManager

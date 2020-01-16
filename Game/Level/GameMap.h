@@ -17,6 +17,7 @@
 #include "StaticObject.h"
 #include "EatEffectManager.h"
 #include "Game/Level/Enemies/Enemy.h"
+#include "Game/IGameMapService.h"
 #include "GameRulesProcessor.h"
 
 namespace Chewman
@@ -70,7 +71,7 @@ enum class GameMapState
     LevelStart
 };
 
-class GameMapProcessor
+class GameMapProcessor : public IGameMapService
 {
 public:
     explicit GameMapProcessor(std::shared_ptr<GameMap> gameMap);
@@ -87,6 +88,8 @@ public:
 
     void setNextMove(MoveDirection direction);
     MoveDirection getNextMove() const;
+
+    void switchDayNight() override;
 
     float getDeltaTime();
 

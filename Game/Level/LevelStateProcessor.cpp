@@ -52,6 +52,7 @@ void LevelStateProcessor::initMap()
     std::stringstream ss;
     ss << "resources/game/levels/level" << levelNum << ".map";
     _gameMapProcessor = std::make_unique<GameMapProcessor>(Game::getInstance()->getGameMapLoader().loadMap(ss.str()));
+    _progressManager.setGameMapService(_gameMapProcessor.get());
     _progressManager.setCurrentLevelInfo({
               _gameMapProcessor->getGameMap()->timeFor2Stars,
               _gameMapProcessor->getGameMap()->timeFor3Stars,
@@ -65,7 +66,6 @@ void LevelStateProcessor::initMap()
         sunLight->getLightSettings().specularStrength = {0.5f, 0.5f, 0.5f, 1.0f};
         sunLight->setNodeTransformation(
                 glm::translate(glm::mat4(1), glm::vec3(80, 80, -80)));
-        auto sunLight = SVE::Engine::getInstance()->getSceneManager()->getLightManager()->getDirectionLight();
 
         sunLight->getLightSettings().castShadows = Game::getInstance()->getGraphicsManager().getSettings().useShadows;
     } else {
@@ -132,7 +132,7 @@ GameState LevelStateProcessor::update(float deltaTime)
                 _counterControl->setDefaultMaterial("counter1.png");
             else if (_counterTime > 0.67f)
                 _counterControl->setDefaultMaterial("counter2.png");
-            else if (_counterTime > 0.15)
+            else if (_counterTime > 0.22)
                 _loadingControl->setVisible(false);
             else
                 _counterControl->setDefaultMaterial("counter3.png");
@@ -143,7 +143,10 @@ GameState LevelStateProcessor::update(float deltaTime)
     {
         --_countToRemove;
         if (!_countToRemove)
+        {
             _oldGameMap.reset();
+            _loadingControl->setVisible(false);
+        }
     }
 
     return GameState::Level;
@@ -232,18 +235,21 @@ void LevelStateProcessor::processEvent(Control* control, IEventHandler::EventTyp
     }
     if (type == IEventHandler::MouseDown)
     {
-        if (control->getName() == "leftStick")
+        if (_useOnScreenControl)
         {
-            _gameMapProcessor->setNextMove(MoveDirection::Down);
-        } else if (control->getName() == "rightStick")
-        {
-            _gameMapProcessor->setNextMove(MoveDirection::Up);
-        } else if (control->getName() == "upStick")
-        {
-            _gameMapProcessor->setNextMove(MoveDirection::Right);
-        } else if (control->getName() == "downStick")
-        {
-            _gameMapProcessor->setNextMove(MoveDirection::Left);
+            if (control->getName() == "leftStick")
+            {
+                _gameMapProcessor->setNextMove(MoveDirection::Down);
+            } else if (control->getName() == "rightStick")
+            {
+                _gameMapProcessor->setNextMove(MoveDirection::Up);
+            } else if (control->getName() == "upStick")
+            {
+                _gameMapProcessor->setNextMove(MoveDirection::Right);
+            } else if (control->getName() == "downStick")
+            {
+                _gameMapProcessor->setNextMove(MoveDirection::Left);
+            }
         }
     }
 }

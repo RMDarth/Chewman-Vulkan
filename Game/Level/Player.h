@@ -39,6 +39,8 @@ public:
     void setIsDying(bool isDying);
     bool isDying();
 
+    void enableLight(bool enable);
+
     void setNextMove(MoveDirection direction);
     MoveDirection getNextMove() const;
 
@@ -63,6 +65,7 @@ private:
     glm::ivec2 _startPos;
     std::shared_ptr<SVE::SceneNode> _rootNode;
     std::shared_ptr<SVE::SceneNode> _rotateNode;
+    std::shared_ptr<SVE::SceneNode> _lightNode;
     std::shared_ptr<SVE::MeshEntity> _trashmanEntity;
     std::shared_ptr<SVE::MeshEntity> _powerUpEntity;
     std::shared_ptr<SVE::ParticleSystemEntity> _powerUpPS;

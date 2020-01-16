@@ -3,6 +3,7 @@
 // Licensed under the MIT License
 #pragma once
 #include <string>
+#include "IGameMapService.h"
 
 namespace Chewman
 {
@@ -35,6 +36,9 @@ public:
     uint32_t getCurrentWorld() const;
     void setCurrentWorld(uint32_t world);
 
+    IGameMapService* getGameMapService();
+    void setGameMapService(IGameMapService* service);
+
     bool isStarted() const;
     void setStarted(bool started);
 
@@ -46,12 +50,13 @@ public:
 
 private:
     uint32_t _currentWorld = 0;
-    uint32_t _currentLevel = 1;
+    uint32_t _currentLevel = 0;
     bool _isStarted = false;
     bool _isVictory = false;
 
     PlayerInfo _playerInfo;
     LevelInfo _levelInfo;
+    IGameMapService* _gameMapService = nullptr;
 };
 
 } // namespace Chewman

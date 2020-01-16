@@ -70,8 +70,12 @@ Player::Player(GameMap* gameMap, glm::ivec2 startPos)
     _trashmanEntity->setMaterial("Yellow");
     _rotateNode->attachEntity(_trashmanEntity);
 
-    if (Game::getInstance()->getGraphicsManager().getSettings().dynamicLights != LightSettings::Off && gameMap->isNight)
-        _rootNode->attachSceneNode(addLightEffect(engine));
+    if (Game::getInstance()->getGraphicsManager().getSettings().dynamicLights != LightSettings::Off)
+    {
+        _lightNode = addLightEffect(engine);
+        if (gameMap->isNight)
+            _rootNode->attachSceneNode(_lightNode);
+    }
 
     createAppearEffect();
     createDisappearEffect();
@@ -317,6 +321,14 @@ void Player::setIsDying(bool isDying)
 bool Player::isDying()
 {
     return _isDying;
+}
+
+void Player::enableLight(bool enable)
+{
+    if (enable)
+        _rootNode->attachSceneNode(_lightNode);
+    else
+        _rootNode->detachSceneNode(_lightNode);
 }
 
 void Player::setNextMove(MoveDirection direction)

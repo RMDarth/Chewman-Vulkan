@@ -39,6 +39,7 @@ void PauseStateProcessor::show()
 {
     _document->show();
     System::showAds(System::AdHorizontalLayout::Center, System::AdVerticalLayout::Bottom);
+    resetControls(false);
 }
 
 void PauseStateProcessor::hide()
@@ -69,6 +70,26 @@ void PauseStateProcessor::processEvent(Control* control, IEventHandler::EventTyp
             Game::getInstance()->setState(GameState::Level);
         }
 
+        if (control->getName() == "reset")
+        {
+            auto& progressManager = Game::getInstance()->getProgressManager();
+            if (progressManager.getPlayerInfo().lives > 0)
+            {
+                progressManager.setVictory(false);
+                progressManager.setStarted(false);
+                progressManager.getPlayerInfo().lives--;
+                Game::getInstance()->setState(GameState::Level);
+            }
+        }
+
+        if (control->getName() == "daynight")
+        {
+            if (auto* gameService = Game::getInstance()->getProgressManager().getGameMapService())
+            {
+                gameService->switchDayNight();
+            }
+        }
+
         if (control->getName() == "tomenu")
         {
             auto& progressManager = Game::getInstance()->getProgressManager();
@@ -77,7 +98,34 @@ void PauseStateProcessor::processEvent(Control* control, IEventHandler::EventTyp
             progressManager.setStarted(false);
             Game::getInstance()->setState(GameState::MainMenu);
         }
+
+        if (control->getName() == "more")
+        {
+            resetControls(!_isCurrentControlsExtended);
+        }
     }
+}
+
+void PauseStateProcessor::resetControls(bool isExtended)
+{
+    _document->getControlByName("reset")->setVisible(isExtended);
+    _document->getControlByName("daynight")->setVisible(isExtended && Game::getInstance()->getGraphicsManager().getSettings().dynamicLights != LightSettings::Off);
+
+    if (isExtended)
+    {
+        if (Game::getInstance()->getProgressManager().getPlayerInfo().lives == 0)
+            _document->getControlByName("reset")->setDefaultMaterial("buttons/button_disabled.png");
+        else
+            _document->getControlByName("reset")->setDefaultMaterial("buttons/button_normal.png");
+    }
+
+    _document->getControlByName("continue")->setVisible(!isExtended);
+    _document->getControlByName("restart")->setVisible(!isExtended);
+    _document->getControlByName("tomenu")->setVisible(!isExtended);
+    _document->getControlByName("more")->setDefaultMaterial(isExtended ? "buttons/up.png" : "buttons/down.png");
+    _document->getControlByName("more")->setHoverMaterial(isExtended ? "buttons/up.png" : "buttons/down.png");
+
+    _isCurrentControlsExtended = isExtended;
 }
 
 } // namespace Chewman

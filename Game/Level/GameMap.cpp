@@ -264,4 +264,40 @@ MoveDirection GameMapProcessor::getNextMove() const
     return _gameMap->player->getNextMove();
 }
 
+void GameMapProcessor::switchDayNight()
+{
+    auto sunLight = SVE::Engine::getInstance()->getSceneManager()->getLightManager()->getDirectionLight();
+    // TODO: Move light configuration into single place
+    if (_gameMap->isNight)
+    {
+        sunLight->getLightSettings().ambientStrength = {0.2f, 0.2f, 0.2f, 1.0f};
+        sunLight->getLightSettings().diffuseStrength = {1.0f, 1.0f, 1.0f, 1.0f};
+        sunLight->getLightSettings().specularStrength = {0.5f, 0.5f, 0.5f, 1.0f};
+        sunLight->setNodeTransformation(
+                glm::translate(glm::mat4(1), glm::vec3(80, 80, -80)));
+
+        sunLight->getLightSettings().castShadows = Game::getInstance()->getGraphicsManager().getSettings().useShadows;
+        _gameMap->isNight = false;
+    } else
+    {
+        _gameMap->isNight = true;
+        sunLight->getLightSettings().ambientStrength = {0.08f, 0.08f, 0.08f, 1.0f};
+        sunLight->getLightSettings().diffuseStrength = {0.15f, 0.15f, 0.15f, 1.0f};
+        sunLight->getLightSettings().specularStrength = {0.08f, 0.08f, 0.08f, 1.0f};
+        sunLight->setNodeTransformation(
+                glm::translate(glm::mat4(1), glm::vec3(-20, 80, 80)));
+
+        sunLight->getLightSettings().castShadows = false;
+    }
+
+    for (auto& enemy : _gameMap->enemies)
+        enemy->enableLight(_gameMap->isNight);
+    _gameMap->player->enableLight(_gameMap->isNight);
+
+    auto currentLevel = Game::getInstance()->getProgressManager().getCurrentLevel() - 1;
+    auto& settingsManager = Game::getInstance()->getGameSettingsManager();
+    settingsManager.getSettings().switchLight[currentLevel] = !settingsManager.getSettings().switchLight[currentLevel];
+    settingsManager.store();
+}
+
 } // namespace Chewman

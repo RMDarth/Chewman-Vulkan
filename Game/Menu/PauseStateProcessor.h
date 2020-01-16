@@ -23,12 +23,15 @@ public:
     void show() override;
     void hide() override;
 
+    void resetControls(bool isExtended);
+
     bool isOverlapping() override;
 
     // IEventHandler
     void processEvent(Control* control, EventType type, int x, int y) override;
 
 private:
+    bool _isCurrentControlsExtended = false;
     std::unique_ptr<ControlDocument> _document;
 };
 

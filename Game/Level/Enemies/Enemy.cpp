@@ -67,6 +67,10 @@ void Enemy::attackPlayer()
 {
 }
 
+void Enemy::enableLight(bool enable)
+{
+}
+
 EnemyType Enemy::getEnemyType() const
 {
     return _enemyType;

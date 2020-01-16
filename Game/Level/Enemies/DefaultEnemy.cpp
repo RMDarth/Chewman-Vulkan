@@ -56,8 +56,13 @@ DefaultEnemy::DefaultEnemy(GameMap* map, glm::ivec2 startPos, EnemyType enemyTyp
     debuffEntity->getMaterialInfo()->diffuse = {1.0, 1.0, 1.0, 0.5 };
     _debuffNode->attachEntity(debuffEntity);
 
-    if (Game::getInstance()->getGraphicsManager().getSettings().dynamicLights != LightSettings::Off && map->isNight)
-        _rootNode->attachSceneNode(addEnemyLightEffect(engine, lightHeight));
+
+    if (Game::getInstance()->getGraphicsManager().getSettings().dynamicLights != LightSettings::Off)
+    {
+        _lightNode = addEnemyLightEffect(engine, lightHeight);
+        if (map->isNight)
+            _rootNode->attachSceneNode(_lightNode);
+    }
 }
 
 void DefaultEnemy::update(float deltaTime)
@@ -134,6 +139,14 @@ void DefaultEnemy::decreaseState(EnemyState state)
                 break;
         }
     }
+}
+
+void DefaultEnemy::enableLight(bool enable)
+{
+    if (enable)
+        _rootNode->attachSceneNode(_lightNode);
+    else
+        _rootNode->detachSceneNode(_lightNode);
 }
 
 float DefaultEnemy::getHeight()
