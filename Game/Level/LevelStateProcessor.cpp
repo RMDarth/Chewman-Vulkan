@@ -272,13 +272,13 @@ void LevelStateProcessor::updateHUD(float deltaTime)
     stream << _gameMapProcessor->getGameMap()->activeCoins << "/" << _gameMapProcessor->getGameMap()->totalCoins;
     coins->setText(stream.str());
 
-    static auto fps = _document->getControlByName("FPS");
+    /*static auto fps = _document->getControlByName("FPS");
     static std::list<float> fpsList;
     fpsList.push_back(1.0f/deltaTime);
     if (fpsList.size() > 100)
         fpsList.pop_front();
     auto fpsValue = std::accumulate(fpsList.begin(), fpsList.end(), 0.0f) / fpsList.size();
-    fps->setText(std::to_string((int) fpsValue));
+    fps->setText(std::to_string((int) fpsValue));*/
 
     updatePowerUps();
     if (_useOnScreenControl)
