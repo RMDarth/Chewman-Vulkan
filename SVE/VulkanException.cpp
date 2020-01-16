@@ -58,14 +58,21 @@ std::string addPossibleResult(VkResult result)
 
 VulkanException::VulkanException(const char* error, VkResult result)
     : runtime_error(std::string(error) + addPossibleResult(result))
+    , _result(result)
 {
 
 }
 
 VulkanException::VulkanException(const std::string& error, VkResult result)
     : runtime_error(error + addPossibleResult(result))
+    , _result(result)
 {
 
+}
+
+VkResult VulkanException::getVkResult() const
+{
+    return _result;
 }
 
 } // namespace SVE

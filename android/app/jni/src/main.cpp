@@ -23,6 +23,7 @@
 #include "SVE/PipelineCacheManager.h"
 
 #include "Game/Game.h"
+#include "Game/SystemApi.h"
 #include "Game/Controls/ControlDocument.h"
 
 #include "AndroidFS.h"
@@ -226,6 +227,7 @@ int SDL_main(int argc, char *argv[]) {
     InitVulkan();
  
     int running = 1;
+    bool isMinimized = false;
  
     LOG("started");
     startLogger();
@@ -396,6 +398,7 @@ int SDL_main(int argc, char *argv[]) {
                     std::cout << "Window event type: " << (int)event.window.event << std::endl;
                     if (event.window.event == SDL_WINDOWEVENT_MINIMIZED)
                     {
+                        isMinimized = true;
                         std::cout << "wait idle" << std::endl;
                         isMusicEnabled = game->getSoundsManager().isMusicEnabled();
                         game->getSoundsManager().setMusicEnabled(false);
@@ -428,6 +431,7 @@ int SDL_main(int argc, char *argv[]) {
                         future.get();
                         game->getSoundsManager().setMusicEnabled(isMusicEnabled);
                         LOG("game restored");
+                        isMinimized = false;
                     }
                 }
             }
@@ -444,6 +448,11 @@ int SDL_main(int argc, char *argv[]) {
         //engine->destroyInstance();
     } catch (SVE::VulkanException& exception)
     {
+        if (isMinimized && exception.getVkResult() == VK_ERROR_SURFACE_LOST_KHR)
+        {
+            Chewman::System::restartApp();
+            return 0;
+        }
         std::string message = std::string("Application error: ") + exception.what();
         LOG("Exception occured");
         std::cout << message << std::endl;

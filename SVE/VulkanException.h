@@ -14,6 +14,10 @@ class VulkanException : public std::runtime_error
 public:
     explicit VulkanException(const char* error, VkResult result = VK_RESULT_MAX_ENUM );
     explicit VulkanException(const std::string& error, VkResult result = VK_RESULT_MAX_ENUM);
+    VkResult getVkResult() const;
+
+private:
+    VkResult _result;
 
 };
 
