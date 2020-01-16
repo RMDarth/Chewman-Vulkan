@@ -150,6 +150,7 @@ add_executable(Chewman
         Game/Controls/PanelControl.h
         Game/Controls/SliderControl.cpp
         Game/Controls/SliderControl.h
+        Game/IGameMapService.h
         Game/Game.cpp
         Game/Game.h
         Game/GameDefs.h

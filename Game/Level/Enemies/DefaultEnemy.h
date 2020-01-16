@@ -26,6 +26,7 @@ public:
     void update(float deltaTime) override;
     void increaseState(EnemyState state) override;
     void decreaseState(EnemyState state) override;
+    void enableLight(bool enable) override;
 
 protected:
     virtual float getHeight();
@@ -40,6 +41,7 @@ protected:
     std::shared_ptr<SVE::SceneNode> _debuffNode;
     std::shared_ptr<SVE::SceneNode> _appearNode;
     std::shared_ptr<SVE::SceneNode> _appearNodeRotate;
+    std::shared_ptr<SVE::SceneNode> _lightNode;
     std::shared_ptr<SVE::MeshEntity> _enemyMesh;
 
     std::string _normalMaterial;

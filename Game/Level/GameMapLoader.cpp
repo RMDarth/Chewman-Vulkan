@@ -207,6 +207,10 @@ std::shared_ptr<GameMap> GameMapLoader::loadMap(const std::string& filename, con
     fin >> light >> gameMap->treasureType;
     gameMap->isNight = light == 2;
 
+    auto currentLevel = Game::getInstance()->getProgressManager().getCurrentLevel();
+    if (currentLevel > 0 && Game::getInstance()->getGameSettingsManager().getSettings().switchLight[currentLevel - 1])
+        gameMap->isNight = !gameMap->isNight;
+
     gameMap->mapNode = SVE::Engine::getInstance()->getSceneManager()->createSceneNode();
     gameMap->upperLevelMeshNode = SVE::Engine::getInstance()->getSceneManager()->createSceneNode();
     gameMap->mapNode->attachSceneNode(gameMap->upperLevelMeshNode);

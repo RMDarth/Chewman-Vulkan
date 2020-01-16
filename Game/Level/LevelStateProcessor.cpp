@@ -62,6 +62,7 @@ void LevelStateProcessor::initMap()
     auto future = std::async(std::launch::async, [&]
     {
         _gameMapProcessor = std::make_unique<GameMapProcessor>(Game::getInstance()->getGameMapLoader().loadMap(ss.str()));
+        _progressManager.setGameMapService(_gameMapProcessor.get());
         _progressManager.setCurrentLevelInfo({
             _gameMapProcessor->getGameMap()->timeFor2Stars,
             _gameMapProcessor->getGameMap()->timeFor3Stars,
@@ -148,7 +149,7 @@ GameState LevelStateProcessor::update(float deltaTime)
                 _counterControl->setDefaultMaterial("counter1.png");
             else if (_counterTime > 0.67f)
                 _counterControl->setDefaultMaterial("counter2.png");
-            else if (_counterTime > 0.15)
+            else if (_counterTime > 0.22)
                 _loadingControl->setVisible(false);
             else
                 _counterControl->setDefaultMaterial("counter3.png");
@@ -163,6 +164,7 @@ GameState LevelStateProcessor::update(float deltaTime)
             auto future = std::async(std::launch::async, [&]
             {
                 _oldGameMap.reset();
+                _loadingControl->setVisible(false);
             });
         }
     }
@@ -283,30 +285,33 @@ void LevelStateProcessor::processEvent(Control* control, IEventHandler::EventTyp
     }
     if (type == IEventHandler::MouseDown || type == IEventHandler::MouseUp)
     {
-        if (control->getName() == "leftStick")
+        if (_useOnScreenControl)
         {
-            _gameMapProcessor->setNextMove(MoveDirection::Down);
-            _lastDirection = MoveDirection::Down;
-        } else if (control->getName() == "rightStick")
-        {
-            _gameMapProcessor->setNextMove(MoveDirection::Up);
-            _lastDirection = MoveDirection::Up;
-        } else if (control->getName() == "upStick")
-        {
-            _gameMapProcessor->setNextMove(MoveDirection::Right);
-            _lastDirection = MoveDirection::Right;
-        } else if (control->getName() == "downStick")
-        {
-            _gameMapProcessor->setNextMove(MoveDirection::Left);
-            _lastDirection = MoveDirection::Left;
-        } else if (control->getName() == "stickBackground")
-        {
-            _gameMapProcessor->setNextMove(_lastDirection);
+            if (control->getName() == "leftStick")
+            {
+                _gameMapProcessor->setNextMove(MoveDirection::Down);
+                _lastDirection = MoveDirection::Down;
+            } else if (control->getName() == "rightStick")
+            {
+                _gameMapProcessor->setNextMove(MoveDirection::Up);
+                _lastDirection = MoveDirection::Up;
+            } else if (control->getName() == "upStick")
+            {
+                _gameMapProcessor->setNextMove(MoveDirection::Right);
+                _lastDirection = MoveDirection::Right;
+            } else if (control->getName() == "downStick")
+            {
+                _gameMapProcessor->setNextMove(MoveDirection::Left);
+                _lastDirection = MoveDirection::Left;
+            } else if (control->getName() == "stickBackground")
+            {
+                _gameMapProcessor->setNextMove(_lastDirection);
+            }
         }
     }
     if (type == IEventHandler::MouseMove)
     {
-        if (control->getName() == "stickBackground")
+        if (_useOnScreenControl && control->getName() == "stickBackground")
         {
             _gameMapProcessor->setNextMove(_lastDirection);
         }
@@ -331,13 +336,13 @@ void LevelStateProcessor::updateHUD(float deltaTime)
     stream << _gameMapProcessor->getGameMap()->activeCoins << "/" << _gameMapProcessor->getGameMap()->totalCoins;
     coins->setText(stream.str());
 
-    static auto fps = _document->getControlByName("FPS");
+    /*static auto fps = _document->getControlByName("FPS");
     static std::list<float> fpsList;
     fpsList.push_back(1.0f/deltaTime);
     if (fpsList.size() > 100)
         fpsList.pop_front();
     auto fpsValue = std::accumulate(fpsList.begin(), fpsList.end(), 0.0f) / fpsList.size();
-    fps->setText(std::to_string((int) fpsValue));
+    fps->setText(std::to_string((int) fpsValue));*/
 
     updatePowerUps();
     if (_useOnScreenControl)

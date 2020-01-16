@@ -51,6 +51,7 @@ public:
     void resetState(EnemyState state);
 
     virtual void attackPlayer();
+    virtual void enableLight(bool enable);
 
     bool isDead() const;
     EnemyType getEnemyType() const;
