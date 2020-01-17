@@ -176,8 +176,7 @@ void showAlert(const char* message) {
 extern "C"
 JNIEXPORT void JNICALL
 Java_org_libsdl_app_SDLActivity_nativeMinimize(JNIEnv *env, jclass clazz) {
-    std::cout << "minimize" << std::endl;
-    SVE::Engine::getInstance()->finishRendering();
+    //SVE::Engine::getInstance()->finishRendering();
 }
 
 glm::ivec2 setResolution(SVE::AndroidFS& androidFS)
