@@ -3,6 +3,7 @@
 // Licensed under the MIT License
 
 #include "VulkanException.h"
+#include <string>
 
 namespace SVE
 {
