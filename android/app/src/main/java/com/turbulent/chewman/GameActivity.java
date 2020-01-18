@@ -26,23 +26,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.android.billingclient.api.AcknowledgePurchaseParams;
-import com.android.billingclient.api.AcknowledgePurchaseResponseListener;
-import com.android.billingclient.api.BillingClient;
-import com.android.billingclient.api.BillingClientStateListener;
-import com.android.billingclient.api.BillingFlowParams;
-import com.android.billingclient.api.BillingResult;
-import com.android.billingclient.api.ConsumeParams;
-import com.android.billingclient.api.ConsumeResponseListener;
-import com.android.billingclient.api.Purchase;
-import com.android.billingclient.api.PurchaseHistoryRecord;
-import com.android.billingclient.api.PurchaseHistoryResponseListener;
-import com.android.billingclient.api.PurchasesUpdatedListener;
-import com.android.billingclient.api.RewardLoadParams;
-import com.android.billingclient.api.RewardResponseListener;
-import com.android.billingclient.api.SkuDetails;
-import com.android.billingclient.api.SkuDetailsParams;
-import com.android.billingclient.api.SkuDetailsResponseListener;
+import com.android.billingclient.api.*;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
@@ -56,12 +40,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.games.AchievementsClient;
-import com.google.android.gms.games.AnnotatedData;
-import com.google.android.gms.games.Games;
-import com.google.android.gms.games.GamesClient;
-import com.google.android.gms.games.LeaderboardsClient;
-import com.google.android.gms.games.Player;
+import com.google.android.gms.games.*;
 import com.google.android.gms.games.leaderboard.LeaderboardScore;
 import com.google.android.gms.games.leaderboard.LeaderboardScoreBuffer;
 import com.google.android.gms.games.leaderboard.LeaderboardVariant;
@@ -76,10 +55,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Semaphore;
-
-import static com.google.android.gms.games.leaderboard.LeaderboardVariant.COLLECTION_PUBLIC;
-import static com.google.android.gms.games.leaderboard.LeaderboardVariant.TIME_SPAN_ALL_TIME;
-import static com.google.android.gms.games.leaderboard.LeaderboardVariant.TIME_SPAN_WEEKLY;
 
 public class GameActivity extends org.libsdl.app.SDLActivity {
     private static final String TAG = "Chewman";
@@ -132,7 +107,7 @@ public class GameActivity extends org.libsdl.app.SDLActivity {
     private long[] mPlayerPlace = {-2, -2};
 
 
-    private boolean[] mScoreSubmitted = new boolean[37];
+    private boolean[] mScoreSubmitted = new boolean[37]; // time scores + point score (last element)
 
     private boolean[] mTimeScoresUpdatedFull = new boolean[36];
     private boolean[] mTimeScoresUpdatedWeekly = new boolean[36];
@@ -377,7 +352,7 @@ public class GameActivity extends org.libsdl.app.SDLActivity {
 
     public void showLeaderboard(boolean weekly)
     {
-        mLeaderboardsClient.getLeaderboardIntent(getString(R.string.leaderboard_scores), weekly ? TIME_SPAN_WEEKLY : TIME_SPAN_ALL_TIME, COLLECTION_PUBLIC)
+        mLeaderboardsClient.getLeaderboardIntent(getString(R.string.leaderboard_scores), weekly ? LeaderboardVariant.TIME_SPAN_WEEKLY : LeaderboardVariant.TIME_SPAN_ALL_TIME, LeaderboardVariant.COLLECTION_PUBLIC)
                 .addOnSuccessListener(new OnSuccessListener<Intent>() {
             @Override
             public void onSuccess(Intent intent) {
@@ -392,7 +367,7 @@ public class GameActivity extends org.libsdl.app.SDLActivity {
         levelStr = levelStr + (level + 1);
         int id = getResources().getIdentifier("leaderboard_level" + levelStr + "time", "string", this.getPackageName());
 
-        mLeaderboardsClient.getLeaderboardIntent(getString(id), weekly ? TIME_SPAN_WEEKLY : TIME_SPAN_ALL_TIME, COLLECTION_PUBLIC)
+        mLeaderboardsClient.getLeaderboardIntent(getString(id), weekly ? LeaderboardVariant.TIME_SPAN_WEEKLY : LeaderboardVariant.TIME_SPAN_ALL_TIME, LeaderboardVariant.COLLECTION_PUBLIC)
                 .addOnSuccessListener(new OnSuccessListener<Intent>() {
                     @Override
                     public void onSuccess(Intent intent) {
@@ -746,15 +721,15 @@ public class GameActivity extends org.libsdl.app.SDLActivity {
         mScoresUpdated[1] = false;
 
         mLeaderboardsClient.loadTopScores(
-                getString(R.string.leaderboard_scores), LeaderboardVariant.TIME_SPAN_ALL_TIME, COLLECTION_PUBLIC, 5, mRefreshScores)
+                getString(R.string.leaderboard_scores), LeaderboardVariant.TIME_SPAN_ALL_TIME, LeaderboardVariant.COLLECTION_PUBLIC, 5, mRefreshScores)
                 .addOnCompleteListener(this, getLeaderboardListener(false));
 
         mLeaderboardsClient.loadTopScores(
-                getString(R.string.leaderboard_scores), TIME_SPAN_WEEKLY, COLLECTION_PUBLIC, 5, mRefreshScores)
+                getString(R.string.leaderboard_scores), LeaderboardVariant.TIME_SPAN_WEEKLY, LeaderboardVariant.COLLECTION_PUBLIC, 5, mRefreshScores)
                 .addOnCompleteListener(this, getLeaderboardListener(true));
 
         mLeaderboardsClient.loadCurrentPlayerLeaderboardScore(
-                getString(R.string.leaderboard_scores), LeaderboardVariant.TIME_SPAN_ALL_TIME, COLLECTION_PUBLIC)
+                getString(R.string.leaderboard_scores), LeaderboardVariant.TIME_SPAN_ALL_TIME, LeaderboardVariant.COLLECTION_PUBLIC)
                 .addOnCompleteListener(this, new OnCompleteListener<AnnotatedData<LeaderboardScore>>() {
                     @Override
                     public void onComplete(@NonNull Task<AnnotatedData<LeaderboardScore>> task) {
@@ -777,7 +752,7 @@ public class GameActivity extends org.libsdl.app.SDLActivity {
                 });
 
         mLeaderboardsClient.loadCurrentPlayerLeaderboardScore(
-                getString(R.string.leaderboard_scores), TIME_SPAN_WEEKLY, COLLECTION_PUBLIC)
+                getString(R.string.leaderboard_scores), LeaderboardVariant.TIME_SPAN_WEEKLY, LeaderboardVariant.COLLECTION_PUBLIC)
                 .addOnCompleteListener(this, new OnCompleteListener<AnnotatedData<LeaderboardScore>>() {
                     @Override
                     public void onComplete(@NonNull Task<AnnotatedData<LeaderboardScore>> task) {
@@ -820,11 +795,11 @@ public class GameActivity extends org.libsdl.app.SDLActivity {
                         int id = getResources().getIdentifier("leaderboard_level" + levelStr + "time", "string", activity.getPackageName());
 
                         mLeaderboardsClient.loadTopScores(
-                                getString(id), LeaderboardVariant.TIME_SPAN_ALL_TIME, COLLECTION_PUBLIC, 1, mRefreshScores)
+                                getString(id), LeaderboardVariant.TIME_SPAN_ALL_TIME, LeaderboardVariant.COLLECTION_PUBLIC, 1, mRefreshScores)
                                 .addOnCompleteListener(activity, getTimeLeaderboardListener(false, i));
 
                         mLeaderboardsClient.loadTopScores(
-                                getString(id), TIME_SPAN_WEEKLY, COLLECTION_PUBLIC, 1, mRefreshScores)
+                                getString(id), LeaderboardVariant.TIME_SPAN_WEEKLY, LeaderboardVariant.COLLECTION_PUBLIC, 1, mRefreshScores)
                                 .addOnCompleteListener(activity, getTimeLeaderboardListener(true, i));
                         try {
                             Thread.sleep(500);
