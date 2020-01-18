@@ -473,8 +473,18 @@ void GameRulesProcessor::deactivatePowerUp(PowerUpType type)
             getPlayer()->getMapTraveller()->setWallAccessible(false);
             break;
         case PowerUpType::Teeth:
+        {
             getPlayer()->getMapTraveller()->setWallAccessible(false);
+            auto mapPos = getPlayer()->getMapTraveller()->getMapPosition(getPlayer()->getMapTraveller()->getTargetPos());
+            if (gameMap->mapData[mapPos.x][mapPos.y].cellType == CellType::Wall)
+            {
+                gameMap->mapData[mapPos.x][mapPos.y].cellType = CellType::Floor;
+                gameMap->eatEffectManager->addEffect(EatEffectType::Walls, mapPos);
+                Game::getInstance()->getSoundsManager().playSound(SoundType::ChewWall);
+                regenerateMap();
+            }
             break;
+        }
         case PowerUpType::Slow:
             if (_lastSpeedPowerUp == type)
                 getPlayer()->getMapTraveller()->setSpeed(MoveSpeed);

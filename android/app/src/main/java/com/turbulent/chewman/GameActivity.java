@@ -144,7 +144,7 @@ public class GameActivity extends org.libsdl.app.SDLActivity {
     private ScoreInfo[] mFullTimeScores = new ScoreInfo[36];
 
     // ads
-    private AdView mAdView;
+    private AdView mAdView = null;
     private boolean mAdsInitialized = false;
     private boolean mAdsHidden = true;
 
@@ -152,6 +152,7 @@ public class GameActivity extends org.libsdl.app.SDLActivity {
     protected void onCreate(Bundle savedInstanceState) {
         this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         super.onCreate(savedInstanceState);
+        Log.d(TAG, "onCreate()");
 
         mSharedPreferences = getSharedPreferences("settings", Context.MODE_PRIVATE);
         mPlayerDisplayName = mSharedPreferences.getString("playerName", "Player");
@@ -175,15 +176,20 @@ public class GameActivity extends org.libsdl.app.SDLActivity {
             public void onInitializationComplete(InitializationStatus initializationStatus) {
                 Log.d(TAG, "MobileAds.initialize() finished");
                 mAdsInitialized = true;
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mAdView = new AdView(getContext());
+                        mAdView.setAdSize(AdSize.BANNER);
+                        mAdView.setAdUnitId("ca-app-pub-3940256099942544/6300978111");
+
+                        AdRequest adRequest = new AdRequest.Builder().build();
+                        mAdView.loadAd(adRequest);
+                    }
+                });
             }
         });
-
-        mAdView = new AdView(this);
-        mAdView.setAdSize(AdSize.BANNER);
-        mAdView.setAdUnitId("ca-app-pub-3940256099942544/6300978111");
-
-        AdRequest adRequest = new AdRequest.Builder().build();
-        mAdView.loadAd(adRequest);
 
         loadPurchases();
         mBillingClient = BillingClient.newBuilder(this).enablePendingPurchases().setListener(new PurchasesUpdatedListener() {
@@ -205,7 +211,7 @@ public class GameActivity extends org.libsdl.app.SDLActivity {
         super.onResume();
         Log.d(TAG, "onResume()");
 
-        if (!mAdsHidden)
+        if (!mAdsHidden && mAdView != null)
             mAdView.resume();
 
         // Since the state of the signed in user can change when the activity is not active
@@ -215,7 +221,7 @@ public class GameActivity extends org.libsdl.app.SDLActivity {
 
     @Override
     protected void onPause() {
-        if (!mAdsHidden)
+        if (!mAdsHidden && mAdView != null)
             mAdView.pause();
 
         super.onPause();
@@ -223,7 +229,8 @@ public class GameActivity extends org.libsdl.app.SDLActivity {
 
     @Override
     protected void onDestroy() {
-        mAdView.destroy();
+        if (mAdView != null)
+            mAdView.destroy();
         super.onDestroy();
     }
 
@@ -258,7 +265,7 @@ public class GameActivity extends org.libsdl.app.SDLActivity {
 
     public void showAds(final int horizontalAlignment, final int verticalAlignment)
     {
-        if (mCampaign3ProductBought)
+        if (mCampaign3ProductBought || mAdView == null)
             return;
 
         runOnUiThread(new Runnable() {
@@ -290,7 +297,7 @@ public class GameActivity extends org.libsdl.app.SDLActivity {
 
     public void hideAds()
     {
-        if (!mAdsHidden) {
+        if (!mAdsHidden && mAdView != null) {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -1100,6 +1107,7 @@ public class GameActivity extends org.libsdl.app.SDLActivity {
         {
             for (Purchase purchase : purchasesResult.getPurchasesList())
             {
+                Log.d(TAG, "Purchase: " + purchase.getSku() + ", State: " + purchase.getPurchaseState());
                 if (purchase.getPurchaseState() == Purchase.PurchaseState.PURCHASED
                      && purchase.getSku().equals(mCampaignProductName))
                 {

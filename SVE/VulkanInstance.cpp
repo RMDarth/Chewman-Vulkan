@@ -369,7 +369,7 @@ void VulkanInstance::waitAvailableFramebuffer()
         return;
     } else if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR)
     {
-        throw VulkanException("Can't acquire Vulkan Swapchain image");
+        throw VulkanException("Can't acquire Vulkan Swapchain image", result);
     }
 }
 
@@ -581,9 +581,10 @@ void VulkanInstance::createInstance()
         instanceInfo.ppEnabledLayerNames = validationLayers.data();
     }
 
-    if (vkCreateInstance(&instanceInfo, nullptr, &_instance) != VK_SUCCESS)
+    auto result = vkCreateInstance(&instanceInfo, nullptr, &_instance);
+    if (result != VK_SUCCESS)
     {
-        throw VulkanException("Vulkan Instance not created");
+        throw VulkanException("Vulkan Instance not created", result);
     }
 }
 
@@ -669,9 +670,10 @@ void VulkanInstance::createDevice()
     }
 
 
-    if (vkCreateDevice(_gpu, &deviceCreateInfo, nullptr, &_device) != VK_SUCCESS)
+    auto result = vkCreateDevice(_gpu, &deviceCreateInfo, nullptr, &_device);
+    if (result != VK_SUCCESS)
     {
-        throw VulkanException("Cannot create Vulkan device");
+        throw VulkanException("Cannot create Vulkan device", result);
     }
 
     vkGetDeviceQueue(_device, _queueIndex, 0, &_queue);
@@ -859,9 +861,10 @@ void VulkanInstance::createSwapchain()
     swapchainCreateInfo.clipped = VK_TRUE;
     swapchainCreateInfo.oldSwapchain = VK_NULL_HANDLE; // used when recreating (when resizing)
 
-    if (vkCreateSwapchainKHR(_device, &swapchainCreateInfo, nullptr, &_swapchain) != VK_SUCCESS)
+    auto result = vkCreateSwapchainKHR(_device, &swapchainCreateInfo, nullptr, &_swapchain);
+    if (result != VK_SUCCESS)
     {
-        throw VulkanException("Failed to create Vulkan swapchain");
+        throw VulkanException("Failed to create Vulkan swapchain", result);
     }
 
     uint32_t realImagesCount;
@@ -969,9 +972,10 @@ void VulkanInstance::createRenderPass()
     renderPassCreateInfo.dependencyCount = 1;
     renderPassCreateInfo.pDependencies = &subpassDependency;
 
-    if (vkCreateRenderPass(_device, &renderPassCreateInfo, nullptr, &_renderPass) != VK_SUCCESS)
+    auto result = vkCreateRenderPass(_device, &renderPassCreateInfo, nullptr, &_renderPass);
+    if (result != VK_SUCCESS)
     {
-        throw VulkanException("Can't create Vulkan render pass");
+        throw VulkanException("Can't create Vulkan render pass", result);
     }
 
     VulkanPassInfo::PassData data {

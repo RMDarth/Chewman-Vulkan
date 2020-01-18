@@ -1,3 +1,6 @@
+// Chewman Vulkan game
+// Copyright (c) 2018-2020, Igor Barinov
+// Licensed under the MIT License
 #include "SDL.h"
 #include "VulkanHeaders.h"
 #include <vector>
@@ -10,11 +13,11 @@
 #include <future>
 #include <chrono>
 #include <fstream>
-#include <SVE/VulkanException.h>
 #include <android/native_window.h>
 #include <android/native_window_jni.h>
 #include "logging.h"
 #include "SVE/Engine.h"
+#include "SVE/VulkanException.h"
 #include "SVE/SceneManager.h"
 #include "SVE/MeshEntity.h"
 #include "SVE/ResourceManager.h"
@@ -175,8 +178,7 @@ void showAlert(const char* message) {
 extern "C"
 JNIEXPORT void JNICALL
 Java_org_libsdl_app_SDLActivity_nativeMinimize(JNIEnv *env, jclass clazz) {
-    std::cout << "minimize" << std::endl;
-    SVE::Engine::getInstance()->finishRendering();
+    //SVE::Engine::getInstance()->finishRendering();
 }
 
 glm::ivec2 setResolution(SVE::AndroidFS& androidFS)
