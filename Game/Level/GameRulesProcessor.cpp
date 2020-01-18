@@ -183,19 +183,7 @@ void GameRulesProcessor::update(float deltaTime)
             }
             if (gameMap->mapData[mapPos.x][mapPos.y].cellType == CellType::Wall && _activeState[static_cast<uint8_t>(PowerUpType::Teeth)])
             {
-                gameMap->mapData[mapPos.x][mapPos.y].cellType = CellType::Floor;
-                gameMap->eatEffectManager->addEffect(EatEffectType::Walls, mapPos);
-                Game::getInstance()->getSoundsManager().playSound(SoundType::ChewWall);
-
-                auto& node = gameMap->mapData[mapPos.x][mapPos.y].cellBlock;
-                auto list = node->getAttachedEntities();
-                for (auto &entity : list)
-                {
-                    gameMap->unusedEntitiesNode->attachEntity(entity);
-                }
-
-                node->detachAllEntities();
-                updateKnightPath();
+                destroyWallCell(mapPos);
             }
         } else {
             _insideTeleport = false;
@@ -488,10 +476,7 @@ void GameRulesProcessor::deactivatePowerUp(PowerUpType type)
             auto mapPos = getPlayer()->getMapTraveller()->getMapPosition(getPlayer()->getMapTraveller()->getTargetPos());
             if (gameMap->mapData[mapPos.x][mapPos.y].cellType == CellType::Wall)
             {
-                gameMap->mapData[mapPos.x][mapPos.y].cellType = CellType::Floor;
-                gameMap->eatEffectManager->addEffect(EatEffectType::Walls, mapPos);
-                Game::getInstance()->getSoundsManager().playSound(SoundType::ChewWall);
-                regenerateMap();
+                destroyWallCell(mapPos);
             }
             break;
         }
@@ -639,6 +624,24 @@ void GameRulesProcessor::destroyWalls(glm::ivec2 pos)
         }
     }
 
+    updateKnightPath();
+}
+
+void GameRulesProcessor::destroyWallCell(glm::ivec2 pos)
+{
+    auto gameMap = _gameMapProcessor.getGameMap();
+    gameMap->mapData[pos.x][pos.y].cellType = CellType::Floor;
+    gameMap->eatEffectManager->addEffect(EatEffectType::Walls, pos);
+    Game::getInstance()->getSoundsManager().playSound(SoundType::ChewWall);
+
+    auto& node = gameMap->mapData[pos.x][pos.y].cellBlock;
+    auto list = node->getAttachedEntities();
+    for (auto &entity : list)
+    {
+        gameMap->unusedEntitiesNode->attachEntity(entity);
+    }
+
+    node->detachAllEntities();
     updateKnightPath();
 }
 

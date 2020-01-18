@@ -59,6 +59,7 @@ private:
 
     void updateCameraAnimation(float deltaTime);
     void destroyWalls(glm::ivec2 pos);
+    void destroyWallCell(glm::ivec2 pos);
     void updateWallsDown(float deltaTime);
     void updateKnightPath();
     bool eatCoin(glm::ivec2 pos);
