@@ -54,7 +54,7 @@ std::string addPossibleResult(VkResult result)
     return "";
 }
 
-}
+} // anon namespace
 
 VulkanException::VulkanException(const char* error, VkResult result)
     : runtime_error(std::string(error) + addPossibleResult(result))

@@ -6,6 +6,7 @@
 #include "SVE/LightManager.h"
 #include "SVE/PostEffectManager.h"
 #include "SVE/PipelineCacheManager.h"
+#include "SVE/VulkanException.h"
 #include "SVE/FontManager.h"
 
 #include "Game/Game.h"
@@ -305,14 +306,17 @@ int runGame()
 
 int main(int argv, char** args)
 {
-    //try
+    try
     {
         return runGame();
     }
-    //catch (const std::exception& ex)
+    catch (const SVE::VulkanException& ex)
     {
-    //    std::cerr << "Unhandled exception: " << ex.what() << std::endl;
-     //   throw;
-        //return 2;
+        std::cerr << "Application exception: " << ex.what() << std::endl;
+    }
+    catch (const std::exception& ex)
+    {
+        std::cerr << "Unhandled exception: " << ex.what() << std::endl;
+        throw;
     }
 }

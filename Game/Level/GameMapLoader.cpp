@@ -549,6 +549,7 @@ void GameMapLoader::createGargoyle(GameMap& level, int row, int column, char map
     lightSettings.constAtten = 1.0f * 0.8f;
     lightSettings.linearAtten = 0.35f * 0.15f;
     lightSettings.quadAtten = 0.44f * 0.15f;
+    lightSettings.secondPoint = rootPos + glm::vec3(0.1,0,0);
     if (Game::getInstance()->getGraphicsManager().getSettings().dynamicLights == LightSettings::Simple)
         lightSettings.isSimple = true;
 

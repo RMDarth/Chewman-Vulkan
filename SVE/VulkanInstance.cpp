@@ -654,7 +654,6 @@ void VulkanInstance::createInstance()
     }
 
     auto result = vkCreateInstance(&instanceInfo, nullptr, &_instance);
-
     if (result != VK_SUCCESS)
     {
         throw VulkanException("Vulkan Instance not created", result);

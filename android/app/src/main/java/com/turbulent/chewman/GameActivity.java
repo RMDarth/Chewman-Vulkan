@@ -179,7 +179,7 @@ public class GameActivity extends org.libsdl.app.SDLActivity {
                     public void run() {
                         mAdView = new AdView(getContext());
                         mAdView.setAdSize(AdSize.BANNER);
-                        mAdView.setAdUnitId("ca-app-pub-3940256099942544/6300978111"); //test = "ca-app-pub-3940256099942544/6300978111", real = "ca-app-pub-4708479882450965/5410854954"
+                        mAdView.setAdUnitId("ca-app-pub-3940256099942544/6300978111");
 
                         AdRequest adRequest = new AdRequest.Builder().build();
                         mAdView.loadAd(adRequest);
