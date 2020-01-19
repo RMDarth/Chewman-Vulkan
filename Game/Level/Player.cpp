@@ -187,6 +187,14 @@ void Player::processInput(const SDL_Event& event)
                 else
                     _nextMove = MoveDirection::Left;
             }
+
+            if (!_mapTraveller->isTargetReached() && _mapTraveller->isCloseToTurn()
+                && _nextMove != _mapTraveller->getCurrentDirection()
+                && !isAntiDirection(_nextMove, _mapTraveller->getCurrentDirection())
+                && _mapTraveller->isMovePossible(_nextMove))
+            {
+                _mapTraveller->setPosition(_mapTraveller->getMapPosition());
+            }
         }
         if (event.type == SDL_MOUSEBUTTONUP)
         {
@@ -209,6 +217,14 @@ void Player::processInput(const SDL_Event& event)
                     _nextMove = MoveDirection::Right;
                 else
                     _nextMove = MoveDirection::Left;
+            }
+
+            if (!_mapTraveller->isTargetReached() && _mapTraveller->isCloseToTurn()
+                && _nextMove != _mapTraveller->getCurrentDirection()
+                && !isAntiDirection(_nextMove, _mapTraveller->getCurrentDirection())
+                && _mapTraveller->isMovePossible(_nextMove))
+            {
+                _mapTraveller->setPosition(_mapTraveller->getMapPosition());
             }
         }
     }
