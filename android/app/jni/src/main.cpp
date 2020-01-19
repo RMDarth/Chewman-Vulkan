@@ -448,14 +448,22 @@ int SDL_main(int argc, char *argv[]) {
         //engine->destroyInstance();
     } catch (SVE::VulkanException& exception)
     {
-        if (isMinimized && (exception.getVkResult() == VK_ERROR_SURFACE_LOST_KHR || exception.getVkResult() == VK_ERROR_DEVICE_LOST))
-        {
-            Chewman::System::restartApp();
-            return 0;
-        }
         std::string message = std::string("Application error: ") + exception.what();
         LOG("Exception occured");
         std::cout << message << std::endl;
+
+        if (exception.getVkResult() == VK_ERROR_SURFACE_LOST_KHR || exception.getVkResult() == VK_ERROR_DEVICE_LOST)
+        {
+            if (isMinimized)
+            {
+                Chewman::System::restartApp();
+                return 0;
+            } else {
+                Chewman::System::exitApp();
+                return 0;
+            }
+        }
+
         showAlert(message.c_str());
         std::exit(1);
     }
