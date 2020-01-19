@@ -87,6 +87,7 @@ void PauseStateProcessor::processEvent(Control* control, IEventHandler::EventTyp
             if (auto* gameService = Game::getInstance()->getProgressManager().getGameMapService())
             {
                 gameService->switchDayNight();
+                Game::getInstance()->setState(GameState::Level);
             }
         }
 

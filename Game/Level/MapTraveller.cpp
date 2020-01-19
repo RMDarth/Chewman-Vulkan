@@ -7,9 +7,10 @@
 
 namespace Chewman
 {
-
 namespace
 {
+
+constexpr float TurnDistance = 0.4f;
 
 void moveTo(MoveDirection dir, glm::ivec2& mapPosition)
 {
@@ -204,6 +205,11 @@ void MapTraveller::setPosition(glm::ivec2 position)
 bool MapTraveller::isCloseToAffect(glm::vec2 pos) const
 {
     return glm::distance(_position, pos) < _affectDistance;
+}
+
+bool MapTraveller::isCloseToTurn() const
+{
+    return glm::distance(_position, toRealPos(getMapPosition())) < TurnDistance;
 }
 
 glm::vec2 MapTraveller::toRealPos(glm::ivec2 pos)

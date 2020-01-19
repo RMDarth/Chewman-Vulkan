@@ -1,0 +1,35 @@
+<document>
+    <Label name="scoreimg" x="0.01" y="0.01" width="0.15" height="-0.364" image="scorebar.png" mousetransparent="true"/>
+    <Label name="timeimg" x="0.20" y="0.01" width="0.15" height="-0.364" image="timebar.png" mousetransparent="true"/>
+    <Label name="score" text="0" x="0.01" y="0.012" width="0.19" height="-0.283" font-size="60" mousetransparent="true"/>
+    <Label name="time" text="0:00" x="0.2" y="0.012" width="0.19" height="-0.283" font-size="60" mousetransparent="true"/>
+
+    <Label name="level" text="Level 1: LevelName" x="0.025" y="0.107" width="0.1" height="0.05" textAlignment="Left" font-size="50" mousetransparent="true"/>
+
+    <Image name="lifeimg" x="0.015" y="0.19" height="0.07" width="-1" image="trashlife.png" />
+    <Label name="lifecount" text="02" x="0.057" y="0.185" height="0.09" width="-1" textAlignment="Left" mousetransparent="true"/>
+
+    <Image name="coinimg" x="0.025" y="0.16" height="0.035" width="-1" image="coin.png" mousetransparent="true"/>
+    <Label name="Coins" text="0" x="0.057" y="0.155" width="0.1" height="0.05" font-size="45" textAlignment="Left" mousetransparent="true"/>
+
+    <Label name="FPS" text="" x="0.6" y="0.02" width="0.1" height="0.05" textAlignment="Left"  mousetransparent="true"/>
+
+    <Image name="Counter" y="0.4" height="0.2" width="-0.67" alignment="center" image="counter3.png"/>
+    <Image name="loading" x="0.2" y="0.62" alignment="center" width="-3.37" height="0.12" image="loadingText.png"/>
+
+    <Container name="stickBackground" x="0.04" y="0.53" height="0.4" width="-1">
+        <Image name="upStick" x="0.33" y="0.05" height="0.333" width="0.333" color="1 1 1 1" image="buttons/upStick.png" />
+        <Image name="leftStick" x="0.05" y="0.333" height="0.333" width="0.333" color="1 1 1 1" image="buttons/leftStick.png"  />
+        <Image name="rightStick" x="0.617" y="0.333" height="0.333" width="0.333" color="1 1 1 1" image="buttons/rightStick.png"  />
+        <Image name="downStick" x="0.333" y="0.617" height="0.333" width="0.333" color="1 1 1 1" image="buttons/downStick.png" />
+    </Container>
+
+    <Image name="powerup1" x="0.90" y="0.8" height="-1" width="0.08" />
+    <Image name="powerup2" x="0.82" y="0.8" height="-1" width="0.08" />
+    <Image name="powerup3" x="0.74" y="0.8" height="-1" width="0.08" />
+    <Image name="powerup4" x="0.66" y="0.8" height="-1" width="0.08" />
+    <Image name="powerup5" x="0.58" y="0.8" height="-1" width="0.08" />
+
+    <Button name="pause" text="" x="0.87" y="0.01" width="0.08" height="-1" image="buttons/pause.png"
+            hoverimage="buttons/pause_hover.png" pressedimage="buttons/pause_pressed.png"/>
+</document>

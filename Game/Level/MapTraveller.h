@@ -52,6 +52,7 @@ public:
     GameMap* getGameMap() const;
 
     bool isCloseToAffect(glm::vec2 pos) const;
+    bool isCloseToTurn() const;
 
     static glm::vec2 toRealPos(glm::ivec2 pos);
 

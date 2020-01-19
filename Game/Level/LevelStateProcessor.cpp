@@ -18,8 +18,8 @@ namespace Chewman
 
 LevelStateProcessor::LevelStateProcessor()
     : _progressManager(Game::getInstance()->getProgressManager())
+    , _document(std::make_unique<ControlDocument>(isWideScreen() ? "resources/game/GUI/HUDWide.xml" : "resources/game/GUI/HUD.xml"))
 {
-    _document = std::make_unique<ControlDocument>("resources/game/GUI/HUD.xml");
     _document->setMouseUpHandler(this);
     _counterControl = _document->getControlByName("Counter");
     _counterControl->setDefaultMaterial("counter1.png");
@@ -232,6 +232,10 @@ void LevelStateProcessor::processEvent(Control* control, IEventHandler::EventTyp
             _gameMapProcessor->setState(GameMapState::Pause);
             Game::getInstance()->setState(GameState::Pause);
         }
+        if (control->getName() == "lifeimg")
+        {
+            _showFPS = !_showFPS;
+        }
     }
     if (type == IEventHandler::MouseDown)
     {
@@ -272,13 +276,17 @@ void LevelStateProcessor::updateHUD(float deltaTime)
     stream << _gameMapProcessor->getGameMap()->activeCoins << "/" << _gameMapProcessor->getGameMap()->totalCoins;
     coins->setText(stream.str());
 
-    /*static auto fps = _document->getControlByName("FPS");
+    static auto fps = _document->getControlByName("FPS");
     static std::list<float> fpsList;
     fpsList.push_back(1.0f/deltaTime);
     if (fpsList.size() > 100)
         fpsList.pop_front();
-    auto fpsValue = std::accumulate(fpsList.begin(), fpsList.end(), 0.0f) / fpsList.size();
-    fps->setText(std::to_string((int) fpsValue));*/
+
+    if (_showFPS)
+    {
+        auto fpsValue = std::accumulate(fpsList.begin(), fpsList.end(), 0.0f) / fpsList.size();
+        fps->setText("FPS: " + std::to_string((int) fpsValue));
+    }
 
     updatePowerUps();
     if (_useOnScreenControl)
