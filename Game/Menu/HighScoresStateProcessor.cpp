@@ -304,7 +304,7 @@ void HighscoresStateProcessor::updatePointScores()
         bool playerInserted = false;
         auto bestScore = Game::getInstance()->getScoresManager().getBestScore();
 
-        if (bestScore != 0 && _isWeeklyActive &&
+        if (bestScore != 0 && !_isWeeklyActive &&
             (scoreData.empty() || scoreData.size() < 5 || bestScore > scoreData.back().second))
         {
             std::string playerName = System::getPlayerName();

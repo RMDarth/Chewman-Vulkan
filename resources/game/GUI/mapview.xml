@@ -1,0 +1,6 @@
+<document>
+    <Button name="back" text="" x="0.87" y="0.01" width="0.08" height="-1" image="buttons/back.png" hoverimage="buttons/back_hover.png" pressedimage="buttons/back_pressed.png"/>
+
+    <Button name="zoomin" text="" x="0.87" y="0.7" width="0.08" height="-1" image="buttons/zoomin.png" hoverimage="buttons/zoomin_hover.png" pressedimage="buttons/zoomin_pressed.png"/>
+    <Button name="zoomout" text="" x="0.87" y="0.83" width="0.08" height="-1" image="buttons/zoomout.png" hoverimage="buttons/zoomout_hover.png" pressedimage="buttons/zoomout_pressed.png"/>
+</document>

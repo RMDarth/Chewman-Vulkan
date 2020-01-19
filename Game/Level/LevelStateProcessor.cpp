@@ -102,7 +102,7 @@ GameState LevelStateProcessor::update(float deltaTime)
             break;
         case GameMapState::Animation:
             if (_gameMapProcessor->getGameMap()->player->isDying())
-                _time += deltaTime * 2;
+                _time += deltaTime;
             break;
         case GameMapState::Victory:
             // TODO: Display victory menu
@@ -132,8 +132,6 @@ GameState LevelStateProcessor::update(float deltaTime)
                 _counterControl->setDefaultMaterial("counter1.png");
             else if (_counterTime > 0.67f)
                 _counterControl->setDefaultMaterial("counter2.png");
-            else if (_counterTime > 0.22)
-                _loadingControl->setVisible(false);
             else
                 _counterControl->setDefaultMaterial("counter3.png");
         }
@@ -193,6 +191,10 @@ void LevelStateProcessor::show()
     }
     _gameMapProcessor->setVisible(true);
     _document->show();
+    if (!_countToRemove)
+    {
+        _loadingControl->setVisible(false);
+    }
     if (_gameMapProcessor->getState() != GameMapState::LevelStart)
     {
         _loadingControl->setVisible(false);
@@ -229,6 +231,8 @@ void LevelStateProcessor::processEvent(Control* control, IEventHandler::EventTyp
     {
         if (control->getName() == "pause")
         {
+            _loadingControl->setVisible(false);
+            _counterControl->setVisible(false);
             _gameMapProcessor->setState(GameMapState::Pause);
             Game::getInstance()->setState(GameState::Pause);
         }

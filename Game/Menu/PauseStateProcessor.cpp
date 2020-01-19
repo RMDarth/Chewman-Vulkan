@@ -82,6 +82,12 @@ void PauseStateProcessor::processEvent(Control* control, IEventHandler::EventTyp
             }
         }
 
+        if (control->getName() == "map")
+        {
+            hide();
+            Game::getInstance()->setState(GameState::Map);
+        }
+
         if (control->getName() == "daynight")
         {
             if (auto* gameService = Game::getInstance()->getProgressManager().getGameMapService())
@@ -123,6 +129,7 @@ void PauseStateProcessor::resetControls(bool isExtended)
     _document->getControlByName("continue")->setVisible(!isExtended);
     _document->getControlByName("restart")->setVisible(!isExtended);
     _document->getControlByName("tomenu")->setVisible(!isExtended);
+    _document->getControlByName("map")->setVisible(!isExtended);
     _document->getControlByName("more")->setDefaultMaterial(isExtended ? "buttons/up.png" : "buttons/down.png");
     _document->getControlByName("more")->setHoverMaterial(isExtended ? "buttons/up.png" : "buttons/down.png");
 

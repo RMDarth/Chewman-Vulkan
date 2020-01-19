@@ -300,4 +300,9 @@ void GameMapProcessor::switchDayNight()
     settingsManager.store();
 }
 
+glm::ivec2 GameMapProcessor::getGameMapSize()
+{
+    return glm::ivec2(_gameMap->width, _gameMap->height);
+}
+
 } // namespace Chewman

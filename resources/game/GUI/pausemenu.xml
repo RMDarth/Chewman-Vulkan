@@ -5,9 +5,10 @@
         <Button name="reset" text="Reset (-1 life)" y="0.27" alignment="center" width="-3.873" height="0.25" font-size="60" />
         <Button name="daynight" text="Day/Night" y="0.51" alignment="center" width="-3.873" height="0.25" font-size="60"/>
 
-        <Button name="continue" text="" x="0.1" y="0.35" width="0.2" height="-1" image="buttons/play.png" hoverimage="buttons/play_hover.png" pressedimage="buttons/play_pressed.png" />
-        <Button name="restart" text="" x="0.4" y="0.35" width="0.2" height="-1" image="buttons/restart.png" hoverimage="buttons/restart_hover.png" pressedimage="buttons/restart_pressed.png"/>
-        <Button name="tomenu" text="" x="0.7" y="0.35" width="0.2" height="-1" image="buttons/menu.png" hoverimage="buttons/menu_hover.png" pressedimage="buttons/menu_pressed.png"/>
+        <Button name="continue" text="" x="0.06" y="0.35" width="0.2" height="-1" image="buttons/play.png" hoverimage="buttons/play_hover.png" pressedimage="buttons/play_pressed.png" />
+        <Button name="restart" text="" x="0.2867" y="0.35" width="0.2" height="-1" image="buttons/restart.png" hoverimage="buttons/restart_hover.png" pressedimage="buttons/restart_pressed.png"/>
+        <Button name="map" text="" x="0.5133" y="0.35" width="0.2" height="-1" image="buttons/map.png" hoverimage="buttons/map_hover.png" pressedimage="buttons/map_pressed.png"/>
+        <Button name="tomenu" text="" x="0.74" y="0.35" width="0.2" height="-1" image="buttons/menu.png" hoverimage="buttons/menu_hover.png" pressedimage="buttons/menu_pressed.png"/>
 
         <Button name="more" text="" x="0.45" y="0.75" width="0.1" height="-1" image="buttons/down.png" hoverimage="buttons/down.png" pressedimage="buttons/down.png" />
     </Panel>
