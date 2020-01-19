@@ -36,8 +36,9 @@
 #define LOG(...) __android_log_print(ANDROID_LOG_DEBUG, "Chewman", __VA_ARGS__)
 
 SDL_Window *window = NULL;
-jobject _globalAssetManager;
+jobject globalAssetManager;
 bool firstRun = false;
+bool isMinimized = false;
 
 ANativeWindow* GetNativeWindow()
 {
@@ -145,12 +146,12 @@ AAssetManager* getAssetManager()
 
     jmethodID activityClassGetAssets = env->GetMethodID(activityClass, "getAssets", "()Landroid/content/res/AssetManager;");
     jobject assetManager = env->CallObjectMethod(activity, activityClassGetAssets);
-    _globalAssetManager = env->NewGlobalRef(assetManager);
+    globalAssetManager = env->NewGlobalRef(assetManager);
 
     env->DeleteLocalRef(activity);
     env->DeleteLocalRef(activityClass);
 
-    return AAssetManager_fromJava(env, _globalAssetManager);
+    return AAssetManager_fromJava(env, globalAssetManager);
 }
 
 void showAlert(const char* message) {
@@ -179,6 +180,7 @@ void showAlert(const char* message) {
 extern "C"
 JNIEXPORT void JNICALL
 Java_org_libsdl_app_SDLActivity_nativeMinimize(JNIEnv *env, jclass clazz) {
+    isMinimized = true;
     //SVE::Engine::getInstance()->finishRendering();
 }
 
@@ -458,6 +460,19 @@ int SDL_main(int argc, char *argv[]) {
         std::string message = std::string("Application error: ") + exception.what();
         LOG("Exception occured");
         std::cout << message << std::endl;
+
+        if (exception.getVkResult() == VK_ERROR_SURFACE_LOST_KHR || exception.getVkResult() == VK_ERROR_DEVICE_LOST)
+        {
+            if (isMinimized)
+            {
+                Chewman::System::restartApp();
+                return 0;
+            } else {
+                Chewman::System::exitApp();
+                return 0;
+            }
+        }
+
         showAlert(message.c_str());
         std::exit(1);
     }

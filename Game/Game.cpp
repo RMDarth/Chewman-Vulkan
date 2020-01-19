@@ -18,6 +18,7 @@
 #include "Game/Menu/CreditsStateProcessor.h"
 #include "Game/Menu/SettingsStateProcessor.h"
 #include "Game/Menu/ReviveStateProcessor.h"
+#include "Game/Menu/MapStateProcessor.h"
 
 
 namespace Chewman
@@ -143,6 +144,7 @@ void Game::initStates()
     registerStateProcessor(GameState::Credits, std::make_shared<CreditsStateProcessor>());
     registerStateProcessor(GameState::Settings, std::make_shared<SettingsStateProcessor>());
     registerStateProcessor(GameState::Revive, std::make_shared<ReviveStateProcessor>());
+    registerStateProcessor(GameState::Map, std::make_shared<MapStateProcessor>());
 
     _stateProcessors[_gameState]->show();
 }

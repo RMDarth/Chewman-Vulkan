@@ -19,8 +19,8 @@ namespace Chewman
 
 LevelStateProcessor::LevelStateProcessor()
     : _progressManager(Game::getInstance()->getProgressManager())
+    , _document(std::make_unique<ControlDocument>(isWideScreen() ? "resources/game/GUI/HUDWide.xml" : "resources/game/GUI/HUD.xml"))
 {
-    _document = std::make_unique<ControlDocument>("resources/game/GUI/HUD.xml");
     _document->setMouseUpHandler(this);
     _counterControl = _document->getControlByName("Counter");
     _counterControl->setDefaultMaterial("counter1.png");
@@ -119,7 +119,7 @@ GameState LevelStateProcessor::update(float deltaTime)
             break;
         case GameMapState::Animation:
             if (_gameMapProcessor->getGameMap()->player->isDying())
-                _time += deltaTime * 2;
+                _time += deltaTime;
             break;
         case GameMapState::Victory:
             // TODO: Display victory menu
@@ -149,8 +149,6 @@ GameState LevelStateProcessor::update(float deltaTime)
                 _counterControl->setDefaultMaterial("counter1.png");
             else if (_counterTime > 0.67f)
                 _counterControl->setDefaultMaterial("counter2.png");
-            else if (_counterTime > 0.22)
-                _loadingControl->setVisible(false);
             else
                 _counterControl->setDefaultMaterial("counter3.png");
         }
@@ -218,6 +216,10 @@ void LevelStateProcessor::show()
     }
     _gameMapProcessor->setVisible(true);
     _document->show();
+    if (!_countToRemove)
+    {
+        _loadingControl->setVisible(false);
+    }
     if (_gameMapProcessor->getState() != GameMapState::LevelStart)
     {
         _loadingControl->setVisible(false);
@@ -254,33 +256,14 @@ void LevelStateProcessor::processEvent(Control* control, IEventHandler::EventTyp
     {
         if (control->getName() == "pause")
         {
+            _loadingControl->setVisible(false);
+            _counterControl->setVisible(false);
             _gameMapProcessor->setState(GameMapState::Pause);
             Game::getInstance()->setState(GameState::Pause);
         }
         if (control->getName() == "lifeimg")
         {
-            static bool isNight = false;
-            auto sunLight = SVE::Engine::getInstance()->getSceneManager()->getLightManager()->getDirectionLight();
-            if (isNight)
-            {
-                sunLight->getLightSettings().ambientStrength = {0.2f, 0.2f, 0.2f, 1.0f};
-                sunLight->getLightSettings().diffuseStrength = {1.0f, 1.0f, 1.0f, 1.0f};
-                sunLight->getLightSettings().specularStrength = {0.5f, 0.5f, 0.5f, 1.0f};
-                sunLight->setNodeTransformation(
-                        glm::translate(glm::mat4(1), glm::vec3(80, 80, -80)));
-
-                sunLight->getLightSettings().castShadows = Game::getInstance()->getGraphicsManager().getSettings().useShadows;
-                isNight = false;
-            } else {
-                isNight = true;
-                sunLight->getLightSettings().ambientStrength = {0.08f, 0.08f, 0.08f, 1.0f};
-                sunLight->getLightSettings().diffuseStrength = {0.15f, 0.15f, 0.15f, 1.0f};
-                sunLight->getLightSettings().specularStrength = {0.08f, 0.08f, 0.08f, 1.0f};
-                sunLight->setNodeTransformation(
-                        glm::translate(glm::mat4(1), glm::vec3(-20, 80, 80)));
-
-                sunLight->getLightSettings().castShadows = false;
-            }
+            _showFPS = !_showFPS;
         }
     }
     if (type == IEventHandler::MouseDown || type == IEventHandler::MouseUp)
@@ -336,13 +319,17 @@ void LevelStateProcessor::updateHUD(float deltaTime)
     stream << _gameMapProcessor->getGameMap()->activeCoins << "/" << _gameMapProcessor->getGameMap()->totalCoins;
     coins->setText(stream.str());
 
-    /*static auto fps = _document->getControlByName("FPS");
+    static auto fps = _document->getControlByName("FPS");
     static std::list<float> fpsList;
     fpsList.push_back(1.0f/deltaTime);
     if (fpsList.size() > 100)
         fpsList.pop_front();
-    auto fpsValue = std::accumulate(fpsList.begin(), fpsList.end(), 0.0f) / fpsList.size();
-    fps->setText(std::to_string((int) fpsValue));*/
+
+    if (_showFPS)
+    {
+        auto fpsValue = std::accumulate(fpsList.begin(), fpsList.end(), 0.0f) / fpsList.size();
+        fps->setText("FPS: " + std::to_string((int) fpsValue));
+    }
 
     updatePowerUps();
     if (_useOnScreenControl)

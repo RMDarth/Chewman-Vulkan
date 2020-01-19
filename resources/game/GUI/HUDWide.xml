@@ -1,19 +1,18 @@
 <document>
-    <Label name="scoreimg" x="0.01" y="0.01" width="0.2" height="-0.364" image="scorebar.png" mousetransparent="true"/>
-    <Label name="timeimg" x="0.25" y="0.01" width="0.2" height="-0.364" image="timebar.png" mousetransparent="true"/>
-    <Label name="score" text="0" x="0.01" y="0.015" width="0.24" height="-0.283" font-size="55" mousetransparent="true"/>
-    <Label name="time" text="0:00" x="0.25" y="0.015" width="0.24" height="-0.283" font-size="55" mousetransparent="true"/>
+    <Label name="scoreimg" x="0.01" y="0.01" width="0.15" height="-0.364" image="scorebar.png" mousetransparent="true"/>
+    <Label name="timeimg" x="0.20" y="0.01" width="0.15" height="-0.364" image="timebar.png" mousetransparent="true"/>
+    <Label name="score" text="0" x="0.01" y="0.012" width="0.19" height="-0.283" font-size="60" mousetransparent="true"/>
+    <Label name="time" text="0:00" x="0.2" y="0.012" width="0.19" height="-0.283" font-size="60" mousetransparent="true"/>
 
-    <Label name="level" text="Level 1: LevelName" x="0.025" y="0.1" width="0.1" height="0.05" textAlignment="Left" font-size="50" mousetransparent="true"/>
+    <Label name="level" text="Level 1: LevelName" x="0.025" y="0.107" width="0.1" height="0.05" textAlignment="Left" font-size="50" mousetransparent="true"/>
 
     <Image name="lifeimg" x="0.015" y="0.19" height="0.07" width="-1" image="trashlife.png" />
-    <Label name="lifecount" text="02" x="0.075" y="0.185" height="0.09" width="-1" textAlignment="Left" mousetransparent="true"/>
+    <Label name="lifecount" text="02" x="0.057" y="0.185" height="0.09" width="-1" textAlignment="Left" mousetransparent="true"/>
 
-    <!--Label name="CoinsText" text="C:" x="0.06" y="0.1" width="0.1" height="0.05" font-size="45"  mousetransparent="true"/-->
-    <Image name="coinimg" x="0.025" y="0.155" height="0.035" width="-1" image="coin.png" mousetransparent="true"/>
-    <Label name="Coins" text="0" x="0.075" y="0.15" width="0.1" height="0.05" font-size="45" textAlignment="Left" mousetransparent="true"/>
+    <Image name="coinimg" x="0.025" y="0.16" height="0.035" width="-1" image="coin.png" mousetransparent="true"/>
+    <Label name="Coins" text="0" x="0.057" y="0.155" width="0.1" height="0.05" font-size="45" textAlignment="Left" mousetransparent="true"/>
 
-    <Label name="FPS" text="" x="0.6" y="0.02" width="0.1" height="0.05" textAlignment="Left" mousetransparent="true"/>
+    <Label name="FPS" text="" x="0.6" y="0.02" width="0.1" height="0.05" textAlignment="Left"  mousetransparent="true"/>
 
     <Image name="Counter" y="0.4" height="0.2" width="-0.67" alignment="center" image="counter3.png"/>
     <Image name="loading" x="0.2" y="0.62" alignment="center" width="-3.37" height="0.12" image="loadingText.png"/>

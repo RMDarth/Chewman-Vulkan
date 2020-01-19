@@ -93,6 +93,7 @@ public:
     MoveDirection getNextMove() const;
 
     void switchDayNight() override;
+    glm::ivec2 getGameMapSize() override;
 
     float getDeltaTime();
 

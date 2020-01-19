@@ -52,6 +52,7 @@ private:
 
     bool _useOnScreenControl = true;
     bool _reviveUsed = false;
+    bool _showFPS = false;
     MoveDirection _lastDirection = MoveDirection::None;
 
     // As prev game map could be still in some commands, we need to finish rendering them all before release
