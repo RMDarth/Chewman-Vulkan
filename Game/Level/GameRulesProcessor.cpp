@@ -405,6 +405,7 @@ void GameRulesProcessor::playDeath(float deltaTime)
         getPlayer()->resetPlaying();
 
         auto& playerInfo = Game::getInstance()->getProgressManager().getPlayerInfo();
+        ++playerInfo.livesLostOnLevel;
         if (playerInfo.lives)
         {
             _gameMapProcessor.setState(GameMapState::Game);

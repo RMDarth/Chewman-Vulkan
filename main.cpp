@@ -30,9 +30,6 @@
 
 void moveCamera(const Uint8* keystates, float deltaTime, std::shared_ptr<SVE::CameraNode>& camera)
 {
-    auto pos = camera->getPosition();
-    auto yawPitchRoll = camera->getYawPitchRoll();
-
     if (keystates[SDL_SCANCODE_A])
         camera->movePosition(glm::vec3(-12.0f*deltaTime,0,0));
     if (keystates[SDL_SCANCODE_D])
@@ -137,7 +134,6 @@ int runGame()
         bool lockControl = true;
         bool isMusicEnabled = game->getSoundsManager().isMusicEnabled();
 
-        uint32_t frames = 0;
         auto startTime = std::chrono::high_resolution_clock::now();
         auto prevTime = std::chrono::duration<float, std::chrono::seconds::period>(std::chrono::high_resolution_clock::now() - startTime).count();
         while (!quit)

@@ -93,7 +93,6 @@ GameState LevelStateProcessor::update(float deltaTime)
                 _time += deltaTime;
             break;
         case GameMapState::Victory:
-            // TODO: Display victory menu
             _progressManager.setVictory(true);
             _progressManager.setStarted(false);
             _progressManager.getPlayerInfo().time = (int)_time;
@@ -160,8 +159,10 @@ void LevelStateProcessor::show()
 {
     if (!_progressManager.isStarted())
     {
+        // new level started
         _progressManager.setStarted(true);
         _progressManager.setVictory(false);
+        _progressManager.getPlayerInfo().livesLostOnLevel = 0;
         _reviveUsed = false;
         initMap();
         _time = 0.0f;

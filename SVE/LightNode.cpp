@@ -227,13 +227,14 @@ void LightNode::createProjectionMatrix()
             _projectionMatrix = glm::ortho(-20.0f, 20.0f, -20.0f, 20.0f, 0.01f, 50.0f);
             _projectionMatrix[1][1] *= -1;
 
-            // TODO: Get far/near view distance from camera
-            float far = 500;
-            float near = 1;
             _projectionList.clear();
 
             if (Engine::getInstance()->getEngineSettings().useCascadeShadowMap)
             {
+                // TODO: Get far/near view distance from camera
+                float far = 500; // _distanceFromCamera + 100
+                float near = 1;
+
                 for (auto i = 0u; i < MAX_CASCADES; i++)
                 {
                     float distance = near * powf(far / near, (float) (i + 1) / MAX_CASCADES);
@@ -243,7 +244,6 @@ void LightNode::createProjectionMatrix()
                     _projectionList.push_back(projectionMatrix);
                 }
             } else {
-                far = _distanceFromCamera + 100;
 
                 //float distance = near * powf(far / near, 1.0f);
                 auto shadowOrthoData = Engine::getInstance()->getSceneManager()->getLightManager()->getDirectShadowOrtho();
