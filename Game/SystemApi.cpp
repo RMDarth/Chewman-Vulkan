@@ -697,5 +697,13 @@ bool hasTimeScoresUpdated()
 #endif
 }
 
+void showMoreInfo()
+{
+#ifdef __ANDROID__
+    callVoidMethod("showMoreInfo");
+#endif
+    openLink("./resources/manual/readme.html");
+}
+
 } // namespace System
 } // namespace Chewman

@@ -92,6 +92,10 @@ void CreditsStateProcessor::processEvent(Control* control, IEventHandler::EventT
         {
             Game::getInstance()->setState(GameState::MainMenu);
         }
+        if (control->getName() == "more")
+        {
+            System::showMoreInfo();
+        }
     }
 }
 

@@ -89,10 +89,11 @@ public:
     void setNextMove(MoveDirection direction);
     MoveDirection getNextMove() const;
 
+    float getDeltaTime() const;
+
+    // IGameMapService
     void switchDayNight() override;
     glm::ivec2 getGameMapSize() override;
-
-    float getDeltaTime();
 
 private:
     void updateGargoyle(float time, Gargoyle& gargoyle);

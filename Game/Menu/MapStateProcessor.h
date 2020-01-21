@@ -30,9 +30,9 @@ public:
     void processEvent(Control* control, EventType type, int x, int y) override;
 
 private:
-    glm::vec3 _speed;
-    glm::vec3 _pos;
-    float _timeToStop;
+    glm::vec3 _speed = {};
+    glm::vec3 _pos = {};
+    float _timeToStop = 0.0f;
 
     bool _isSliding = false;
     float _startSlideX = 0;

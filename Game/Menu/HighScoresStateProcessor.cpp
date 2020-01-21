@@ -29,6 +29,25 @@ HighscoresStateProcessor::~HighscoresStateProcessor() = default;
 
 GameState HighscoresStateProcessor::update(float deltaTime)
 {
+    if (_logged && _isRefreshIcon)
+    {
+        _refreshTime -= deltaTime;
+        if (_refreshTime < 0)
+        {
+            _refreshTime = 0.4;
+            if (_refreshIconIndex == 1)
+            {
+                _refreshIconIndex = 2;
+                _documentPoints->getControlByName("refresh")->setDefaultMaterial("refreshing1.png");
+                _documentTime->getControlByName("refresh")->setDefaultMaterial("refreshing1.png");
+            } else {
+                _refreshIconIndex = 1;
+                _documentPoints->getControlByName("refresh")->setDefaultMaterial("refreshing2.png");
+                _documentTime->getControlByName("refresh")->setDefaultMaterial("refreshing2.png");
+            }
+        }
+    }
+
     _updateTime -= deltaTime;
     if (_updateTime > 0)
         return GameState::Highscores;
@@ -79,24 +98,6 @@ GameState HighscoresStateProcessor::update(float deltaTime)
             }
         }
 
-        if (_isRefreshIcon)
-        {
-            _refreshTime -= deltaTime;
-            if (_refreshTime < 0)
-            {
-                _refreshTime = 0.4;
-                if (_refreshIconIndex == 1)
-                {
-                    _refreshIconIndex = 2;
-                    _documentPoints->getControlByName("refresh")->setDefaultMaterial("refreshing1.png");
-                    _documentTime->getControlByName("refresh")->setDefaultMaterial("refreshing1.png");
-                } else {
-                    _refreshIconIndex = 1;
-                    _documentPoints->getControlByName("refresh")->setDefaultMaterial("refreshing2.png");
-                    _documentTime->getControlByName("refresh")->setDefaultMaterial("refreshing2.png");
-                }
-            }
-        }
     } else {
         _documentPoints->getControlByName("refresh")->setVisible(false);
         _documentTime->getControlByName("refresh")->setVisible(false);
@@ -123,11 +124,11 @@ void HighscoresStateProcessor::show()
     _isWeeklyActive = true;
     _isFirstLevelsHalf = true;
     _isScoresUpdated = false;
-    //if (System::isLoggedServices() && !_scoresUpdated)
-    //{
-    //    System::updateScores();
-    //    _scoresUpdated = true;
-    //}
+    if (!System::isLoggedServices())
+    {
+        _documentPoints->getControlByName("refresh")->setVisible(false);
+    }
+
     updatePointsDoc();
 
     System::showAds(System::AdHorizontalLayout::Right, System::AdVerticalLayout::Top);
@@ -234,6 +235,8 @@ void HighscoresStateProcessor::updateCheckboxes()
     auto* currentDoc = getCurrentDoc();
     currentDoc->getControlByName("weekly")->setDefaultMaterial(_isWeeklyActive ? "buttons/checkbox_checked.png" : "buttons/checkbox_unchecked.png");
     currentDoc->getControlByName("alltime")->setDefaultMaterial(_isWeeklyActive ? "buttons/checkbox_unchecked.png" : "buttons/checkbox_checked.png");
+    if (!_logged)
+        currentDoc->getControlByName("refresh")->setVisible(false);
 }
 
 void HighscoresStateProcessor::updateTimeScores()

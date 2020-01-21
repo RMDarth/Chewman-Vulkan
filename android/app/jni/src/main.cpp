@@ -26,6 +26,8 @@
 #include "SVE/PipelineCacheManager.h"
 
 #include "Game/Game.h"
+#include "Game/SystemApi.h"
+#include "Game/Level/GameUtils.h"
 #include "Game/Controls/ControlDocument.h"
 
 #include "AndroidFS.h"
@@ -360,22 +362,10 @@ int SDL_main(int argc, char *argv[]) {
         camera->setNearFarPlane(0.1f, 100.0f);
         //engine->getSceneManager()->setSkybox("Skybox2");
 
-        auto sunLight = engine->getSceneManager()->getLightManager()->getDirectionLight();
-        if (graphicsManager.getSettings().effectSettings == Chewman::EffectSettings::Low) {
-            sunLight->getLightSettings().ambientStrength = {0.2f, 0.2f, 0.2f, 1.0f};
-            sunLight->getLightSettings().diffuseStrength = {1.0f, 1.0f, 1.0f, 1.0f};
-            sunLight->getLightSettings().specularStrength = {0.5f, 0.5f, 0.5f, 1.0f};
-            sunLight->setNodeTransformation(
-                    glm::translate(glm::mat4(1), glm::vec3(80, 80, -80)));
-            sunLight->getLightSettings().castShadows = true;
-
+        if (game->getGraphicsManager().getSettings().dynamicLights == Chewman::LightSettings::Off) {
+            Chewman::setSunLight(Chewman::SunLightType::Day);
         } else {
-            sunLight->getLightSettings().ambientStrength = {0.08f, 0.08f, 0.08f, 1.0f};
-            sunLight->getLightSettings().diffuseStrength = {0.15f, 0.15f, 0.15f, 1.0f};
-            sunLight->getLightSettings().specularStrength = {0.08f, 0.08f, 0.08f, 1.0f};
-            sunLight->setNodeTransformation(
-                    glm::translate(glm::mat4(1), glm::vec3(-20, 80, 80)));
-            sunLight->getLightSettings().castShadows = false;
+            Chewman::setSunLight(Chewman::SunLightType::Night);
         }
 
         updateProgress(1.0f);

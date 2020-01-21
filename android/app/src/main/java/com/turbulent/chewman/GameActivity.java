@@ -123,6 +123,10 @@ public class GameActivity extends org.libsdl.app.SDLActivity {
     private boolean mAdsInitialized = false;
     private boolean mAdsHidden = true;
 
+    // more info
+    private WebView mWebView = null;
+    private Button mCloseInfoButton = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
@@ -956,6 +960,45 @@ public class GameActivity extends org.libsdl.app.SDLActivity {
     public byte[] decrypt(byte[] data)
     {
         return EncryptUtils.decrypt(this, data);
+    }
+
+    public void showMoreInfo()
+    {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (mWebView == null) {
+                    mWebView = new WebView(getContext());
+                    RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,
+                            RelativeLayout.LayoutParams.MATCH_PARENT);
+                    mWebView.setLayoutParams(params);
+                    mWebView.loadUrl("file:///android_asset/resources/manual/readme.html");
+
+                    mCloseInfoButton = new Button(getContext());
+                    mCloseInfoButton.setText("X");
+                    RelativeLayout.LayoutParams bparams = new RelativeLayout.LayoutParams(
+                            RelativeLayout.LayoutParams.WRAP_CONTENT,
+                            RelativeLayout.LayoutParams.WRAP_CONTENT);
+                    bparams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+                    mCloseInfoButton.setLayoutParams(bparams);
+                    mCloseInfoButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            mLayout.removeView(mWebView);
+                            mLayout.removeView(mCloseInfoButton);
+                        }
+                    });
+
+                    mLayout.addView(mWebView);
+                    mLayout.addView(mCloseInfoButton);
+                    mLayout.updateViewLayout(mWebView, params);
+                    mLayout.updateViewLayout(mCloseInfoButton, bparams);
+                } else {
+                    mLayout.addView(mWebView);
+                    mLayout.addView(mCloseInfoButton);
+                }
+            }
+        });
     }
 
     @Override

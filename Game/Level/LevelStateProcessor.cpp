@@ -11,6 +11,7 @@
 #include "Game/Controls/ControlDocument.h"
 #include "SVE/SceneManager.h"
 #include "SVE/LightManager.h"
+#include "GameUtils.h"
 
 
 namespace Chewman
@@ -58,24 +59,11 @@ void LevelStateProcessor::initMap()
               _gameMapProcessor->getGameMap()->timeFor3Stars,
               _gameMapProcessor->getGameMap()->name } );
 
-    auto sunLight = SVE::Engine::getInstance()->getSceneManager()->getLightManager()->getDirectionLight();
-    if (!_gameMapProcessor->getGameMap()->isNight)
+    if (!_gameMapProcessor->getGameMap()->isNight || Game::getInstance()->getGraphicsManager().getSettings().dynamicLights == LightSettings::Off)
     {
-        sunLight->getLightSettings().ambientStrength = {0.2f, 0.2f, 0.2f, 1.0f};
-        sunLight->getLightSettings().diffuseStrength = {1.0f, 1.0f, 1.0f, 1.0f};
-        sunLight->getLightSettings().specularStrength = {0.5f, 0.5f, 0.5f, 1.0f};
-        sunLight->setNodeTransformation(
-                glm::translate(glm::mat4(1), glm::vec3(80, 80, -80)));
-
-        sunLight->getLightSettings().castShadows = Game::getInstance()->getGraphicsManager().getSettings().useShadows;
+        setSunLight(SunLightType::Day);
     } else {
-        sunLight->getLightSettings().ambientStrength = {0.08f, 0.08f, 0.08f, 1.0f};
-        sunLight->getLightSettings().diffuseStrength = {0.15f, 0.15f, 0.15f, 1.0f};
-        sunLight->getLightSettings().specularStrength = {0.08f, 0.08f, 0.08f, 1.0f};
-        sunLight->setNodeTransformation(
-                glm::translate(glm::mat4(1), glm::vec3(-20, 80, 80)));
-
-        sunLight->getLightSettings().castShadows = false;
+        setSunLight(SunLightType::Night);
     }
 }
 
@@ -182,7 +170,6 @@ void LevelStateProcessor::show()
 
         if (_gameMapProcessor->getGameMap()->hasTutorial)
         {
-            //_gameMapProcessor->setState(GameMapState::Pause);
             Game::getInstance()->setState(GameState::Tutorial);
         }
     } else {

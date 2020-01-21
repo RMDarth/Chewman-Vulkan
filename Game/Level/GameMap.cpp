@@ -7,6 +7,7 @@
 #include "SVE/LightManager.h"
 #include "Game/GameSoundsManager.h"
 #include "Game/Game.h"
+#include "GameUtils.h"
 #include <glm/gtc/matrix_transform.hpp>
 
 namespace Chewman
@@ -244,7 +245,7 @@ GameMapState GameMapProcessor::getState() const
     return _state;
 }
 
-float GameMapProcessor::getDeltaTime()
+float GameMapProcessor::getDeltaTime() const
 {
     return _deltaTime;
 }
@@ -266,28 +267,14 @@ MoveDirection GameMapProcessor::getNextMove() const
 
 void GameMapProcessor::switchDayNight()
 {
-    auto sunLight = SVE::Engine::getInstance()->getSceneManager()->getLightManager()->getDirectionLight();
-    // TODO: Move light configuration into single place
     if (_gameMap->isNight)
     {
-        sunLight->getLightSettings().ambientStrength = {0.2f, 0.2f, 0.2f, 1.0f};
-        sunLight->getLightSettings().diffuseStrength = {1.0f, 1.0f, 1.0f, 1.0f};
-        sunLight->getLightSettings().specularStrength = {0.5f, 0.5f, 0.5f, 1.0f};
-        sunLight->setNodeTransformation(
-                glm::translate(glm::mat4(1), glm::vec3(80, 80, -80)));
-
-        sunLight->getLightSettings().castShadows = Game::getInstance()->getGraphicsManager().getSettings().useShadows;
+        setSunLight(SunLightType::Day);
         _gameMap->isNight = false;
     } else
     {
+        setSunLight(SunLightType::Night);
         _gameMap->isNight = true;
-        sunLight->getLightSettings().ambientStrength = {0.08f, 0.08f, 0.08f, 1.0f};
-        sunLight->getLightSettings().diffuseStrength = {0.15f, 0.15f, 0.15f, 1.0f};
-        sunLight->getLightSettings().specularStrength = {0.08f, 0.08f, 0.08f, 1.0f};
-        sunLight->setNodeTransformation(
-                glm::translate(glm::mat4(1), glm::vec3(-20, 80, 80)));
-
-        sunLight->getLightSettings().castShadows = false;
     }
 
     for (auto& enemy : _gameMap->enemies)

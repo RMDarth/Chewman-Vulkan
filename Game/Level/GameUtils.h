@@ -16,6 +16,12 @@ class Engine;
 namespace Chewman
 {
 
+enum class SunLightType : uint8_t
+{
+    Day,
+    Night
+};
+
 struct GlmHash
 {
     size_t operator()(const glm::ivec2& v)const
@@ -28,5 +34,6 @@ std::mt19937& getRandomEngine();
 glm::vec3 getWorldPos(int row, int column, float y = 0.0f);
 std::shared_ptr<SVE::LightNode> addEnemyLightEffect(SVE::Engine* engine, float height = 1.5f);
 bool isAntiDirection(MoveDirection curDir, MoveDirection newDir);
+void setSunLight(SunLightType sunLightType);
 
 } // namespace Chewman
