@@ -3,9 +3,10 @@
 // Licensed under the MIT License
 #include "SettingsStateProcessor.h"
 #include "Game/Controls/ControlDocument.h"
+#include "Game/Level/GameUtils.h"
 #include "Game/SystemApi.h"
+#include "Game/Game.h"
 
-#include <Game/Game.h>
 
 namespace Chewman
 {
@@ -20,6 +21,7 @@ SettingsStateProcessor::SettingsStateProcessor()
     _document->setMouseUpHandler(this);
     _document->getControlByName("soundSlider")->setMouseMoveHandler(this);
     _document->getControlByName("musicSlider")->setMouseMoveHandler(this);
+    _document->getControlByName("brightSlider")->setMouseMoveHandler(this);
     _document->getControlByName("soundSlider")->setMouseDownHandler(this);
     _document->getControlByName("musicSlider")->setMouseDownHandler(this);
     _document->hide();
@@ -70,10 +72,19 @@ void SettingsStateProcessor::show()
 
     setGraphicsSettingsValue();
 
+    auto& gameSettings = Game::getInstance()->getGameSettingsManager().getSettings();
+    _document->getControlByName("brightSlider")->setCustomAttribute("progress", std::to_string(gameSettings.brightness));
+
     _document->getControlByName("gamepadCheckbox")->setDefaultMaterial(
-            Game::getInstance()->getGameSettingsManager().getSettings().showOnScreenControls
+            gameSettings.showOnScreenControls
                  ? "buttons/checkbox_checked.png"
                  : "buttons/checkbox_unchecked.png");
+
+    if (Game::getInstance()->getGraphicsManager().getSettings().dynamicLights == LightSettings::Off)
+    {
+        _document->getControlByName("brightSlider")->setVisible(false);
+        _document->getControlByName("brightLabel")->setVisible(false);
+    }
 
     System::showAds(System::AdHorizontalLayout::Right, System::AdVerticalLayout::Bottom);
 }
@@ -172,6 +183,13 @@ void SettingsStateProcessor::processEvent(Control* control, IEventHandler::Event
         {
             auto progress = std::stof(control->getCustomAttribute("progress"));
             soundManager.setMusicVolume(progress);
+        } else if (control->getName() == "brightSlider")
+        {
+            auto progress = std::stof(control->getCustomAttribute("progress"));
+            auto& settingsManager = Game::getInstance()->getGameSettingsManager();
+            settingsManager.getSettings().brightness = progress;
+            setSunLight(SunLightType::Night);
+            settingsManager.store();
         }
     }
 }

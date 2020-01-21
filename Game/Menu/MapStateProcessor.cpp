@@ -84,8 +84,8 @@ void MapStateProcessor::processInput(const SDL_Event& event)
     {
         auto windowSize = SVE::Engine::getInstance()->getRenderWindowSize();
         _isSliding = false;
-        if (abs(_startSlideX - event.button.x) < windowSize.x * 0.001
-            || abs(_startSlideY - event.button.y) < windowSize.y * 0.001)
+        if (abs(_startSlideX - event.button.x) < windowSize.x * 0.002
+            || abs(_startSlideY - event.button.y) < windowSize.y * 0.002)
         {
             return;
         }
@@ -98,9 +98,9 @@ void MapStateProcessor::processInput(const SDL_Event& event)
                 setSpeed({-15.0f, 0.0f, 0.0f});
         } else {
             if (_startSlideY > event.button.y)
-                setSpeed({0.0f, 0.0f, -15.0f});
-            else
                 setSpeed({0.0f, 0.0f, 15.0f});
+            else
+                setSpeed({0.0f, 0.0f, -15.0f});
         }
     }
 }
@@ -108,8 +108,10 @@ void MapStateProcessor::processInput(const SDL_Event& event)
 void MapStateProcessor::show()
 {
     _document->show();
-    _pos = {};
+    _pos = glm::vec3(0,0,0);
     _isSliding = false;
+    _timeToStop = 0.0f;
+    _speed = glm::vec3(0,0,0);
 
     SVE::Engine::getInstance()->getSceneManager()->getLightManager()->setDirectShadowOrtho({-20.0f, 100.0f, -18.0f, 70.0f}, {5.0f, 200.0f});
 }

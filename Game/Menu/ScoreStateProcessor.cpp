@@ -131,12 +131,18 @@ void ScoreStateProcessor::show()
     _stars = 0;
     if (_progressManager.isVictory())
     {
-        // TODO: Add stars logic
         _stars = 3;
-        if (_progressManager.getPlayerInfo().time > _progressManager.getCurrentLevelInfo().timeFor3Stars)
-            --_stars;
-        if (_progressManager.getPlayerInfo().time > _progressManager.getCurrentLevelInfo().timeFor2Stars)
-            --_stars;
+        if (_progressManager.getPlayerInfo().livesLostOnLevel == 0)
+        {
+            _stars = 3;
+        }
+        else
+        {
+            if (_progressManager.getPlayerInfo().time > _progressManager.getCurrentLevelInfo().timeFor3Stars)
+                --_stars;
+            if (_progressManager.getPlayerInfo().time > _progressManager.getCurrentLevelInfo().timeFor2Stars)
+                --_stars;
+        }
 
         if (_stars > bestStars)
             scoresManager.setStars(currentLevel, _stars);

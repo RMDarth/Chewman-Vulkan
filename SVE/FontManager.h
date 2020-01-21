@@ -16,9 +16,6 @@ public:
     TextInfo generateText(const std::string& text, const std::string& font, float scale = 1.0f, glm::ivec2 shift = {0, 0}, glm::vec4 color = {1, 1, 1, 1});
     void addFont(Font font);
 
-    // TODO: move this to Overlay manager
-    //void fillUniformData(UniformData& data);
-
 private:
     std::unordered_map<std::string, Font> _fontList;
 };

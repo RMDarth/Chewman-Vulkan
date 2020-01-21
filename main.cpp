@@ -11,6 +11,7 @@
 
 #include "Game/Game.h"
 #include "Game/Controls/ControlDocument.h"
+#include "Game/Level/GameUtils.h"
 #include "DesktopFS.h"
 
 #include <SDL2/SDL.h>
@@ -32,9 +33,6 @@
 
 void moveCamera(const Uint8* keystates, float deltaTime, std::shared_ptr<SVE::CameraNode>& camera)
 {
-    auto pos = camera->getPosition();
-    auto yawPitchRoll = camera->getYawPitchRoll();
-
     if (keystates[SDL_SCANCODE_A])
         camera->movePosition(glm::vec3(-12.0f*deltaTime,0,0));
     if (keystates[SDL_SCANCODE_D])
@@ -167,43 +165,25 @@ int runGame()
             engine->getPostEffectManager()->addPostEffect("VBlurEffect", "VBlurEffect",windowSize.x / 8, windowSize.y / 8);
             engine->getPostEffectManager()->addPostEffect("HBlurEffect", "HBlurEffect",windowSize.x / 8, windowSize.y / 8);
             engine->getPostEffectManager()->addPostEffect("BloomEffect", "BloomEffect");
-
-            //engine->getPostEffectManager()->addPostEffect("BlurAllEffect", "BlurAllEffect", windowSize.x / 4, windowSize.y / 4);
-            //engine->getPostEffectManager()->addPostEffect("HBlurEffect", "HBlurEffect",windowSize.x / 8, windowSize.y / 8);
-
-            // engine->getPostEffectManager()->addPostEffect("GrayscaleEffect", "GrayscaleEffect");
-            // engine->getPostEffectManager()->addPostEffect("PencilEffect", "PencilEffect");
         }
 
         // configure light
-        auto sunLight = engine->getSceneManager()->getLightManager()->getDirectionLight();
-        //sunLight->setNodeTransformation(
-        //        glm::translate(glm::mat4(1), glm::vec3(80, 80, -80)));
-        sunLight->getLightSettings().ambientStrength = {0.08f, 0.08f, 0.08f, 1.0f};
-        sunLight->getLightSettings().diffuseStrength = {0.15f, 0.15f, 0.15f, 1.0f};
-        sunLight->getLightSettings().specularStrength = {0.08f, 0.08f, 0.08f, 1.0f};
-        sunLight->setNodeTransformation(
-                glm::translate(glm::mat4(1), glm::vec3(-20, 80, 80)));
-        sunLight->getLightSettings().castShadows = false;
+        if (game->getGraphicsManager().getSettings().dynamicLights == Chewman::LightSettings::Off)
+            Chewman::setSunLight(Chewman::SunLightType::Day);
+        else
+            Chewman::setSunLight(Chewman::SunLightType::Night);
 
         // create camera
-        camera->setNearFarPlane(0.1f, 50.0f);
-        //camera->setPosition(glm::vec3(5.0f, 5.0f, 5.0f));
+        camera->setNearFarPlane(0.1f, 100.0f);
 
         // create skybox
         engine->getSceneManager()->setSkybox("Skybox4");
-
-        // Add text
-        auto textEntity = std::make_shared<SVE::TextEntity>(
-                engine->getFontManager()->generateText("Hello world", "NordBold"));
-        //engine->getSceneManager()->getRootNode()->attachEntity(textEntity);
 
         bool quit = false;
         bool skipRendering = false;
         bool lockControl = true;
         bool isMusicEnabled = game->getSoundsManager().isMusicEnabled();
 
-        uint32_t frames = 0;
         auto startTime = std::chrono::high_resolution_clock::now();
         auto prevTime = std::chrono::duration<float, std::chrono::seconds::period>(std::chrono::high_resolution_clock::now() - startTime).count();
         while (!quit)
@@ -245,23 +225,6 @@ int runGame()
                     if (event.key.keysym.sym == SDLK_f)
                     {
                         lockControl = !lockControl;
-                        //lockControl ? document.hide() : document.show();
-                    }
-                    if (event.key.keysym.sym == SDLK_SPACE)
-                    {
-                        static bool isNight = false;
-                        if (isNight)
-                        {
-                            sunLight->getLightSettings().ambientStrength = {0.2f, 0.2f, 0.2f, 1.0f};
-                            sunLight->getLightSettings().diffuseStrength = {1.0f, 1.0f, 1.0f, 1.0f};
-                            sunLight->getLightSettings().specularStrength = {0.5f, 0.5f, 0.5f, 1.0f};
-                            isNight = false;
-                        } else {
-                            isNight = true;
-                            sunLight->getLightSettings().ambientStrength = {0.05f, 0.05f, 0.05f, 1.0f};
-                            sunLight->getLightSettings().diffuseStrength = {0.1f, 0.1f, 0.1f, 1.0f};
-                            sunLight->getLightSettings().specularStrength = {0.05f, 0.05f, 0.05f, 1.0f};
-                        }
                     }
                 }
                 if (event.type == SDL_MOUSEMOTION && !lockControl)
@@ -283,11 +246,6 @@ int runGame()
             {
                 game->update(curTime - prevTime);
                 engine->renderFrame(curTime - prevTime);
-
-                ++frames;
-                float fps = frames / engine->getTime();
-
-                textEntity->setText(engine->getFontManager()->generateText("FPS: " + std::to_string(fps), "NordBold"));
             }
 
             prevTime = curTime;

@@ -89,6 +89,7 @@ void syncAchievements();
 void rateApp();
 
 void openLink(const std::string& link);
+void showMoreInfo();
 
 } // namespace System
 } // namespace Chewman

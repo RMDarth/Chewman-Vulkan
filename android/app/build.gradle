@@ -30,8 +30,8 @@ android {
         }
         minSdkVersion 24
         targetSdkVersion 28
-        versionCode 66
-        versionName "0.9.3-a"
+        versionCode 68
+        versionName "0.9.5-b"
         externalNativeBuild {
             ndkBuild {
                 arguments "APP_PLATFORM=android-24"

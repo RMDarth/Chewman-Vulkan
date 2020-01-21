@@ -518,7 +518,7 @@ void Engine::renderFrameImpl()
                     BUFFER_INDEX_SHADOWMAP_POINT + _vulkanInstance->getCurrentFrameIndex());
         }
     }
-    if (auto water = _sceneManager->getWater())
+    if (_sceneManager->getWater())
     {
         _vulkanInstance->submitCommands(CommandsType::ReflectionPass, BUFFER_INDEX_WATER_REFLECTION);
         _vulkanInstance->submitCommands(CommandsType::RefractionPass, BUFFER_INDEX_WATER_REFRACTION);

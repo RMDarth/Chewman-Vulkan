@@ -47,7 +47,6 @@ ScoresManager::ScoresManager()
 
 void ScoresManager::load()
 {
-    // TODO: Replace it with some encrypted save/load
     _timeScores = std::vector<uint32_t>(LevelsCount, 0);
     _stars = std::vector<uint8_t>(LevelsCount, 0);
     _isNew = std::vector<uint8_t>(LevelsCount, 0);
