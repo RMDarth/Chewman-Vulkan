@@ -198,6 +198,7 @@ void LevelStateProcessor::show()
     _document->getControlByName("downStick")->setVisible(_useOnScreenControl);
     _document->getControlByName("leftStick")->setVisible(_useOnScreenControl);
     _document->getControlByName("rightStick")->setVisible(_useOnScreenControl);
+    _document->getControlByName("FPS")->setVisible(_showFPS);
 
     System::hideAds();
 }
@@ -221,12 +222,22 @@ void LevelStateProcessor::processEvent(Control* control, IEventHandler::EventTyp
         {
             _loadingControl->setVisible(false);
             _counterControl->setVisible(false);
+            _document->getControlByName("camera")->setVisible(false);
             _gameMapProcessor->setState(GameMapState::Pause);
             Game::getInstance()->setState(GameState::Pause);
         }
-        if (control->getName() == "lifeimg")
+        else if (control->getName() == "lifeimg")
         {
             _showFPS = !_showFPS;
+            _document->getControlByName("FPS")->setVisible(_showFPS);
+        }
+        else if (control->getName() == "camera")
+        {
+            auto& gameSettings = Game::getInstance()->getGameSettingsManager();
+            auto cameraStyle = static_cast<uint8_t>(gameSettings.getSettings().cameraStyle);
+            cameraStyle = (cameraStyle + 1) % 3;
+            gameSettings.getSettings().cameraStyle = static_cast<CameraStyle>(cameraStyle);
+            gameSettings.store();
         }
     }
     if (type == IEventHandler::MouseDown)

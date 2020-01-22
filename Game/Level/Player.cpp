@@ -94,7 +94,8 @@ void Player::update(float deltaTime)
             {
                 auto camera = SVE::Engine::getInstance()->getSceneManager()->getMainCamera();
                 camera->setParent(_rootNode);
-                camera->setLookAt(glm::vec3(0.0f, 16.0f, 19.0f), glm::vec3(0), glm::vec3(0, 1, 0));
+                auto cameraStyle = Game::getInstance()->getGameSettingsManager().getSettings().cameraStyle;
+                camera->setLookAt(getCameraPos(cameraStyle), glm::vec3(0), glm::vec3(0, 1, 0));
             }
 
             if (_appearing)

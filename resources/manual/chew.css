@@ -1,42 +1,43 @@
 body
 {
-background: #000000 url(./images/background.jpg); color: #aaaaaa	
+    background: #000000 url(./images/background.jpg); color: #aaaaaa
 }
 h2
 {
-color:#aa0000;
+    color:#aa0000;
 }
 img.p
 {
-	border: solid #aa0000;		
+    border: solid #aa0000;
 }
 #main
 {
-	position: absolute; top: 0px; left: 10%
-	
+    position: absolute; top: 0px; left: 10%;
+    max-width: 80%;
 }
 .table1
 {
-	background: #000000; 
-	border-right: solid #aa0000; 
-	border-left: solid #aa0000; 
-	padding: 0px; 
-	border-collapse: collapse;
-	width: min(90%, 780px);
+    background: #000000;
+    border-right: solid #aa0000;
+    border-left: solid #aa0000;
+    padding: 0px;
+    border-collapse: collapse;
+    max-width: 780px;
 }
+
 .td1
 {
-	background: #000000 url(./images/header_c.png) no-repeat top left; height: 120px; background-size: contain;
+    background: #000000 url(./images/header_c.png) no-repeat top left; height: 120px; background-size: contain;
 }
 .td2
 {
-	padding: 1em; text-align: justify; background: #000000;
+    padding: 1em; text-align: justify; background: #000000;
 }
 .td3
 {
-	background: #000000; height: 21px; text-align:center	
+    background: #000000; height: 21px; text-align:center
 }
 .td4
 {
-	padding: 1em; text-align: justify; background: #000000;
+    padding: 1em; text-align: justify; background: #000000;
 }
