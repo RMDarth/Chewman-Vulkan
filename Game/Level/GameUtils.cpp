@@ -83,4 +83,33 @@ void setSunLight(SunLightType sunLightType)
     }
 }
 
+glm::vec3 getCameraPos(CameraStyle cameraStyle)
+{
+    switch (cameraStyle)
+    {
+        case CameraStyle::Horizontal:
+            return glm::vec3(0.0f, 16.0f, 19.0f);
+        case CameraStyle::Balanced:
+            return glm::vec3(0.0f, 20.0f, 15.0f);
+        case CameraStyle::Vertical:
+            return glm::vec3(0.0f, 25.0f, 8.0f);
+    }
+    assert(!"Unknown camera style");
+    return glm::vec3(0.0f, 16.0f, 19.0f);
+}
+
+glm::vec3 getDeathCameraPos(CameraStyle cameraStyle)
+{
+    switch (cameraStyle)
+    {
+        case CameraStyle::Horizontal:
+        case CameraStyle::Balanced:
+            return glm::vec3(-7.0f, 4.0f, 3.0f);
+        case CameraStyle::Vertical:
+            return glm::vec3(-5.0f, 6.0f, 3.0f);
+    }
+    assert(!"Unknown camera style");
+    return glm::vec3(-7.0f, 4.0f, 3.0f);
+}
+
 } // namespace Chewman

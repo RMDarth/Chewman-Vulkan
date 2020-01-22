@@ -46,15 +46,7 @@ void GameSettingsManager::load()
     fin.read(reinterpret_cast<char*>(&_currentSettings), sizeof(_currentSettings));
     if (_currentSettings.version != CurrentGameSettingsVersion)
     {
-        if (_currentSettings.version == 2)
-        {
-            _currentSettings.version = CurrentGameSettingsVersion;
-            _currentSettings.brightness = 0.5f;
-        }
-        else
-        {
-            _currentSettings = {};
-        }
+        _currentSettings = {};
     }
 
     fin.close();

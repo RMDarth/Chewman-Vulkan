@@ -31,6 +31,8 @@
     <Image name="powerup4" x="0.66" y="0.8" height="-1" width="0.08" />
     <Image name="powerup5" x="0.58" y="0.8" height="-1" width="0.08" />
 
+    <Button name="camera" text="" x="0.78" y="0.01" width="0.08" height="-1" image="buttons/camera.png"
+            hoverimage="buttons/camera_hover.png" pressedimage="buttons/camera_pressed.png"/>
     <Button name="pause" text="" x="0.87" y="0.01" width="0.08" height="-1" image="buttons/pause.png"
             hoverimage="buttons/pause_hover.png" pressedimage="buttons/pause_pressed.png"/>
 </document>

@@ -6,7 +6,14 @@
 namespace Chewman
 {
 
-constexpr uint8_t CurrentGameSettingsVersion = 3;
+constexpr uint8_t CurrentGameSettingsVersion = 4;
+
+enum class CameraStyle : uint8_t
+{
+    Horizontal,
+    Balanced,
+    Vertical
+};
 
 struct GameSettings
 {
@@ -14,6 +21,7 @@ struct GameSettings
     bool showOnScreenControls = false;
     bool switchLight[36] = {};
     float brightness = 0.5f;
+    CameraStyle cameraStyle = CameraStyle::Horizontal;
 };
 
 class GameSettingsManager
