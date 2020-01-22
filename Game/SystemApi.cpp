@@ -13,13 +13,13 @@ namespace System
 {
 
 #ifdef __ANDROID__
-void callVoidMethod(const std::string& name)
+void callVoidMethod(const char* const name)
 {
     JNIEnv* env = (JNIEnv*)SDL_AndroidGetJNIEnv();
     jobject activity = (jobject)SDL_AndroidGetActivity();
     jclass activityClass = env->GetObjectClass(activity);
 
-    jmethodID methodId = env->GetMethodID(activityClass, name.c_str(), "()V");
+    jmethodID methodId = env->GetMethodID(activityClass, name, "()V");
 
     env->CallVoidMethod(activity, methodId);
 
@@ -700,9 +700,10 @@ bool hasTimeScoresUpdated()
 void showMoreInfo()
 {
 #ifdef __ANDROID__
-    callVoidMethod("showMoreInfo");
-#endif
+    callVoidMethod("showManual");
+#else
     openLink("./resources/manual/readme.html");
+#endif
 }
 
 } // namespace System

@@ -23,6 +23,7 @@ HighscoresStateProcessor::HighscoresStateProcessor()
 
     _documentPoints->getControlByName("refresh")->setDefaultMaterial("refreshing1.png");
     _documentTime->getControlByName("refresh")->setDefaultMaterial("refreshing2.png");
+    _isRefreshIcon = true;
 }
 
 HighscoresStateProcessor::~HighscoresStateProcessor() = default;
@@ -315,7 +316,8 @@ void HighscoresStateProcessor::updatePointScores()
             auto playerPos = std::find_if(scoreData.begin(), scoreData.end(), [&](auto item) { return item.first == playerName; });
             if (playerPos != scoreData.end())
             {
-                (*playerPos).second = bestScore;
+                if (playerPos->second < bestScore)
+                    (*playerPos).second = bestScore;
             } else {
                 scoreData.emplace_back(playerName, bestScore);
             }
