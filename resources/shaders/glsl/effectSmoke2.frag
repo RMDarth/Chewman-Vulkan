@@ -34,13 +34,19 @@ void main()
     float len1 = length(cameraDir);
     cameraDir = normalize(cameraDir);
     vec3 toWall = vec3(0, 0, 1);
-    float len2 = (-ubo.cameraPos.z + 1.5) / dot(toWall, cameraDir);
+    float wallCamera = dot(toWall, cameraDir);
+    float depthDiff = 1.0;
+    if (wallCamera != 0)
+    {
+        float len2 = (-ubo.cameraPos.z + 1.5) / wallCamera;
 
-    float depthDiff = (len2 - len1) * 0.5;
-    depthDiff = mix(depthDiff, 1.0, smoothstep(-1.5, -2, fragPos.x));
-    depthDiff = mix(depthDiff, 1.0, smoothstep(ubo.width - 1.5, ubo.width-1.0, fragPos.x));
-    depthDiff = mix(depthDiff, 1.0, smoothstep(0, -10, fragPos.z));
+        depthDiff = (len2 - len1) * 0.5;
+        depthDiff = mix(depthDiff, 1.0, smoothstep(-1.5, -2, fragPos.x));
+        depthDiff = mix(depthDiff, 1.0, smoothstep(ubo.width - 1.5, ubo.width-1.0, fragPos.x));
+        depthDiff = mix(depthDiff, 1.0, smoothstep(0, -10, fragPos.z));
+    }
 
+    depthDiff = depthDiff < 0 ? 1 : depthDiff;
     outColor = vec4(color, depthDiff);
     outColorBloom = vec4(outColor.rgb, 0.35 * min(depthDiff, 1.0));
 }
