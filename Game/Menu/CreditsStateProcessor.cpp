@@ -62,7 +62,7 @@ void CreditsStateProcessor::processEvent(Control* control, IEventHandler::EventT
         }
         if (control->getName() == "credits4" || control->getName() == "credits6")
         {
-            System::openLink("mailto:igor.barinov@gmail.com");
+            System::openLink("https://github.com/RMDarth");
         }
         if (control->getName() == "credits7")
         {
