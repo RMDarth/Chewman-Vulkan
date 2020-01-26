@@ -21,8 +21,10 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.util.Log;
+import android.view.View;
+import android.webkit.WebView;
+import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
@@ -30,27 +32,14 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.android.billingclient.api.*;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdSize;
-import com.google.android.gms.ads.AdView;
-import com.google.android.gms.ads.MobileAds;
-import com.google.android.gms.ads.initialization.InitializationStatus;
-import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.auth.api.signin.GoogleSignInClient;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GoogleApiAvailability;
-import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.ads.*;
+import com.google.android.gms.ads.initialization.*;
+import com.google.android.gms.auth.api.signin.*;
+import com.google.android.gms.common.*;
+import com.google.android.gms.common.api.*;
 import com.google.android.gms.games.*;
-import com.google.android.gms.games.leaderboard.LeaderboardScore;
-import com.google.android.gms.games.leaderboard.LeaderboardScoreBuffer;
-import com.google.android.gms.games.leaderboard.LeaderboardVariant;
-import com.google.android.gms.games.leaderboard.ScoreSubmissionData;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
+import com.google.android.gms.games.leaderboard.*;
+import com.google.android.gms.tasks.*;
 
 import org.libsdl.app.SDLActivity;
 
@@ -110,7 +99,7 @@ public class GameActivity extends org.libsdl.app.SDLActivity {
     private long[] mPlayerPlace = {-2, -2};
 
 
-    private boolean[] mScoreSubmitted = new boolean[37]; // time scores + point score (last element)
+    private boolean[] mScoreSubmitted = new boolean[37];
 
     private boolean[] mTimeScoresUpdatedFull = new boolean[36];
     private boolean[] mTimeScoresUpdatedWeekly = new boolean[36];
@@ -604,8 +593,6 @@ public class GameActivity extends org.libsdl.app.SDLActivity {
 
     OnCompleteListener<AnnotatedData<LeaderboardsClient.LeaderboardScores>>  getLeaderboardListener(final boolean weekly)
     {
-        final ScoreInfo[] scoresList = weekly ? mWeeklyScores : mFullScores;
-
         return new OnCompleteListener<AnnotatedData<LeaderboardsClient.LeaderboardScores>>() {
 
             @Override
@@ -616,6 +603,7 @@ public class GameActivity extends org.libsdl.app.SDLActivity {
                         LeaderboardsClient.LeaderboardScores scores = result.get();
                         LeaderboardScoreBuffer buffer = scores.getScores();
                         int scoreIndex = 0;
+                        ScoreInfo[] scoresList = weekly ? mWeeklyScores : mFullScores;
                         for (LeaderboardScore item : buffer) {
                             scoresList[scoreIndex] = new ScoreInfo();
                             scoresList[scoreIndex].name = item.getScoreHolder().getDisplayName();
@@ -981,11 +969,15 @@ public class GameActivity extends org.libsdl.app.SDLActivity {
                         mWebView.loadUrl("file:///android_asset/resources/manual/readme.html");
 
                         mCloseInfoButton = new Button(getContext());
-                        mCloseInfoButton.setText("X");
+                        mCloseInfoButton.setBackgroundResource(R.drawable.close);
+                        int height =  getResources().getDisplayMetrics().heightPixels;
                         RelativeLayout.LayoutParams bparams = new RelativeLayout.LayoutParams(
-                                RelativeLayout.LayoutParams.WRAP_CONTENT,
-                                RelativeLayout.LayoutParams.WRAP_CONTENT);
+                                height / 10,
+                                height / 10);
+                        bparams.rightMargin = height / 30;
+                        bparams.topMargin = height / 30;
                         bparams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+
                         mCloseInfoButton.setLayoutParams(bparams);
                         mCloseInfoButton.setOnClickListener(new View.OnClickListener() {
                             @Override

@@ -1,6 +1,3 @@
-// Chewman Vulkan game
-// Copyright (c) 2018-2020, Igor Barinov
-// Licensed under the MIT License
 #include "SDL.h"
 #include "VulkanHeaders.h"
 #include <vector>
@@ -13,11 +10,11 @@
 #include <future>
 #include <chrono>
 #include <fstream>
+#include <SVE/VulkanException.h>
 #include <android/native_window.h>
 #include <android/native_window_jni.h>
 #include "logging.h"
 #include "SVE/Engine.h"
-#include "SVE/VulkanException.h"
 #include "SVE/SceneManager.h"
 #include "SVE/MeshEntity.h"
 #include "SVE/ResourceManager.h"
@@ -40,6 +37,7 @@ SDL_Window *window = NULL;
 jobject globalAssetManager;
 bool firstRun = false;
 bool isMinimized = false;
+bool loadingFinished = false;
 
 ANativeWindow* GetNativeWindow()
 {
@@ -179,11 +177,21 @@ void showAlert(const char* message) {
 }
 
 extern "C"
-JNIEXPORT void JNICALL
-Java_org_libsdl_app_SDLActivity_nativeMinimize(JNIEnv *env, jclass clazz) {
+JNIEXPORT void JNICALL Java_org_libsdl_app_SDLActivity_nativeMinimize(JNIEnv *env, jclass clazz)
+{
+    if (!loadingFinished)
+        Chewman::System::exitApp();
     isMinimized = true;
-    //SVE::Engine::getInstance()->finishRendering();
 }
+
+extern "C"
+JNIEXPORT void JNICALL Java_org_libsdl_app_SDLActivity_onNativeSurfaceDestroyed(JNIEnv *env, jclass clazz)
+{
+    if (!loadingFinished)
+        Chewman::System::exitApp();
+    isMinimized = true;
+}
+
 
 glm::ivec2 setResolution(SVE::AndroidFS& androidFS)
 {
@@ -226,19 +234,19 @@ glm::ivec2 setResolution(SVE::AndroidFS& androidFS)
     std::cout << "Final size: " << resolution.x << " x " << resolution.y << std::endl;
     return resolution;
 }
- 
+
 int SDL_main(int argc, char *argv[]) {
 
     InitVulkan();
- 
+
     int running = 1;
- 
+
     LOG("started");
     startLogger();
- 
+
     SDL_Init(SDL_INIT_VIDEO);
     SDL_SetHint(SDL_HINT_ORIENTATIONS, "LandscapeLeft LandscapeRight");
- 
+
     window = SDL_CreateWindow("Chewman Vulkan",
                               SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
                               1280, 720, SDL_WINDOW_SHOWN | SDL_WINDOW_VULKAN | SDL_WINDOW_FULLSCREEN);
@@ -371,6 +379,7 @@ int SDL_main(int argc, char *argv[]) {
         updateProgress(1.0f);
         SDL_Delay(100);
         loadingScreen->hide();
+        loadingFinished = true;
 
         auto startTime = std::chrono::high_resolution_clock::now();
         auto prevTime = std::chrono::duration<float, std::chrono::seconds::period>(
@@ -390,6 +399,7 @@ int SDL_main(int argc, char *argv[]) {
                     std::cout << "Window event type: " << (int)event.window.event << std::endl;
                     if (event.window.event == SDL_WINDOWEVENT_MINIMIZED)
                     {
+                        isMinimized = true;
                         std::cout << "wait idle" << std::endl;
                         isMusicEnabled = game->getSoundsManager().isMusicEnabled();
                         game->getSoundsManager().setMusicEnabled(false);
@@ -422,11 +432,12 @@ int SDL_main(int argc, char *argv[]) {
                         future.get();
                         game->getSoundsManager().setMusicEnabled(isMusicEnabled);
                         LOG("game restored");
+                        isMinimized = false;
                     }
                 }
             }
 
-            if (!isPaused)
+            if (!isPaused && !isMinimized)
             {
                 game->update(curTime - prevTime);
                 engine->renderFrame(curTime - prevTime);
@@ -439,25 +450,25 @@ int SDL_main(int argc, char *argv[]) {
     } catch (SVE::VulkanException& exception)
     {
         std::string message = std::string("Application error: ") + exception.what();
-        LOG("Exception occured");
         std::cout << message << std::endl;
-
         if (exception.getVkResult() == VK_ERROR_SURFACE_LOST_KHR || exception.getVkResult() == VK_ERROR_DEVICE_LOST)
         {
             if (isMinimized)
             {
+                LOG("Exception occured, restarting");
                 Chewman::System::restartApp();
                 return 0;
             } else {
+                LOG("Exception occured, exiting");
                 Chewman::System::exitApp();
-                return 0;
             }
         }
 
+        LOG("Exception occured");
         showAlert(message.c_str());
         std::exit(1);
     }
- 
+
     LOG("finished");
 
     //SDL_DestroyWindow(window);
