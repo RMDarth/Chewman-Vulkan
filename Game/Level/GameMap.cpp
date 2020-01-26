@@ -277,12 +277,20 @@ void GameMapProcessor::switchDayNight()
         _gameMap->isNight = true;
     }
 
+    _gameMap->floor[0]->getMaterialInfo()->diffuse = getFloorMaterialDiffuse(_gameMap->style, _gameMap->isNight);
+    for (auto x = 0; x < _gameMap->height; ++x)
+        for (auto y = 0; y < _gameMap->width; ++y)
+            if (_gameMap->mapData[x][y].cellType == CellType::Wall && _gameMap->mapData[x][y].cellBlock &&
+                !_gameMap->mapData[x][y].cellBlock->getAttachedEntities().empty())
+            {
+                _gameMap->mapData[x][y].cellBlock->getAttachedEntities().front()->getMaterialInfo()->diffuse
+                        = getCeilingMaterialDiffuse(_gameMap->style, _gameMap->isNight);
+            }
+
+
     for (auto& enemy : _gameMap->enemies)
         enemy->enableLight(_gameMap->isNight);
     _gameMap->player->enableLight(_gameMap->isNight);
-
-    _gameMap->mapEntity[0]->getMaterialInfo()->diffuse = getCeilingMaterialDiffuse(_gameMap->style, _gameMap->isNight);
-    _gameMap->mapEntity[1]->getMaterialInfo()->diffuse = getFloorMaterialDiffuse(_gameMap->style, _gameMap->isNight);
 
     auto currentLevel = Game::getInstance()->getProgressManager().getCurrentLevel() - 1;
     auto& settingsManager = Game::getInstance()->getGameSettingsManager();

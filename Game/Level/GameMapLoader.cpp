@@ -433,7 +433,7 @@ void GameMapLoader::initMeshes(GameMap& level, const std::string& suffix)
 
                     auto wallTop = std::make_shared<SVE::MeshEntity>("WallTop");
                     wallTop->setMaterial("CeilingNormals" + skinId);
-                    wallTop->getMaterialInfo()->diffuse = {0.85f, 0.85f, 0.85f, 1.0f};
+                    wallTop->getMaterialInfo()->diffuse = getCeilingMaterialDiffuse(level.style, level.isNight);
                     node->attachEntity(std::move(wallTop));
                     auto wallVert = std::make_shared<SVE::MeshEntity>("WallVert");
                     wallVert->setMaterial("WallNormalsInstanced" + skinId);
@@ -452,7 +452,7 @@ void GameMapLoader::initMeshes(GameMap& level, const std::string& suffix)
 
     level.floor[0] = std::make_shared<SVE::MeshEntity>("AllFloorTop" + suffix);
     level.floor[1] = std::make_shared<SVE::MeshEntity>("AllFloorVert" + suffix);
-    level.floor[0]->getMaterialInfo()->diffuse = {1.05f, 1.05f, 1.05f, 1.0f};
+    level.floor[0]->getMaterialInfo()->diffuse = getFloorMaterialDiffuse(level.style, level.isNight);
     auto floorNode = SVE::Engine::getInstance()->getSceneManager()->createSceneNode();
     level.mapNode->attachSceneNode(floorNode);
     floorNode->attachEntity(level.floor[0]);
