@@ -353,7 +353,9 @@ void GameMapLoader::initMeshes(GameMap& level, const std::string& suffix)
         _callback(0.7);
 
     level.mapEntity[0] = std::make_shared<SVE::MeshEntity>("MapT" + suffix);
+    level.mapEntity[0]->getMaterialInfo()->diffuse = getCeilingMaterialDiffuse(level.style, level.isNight);
     level.mapEntity[1] = std::make_shared<SVE::MeshEntity>("MapB" + suffix);
+    level.mapEntity[1]->getMaterialInfo()->diffuse = getFloorMaterialDiffuse(level.style, level.isNight);
     level.mapEntity[2] = std::make_shared<SVE::MeshEntity>("MapV" + suffix);
     for (auto i = 0; i < 3; ++i)
         level.mapEntity[i]->setRenderToDepth(true);

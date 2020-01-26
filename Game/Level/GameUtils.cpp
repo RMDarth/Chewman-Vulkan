@@ -112,4 +112,39 @@ glm::vec3 getDeathCameraPos(CameraStyle cameraStyle)
     return glm::vec3(-7.0f, 4.0f, 3.0f);
 }
 
+
+glm::vec4 getCeilingMaterialDiffuse(uint16_t style, bool isNight)
+{
+    if (!isNight)
+        return {1.0f, 1.0f, 1.0f, 1.0f};
+
+    switch (style)
+    {
+        case 1: return {0.8f, 0.8f, 0.8f, 1.0f};
+        case 2: return {0.85f, 0.85f, 0.85f, 1.0f};
+        case 3: return {1.6f, 1.8f, 1.6f, 1.0f};
+        case 4: return {1.0f, 1.0f, 1.0f, 1.0f};
+        case 5: return {0.8f, 0.8f, 0.8f, 1.0f};
+        case 6: return {0.9f, 0.9f, 0.9f, 1.0f};
+        default: return {1.0f, 1.0f, 1.0f, 1.0f};
+    }
+}
+
+glm::vec4 getFloorMaterialDiffuse(uint16_t style, bool isNight)
+{
+    if (!isNight)
+        return {1.0f, 1.0f, 1.0f, 1.0f};
+
+    switch (style)
+    {
+        case 1: return {1.25f, 1.25f, 1.25f, 1.0f};
+        case 2: return {1.05f, 1.05f, 1.05f, 1.0f};
+        case 3: return {0.85f, 0.9f, 0.85f, 1.0f};
+        case 4: return {1.35f, 1.35f, 1.35f, 1.0f};
+        case 5: return {1.2f, 1.2f, 1.2f, 1.0f};
+        case 6: return {1.05f, 1.05f, 1.05f, 1.0f};
+        default: return {1.0f, 1.0f, 1.0f, 1.0f};
+    }
+}
+
 } // namespace Chewman

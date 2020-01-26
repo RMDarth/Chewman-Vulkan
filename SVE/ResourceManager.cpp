@@ -363,6 +363,8 @@ Font loadFont(FSEntityPtr directory, const std::string& data)
         glyphInfo.originX = characterInfo["originX"].GetInt();
         glyphInfo.originY = characterInfo["originY"].GetInt();
         glyphInfo.advance = characterInfo["advance"].GetUint();
+        if (character.name.GetStringLength() > 1)
+            continue;
         font.symbolToInfoPos[character.name.GetString()[0]] = symbolIndex;
         font.symbols[symbolIndex] = glyphInfo;
         font.maxHeight = std::max(font.maxHeight, glyphInfo.originY);
