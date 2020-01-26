@@ -281,6 +281,9 @@ void GameMapProcessor::switchDayNight()
         enemy->enableLight(_gameMap->isNight);
     _gameMap->player->enableLight(_gameMap->isNight);
 
+    _gameMap->mapEntity[0]->getMaterialInfo()->diffuse = getCeilingMaterialDiffuse(_gameMap->style, _gameMap->isNight);
+    _gameMap->mapEntity[1]->getMaterialInfo()->diffuse = getFloorMaterialDiffuse(_gameMap->style, _gameMap->isNight);
+
     auto currentLevel = Game::getInstance()->getProgressManager().getCurrentLevel() - 1;
     auto& settingsManager = Game::getInstance()->getGameSettingsManager();
     settingsManager.getSettings().switchLight[currentLevel] = !settingsManager.getSettings().switchLight[currentLevel];

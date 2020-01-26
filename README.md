@@ -1,6 +1,6 @@
 # Chewman Vulkan
 [![Language](https://img.shields.io/badge/Language%20-C++14-blue.svg?style=flat-square)](https://github.com/RMDarth/Chewman-Vulkan/)
-[![Version](https://img.shields.io/badge/Version%20-0.9a-blue.svg?style=flat-square)](https://github.com/RMDarth/Chewman-Vulkan/)
+[![Version](https://img.shields.io/badge/Version%20-1.0.4-blue.svg?style=flat-square)](https://github.com/RMDarth/Chewman-Vulkan/)
 [![Build Status](https://travis-ci.org/RMDarth/Chewman-Vulkan.svg?branch=master)](https://travis-ci.org/RMDarth/Chewman-Vulkan)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/a631478818d7470daa422278959e6c99)](https://www.codacy.com/manual/RMDarth/Chewman-Vulkan?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=RMDarth/Chewman-Vulkan&amp;utm_campaign=Badge_Grade)
 [![Coverity](https://scan.coverity.com/projects/19967/badge.svg)](https://scan.coverity.com/projects/rmdarth-chewman-vulkan)
@@ -11,7 +11,10 @@ Main dependencies: SDL2 (windows initialization and controls) and assimp (3D ass
 Desktop build also uses OpenAL and Ogg Vorbis for audio, and cppfs for filesystem functions (Android
 build has all those functions in Android SDK).
 
-Game development is currently in progress (current version is 0.9-a).
+Game is currently released on Android Play Store. iOS version is in progress.
+<p align="center">
+<a href="https://play.google.com/store/apps/details?id=com.turbulent.chewman"><img src="https://play.google.com/intl/en_us/badges/images/badge_new.png" title="Get it on Google Play"></a>
+</p>
 
 [![Screenshot](https://github.com/RMDarth/Chewman-Vulkan/blob/master/Screenshot_20190826.png?raw=true)](https://youtu.be/kNlpxXPu8mA)
 

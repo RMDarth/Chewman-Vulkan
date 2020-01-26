@@ -40,4 +40,7 @@ void setSunLight(SunLightType sunLightType);
 glm::vec3 getCameraPos(CameraStyle cameraStyle);
 glm::vec3 getDeathCameraPos(CameraStyle cameraStyle);
 
+glm::vec4 getCeilingMaterialDiffuse(uint16_t style, bool isNight);
+glm::vec4 getFloorMaterialDiffuse(uint16_t style, bool isNight);
+
 } // namespace Chewman
