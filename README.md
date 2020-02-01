@@ -1,6 +1,6 @@
 # Chewman Vulkan
 [![Language](https://img.shields.io/badge/Language%20-C++14-blue.svg?style=flat-square)](https://github.com/RMDarth/Chewman-Vulkan/)
-[![Version](https://img.shields.io/badge/Version%20-1.0.4-blue.svg?style=flat-square)](https://github.com/RMDarth/Chewman-Vulkan/)
+[![Version](https://img.shields.io/badge/Version%20-1.0.6-blue.svg?style=flat-square)](https://github.com/RMDarth/Chewman-Vulkan/)
 [![Build Status](https://travis-ci.org/RMDarth/Chewman-Vulkan.svg?branch=master)](https://travis-ci.org/RMDarth/Chewman-Vulkan)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/a631478818d7470daa422278959e6c99)](https://www.codacy.com/manual/RMDarth/Chewman-Vulkan?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=RMDarth/Chewman-Vulkan&amp;utm_campaign=Badge_Grade)
 [![Coverity](https://scan.coverity.com/projects/19967/badge.svg)](https://scan.coverity.com/projects/rmdarth-chewman-vulkan)
