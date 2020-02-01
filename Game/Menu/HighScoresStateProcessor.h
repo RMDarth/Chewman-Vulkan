@@ -54,6 +54,7 @@ private:
 
     //bool _scoresUpdated = false;
     bool _logged = false;
+    bool _signInTried = false;
 };
 
 } // namespace Chewman

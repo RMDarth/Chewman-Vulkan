@@ -41,6 +41,7 @@ import com.google.android.gms.games.*;
 import com.google.android.gms.games.leaderboard.*;
 import com.google.android.gms.tasks.*;
 
+import org.codechimp.apprater.AppRater;
 import org.libsdl.app.SDLActivity;
 
 import java.io.IOException;
@@ -49,6 +50,10 @@ import java.util.List;
 import java.util.concurrent.Semaphore;
 
 public class GameActivity extends org.libsdl.app.SDLActivity {
+    static {
+        System.loadLibrary("main");
+    }
+
     private static final String TAG = "Chewman";
     private final Semaphore mSemaphore = new Semaphore(0, true);
 
@@ -89,6 +94,7 @@ public class GameActivity extends org.libsdl.app.SDLActivity {
     }
 
     private boolean mRefreshScores = false;
+    private boolean mFirstConnect = true;
 
     private String mPlayerDisplayName = "Player";
     private boolean[] mScoresUpdated = { false, false };
@@ -118,9 +124,12 @@ public class GameActivity extends org.libsdl.app.SDLActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate()");
+
+        // rate
+        AppRater.app_launched(this);
 
         mSharedPreferences = getSharedPreferences("settings", Context.MODE_PRIVATE);
         mPlayerDisplayName = mSharedPreferences.getString("playerName", "Player");
@@ -138,6 +147,7 @@ public class GameActivity extends org.libsdl.app.SDLActivity {
 
         mGoogleSignInClient = GoogleSignIn.getClient(this,
                 new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_GAMES_SIGN_IN).build());
+        signInSilently();
 
         MobileAds.initialize(this, new OnInitializationCompleteListener() {
             @Override
@@ -160,16 +170,17 @@ public class GameActivity extends org.libsdl.app.SDLActivity {
         });
 
         loadPurchases();
-        mBillingClient = BillingClient.newBuilder(this).enablePendingPurchases().setListener(new PurchasesUpdatedListener() {
-            @Override
-            public void onPurchasesUpdated(BillingResult billingResult, @Nullable List<Purchase> purchases) {
-                if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK && purchases != null) {
-                    for (Purchase purchase : purchases) {
-                        handlePurchase(purchase);
-                    }
+        mBillingClient = BillingClient.newBuilder(this).enablePendingPurchases().setListener(
+                new PurchasesUpdatedListener() {
+                    @Override
+                    public void onPurchasesUpdated(BillingResult billingResult, @Nullable List<Purchase> purchases) {
+                        if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK && purchases != null) {
+                            for (Purchase purchase : purchases) {
+                                handlePurchase(purchase);
+                            }
+                        }
                 }
-            }
-        }).build();
+            }).build();
 
         startBillingConnection();
     }
@@ -285,27 +296,30 @@ public class GameActivity extends org.libsdl.app.SDLActivity {
 
     public boolean showVideoAds()
     {
-        if (!mBillingConnected || mRewardProduct == null)
+        try {
+            if (!mBillingConnected || mRewardProduct == null) {
+                Toast.makeText(this, "Can't display video ads",
+                        Toast.LENGTH_SHORT).show();
+                startBillingConnection();
+                return false;
+            }
+            if (!mVideoProductAvailable) {
+                Toast.makeText(this, "No video ads available",
+                        Toast.LENGTH_SHORT).show();
+                quaryNewVideo();
+                return false;
+            }
+
+            BillingFlowParams flowParams = BillingFlowParams.newBuilder()
+                    .setSkuDetails(mRewardProduct)
+                    .build();
+            BillingResult result = mBillingClient.launchBillingFlow(this, flowParams);
+
+            return result.getResponseCode() == BillingClient.BillingResponseCode.OK;
+        } catch (Exception ex)
         {
-            Toast.makeText(this, "Can't display video ads",
-                    Toast.LENGTH_SHORT).show();
-            startBillingConnection();
             return false;
         }
-        if (!mVideoProductAvailable)
-        {
-            Toast.makeText(this, "No video ads available",
-                    Toast.LENGTH_SHORT).show();
-            quaryNewVideo();
-            return false;
-        }
-
-        BillingFlowParams flowParams = BillingFlowParams.newBuilder()
-                .setSkuDetails(mRewardProduct)
-                .build();
-        BillingResult result = mBillingClient.launchBillingFlow(this, flowParams);
-
-        return result.getResponseCode() == BillingClient.BillingResponseCode.OK;
     }
 
     public boolean wasVideoAdsWatched()
@@ -456,19 +470,20 @@ public class GameActivity extends org.libsdl.app.SDLActivity {
     private void signInSilently() {
         Log.d(TAG, "signInSilently()");
 
-        mGoogleSignInClient.silentSignIn().addOnCompleteListener(this,
-                new OnCompleteListener<GoogleSignInAccount>() {
-                    @Override
-                    public void onComplete(@NonNull Task<GoogleSignInAccount> task) {
-                        if (task.isSuccessful()) {
-                            Log.d(TAG, "signInSilently(): success");
-                            onConnected(task.getResult());
-                        } else {
-                            Log.d(TAG, "signInSilently(): failure", task.getException());
-                            onDisconnected();
+        if (mGoogleSignInClient != null)
+            mGoogleSignInClient.silentSignIn().addOnCompleteListener(this,
+                    new OnCompleteListener<GoogleSignInAccount>() {
+                        @Override
+                        public void onComplete(@NonNull Task<GoogleSignInAccount> task) {
+                            if (task.isSuccessful()) {
+                                Log.d(TAG, "signInSilently(): success");
+                                onConnected(task.getResult());
+                            } else {
+                                Log.d(TAG, "signInSilently(): failure", task.getException());
+                                onDisconnected();
+                            }
                         }
-                    }
-                });
+                    });
     }
 
     private void startSignInIntent() {
@@ -1037,33 +1052,36 @@ public class GameActivity extends org.libsdl.app.SDLActivity {
     {
         Log.d(TAG, "onConnected(): connected to Google APIs");
 
-        GamesClient gamesClient = Games.getGamesClient(this, googleSignInAccount);
-        gamesClient.setViewForPopups(mSurface);
+        if (mFirstConnect) {
+            GamesClient gamesClient = Games.getGamesClient(this, googleSignInAccount);
+            gamesClient.setViewForPopups(mSurface);
 
-        if (mPlayerDisplayName.equals("Player")) {
-            Games.getPlayersClient(this, googleSignInAccount).getCurrentPlayer().addOnCompleteListener(
-                    new OnCompleteListener<Player>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Player> task) {
-                            if (task.isSuccessful()) {
-                                String displayName = task.getResult().getDisplayName();
-                                if (displayName != null) {
-                                    mPlayerDisplayName = displayName;
+            if (mPlayerDisplayName.equals("Player")) {
+                Games.getPlayersClient(this, googleSignInAccount).getCurrentPlayer().addOnCompleteListener(
+                        new OnCompleteListener<Player>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Player> task) {
+                                if (task.isSuccessful()) {
+                                    String displayName = task.getResult().getDisplayName();
+                                    if (displayName != null) {
+                                        mPlayerDisplayName = displayName;
 
-                                    SharedPreferences.Editor editor = mSharedPreferences.edit();
-                                    editor.putString("playerName", displayName);
-                                    editor.apply();
+                                        SharedPreferences.Editor editor = mSharedPreferences.edit();
+                                        editor.putString("playerName", displayName);
+                                        editor.apply();
+                                    }
                                 }
                             }
-                        }
-                    });
+                        });
+            }
+
+            mAchievementsClient = Games.getAchievementsClient(this, googleSignInAccount);
+            mLeaderboardsClient = Games.getLeaderboardsClient(this, googleSignInAccount);
+
+            getTopTimeScores();
+            getTopScores();
+            mFirstConnect = false;
         }
-
-        mAchievementsClient = Games.getAchievementsClient(this, googleSignInAccount);
-        mLeaderboardsClient = Games.getLeaderboardsClient(this, googleSignInAccount);
-
-        getTopTimeScores();
-        getTopScores();
     }
 
     private void onDisconnected()
@@ -1072,6 +1090,7 @@ public class GameActivity extends org.libsdl.app.SDLActivity {
 
         mAchievementsClient = null;
         mLeaderboardsClient = null;
+        mFirstConnect = true;
     }
 
     private void storePurchases()

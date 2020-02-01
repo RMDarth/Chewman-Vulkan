@@ -13,7 +13,7 @@ build has all those functions in Android SDK).
 
 Game is currently released on Android Play Store. iOS version is in progress.
 <p align="center">
-<a href="https://play.google.com/store/apps/details?id=com.turbulent.chewman"><img src="https://play.google.com/intl/en_us/badges/images/badge_new.png" title="Get it on Google Play"></a>
+<a href="https://play.google.com/store/apps/details?id=com.turbulent.chewman" target="_blank"><img src="https://play.google.com/intl/en_us/badges/images/badge_new.png" title="Get it on Google Play"></a>
 </p>
 
 [![Screenshot](https://github.com/RMDarth/Chewman-Vulkan/blob/master/Screenshot_20190826.png?raw=true)](https://youtu.be/kNlpxXPu8mA)
@@ -26,10 +26,9 @@ separated in the SVE folder - "Simple Vulkan Engine".
 
 SVE is a small game graphics engine, developed with the game. It is used for Vulkan 
 initialization and processing, and some common game features - scene management, resources 
-loader, materials, lights, particles and shaders management etc. Design of the engine is 
-somewhat similar to other engines like Ogre or Irrlicht, but it's still pretty simple 
-compared to those big engines. SVE will probably move to a separate repository after 
-the game is finished.
+loader, materials, lights, particles and shaders management etc. SVE will probably move to
+a separate repository after the game is finished.
+
 #### Main features of the game (and SVE):
 -   Vulkan rendering
 -   Animation from loaded 3D assets

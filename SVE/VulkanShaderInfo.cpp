@@ -101,7 +101,8 @@ size_t VulkanShaderInfo::getShaderUniformsSize() const
         }
         else
         {
-            size += sizeMap.at(info.uniformType);
+            if (sizeMap.find(info.uniformType) != sizeMap.end())
+                size += sizeMap.at(info.uniformType);
         }
     }
 

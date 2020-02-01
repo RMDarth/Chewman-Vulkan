@@ -127,6 +127,11 @@ void HighscoresStateProcessor::show()
     _isScoresUpdated = false;
     if (!System::isLoggedServices())
     {
+        if (System::isSignedServices() && !_signInTried)
+        {
+            _signInTried = true;
+            System::logInServices();
+        }
         _documentPoints->getControlByName("refresh")->setVisible(false);
     }
 

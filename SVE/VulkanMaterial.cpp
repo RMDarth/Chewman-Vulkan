@@ -879,9 +879,10 @@ void VulkanMaterial::createTextureSampler()
         samplerCreateInfo.maxLod = _mipLevels[i];
         samplerCreateInfo.mipLodBias = 0;
 
-        if (vkCreateSampler(_device, &samplerCreateInfo, nullptr, &_textureSamplers[i]) != VK_SUCCESS)
+        auto result = vkCreateSampler(_device, &samplerCreateInfo, nullptr, &_textureSamplers[i]);
+        if (result != VK_SUCCESS)
         {
-            throw std::runtime_error("Can't create Vulkan texture sampler");
+            throw SVE::VulkanException("Can't create Vulkan texture sampler", result);
         }
     }
 }
@@ -1022,9 +1023,10 @@ void VulkanMaterial::createDescriptorPool()
     poolInfo.pPoolSizes = poolSizes.data();
     poolInfo.maxSets = _shaderList.size() * swapchainSize;
 
-    if (vkCreateDescriptorPool(_device, &poolInfo, nullptr, &instance.descriptorPool) != VK_SUCCESS)
+    auto result = vkCreateDescriptorPool(_device, &poolInfo, nullptr, &instance.descriptorPool);
+    if (result != VK_SUCCESS)
     {
-        throw std::runtime_error("Can't create Vulkan descriptor pool");
+        throw SVE::VulkanException("Can't create Vulkan descriptor pool", result);
     }
 }
 
