@@ -467,20 +467,25 @@ public class GameActivity extends org.libsdl.app.SDLActivity {
     private void signInSilently() {
         Log.d(TAG, "signInSilently()");
 
-        if (mGoogleSignInClient != null)
-            mGoogleSignInClient.silentSignIn().addOnCompleteListener(this,
-                    new OnCompleteListener<GoogleSignInAccount>() {
-                        @Override
-                        public void onComplete(@NonNull Task<GoogleSignInAccount> task) {
-                            if (task.isSuccessful()) {
-                                Log.d(TAG, "signInSilently(): success");
-                                onConnected(task.getResult());
-                            } else {
-                                Log.d(TAG, "signInSilently(): failure", task.getException());
-                                onDisconnected();
+        try {
+            if (mGoogleSignInClient != null)
+                mGoogleSignInClient.silentSignIn().addOnCompleteListener(this,
+                        new OnCompleteListener<GoogleSignInAccount>() {
+                            @Override
+                            public void onComplete(@NonNull Task<GoogleSignInAccount> task) {
+                                if (task.isSuccessful()) {
+                                    Log.d(TAG, "signInSilently(): success");
+                                    onConnected(task.getResult());
+                                } else {
+                                    Log.d(TAG, "signInSilently(): failure", task.getException());
+                                    onDisconnected();
+                                }
                             }
-                        }
-                    });
+                        });
+        } catch (Exception ex)
+        {
+            Log.d(TAG, "Can't sign in into Google Play Services: " + ex.getLocalizedMessage());
+        }
     }
 
     private void startSignInIntent() {
