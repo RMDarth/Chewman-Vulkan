@@ -146,6 +146,7 @@ LOCAL_SRC_FILES := vulkan_wrapper.cpp \
     Game/Controls/PanelControl.h \
     Game/Controls/SliderControl.cpp \
     Game/Controls/SliderControl.h \
+    Game/IGameMapService.h \
     Game/Game.cpp \
     Game/Game.h \
     Game/GameDefs.h \
@@ -214,6 +215,8 @@ LOCAL_SRC_FILES := vulkan_wrapper.cpp \
     Game/Menu/HighScoresStateProcessor.h \
     Game/Menu/LevelSelectionStateProcessor.cpp \
     Game/Menu/LevelSelectionStateProcessor.h \
+	Game/Menu/MapStateProcessor.cpp \
+	Game/Menu/MapStateProcessor.h \
     Game/Menu/MenuStateProcessor.cpp \
     Game/Menu/MenuStateProcessor.h \
     Game/Menu/PauseStateProcessor.cpp \

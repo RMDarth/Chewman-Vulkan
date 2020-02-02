@@ -127,12 +127,18 @@ void MenuStateProcessor::processEvent(Control* control, IEventHandler::EventType
         {
             _document->hide();
 
-            auto& progressManager = Game::getInstance()->getProgressManager();
-            progressManager.setCurrentLevel(1);
-            progressManager.setVictory(false);
-            progressManager.setStarted(false);
-            progressManager.resetPlayerInfo();
-            Game::getInstance()->setState(GameState::WorldSelection);
+            if (Game::getInstance()->getScoresManager().getBestScore() == 0)
+            {
+                auto& progressManager = Game::getInstance()->getProgressManager();
+                progressManager.setCurrentLevel(1);
+                progressManager.setVictory(false);
+                progressManager.setStarted(false);
+                progressManager.resetPlayerInfo();
+                Game::getInstance()->setState(GameState::Level);
+            } else
+            {
+                Game::getInstance()->setState(GameState::WorldSelection);
+            }
         }
         if (control->getName() == "config")
         {
