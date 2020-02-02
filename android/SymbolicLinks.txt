@@ -1,0 +1,8 @@
+There are several symbolic links used to build android version of the game:
+app/jni/SDL -> to SDL root folder
+app/jni/src/Game -> to Game subfolder from this repository root
+app/jni/src/SDL2 -> to SDL/include folder
+app/jni/src/SVE -> to SVE subfolder from this repository root
+app/src/main/java/org/libsdl/app -> to SDL built activity (SDL/android-project/app/src/main/java/org/libsdl/app)
+
+Also app resources should be added into app/src/main/assets folder (i.e. it should contain "resources" subfolder)
