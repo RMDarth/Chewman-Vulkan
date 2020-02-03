@@ -27,7 +27,7 @@ struct Font
 {
     std::string fontName;
     GlyphInfo symbols[300];
-    std::unordered_map<char, uint32_t> symbolToInfoPos;
+    std::unordered_map<uint32_t, uint32_t> symbolToInfoPos;
     std::string materialName;
     uint32_t width;
     uint32_t height;
