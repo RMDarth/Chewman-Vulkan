@@ -123,6 +123,7 @@ bool isItemBought(const std::string& id)
 #ifdef __ANDROID__
     if (id == "levels")
         return callBoolMethod("isCampaignPurchased");
+    return false;
 #else
     return isBought;
 #endif
@@ -535,6 +536,38 @@ std::string getPlayerName()
 #else
     return "Player";
 #endif
+}
+
+std::string getLanguage()
+{
+#ifdef __ANDROID__
+    JNIEnv* env = (JNIEnv*)SDL_AndroidGetJNIEnv();
+    jobject activity = (jobject)SDL_AndroidGetActivity();
+    jclass activityClass = env->GetObjectClass(activity);
+
+    jmethodID methodIdName = env->GetMethodID(activityClass, "getLanguage", "()Ljava/lang/String;");
+
+    auto nameObj = (jstring)env->CallObjectMethod(activity, methodIdName);
+    if (nameObj != nullptr) {
+        const char *name = env->GetStringUTFChars(nameObj, nullptr);
+
+        std::string result = name;
+
+        env->ReleaseStringUTFChars(nameObj, name);
+
+        env->DeleteLocalRef(nameObj);
+        env->DeleteLocalRef(activity);
+        env->DeleteLocalRef(activityClass);
+
+        return result;
+    } else {
+        env->DeleteLocalRef(activity);
+        env->DeleteLocalRef(activityClass);
+
+        return "en";
+    }
+#endif
+    return "en";
 }
 
 std::vector<std::pair<std::string, int>> getTimes(bool weekly)

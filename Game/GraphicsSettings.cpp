@@ -25,7 +25,7 @@ std::string getResolutionText(ResolutionSettings resolutionSettings)
         case ResolutionSettings::Low: return "720p";
         case ResolutionSettings::High: return "1080p";
         case ResolutionSettings::Native: return "Native";
-        case ResolutionSettings::Custom: return "Custom";
+        case ResolutionSettings::Custom: return "@Custom";
     }
 
     assert(!"Incorrect resolution settings");
@@ -36,9 +36,9 @@ std::string getEffectText(EffectSettings effectSettings)
 {
     switch (effectSettings)
     {
-        case EffectSettings::Low: return "Low";
-        case EffectSettings::Medium: return "Medium";
-        case EffectSettings::High: return "High";
+        case EffectSettings::Low: return "@Low";
+        case EffectSettings::Medium: return "@Medium";
+        case EffectSettings::High: return "@High";
     }
 
     assert(!"Incorrect effects settings");
@@ -49,9 +49,9 @@ std::string getLightText(LightSettings lightSettings)
 {
     switch (lightSettings)
     {
-        case LightSettings::High: return "High";
-        case LightSettings::Simple: return "Simple";
-        case LightSettings::Off: return "Off";
+        case LightSettings::High: return "@High";
+        case LightSettings::Simple: return "@Simple";
+        case LightSettings::Off: return "@Off";
     }
 
     assert(!"Incorrect light settings");
@@ -62,9 +62,9 @@ std::string getParticlesText(ParticlesSettings settings)
 {
     switch (settings)
     {
-        case ParticlesSettings::Full: return "Full";
-        case ParticlesSettings::Partial: return "Partial";
-        case ParticlesSettings::None: return "None";
+        case ParticlesSettings::Full: return "@Full";
+        case ParticlesSettings::Partial: return "@Partial";
+        case ParticlesSettings::None: return "@None";
     }
 
     assert(!"Incorrect particle effect settings");

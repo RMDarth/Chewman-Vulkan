@@ -44,6 +44,7 @@ public:
     const std::vector<std::string> getFolderList() const;
     std::string loadFileContent(const std::string& file) const;
     std::string getSavePath() const;
+    std::shared_ptr<FileSystem> getFileSystem() const;
 
 private:
     enum class ResourceType : uint8_t

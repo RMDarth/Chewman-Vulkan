@@ -5,6 +5,7 @@
 
 #include <utility>
 #include <sstream>
+#include <Game/Game.h>
 #include "SVE/Engine.h"
 #include "SVE/OverlayManager.h"
 #include "SVE/FontManager.h"
@@ -131,8 +132,18 @@ uint32_t Control::getRenderOrder() const
 
 void Control::setText(const std::string& text, const std::string& font, float scale, glm::vec4 color)
 {
-    _overlay->setText(SVE::Engine::getInstance()->getFontManager()->generateText(text, font, scale, _textShift, color));
-    _text = text;
+    if (!text.empty() && text[0] == '@')
+    {
+        auto key = text.substr(1);
+        auto localeText = Game::getInstance()->getLocaleManager().getLocalizedString(key);
+        _overlay->setText(SVE::Engine::getInstance()->getFontManager()->generateText(localeText, font, scale, _textShift, color));
+        _text = localeText;
+    }
+    else
+    {
+        _overlay->setText(SVE::Engine::getInstance()->getFontManager()->generateText(text, font, scale, _textShift, color));
+        _text = text;
+    }
 }
 
 void Control::setText(const std::string& text)

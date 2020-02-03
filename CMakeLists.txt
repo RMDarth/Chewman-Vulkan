@@ -214,6 +214,8 @@ add_executable(Chewman
         Game/Level/StaticObject.cpp
         Game/Level/StaticObject.h
         Game/Level/Teleport.h
+        Game/LocaleManager.cpp
+        Game/LocaleManager.h
         Game/Menu/CreditsStateProcessor.cpp
         Game/Menu/CreditsStateProcessor.h
         Game/Menu/GraphicsStateProcessor.cpp

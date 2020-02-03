@@ -190,7 +190,8 @@ void LevelStateProcessor::show()
     }
 
     std::stringstream ss;
-    ss << "Level " << _progressManager.getCurrentLevel() << ": " << _gameMapProcessor->getGameMap()->name;
+    ss << Game::getInstance()->getLocaleManager().getLocalizedString("Level") << " "
+       << _progressManager.getCurrentLevel() << ": " << _gameMapProcessor->getGameMap()->name;
     _document->getControlByName("level")->setText(ss.str());
 
     _useOnScreenControl = Game::getInstance()->getGameSettingsManager().getSettings().showOnScreenControls;

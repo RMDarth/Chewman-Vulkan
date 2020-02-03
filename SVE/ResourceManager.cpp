@@ -20,9 +20,9 @@
 
 #include <utf8.h>
 #include <map>
+#include <rapidjson/document.h>
 
 #define GLM_ENABLE_EXPERIMENTAL
-#include <rapidjson/document.h>
 #include <glm/gtx/quaternion.hpp>
 
 #define setOptional(expr)                \
@@ -655,6 +655,7 @@ void ResourceManager::loadFile(FSEntityPtr file, LoadData& loadData, const std::
     {
         // TODO: Add logging system
         std::cout << "Skipping unsupported file " << file->getPath() << std::endl;
+        return;
     }
 
     std::string fileContent = fileSystem->getFileContent(file);
@@ -702,6 +703,11 @@ std::string ResourceManager::getSavePath() const
 void ResourceManager::setMaxMaterialLoadQuality(MaterialQuality quality)
 {
     _maxLoadQuality = quality;
+}
+
+std::shared_ptr<FileSystem> ResourceManager::getFileSystem() const
+{
+    return _fileSystem;
 }
 
 } // namespace SVE

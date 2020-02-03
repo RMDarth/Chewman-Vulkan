@@ -39,6 +39,9 @@ private:
     uint16_t _stars = 0;
     uint16_t _countStars = 0;
     bool _countingFinished = false;
+
+    std::string _scoreLabel;
+    std::string _timeLabel;
 };
 
 } // namespace Chewman

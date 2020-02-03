@@ -2,6 +2,7 @@
 // Copyright (c) 2018-2019, Igor Barinov
 // Licensed under the MIT License
 #include "Game.h"
+#include "SystemApi.h"
 
 #include <utility>
 #include <Game/Menu/GraphicsStateProcessor.h>
@@ -118,6 +119,11 @@ GameSoundsManager& Game::getSoundsManager()
     return _soundsManager;
 }
 
+LocaleManager& Game::getLocaleManager()
+{
+    return _localeManager;
+}
+
 std::vector<std::string>& Game::getTutorialData()
 {
     return _tutorialText;
@@ -126,6 +132,7 @@ std::vector<std::string>& Game::getTutorialData()
 Game::Game()
     : _mapLoader(std::make_unique<GameMapLoader>())
     , _graphicsManager(GraphicsManager::getInstance())
+    , _localeManager(System::getLanguage())
 {
 }
 

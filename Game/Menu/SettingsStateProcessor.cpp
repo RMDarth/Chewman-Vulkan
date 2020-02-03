@@ -200,19 +200,19 @@ void SettingsStateProcessor::setGraphicsSettingsValue()
     auto settings = Game::getInstance()->getGraphicsManager().getSettings();
     if (settings == _highSettings)
     {
-        graphicsControl->setText("High");
+        graphicsControl->setText("@High");
     }
     else if (settings == _medSettings)
     {
-        graphicsControl->setText("Medium");
+        graphicsControl->setText("@Medium");
     }
     else if (settings == _lowSettings)
     {
-        graphicsControl->setText("Low");
+        graphicsControl->setText("@Low");
     }
     else
     {
-        graphicsControl->setText("Custom");
+        graphicsControl->setText("@Custom");
     }
 }
 
