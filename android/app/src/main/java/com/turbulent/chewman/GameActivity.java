@@ -668,7 +668,7 @@ public class GameActivity extends org.libsdl.app.SDLActivity {
         return true;
     }
 
-    OnCompleteListener<AnnotatedData<LeaderboardsClient.LeaderboardScores>>  getTimeLeaderboardListener(final boolean weekly, final int level)
+    private OnCompleteListener<AnnotatedData<LeaderboardsClient.LeaderboardScores>>  getTimeLeaderboardListener(final boolean weekly, final int level)
     {
         return new OnCompleteListener<AnnotatedData<LeaderboardsClient.LeaderboardScores>>() {
 
@@ -960,6 +960,11 @@ public class GameActivity extends org.libsdl.app.SDLActivity {
         {
             Log.d(TAG, ex.getLocalizedMessage());
         }
+    }
+
+    public String getLanguage()
+    {
+        return Locale.getDefault().getLanguage();
     }
 
     public byte[] encrypt(byte[] data)

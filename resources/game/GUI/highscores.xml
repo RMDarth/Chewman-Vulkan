@@ -1,8 +1,8 @@
 <document>
     <Panel name="panel" alignment="center" y="0.03" width="-1" height="0.95" image="windows/window_square.png">
-        <Label name="windowName" text="High scores" alignment="center" y = "0.045" width="0.5" height="0.06" />
-        <Image name="points" text="Points"  x="0.1" y="0.17" width="0.16" height="0.08" image="tabs/selected.png" font-size="55" />
-        <Image name="time" text="Time"  x="0.27" y="0.17" width="0.16" height="0.08" image="tabs/inactive.png" font-size="55" />
+        <Label name="windowName" text="@HighscoresTitle" alignment="center" y = "0.045" width="0.5" height="0.06" />
+        <Image name="points" text="@Points"  x="0.1" y="0.17" width="0.16" height="0.08" image="tabs/selected.png" font-size="55" />
+        <Image name="time" text="@Time"  x="0.27" y="0.17" width="0.16" height="0.08" image="tabs/inactive.png" font-size="55" />
         <Image name="tabView" x="0.04" y="0.245" width="0.92" height="0.62" image="tabs/panel.png" />
 
         <Label name="name1" text="1. Player" x="0.15" y="0.3" width="0.38" height="0.08" textAlignment="Left" font-size="55" />
@@ -20,9 +20,9 @@
         <Label name="score6" text="500" x="0.7" y="0.67" width="0.38" height="0.08"  textAlignment="Left" font-size="55" />
 
         <Image name="weekly" x="0.35" y ="0.83" width="0.06" height="-1" image="buttons/checkbox_checked.png"/>
-        <Label name="weeklyLabel" text="Weekly" x="0.42" y="0.83" width="0.07" height="-1" textAlignment="Left" />
+        <Label name="weeklyLabel" text="@Weekly" x="0.42" y="0.83" width="0.07" height="-1" textAlignment="Left" />
         <Image name="alltime" x="0.65" y ="0.83" width="0.06" height="-1" image="buttons/checkbox_unchecked.png"/>
-        <Label name="alltimeLabel" text="All Time" x="0.72" y="0.83" width="0.07" height="-1" textAlignment="Left" />
+        <Label name="alltimeLabel" text="@AllTime" x="0.72" y="0.83" width="0.07" height="-1" textAlignment="Left" />
 
         <Image name="googleplay" x="0.25" y ="0.83" width="0.06" height="-1" image="buttons/googleplay.png"/>
     </Panel>

@@ -3,6 +3,7 @@
 // Licensed under the MIT License
 #include "FontManager.h"
 #include "VulkanException.h"
+#include <utf8.h>
 
 namespace SVE
 {
@@ -23,13 +24,16 @@ TextInfo FontManager::generateText(const std::string& text, const std::string& f
         throw VulkanException("Can't find font: " + font + ".");
     }
     info.font = &_fontList.at(font);
-    info.symbolCount = text.size();
+    const char* pos = text.c_str();
+    auto length = text.length();
+    info.symbolCount = utf8::distance(pos, pos + length);
 
     glm::vec2 currentShift = shift;
-    for (char symbol : text)
+    while (*pos != 0)
     {
+        uint32_t currentSymbol = utf8::next(pos, pos + length);
         TextSymbolInfo symbolInfo {};
-        symbolInfo.symbolInfoIndex = info.font->symbolToInfoPos[symbol];
+        symbolInfo.symbolInfoIndex = info.font->symbolToInfoPos[currentSymbol];
         symbolInfo.x = currentShift.x;
         symbolInfo.y = currentShift.y;
 

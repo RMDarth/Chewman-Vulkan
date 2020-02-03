@@ -14,7 +14,7 @@ namespace
 
 std::string boolToText(bool value)
 {
-    return value ? "On" : "Off";
+    return value ? "@On" : "@Off";
 }
 
 template <typename T>

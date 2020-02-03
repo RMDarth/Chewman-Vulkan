@@ -25,6 +25,9 @@ ScoreStateProcessor::ScoreStateProcessor()
     {
         _document->getControlByName("starSpark" + std::to_string(i+1))->setRawMaterial("OverlaySparksMaterial");
     }
+
+    _scoreLabel = Game::getInstance()->getLocaleManager().getLocalizedString("ScorePointLabel");
+    _timeLabel = Game::getInstance()->getLocaleManager().getLocalizedString("ScoreTimeLabel");
 }
 
 ScoreStateProcessor::~ScoreStateProcessor() = default;
@@ -35,7 +38,7 @@ GameState ScoreStateProcessor::update(float deltaTime)
     if (_time < 3.0f)
     {
         auto scoreText = std::to_string(static_cast<int>(_progressManager.getPlayerInfo().points * std::min(_time, 2.0f) * 0.5f));
-        _document->getControlByName("score")->setText("Score: " + scoreText);
+        _document->getControlByName("score")->setText(_scoreLabel + ": " + scoreText);
 
         auto prevCountStars = _countStars;
         if (_stars > 0)
@@ -53,7 +56,7 @@ GameState ScoreStateProcessor::update(float deltaTime)
     else if (!_countingFinished)
     {
         _countingFinished = true;
-        _document->getControlByName("score")->setText("Score: " + std::to_string(_progressManager.getPlayerInfo().points));
+        _document->getControlByName("score")->setText(_scoreLabel + ": " + std::to_string(_progressManager.getPlayerInfo().points));
 
         std::stringstream ss;
         ss << "windows/gameover_" << _stars << ".png";
@@ -93,10 +96,12 @@ void ScoreStateProcessor::show()
 {
     auto currentLevel = _progressManager.getCurrentLevel();
     _document->show();
-    _document->getControlByName("result")->setText(_progressManager.isVictory() ? "Victory" : "You lose");
-    _document->getControlByName("levelname")->setText("L" + std::to_string(currentLevel) + ": " + _progressManager.getCurrentLevelInfo().levelName);
-    _document->getControlByName("time")->setText("Time: " + Utils::timeToString(_progressManager.getPlayerInfo().time));
-    _document->getControlByName("score")->setText("Score: 0");
+    _document->getControlByName("result")->setText(
+         Game::getInstance()->getLocaleManager().getLocalizedString(_progressManager.isVictory() ? "ScoreVictory" : "ScoreGameOver"));
+    _document->getControlByName("levelname")->setText(
+         Game::getInstance()->getLocaleManager().getLocalizedString("LevelShort") + std::to_string(currentLevel) + ": " + _progressManager.getCurrentLevelInfo().levelName);
+    _document->getControlByName("time")->setText(_timeLabel + ": " + Utils::timeToString(_progressManager.getPlayerInfo().time));
+    _document->getControlByName("score")->setText(_scoreLabel + ": 0");
     _document->getControlByName("panel")->setDefaultMaterial("windows/gameover_0.png");
 
     _document->getControlByName("highscoreScore")->setVisible(false);

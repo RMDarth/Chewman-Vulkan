@@ -21,8 +21,8 @@ Game is currently released on Android Play Store. iOS version is in progress.
 ## Technology
 Game is using Vulkan API/SDK for graphics, SDL for windows creation and controls, 
 Assimp library for 3d models importing and some other small libraries like glm, 
-cppfs, stb and rapidjson. Common Vulkan bootstrapping and scene management files are 
-separated in the SVE folder - "Simple Vulkan Engine". 
+cppfs, stb, utf8-cpp and rapidjson. Common Vulkan bootstrapping and scene management 
+files are separated in the SVE folder - "Simple Vulkan Engine". 
 
 SVE is a small game graphics engine, developed with the game. It is used for Vulkan 
 initialization and processing, and some common game features - scene management, resources 

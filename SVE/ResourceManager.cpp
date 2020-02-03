@@ -18,10 +18,11 @@
 #include "MeshManager.h"
 #include "Libs.h"
 
+#include <utf8.h>
 #include <map>
+#include <rapidjson/document.h>
 
 #define GLM_ENABLE_EXPERIMENTAL
-#include <rapidjson/document.h>
 #include <glm/gtx/quaternion.hpp>
 
 #define setOptional(expr)                \
@@ -363,9 +364,9 @@ Font loadFont(FSEntityPtr directory, const std::string& data)
         glyphInfo.originX = characterInfo["originX"].GetInt();
         glyphInfo.originY = characterInfo["originY"].GetInt();
         glyphInfo.advance = characterInfo["advance"].GetUint();
-        if (character.name.GetStringLength() > 1)
-            continue;
-        font.symbolToInfoPos[character.name.GetString()[0]] = symbolIndex;
+        const char* charName = character.name.GetString();
+        uint32_t characterCode = utf8::next(charName, charName + character.name.GetStringLength());
+        font.symbolToInfoPos[characterCode] = symbolIndex;
         font.symbols[symbolIndex] = glyphInfo;
         font.maxHeight = std::max(font.maxHeight, glyphInfo.originY);
         ++symbolIndex;
@@ -654,6 +655,7 @@ void ResourceManager::loadFile(FSEntityPtr file, LoadData& loadData, const std::
     {
         // TODO: Add logging system
         std::cout << "Skipping unsupported file " << file->getPath() << std::endl;
+        return;
     }
 
     std::string fileContent = fileSystem->getFileContent(file);
@@ -701,6 +703,11 @@ std::string ResourceManager::getSavePath() const
 void ResourceManager::setMaxMaterialLoadQuality(MaterialQuality quality)
 {
     _maxLoadQuality = quality;
+}
+
+std::shared_ptr<FileSystem> ResourceManager::getFileSystem() const
+{
+    return _fileSystem;
 }
 
 } // namespace SVE

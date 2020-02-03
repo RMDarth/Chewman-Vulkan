@@ -29,6 +29,8 @@ public:
     {}
 };
 
-#define RAPIDJSON_ASSERT(x) if(!(x)) throw SVE::RapidJsonException();
+#ifndef RAPIDJSON_ASSERT
+    #define RAPIDJSON_ASSERT(x) if(!(x)) throw SVE::RapidJsonException();
+#endif
 
 } // namespace SVE
