@@ -1,6 +1,6 @@
 <document>
     <Panel name="panel" alignment="center" y="0.15" width="-1.84" height="0.6" image="windows/window_wide.png">
-        <Label name="windowName" text="Tutorial" alignment="center" y = "0.045" width="0.5" height="0.06" />
+        <Label name="windowName" text="@TutorialTitle" alignment="center" y = "0.045" width="0.5" height="0.06" />
 
         <Label name="text1" text="You are treasure hunting demon." x="0.02" y="0.35" width="0.96" height="0.08"/>
         <Label name="text2" text="Collect all treasure to win." x="0.02" y="0.45" width="0.96" height="0.08" />
