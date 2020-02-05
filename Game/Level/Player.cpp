@@ -160,6 +160,11 @@ void Player::processInput(const SDL_Event& event)
             _nextMove = MoveDirection::Right;
         if (keystates[SDL_SCANCODE_S])
             _nextMove = MoveDirection::Left;
+
+        if (!_mapTraveller->isTargetReached() && _mapTraveller->isCloseToTurn() && !isOrthogonalDirection(_nextMove, _mapTraveller->getCurrentDirection()))
+        {
+            _mapTraveller->resetPositionWithShift();
+        }
     }
 }
 

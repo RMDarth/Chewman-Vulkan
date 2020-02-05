@@ -10,7 +10,7 @@ namespace Chewman
 namespace
 {
 
-constexpr float TurnDistance = 0.4f;
+constexpr float TurnDistance = CellSize / 4.0f;
 
 void moveTo(MoveDirection dir, glm::ivec2& mapPosition)
 {
@@ -77,6 +77,7 @@ void MapTraveller::move(MoveDirection dir)
     _direction = dir;
     _targetReached = false;
 
+    _lastTarget = _target;
     auto mapPosition = getMapPosition();
     moveTo(dir, mapPosition);
     _start = _position;
@@ -94,6 +95,29 @@ bool MapTraveller::isMovePossible(MoveDirection dir)
 void MapTraveller::update(float deltaTime)
 {
     _position += _speed * deltaTime;
+    if (_useShift)
+    {
+        int zeroed = 0;
+        float speed = deltaTime * MoveSpeed * 0.5f;
+        if (fabs(_shift.x) > speed)
+            _shift.x += (_shift.x > 0) ? -speed : speed;
+        else
+        {
+            _shift.x = 0;
+            zeroed++;
+        }
+
+        if (fabs(_shift.y) > speed)
+            _shift.y += (_shift.y > 0) ? -speed : speed;
+        else
+        {
+            _shift.y = 0;
+            zeroed++;
+        }
+
+        if (zeroed == 2)
+            _useShift = false;
+    }
     auto distance = _target - _position;
     if (glm::dot(distance, _speed) <= 0)
     {
@@ -115,6 +139,8 @@ glm::ivec2 MapTraveller::getMapPosition(glm::vec2 realPos)
 
 glm::vec2 MapTraveller::getRealPosition() const
 {
+    if (_useShift)
+        return _position + _shift;
     return _position;
 }
 
@@ -169,6 +195,8 @@ void MapTraveller::setTargetPos(glm::vec2 pos)
     _target = pos;
 }
 
+
+
 GameMap* MapTraveller::getGameMap() const
 {
     return _map;
@@ -202,6 +230,14 @@ void MapTraveller::setPosition(glm::ivec2 position)
     _direction = MoveDirection::None;
 }
 
+void MapTraveller::resetPositionWithShift()
+{
+    _shift = _position - _lastTarget;
+    _position = _lastTarget;
+    _useShift = true;
+    _targetReached = true;
+}
+
 bool MapTraveller::isCloseToAffect(glm::vec2 pos) const
 {
     return glm::distance(_position, pos) < _affectDistance;
@@ -209,7 +245,7 @@ bool MapTraveller::isCloseToAffect(glm::vec2 pos) const
 
 bool MapTraveller::isCloseToTurn() const
 {
-    return glm::distance(_position, toRealPos(getMapPosition())) < TurnDistance;
+    return glm::distance(_position, _lastTarget) < TurnDistance;
 }
 
 glm::vec2 MapTraveller::toRealPos(glm::ivec2 pos)

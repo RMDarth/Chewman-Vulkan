@@ -52,6 +52,11 @@ bool isAntiDirection(MoveDirection curDir, MoveDirection newDir)
     return curDir != MoveDirection::None && curDir != newDir && static_cast<uint8_t>(curDir) % 2 == static_cast<uint8_t>(newDir) % 2;
 }
 
+bool isOrthogonalDirection(MoveDirection curDir, MoveDirection newDir)
+{
+    return curDir != MoveDirection::None && static_cast<uint8_t>(curDir) % 2 == static_cast<uint8_t>(newDir) % 2;
+}
+
 void setSunLight(SunLightType sunLightType)
 {
     auto sunLight = SVE::Engine::getInstance()->getSceneManager()->getLightManager()->getDirectionLight();
