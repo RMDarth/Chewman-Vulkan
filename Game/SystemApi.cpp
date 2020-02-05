@@ -266,6 +266,8 @@ std::string achivementTypeToId(AchievementType type)
         case AchievementType::Supernova: return  "achievement_supernova";
         case AchievementType::Gold_rush: return  "achievement_gold_rush";
         case AchievementType::Mission_accomplished: return  "achievement_mission_accomplished";
+        case AchievementType::Predator: return  "achievement_predator";
+        case AchievementType::Bomberman: return  "achievement_bomberman";
     }
 
     return "";

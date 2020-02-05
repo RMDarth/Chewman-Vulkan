@@ -38,6 +38,7 @@ public:
     void setAffectDistance(float distance);
 
     void setPosition(glm::ivec2 position);
+    void resetPositionWithShift();
 
     MoveDirection getCurrentDirection() const;
     glm::ivec2 getMapPosition() const;
@@ -68,9 +69,12 @@ private:
     glm::vec2 _position  = {};
     glm::vec2 _target = {};
     glm::vec2 _start = {};
+    glm::vec2 _lastTarget = {};
+    glm::vec2 _shift = {};
     bool _targetReached = true;
     bool _waterAllowed = false;
     bool _wallAllowed = false;
+    bool _useShift = false;
 
     glm::vec2 _speed = {};
 

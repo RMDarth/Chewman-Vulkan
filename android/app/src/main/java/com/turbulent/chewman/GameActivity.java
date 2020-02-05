@@ -84,12 +84,6 @@ public class GameActivity extends org.libsdl.app.SDLActivity {
     private int mVideosWatched = 0;
 
     // Scores
-    class ScoreInfo
-    {
-        String name;
-        long score;
-    }
-
     private boolean mRefreshScores = false;
     private boolean mFirstConnect = true;
 
@@ -118,6 +112,13 @@ public class GameActivity extends org.libsdl.app.SDLActivity {
     // more info
     private WebView mWebView = null;
     private Button mCloseInfoButton = null;
+
+    // Scores holder class
+    class ScoreInfo
+    {
+        String name;
+        long score;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

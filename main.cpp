@@ -277,4 +277,6 @@ int main(int argv, char** args)
         std::cerr << "Unhandled exception: " << ex.what() << std::endl;
         throw;
     }
+
+    return 1;
 }

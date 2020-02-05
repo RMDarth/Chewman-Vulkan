@@ -189,14 +189,12 @@ void Player::processInput(const SDL_Event& event)
                     _nextMove = MoveDirection::Left;
             }
 
-            // TODO: This code makes camera too jumpy, need to make more smooth transition
-            /*if (!_mapTraveller->isTargetReached() && _mapTraveller->isCloseToTurn()
-                && _nextMove != _mapTraveller->getCurrentDirection()
-                && !isAntiDirection(_nextMove, _mapTraveller->getCurrentDirection())
+            if (!_mapTraveller->isTargetReached() && _mapTraveller->isCloseToTurn()
+                && !isOrthogonalDirection(_nextMove, _mapTraveller->getCurrentDirection())
                 && _mapTraveller->isMovePossible(_nextMove))
             {
-                _mapTraveller->setPosition(_mapTraveller->getMapPosition());
-            }*/
+                _mapTraveller->resetPositionWithShift();
+            }
         }
         if (event.type == SDL_MOUSEBUTTONUP)
         {
@@ -221,13 +219,12 @@ void Player::processInput(const SDL_Event& event)
                     _nextMove = MoveDirection::Left;
             }
 
-            /*if (!_mapTraveller->isTargetReached() && _mapTraveller->isCloseToTurn()
-                && _nextMove != _mapTraveller->getCurrentDirection()
-                && !isAntiDirection(_nextMove, _mapTraveller->getCurrentDirection())
+            if (!_mapTraveller->isTargetReached() && _mapTraveller->isCloseToTurn()
+                && !isOrthogonalDirection(_nextMove, _mapTraveller->getCurrentDirection())
                 && _mapTraveller->isMovePossible(_nextMove))
             {
-                _mapTraveller->setPosition(_mapTraveller->getMapPosition());
-            }*/
+                _mapTraveller->resetPositionWithShift();
+            }
         }
     }
 }

@@ -28,6 +28,10 @@ Save this file as res/values/games-ids.xml in your project.
     <string name="achievement_gold_rush" translatable="false">CgkIisXEzLoEEAIQFg</string>
     <!-- achievement Mission accomplished -->
     <string name="achievement_mission_accomplished" translatable="false">CgkIisXEzLoEEAIQFw</string>
+    <!-- achievement Predator -->
+    <string name="achievement_predator" translatable="false">CgkIisXEzLoEEAIQMA</string>
+    <!-- achievement Bomberman -->
+    <string name="achievement_bomberman" translatable="false">CgkIisXEzLoEEAIQMQ</string>
     <!-- leaderboard scores -->
     <string name="leaderboard_scores" translatable="false">CgkIisXEzLoEEAIQAQ</string>
     <!-- leaderboard level01time -->
