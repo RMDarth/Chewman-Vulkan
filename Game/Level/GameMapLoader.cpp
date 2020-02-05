@@ -320,6 +320,7 @@ std::shared_ptr<GameMap> GameMapLoader::loadMap(const std::string& filename, con
     }
     gameMap->activeCoins = gameMap->coins.size();
     gameMap->totalCoins = gameMap->coins.size();
+    gameMap->eatenEnemies = 0;
 
     //fin.getline(line, 100);
     initMeshes(*gameMap, suffix);

@@ -6,6 +6,7 @@
 #include "GameMapLoader.h"
 #include "GameUtils.h"
 #include "Game/Game.h"
+#include "Game/SystemApi.h"
 #include "Game/Level/Enemies/Projectile.h"
 #include "Game/Level/Enemies/Knight.h"
 #include "SVE/Engine.h"
@@ -308,6 +309,10 @@ void GameRulesProcessor::update(float deltaTime)
                     else if (enemy->isStateActive(EnemyState::Vulnerable))
                     {
                         playerInfo.points += 10;
+                        ++gameMap->eatenEnemies;
+                        if (gameMap->eatenEnemies == 5)
+                            System::unlockAchievement(System::AchievementType::Predator);
+
                         Game::getInstance()->getSoundsManager().playSound(SoundType::ChewEnemy);
                         enemy->increaseState(EnemyState::Dead);
                     }
@@ -569,11 +574,21 @@ void GameRulesProcessor::activatePowerUp(PowerUpType type, glm::ivec2 pos, Enemy
         {
             destroyWalls(pos);
             Game::getInstance()->getSoundsManager().playSound(SoundType::Bomb);
+            uint8_t enemiesDown = 0;
             for (auto& enemy : gameMap->enemies)
             {
                 if (glm::length(enemy->getPosition() - getPlayer()->getMapTraveller()->getRealPosition()) < 9.0f)
+                {
+                    ++enemiesDown;
                     enemy->increaseState(EnemyState::Dead);
+                }
             }
+
+            if (enemiesDown >= 3)
+            {
+                System::unlockAchievement(System::AchievementType::Bomberman);
+            }
+
             break;
         }
         case PowerUpType::Jackhammer:

@@ -55,6 +55,7 @@ struct GameMap
 
     uint32_t totalCoins;
     uint32_t activeCoins;
+    uint32_t eatenEnemies;
 
     CellInfoMap mapData;
     size_t width;

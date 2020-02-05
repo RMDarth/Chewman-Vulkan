@@ -34,6 +34,8 @@ enum class AchievementType : int
     Supernova,
     Gold_rush,
     Mission_accomplished,
+    Bomberman,
+    Predator
 };
 
 const std::string levelsProduct = "levels";
