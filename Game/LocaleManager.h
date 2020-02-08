@@ -12,7 +12,8 @@ class LocaleManager
 {
 public:
     explicit LocaleManager(std::string language);
-    const std::string&  getLocalizedString(const std::string& key) const;
+    const std::string& getLocalizedString(const std::string& key) const;
+    const std::string& getLanguage() const;
 
 private:
     void load();

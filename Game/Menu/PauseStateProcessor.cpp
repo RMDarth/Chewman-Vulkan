@@ -16,6 +16,13 @@ PauseStateProcessor::PauseStateProcessor()
     _document->setMouseUpHandler(this);
     _document->raisePriority(120);
     _document->hide();
+
+    if (!isWideScreen())
+    {
+        auto resetControl = _document->getControlByName("reset");
+        resetControl->setCustomAttribute("font-size",
+            Game::getInstance()->getLocaleManager().getLanguage() == "de" ? "40" : "45");
+    }
 }
 
 PauseStateProcessor::~PauseStateProcessor() = default;

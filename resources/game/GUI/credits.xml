@@ -5,7 +5,7 @@
     <Button name="facebook" text="" x="0.9" y="0.85" width="0.05" height="-1" image="buttons/Facebook.png" hoverimage="buttons/Facebook.png" pressedimage="buttons/Facebook.png" />
 
     <Panel name="innerPanel" x="0.09" y="0.05" width="0.53" height="0.88"  image="gray.png" >
-        <Label name="credits1" text="Chewman, version 1.0.7" font-size="60" font-color="0.3 0.9 0.3 1" x="0.1" y="0.02" width="0.9"  height="0.10" textAlignment="Left" />
+        <Label name="credits1" text="Chewman, version 1.0.9" font-size="60" font-color="0.3 0.9 0.3 1" x="0.1" y="0.02" width="0.9"  height="0.10" textAlignment="Left" />
         <Label name="credits2" text="Game by Turbulent Software" font-size="60" font-color="0 1 0.7 1" x="0.1" y="0.07" width="0.9" height="0.10" textAlignment="Left" />
         <Label name="credits3" text="Programming:" font-size="60" font-color="0 0.5 1 1" x="0.1" y="0.14" width="0" height="0.10" />
         <Label name="credits4" text="Igor Barinov" font-size="60" font-color="1 1 0 1" alignment="center" y="0.20" width="0.9" height="0.10" />
@@ -16,7 +16,7 @@
         <Label name="credits9" text="Texic" font-size="60" font-color="1 1 0 1" alignment="center" y="0.45" width="0.9" height="0.10" />
         <Label name="credits10" text="freepik" font-size="60" font-color="1 1 0 1" alignment="center" y="0.50" width="0.9" height="0.10" />
         <Label name="credits11" text="Music:" font-size="60" font-color="0 0.5 1 1" x="0.1" y="0.55" width="0" height="0.10" />
-        <Label name="credits12" text="musiccampare" font-size="60" font-color="1 1 0 1" alignment="center" y="0.59" width="0.9" height="0.10" />
+        <Label name="credits12" text="LiveMusics" font-size="60" font-color="1 1 0 1" alignment="center" y="0.59" width="0.9" height="0.10" />
         <Label name="credits14" text="Testing:" font-size="60" font-color="0 0.5 1 1" x="0.1" y="0.63" width="0" height="0.10" />
         <Label name="credits16" text="Anna Barinova" font-size="60" font-color="1 1 0 1" alignment="center" y="0.685" width="0.9" height="0.10" />
         <Label name="credits15" text="Svetlana Kurochkina" font-size="60" font-color="1 1 0 1" alignment="center" y="0.735" width="0.9" height="0.10" />

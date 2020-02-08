@@ -40,7 +40,6 @@ a separate repository after the game is finished.
 -   Overlays and GUI rendering
 -   Post-effects (like bloom, grayscale)
 
-
 ## Game description
 Game design is inspired by original Pacman game, but in a dark fantasy world. 
 

@@ -23,6 +23,26 @@ HighscoresStateProcessor::HighscoresStateProcessor()
 
     _documentPoints->getControlByName("refresh")->setDefaultMaterial("refreshing1.png");
     _documentTime->getControlByName("refresh")->setDefaultMaterial("refreshing2.png");
+
+    const auto& language = Game::getInstance()->getLocaleManager().getLanguage();
+    if (language != "fr" && language != "de")
+    {
+        const auto shiftControls = [](ControlDocument* document)
+        {
+            auto allTimeControl = document->getControlByName("alltime");
+            auto allTimeSize = allTimeControl->getSize();
+            auto allTimePos = allTimeControl->getPosition();
+            allTimeControl->setPosition({allTimePos.x - allTimeSize.x, allTimePos.y});
+
+            auto allTimeLabelControl = document->getControlByName("alltimeLabel");
+            auto allTimeLabelPos = allTimeLabelControl->getPosition();
+            allTimeLabelControl->setPosition({ allTimeLabelPos.x - allTimeSize.x, allTimeLabelPos.y});
+        };
+
+        shiftControls(_documentPoints.get());
+        shiftControls(_documentTime.get());
+    }
+
     _isRefreshIcon = true;
 }
 
