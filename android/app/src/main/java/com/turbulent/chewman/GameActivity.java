@@ -609,7 +609,7 @@ public class GameActivity extends org.libsdl.app.SDLActivity {
         }
     }
 
-    OnCompleteListener<AnnotatedData<LeaderboardsClient.LeaderboardScores>>  getLeaderboardListener(final boolean weekly)
+    private OnCompleteListener<AnnotatedData<LeaderboardsClient.LeaderboardScores>>  getLeaderboardListener(final boolean weekly)
     {
         return new OnCompleteListener<AnnotatedData<LeaderboardsClient.LeaderboardScores>>() {
 
@@ -965,7 +965,20 @@ public class GameActivity extends org.libsdl.app.SDLActivity {
 
     public String getLanguage()
     {
-        return Locale.getDefault().getLanguage();
+        String language = Locale.getDefault().getLanguage();
+
+        if (language.equals("ru"))
+            return "ru";
+        if (language.equals("de"))
+            return "de";
+        if (language.equals("fr"))
+            return "fr";
+        if (language.equals("es"))
+            return "es";
+        if (language.equals("pt"))
+            return "pt";
+
+        return "en";
     }
 
     public byte[] encrypt(byte[] data)
@@ -1064,7 +1077,7 @@ public class GameActivity extends org.libsdl.app.SDLActivity {
             GamesClient gamesClient = Games.getGamesClient(this, googleSignInAccount);
             gamesClient.setViewForPopups(mSurface);
 
-            if (mPlayerDisplayName.equals("Player")) {
+            if ("Player".equals(mPlayerDisplayName)) {
                 Games.getPlayersClient(this, googleSignInAccount).getCurrentPlayer().addOnCompleteListener(
                         new OnCompleteListener<Player>() {
                             @Override

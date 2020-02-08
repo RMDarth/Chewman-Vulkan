@@ -3,7 +3,7 @@
     "size": 70,
     "bold": false,
     "italic": false,
-    "width": 1201,
+    "width": 1259,
     "height": 512,
     "material": "FontNordBoldMaterial",
     "characters": {
@@ -14,7 +14,7 @@
             "height": 53,
             "originX": -25,
             "originY": -16,
-            "advance": 60
+            "advance": 58
         },
         "\"": {
             "x": 10,
@@ -23,7 +23,7 @@
             "height": 0,
             "originX": 0,
             "originY": -68,
-            "advance": 37
+            "advance": 35
         },
         "#": {
             "x": 10,
@@ -32,7 +32,7 @@
             "height": 51,
             "originX": -6,
             "originY": -17,
-            "advance": 60
+            "advance": 58
         },
         "$": {
             "x": 33,
@@ -41,7 +41,7 @@
             "height": 63,
             "originX": -12,
             "originY": -11,
-            "advance": 60
+            "advance": 58
         },
         "%": {
             "x": 10,
@@ -50,7 +50,7 @@
             "height": 57,
             "originX": -4,
             "originY": -14,
-            "advance": 59
+            "advance": 57
         },
         "&": {
             "x": 10,
@@ -59,7 +59,7 @@
             "height": 51,
             "originX": -4,
             "originY": -17,
-            "advance": 47
+            "advance": 45
         },
         "'": {
             "x": 10,
@@ -68,7 +68,7 @@
             "height": 13,
             "originX": -5,
             "originY": -13,
-            "advance": 21
+            "advance": 19
         },
         "(": {
             "x": 10,
@@ -77,7 +77,7 @@
             "height": 50,
             "originX": -3,
             "originY": -17,
-            "advance": 24
+            "advance": 22
         },
         ")": {
             "x": 10,
@@ -86,7 +86,7 @@
             "height": 50,
             "originX": -4,
             "originY": -17,
-            "advance": 24
+            "advance": 22
         },
         "*": {
             "x": 20,
@@ -95,7 +95,7 @@
             "height": 0,
             "originX": 0,
             "originY": -68,
-            "advance": 37
+            "advance": 35
         },
         "+": {
             "x": 10,
@@ -104,7 +104,7 @@
             "height": 30,
             "originX": -4,
             "originY": -26,
-            "advance": 35
+            "advance": 33
         },
         ",": {
             "x": 10,
@@ -113,7 +113,7 @@
             "height": 16,
             "originX": -4,
             "originY": -57,
-            "advance": 18
+            "advance": 16
         },
         "-": {
             "x": 30,
@@ -122,7 +122,7 @@
             "height": 10,
             "originX": -4,
             "originY": -36,
-            "advance": 35
+            "advance": 33
         },
         ".": {
             "x": 10,
@@ -131,7 +131,7 @@
             "height": 10,
             "originX": -4,
             "originY": -58,
-            "advance": 16
+            "advance": 14
         },
         "/": {
             "x": 62,
@@ -140,7 +140,7 @@
             "height": 50,
             "originX": -4,
             "originY": -17,
-            "advance": 31
+            "advance": 29
         },
         "0": {
             "x": 38,
@@ -149,7 +149,7 @@
             "height": 51,
             "originX": -4,
             "originY": -17,
-            "advance": 34
+            "advance": 32
         },
         "1": {
             "x": 38,
@@ -158,7 +158,7 @@
             "height": 51,
             "originX": -4,
             "originY": -16,
-            "advance": 29
+            "advance": 27
         },
         "2": {
             "x": 50,
@@ -167,7 +167,7 @@
             "height": 51,
             "originX": -4,
             "originY": -17,
-            "advance": 37
+            "advance": 35
         },
         "3": {
             "x": 76,
@@ -176,7 +176,7 @@
             "height": 52,
             "originX": -4,
             "originY": -17,
-            "advance": 40
+            "advance": 38
         },
         "4": {
             "x": 76,
@@ -185,7 +185,7 @@
             "height": 52,
             "originX": -3,
             "originY": -17,
-            "advance": 49
+            "advance": 47
         },
         "5": {
             "x": 91,
@@ -194,7 +194,7 @@
             "height": 51,
             "originX": -4,
             "originY": -17,
-            "advance": 39
+            "advance": 37
         },
         "6": {
             "x": 74,
@@ -203,7 +203,7 @@
             "height": 51,
             "originX": -4,
             "originY": -17,
-            "advance": 38
+            "advance": 36
         },
         "7": {
             "x": 74,
@@ -212,7 +212,7 @@
             "height": 51,
             "originX": -4,
             "originY": -17,
-            "advance": 41
+            "advance": 39
         },
         "8": {
             "x": 74,
@@ -221,7 +221,7 @@
             "height": 53,
             "originX": -4,
             "originY": -16,
-            "advance": 39
+            "advance": 37
         },
         "9": {
             "x": 116,
@@ -230,7 +230,7 @@
             "height": 51,
             "originX": -4,
             "originY": -17,
-            "advance": 38
+            "advance": 36
         },
         ":": {
             "x": 32,
@@ -239,7 +239,7 @@
             "height": 25,
             "originX": -4,
             "originY": -35,
-            "advance": 16
+            "advance": 14
         },
         ";": {
             "x": 91,
@@ -248,7 +248,7 @@
             "height": 30,
             "originX": -4,
             "originY": -35,
-            "advance": 18
+            "advance": 16
         },
         "<": {
             "x": 113,
@@ -257,7 +257,7 @@
             "height": 31,
             "originX": -4,
             "originY": -24,
-            "advance": 30
+            "advance": 28
         },
         "=": {
             "x": 98,
@@ -266,7 +266,7 @@
             "height": 23,
             "originX": -4,
             "originY": -31,
-            "advance": 35
+            "advance": 33
         },
         ">": {
             "x": 98,
@@ -275,7 +275,7 @@
             "height": 31,
             "originX": -3,
             "originY": -24,
-            "advance": 30
+            "advance": 28
         },
         "?": {
             "x": 117,
@@ -284,7 +284,7 @@
             "height": 51,
             "originX": -4,
             "originY": -17,
-            "advance": 31
+            "advance": 29
         },
         "@": {
             "x": 129,
@@ -293,7 +293,7 @@
             "height": 65,
             "originX": -3,
             "originY": -12,
-            "advance": 71
+            "advance": 69
         },
         "A": {
             "x": 119,
@@ -302,7 +302,7 @@
             "height": 51,
             "originX": -3,
             "originY": -16,
-            "advance": 43
+            "advance": 41
         },
         "B": {
             "x": 158,
@@ -311,7 +311,7 @@
             "height": 51,
             "originX": -4,
             "originY": -17,
-            "advance": 37
+            "advance": 35
         },
         "C": {
             "x": 138,
@@ -320,7 +320,7 @@
             "height": 51,
             "originX": -4,
             "originY": -17,
-            "advance": 37
+            "advance": 35
         },
         "D": {
             "x": 152,
@@ -329,7 +329,7 @@
             "height": 51,
             "originX": -4,
             "originY": -17,
-            "advance": 36
+            "advance": 34
         },
         "E": {
             "x": 166,
@@ -338,7 +338,7 @@
             "height": 51,
             "originX": -4,
             "originY": -17,
-            "advance": 35
+            "advance": 33
         },
         "F": {
             "x": 199,
@@ -347,7 +347,7 @@
             "height": 51,
             "originX": -4,
             "originY": -17,
-            "advance": 33
+            "advance": 31
         },
         "G": {
             "x": 179,
@@ -356,7 +356,7 @@
             "height": 52,
             "originX": -4,
             "originY": -16,
-            "advance": 37
+            "advance": 35
         },
         "H": {
             "x": 192,
@@ -365,7 +365,7 @@
             "height": 51,
             "originX": -4,
             "originY": -17,
-            "advance": 38
+            "advance": 36
         },
         "I": {
             "x": 205,
@@ -374,7 +374,7 @@
             "height": 51,
             "originX": -4,
             "originY": -17,
-            "advance": 17
+            "advance": 15
         },
         "J": {
             "x": 226,
@@ -383,7 +383,7 @@
             "height": 51,
             "originX": -3,
             "originY": -17,
-            "advance": 37
+            "advance": 35
         },
         "K": {
             "x": 236,
@@ -392,7 +392,7 @@
             "height": 51,
             "originX": -4,
             "originY": -17,
-            "advance": 42
+            "advance": 40
         },
         "L": {
             "x": 134,
@@ -401,7 +401,7 @@
             "height": 51,
             "originX": -4,
             "originY": -17,
-            "advance": 33
+            "advance": 31
         },
         "M": {
             "x": 147,
@@ -410,7 +410,7 @@
             "height": 51,
             "originX": -4,
             "originY": -17,
-            "advance": 49
+            "advance": 47
         },
         "N": {
             "x": 171,
@@ -419,7 +419,7 @@
             "height": 51,
             "originX": -4,
             "originY": -16,
-            "advance": 45
+            "advance": 43
         },
         "O": {
             "x": 204,
@@ -428,7 +428,7 @@
             "height": 54,
             "originX": -4,
             "originY": -15,
-            "advance": 38
+            "advance": 36
         },
         "P": {
             "x": 221,
@@ -437,7 +437,7 @@
             "height": 51,
             "originX": -4,
             "originY": -17,
-            "advance": 39
+            "advance": 37
         },
         "Q": {
             "x": 200,
@@ -446,7 +446,7 @@
             "height": 68,
             "originX": -4,
             "originY": -16,
-            "advance": 52
+            "advance": 50
         },
         "R": {
             "x": 235,
@@ -455,7 +455,7 @@
             "height": 51,
             "originX": -4,
             "originY": -17,
-            "advance": 39
+            "advance": 37
         },
         "S": {
             "x": 267,
@@ -464,7 +464,7 @@
             "height": 51,
             "originX": -4,
             "originY": -17,
-            "advance": 37
+            "advance": 35
         },
         "T": {
             "x": 282,
@@ -473,7 +473,7 @@
             "height": 51,
             "originX": -4,
             "originY": -17,
-            "advance": 43
+            "advance": 41
         },
         "U": {
             "x": 220,
@@ -482,7 +482,7 @@
             "height": 51,
             "originX": -4,
             "originY": -17,
-            "advance": 38
+            "advance": 36
         },
         "V": {
             "x": 247,
@@ -491,7 +491,7 @@
             "height": 51,
             "originX": -3,
             "originY": -16,
-            "advance": 48
+            "advance": 46
         },
         "W": {
             "x": 264,
@@ -500,7 +500,7 @@
             "height": 51,
             "originX": -3,
             "originY": -16,
-            "advance": 79
+            "advance": 77
         },
         "X": {
             "x": 278,
@@ -509,7 +509,7 @@
             "height": 51,
             "originX": -3,
             "originY": -17,
-            "advance": 43
+            "advance": 41
         },
         "Y": {
             "x": 308,
@@ -518,7 +518,7 @@
             "height": 51,
             "originX": -3,
             "originY": -17,
-            "advance": 43
+            "advance": 41
         },
         "Z": {
             "x": 329,
@@ -527,7 +527,7 @@
             "height": 51,
             "originX": -4,
             "originY": -17,
-            "advance": 37
+            "advance": 35
         },
         "[": {
             "x": 325,
@@ -536,7 +536,7 @@
             "height": 50,
             "originX": -4,
             "originY": -18,
-            "advance": 25
+            "advance": 23
         },
         "\\": {
             "x": 256,
@@ -545,7 +545,7 @@
             "height": 50,
             "originX": -4,
             "originY": -17,
-            "advance": 31
+            "advance": 29
         },
         "]": {
             "x": 263,
@@ -554,7 +554,7 @@
             "height": 50,
             "originX": -4,
             "originY": -18,
-            "advance": 25
+            "advance": 23
         },
         "^": {
             "x": 10,
@@ -563,7 +563,7 @@
             "height": 0,
             "originX": 0,
             "originY": -68,
-            "advance": 37
+            "advance": 35
         },
         "_": {
             "x": 132,
@@ -572,7 +572,7 @@
             "height": 4,
             "originX": -4,
             "originY": -64,
-            "advance": 47
+            "advance": 45
         },
         "`": {
             "x": 20,
@@ -581,7 +581,7 @@
             "height": 0,
             "originX": 0,
             "originY": -68,
-            "advance": 37
+            "advance": 35
         },
         "a": {
             "x": 256,
@@ -590,7 +590,7 @@
             "height": 37,
             "originX": -4,
             "originY": -32,
-            "advance": 47
+            "advance": 45
         },
         "b": {
             "x": 292,
@@ -599,7 +599,7 @@
             "height": 50,
             "originX": -4,
             "originY": -18,
-            "advance": 38
+            "advance": 36
         },
         "c": {
             "x": 147,
@@ -608,7 +608,7 @@
             "height": 36,
             "originX": -4,
             "originY": -33,
-            "advance": 38
+            "advance": 36
         },
         "d": {
             "x": 308,
@@ -617,7 +617,7 @@
             "height": 51,
             "originX": -4,
             "originY": -17,
-            "advance": 46
+            "advance": 44
         },
         "e": {
             "x": 293,
@@ -626,7 +626,7 @@
             "height": 36,
             "originX": -4,
             "originY": -32,
-            "advance": 39
+            "advance": 37
         },
         "f": {
             "x": 299,
@@ -635,7 +635,7 @@
             "height": 50,
             "originX": -4,
             "originY": -18,
-            "advance": 36
+            "advance": 34
         },
         "g": {
             "x": 334,
@@ -644,7 +644,7 @@
             "height": 63,
             "originX": -4,
             "originY": -29,
-            "advance": 46
+            "advance": 44
         },
         "h": {
             "x": 359,
@@ -653,7 +653,7 @@
             "height": 50,
             "originX": -4,
             "originY": -18,
-            "advance": 37
+            "advance": 35
         },
         "i": {
             "x": 339,
@@ -662,7 +662,7 @@
             "height": 51,
             "originX": -4,
             "originY": -17,
-            "advance": 25
+            "advance": 23
         },
         "j": {
             "x": 355,
@@ -671,7 +671,7 @@
             "height": 76,
             "originX": -4,
             "originY": -16,
-            "advance": 39
+            "advance": 37
         },
         "k": {
             "x": 370,
@@ -680,7 +680,7 @@
             "height": 50,
             "originX": -4,
             "originY": -18,
-            "advance": 38
+            "advance": 36
         },
         "l": {
             "x": 347,
@@ -689,7 +689,7 @@
             "height": 50,
             "originX": -4,
             "originY": -17,
-            "advance": 16
+            "advance": 14
         },
         "m": {
             "x": 337,
@@ -698,7 +698,7 @@
             "height": 36,
             "originX": -4,
             "originY": -32,
-            "advance": 68
+            "advance": 66
         },
         "n": {
             "x": 385,
@@ -707,7 +707,7 @@
             "height": 36,
             "originX": -4,
             "originY": -32,
-            "advance": 46
+            "advance": 44
         },
         "o": {
             "x": 367,
@@ -716,7 +716,7 @@
             "height": 37,
             "originX": -4,
             "originY": -31,
-            "advance": 43
+            "advance": 41
         },
         "p": {
             "x": 398,
@@ -725,7 +725,7 @@
             "height": 62,
             "originX": -4,
             "originY": -30,
-            "advance": 53
+            "advance": 51
         },
         "q": {
             "x": 400,
@@ -734,7 +734,7 @@
             "height": 62,
             "originX": -4,
             "originY": -29,
-            "advance": 53
+            "advance": 51
         },
         "r": {
             "x": 367,
@@ -743,7 +743,7 @@
             "height": 37,
             "originX": -4,
             "originY": -31,
-            "advance": 34
+            "advance": 32
         },
         "s": {
             "x": 413,
@@ -752,7 +752,7 @@
             "height": 36,
             "originX": -3,
             "originY": -32,
-            "advance": 29
+            "advance": 27
         },
         "t": {
             "x": 446,
@@ -761,7 +761,7 @@
             "height": 50,
             "originX": -4,
             "originY": -17,
-            "advance": 36
+            "advance": 34
         },
         "u": {
             "x": 368,
@@ -770,7 +770,7 @@
             "height": 36,
             "originX": -4,
             "originY": -32,
-            "advance": 38
+            "advance": 36
         },
         "v": {
             "x": 405,
@@ -779,7 +779,7 @@
             "height": 36,
             "originX": -4,
             "originY": -31,
-            "advance": 44
+            "advance": 42
         },
         "w": {
             "x": 414,
@@ -788,7 +788,7 @@
             "height": 36,
             "originX": -4,
             "originY": -31,
-            "advance": 72
+            "advance": 70
         },
         "x": {
             "x": 409,
@@ -797,7 +797,7 @@
             "height": 36,
             "originX": -3,
             "originY": -32,
-            "advance": 33
+            "advance": 31
         },
         "y": {
             "x": 435,
@@ -806,7 +806,7 @@
             "height": 51,
             "originX": -4,
             "originY": -32,
-            "advance": 41
+            "advance": 39
         },
         "z": {
             "x": 410,
@@ -815,7 +815,7 @@
             "height": 36,
             "originX": -3,
             "originY": -33,
-            "advance": 36
+            "advance": 34
         },
         "{": {
             "x": 455,
@@ -824,7 +824,7 @@
             "height": 51,
             "originX": -4,
             "originY": -17,
-            "advance": 30
+            "advance": 28
         },
         "|": {
             "x": 450,
@@ -833,7 +833,7 @@
             "height": 51,
             "originX": -4,
             "originY": -17,
-            "advance": 16
+            "advance": 14
         },
         "}": {
             "x": 453,
@@ -842,7 +842,7 @@
             "height": 51,
             "originX": -4,
             "originY": -17,
-            "advance": 30
+            "advance": 28
         },
         "~": {
             "x": 190,
@@ -851,7 +851,7 @@
             "height": 0,
             "originX": 0,
             "originY": -68,
-            "advance": 37
+            "advance": 35
         },
         "а": {
             "x": 486,
@@ -860,7 +860,7 @@
             "height": 37,
             "originX": -4,
             "originY": -32,
-            "advance": 47
+            "advance": 45
         },
         "б": {
             "x": 489,
@@ -869,7 +869,7 @@
             "height": 55,
             "originX": -4,
             "originY": -12,
-            "advance": 43
+            "advance": 41
         },
         "в": {
             "x": 470,
@@ -878,7 +878,7 @@
             "height": 45,
             "originX": -4,
             "originY": -23,
-            "advance": 35
+            "advance": 33
         },
         "г": {
             "x": 487,
@@ -887,7 +887,7 @@
             "height": 36,
             "originX": -4,
             "originY": -32,
-            "advance": 30
+            "advance": 28
         },
         "д": {
             "x": 491,
@@ -896,7 +896,7 @@
             "height": 43,
             "originX": -4,
             "originY": -34,
-            "advance": 42
+            "advance": 40
         },
         "е": {
             "x": 536,
@@ -905,7 +905,7 @@
             "height": 36,
             "originX": -4,
             "originY": -32,
-            "advance": 39
+            "advance": 37
         },
         "ё": {
             "x": 457,
@@ -914,7 +914,7 @@
             "height": 49,
             "originX": -4,
             "originY": -19,
-            "advance": 39
+            "advance": 37
         },
         "ж": {
             "x": 538,
@@ -923,7 +923,7 @@
             "height": 36,
             "originX": -3,
             "originY": -32,
-            "advance": 55
+            "advance": 53
         },
         "з": {
             "x": 457,
@@ -932,7 +932,7 @@
             "height": 37,
             "originX": -4,
             "originY": -31,
-            "advance": 30
+            "advance": 28
         },
         "и": {
             "x": 491,
@@ -941,7 +941,7 @@
             "height": 36,
             "originX": -4,
             "originY": -31,
-            "advance": 40
+            "advance": 38
         },
         "й": {
             "x": 480,
@@ -950,7 +950,7 @@
             "height": 50,
             "originX": -4,
             "originY": -18,
-            "advance": 40
+            "advance": 38
         },
         "к": {
             "x": 509,
@@ -959,7 +959,7 @@
             "height": 36,
             "originX": -4,
             "originY": -32,
-            "advance": 35
+            "advance": 33
         },
         "л": {
             "x": 521,
@@ -968,7 +968,7 @@
             "height": 36,
             "originX": -4,
             "originY": -32,
-            "advance": 40
+            "advance": 38
         },
         "м": {
             "x": 538,
@@ -977,7 +977,7 @@
             "height": 36,
             "originX": -4,
             "originY": -32,
-            "advance": 39
+            "advance": 37
         },
         "н": {
             "x": 580,
@@ -986,7 +986,7 @@
             "height": 35,
             "originX": -4,
             "originY": -32,
-            "advance": 35
+            "advance": 33
         },
         "о": {
             "x": 597,
@@ -995,7 +995,7 @@
             "height": 36,
             "originX": -4,
             "originY": -32,
-            "advance": 42
+            "advance": 40
         },
         "п": {
             "x": 501,
@@ -1004,7 +1004,7 @@
             "height": 35,
             "originX": -4,
             "originY": -32,
-            "advance": 35
+            "advance": 33
         },
         "р": {
             "x": 525,
@@ -1013,7 +1013,7 @@
             "height": 54,
             "originX": -4,
             "originY": -32,
-            "advance": 37
+            "advance": 35
         },
         "с": {
             "x": 501,
@@ -1022,7 +1022,7 @@
             "height": 36,
             "originX": -4,
             "originY": -32,
-            "advance": 39
+            "advance": 37
         },
         "т": {
             "x": 536,
@@ -1031,7 +1031,7 @@
             "height": 36,
             "originX": -4,
             "originY": -33,
-            "advance": 42
+            "advance": 40
         },
         "у": {
             "x": 541,
@@ -1040,7 +1040,7 @@
             "height": 51,
             "originX": -4,
             "originY": -32,
-            "advance": 40
+            "advance": 38
         },
         "ф": {
             "x": 544,
@@ -1049,7 +1049,7 @@
             "height": 38,
             "originX": -3,
             "originY": -30,
-            "advance": 49
+            "advance": 47
         },
         "х": {
             "x": 582,
@@ -1058,7 +1058,7 @@
             "height": 36,
             "originX": -3,
             "originY": -32,
-            "advance": 33
+            "advance": 31
         },
         "ц": {
             "x": 548,
@@ -1067,7 +1067,7 @@
             "height": 42,
             "originX": -4,
             "originY": -33,
-            "advance": 36
+            "advance": 34
         },
         "ч": {
             "x": 567,
@@ -1076,7 +1076,7 @@
             "height": 36,
             "originX": -4,
             "originY": -32,
-            "advance": 35
+            "advance": 33
         },
         "ш": {
             "x": 565,
@@ -1085,7 +1085,7 @@
             "height": 36,
             "originX": -4,
             "originY": -32,
-            "advance": 50
+            "advance": 48
         },
         "щ": {
             "x": 589,
@@ -1094,7 +1094,7 @@
             "height": 42,
             "originX": -4,
             "originY": -33,
-            "advance": 53
+            "advance": 51
         },
         "ъ": {
             "x": 581,
@@ -1103,7 +1103,7 @@
             "height": 36,
             "originX": -4,
             "originY": -32,
-            "advance": 45
+            "advance": 43
         },
         "ы": {
             "x": 619,
@@ -1112,7 +1112,7 @@
             "height": 36,
             "originX": -4,
             "originY": -32,
-            "advance": 51
+            "advance": 49
         },
         "ь": {
             "x": 585,
@@ -1121,7 +1121,7 @@
             "height": 36,
             "originX": -4,
             "originY": -32,
-            "advance": 33
+            "advance": 31
         },
         "э": {
             "x": 606,
@@ -1130,7 +1130,7 @@
             "height": 36,
             "originX": -4,
             "originY": -32,
-            "advance": 39
+            "advance": 37
         },
         "ю": {
             "x": 646,
@@ -1139,7 +1139,7 @@
             "height": 38,
             "originX": -4,
             "originY": -33,
-            "advance": 59
+            "advance": 57
         },
         "я": {
             "x": 597,
@@ -1148,7 +1148,7 @@
             "height": 39,
             "originX": -4,
             "originY": -34,
-            "advance": 46
+            "advance": 44
         },
         "А": {
             "x": 622,
@@ -1157,7 +1157,7 @@
             "height": 51,
             "originX": -3,
             "originY": -17,
-            "advance": 42
+            "advance": 40
         },
         "Б": {
             "x": 630,
@@ -1166,7 +1166,7 @@
             "height": 51,
             "originX": -4,
             "originY": -17,
-            "advance": 38
+            "advance": 36
         },
         "В": {
             "x": 619,
@@ -1175,7 +1175,7 @@
             "height": 51,
             "originX": -4,
             "originY": -17,
-            "advance": 38
+            "advance": 36
         },
         "Г": {
             "x": 672,
@@ -1184,7 +1184,7 @@
             "height": 51,
             "originX": -4,
             "originY": -17,
-            "advance": 33
+            "advance": 31
         },
         "Д": {
             "x": 672,
@@ -1193,7 +1193,7 @@
             "height": 60,
             "originX": -4,
             "originY": -17,
-            "advance": 47
+            "advance": 45
         },
         "Е": {
             "x": 709,
@@ -1202,7 +1202,7 @@
             "height": 51,
             "originX": -4,
             "originY": -17,
-            "advance": 35
+            "advance": 33
         },
         "Ё": {
             "x": 661,
@@ -1211,7 +1211,7 @@
             "height": 64,
             "originX": -4,
             "originY": -4,
-            "advance": 35
+            "advance": 33
         },
         "Ж": {
             "x": 661,
@@ -1220,7 +1220,7 @@
             "height": 51,
             "originX": -3,
             "originY": -17,
-            "advance": 62
+            "advance": 60
         },
         "З": {
             "x": 668,
@@ -1229,7 +1229,7 @@
             "height": 51,
             "originX": -4,
             "originY": -17,
-            "advance": 38
+            "advance": 36
         },
         "И": {
             "x": 709,
@@ -1238,7 +1238,7 @@
             "height": 51,
             "originX": -4,
             "originY": -17,
-            "advance": 45
+            "advance": 43
         },
         "Й": {
             "x": 700,
@@ -1247,7 +1247,7 @@
             "height": 67,
             "originX": -4,
             "originY": -1,
-            "advance": 45
+            "advance": 43
         },
         "К": {
             "x": 723,
@@ -1256,7 +1256,7 @@
             "height": 51,
             "originX": -4,
             "originY": -17,
-            "advance": 42
+            "advance": 40
         },
         "Л": {
             "x": 748,
@@ -1265,7 +1265,7 @@
             "height": 51,
             "originX": -3,
             "originY": -17,
-            "advance": 42
+            "advance": 40
         },
         "М": {
             "x": 710,
@@ -1274,7 +1274,7 @@
             "height": 51,
             "originX": -4,
             "originY": -17,
-            "advance": 49
+            "advance": 47
         },
         "Н": {
             "x": 758,
@@ -1283,7 +1283,7 @@
             "height": 51,
             "originX": -4,
             "originY": -17,
-            "advance": 40
+            "advance": 38
         },
         "О": {
             "x": 794,
@@ -1292,7 +1292,7 @@
             "height": 54,
             "originX": -4,
             "originY": -15,
-            "advance": 38
+            "advance": 36
         },
         "П": {
             "x": 727,
@@ -1301,7 +1301,7 @@
             "height": 51,
             "originX": -4,
             "originY": -17,
-            "advance": 38
+            "advance": 36
         },
         "Р": {
             "x": 727,
@@ -1310,7 +1310,7 @@
             "height": 51,
             "originX": -4,
             "originY": -16,
-            "advance": 39
+            "advance": 37
         },
         "С": {
             "x": 749,
@@ -1319,7 +1319,7 @@
             "height": 51,
             "originX": -4,
             "originY": -17,
-            "advance": 37
+            "advance": 35
         },
         "Т": {
             "x": 763,
@@ -1328,7 +1328,7 @@
             "height": 51,
             "originX": -4,
             "originY": -17,
-            "advance": 41
+            "advance": 39
         },
         "У": {
             "x": 769,
@@ -1337,7 +1337,7 @@
             "height": 51,
             "originX": -4,
             "originY": -17,
-            "advance": 41
+            "advance": 39
         },
         "Ф": {
             "x": 790,
@@ -1346,7 +1346,7 @@
             "height": 51,
             "originX": -3,
             "originY": -17,
-            "advance": 62
+            "advance": 60
         },
         "Х": {
             "x": 802,
@@ -1355,7 +1355,7 @@
             "height": 51,
             "originX": -3,
             "originY": -16,
-            "advance": 43
+            "advance": 41
         },
         "Ц": {
             "x": 808,
@@ -1364,7 +1364,7 @@
             "height": 59,
             "originX": -4,
             "originY": -17,
-            "advance": 43
+            "advance": 41
         },
         "Ч": {
             "x": 837,
@@ -1373,7 +1373,7 @@
             "height": 51,
             "originX": -4,
             "originY": -18,
-            "advance": 38
+            "advance": 36
         },
         "Ш": {
             "x": 849,
@@ -1382,7 +1382,7 @@
             "height": 51,
             "originX": -4,
             "originY": -17,
-            "advance": 59
+            "advance": 57
         },
         "Щ": {
             "x": 770,
@@ -1391,7 +1391,7 @@
             "height": 59,
             "originX": -4,
             "originY": -17,
-            "advance": 65
+            "advance": 63
         },
         "Ъ": {
             "x": 879,
@@ -1400,7 +1400,7 @@
             "height": 51,
             "originX": -4,
             "originY": -17,
-            "advance": 54
+            "advance": 52
         },
         "Ы": {
             "x": 814,
@@ -1409,7 +1409,7 @@
             "height": 51,
             "originX": -4,
             "originY": -17,
-            "advance": 61
+            "advance": 59
         },
         "Ь": {
             "x": 839,
@@ -1418,7 +1418,7 @@
             "height": 51,
             "originX": -4,
             "originY": -17,
-            "advance": 39
+            "advance": 37
         },
         "Э": {
             "x": 839,
@@ -1427,7 +1427,7 @@
             "height": 51,
             "originX": -4,
             "originY": -17,
-            "advance": 37
+            "advance": 35
         },
         "Ю": {
             "x": 880,
@@ -1436,7 +1436,7 @@
             "height": 54,
             "originX": -4,
             "originY": -16,
-            "advance": 59
+            "advance": 57
         },
         "Я": {
             "x": 856,
@@ -1445,7 +1445,7 @@
             "height": 55,
             "originX": -4,
             "originY": -17,
-            "advance": 53
+            "advance": 51
         },
         "І": {
             "x": 190,
@@ -1454,7 +1454,7 @@
             "height": 0,
             "originX": 0,
             "originY": -68,
-            "advance": 37
+            "advance": 35
         },
         "і": {
             "x": 470,
@@ -1463,7 +1463,7 @@
             "height": 0,
             "originX": 0,
             "originY": -68,
-            "advance": 37
+            "advance": 35
         },
         "Ї": {
             "x": 620,
@@ -1472,7 +1472,7 @@
             "height": 0,
             "originX": 0,
             "originY": -68,
-            "advance": 37
+            "advance": 35
         },
         "ї": {
             "x": 620,
@@ -1481,7 +1481,7 @@
             "height": 0,
             "originX": 0,
             "originY": -68,
-            "advance": 37
+            "advance": 35
         },
         "Ґ": {
             "x": 620,
@@ -1490,7 +1490,7 @@
             "height": 0,
             "originX": 0,
             "originY": -68,
-            "advance": 37
+            "advance": 35
         },
         "ґ": {
             "x": 620,
@@ -1499,7 +1499,7 @@
             "height": 0,
             "originX": 0,
             "originY": -68,
-            "advance": 37
+            "advance": 35
         },
         "ā": {
             "x": 455,
@@ -1508,7 +1508,7 @@
             "height": 0,
             "originX": 0,
             "originY": -68,
-            "advance": 37
+            "advance": 35
         },
         "ă": {
             "x": 465,
@@ -1517,7 +1517,7 @@
             "height": 0,
             "originX": 0,
             "originY": -68,
-            "advance": 37
+            "advance": 35
         },
         "â": {
             "x": 856,
@@ -1526,7 +1526,7 @@
             "height": 54,
             "originX": -4,
             "originY": -15,
-            "advance": 48
+            "advance": 46
         },
         "ã": {
             "x": 879,
@@ -1535,7 +1535,7 @@
             "height": 53,
             "originX": -4,
             "originY": -16,
-            "advance": 48
+            "advance": 46
         },
         "à": {
             "x": 908,
@@ -1544,7 +1544,7 @@
             "height": 54,
             "originX": -4,
             "originY": -15,
-            "advance": 48
+            "advance": 46
         },
         "á": {
             "x": 882,
@@ -1553,7 +1553,7 @@
             "height": 54,
             "originX": -4,
             "originY": -15,
-            "advance": 48
+            "advance": 46
         },
         "ä": {
             "x": 912,
@@ -1562,7 +1562,7 @@
             "height": 51,
             "originX": -4,
             "originY": -18,
-            "advance": 48
+            "advance": 46
         },
         "å": {
             "x": 934,
@@ -1571,7 +1571,7 @@
             "height": 56,
             "originX": -4,
             "originY": -13,
-            "advance": 48
+            "advance": 46
         },
         "ą": {
             "x": 475,
@@ -1580,7 +1580,7 @@
             "height": 0,
             "originX": 0,
             "originY": -68,
-            "advance": 37
+            "advance": 35
         },
         "æ": {
             "x": 622,
@@ -1589,7 +1589,7 @@
             "height": 0,
             "originX": 0,
             "originY": -68,
-            "advance": 37
+            "advance": 35
         },
         "ç": {
             "x": 913,
@@ -1598,7 +1598,7 @@
             "height": 52,
             "originX": -4,
             "originY": -32,
-            "advance": 39
+            "advance": 37
         },
         "č": {
             "x": 632,
@@ -1607,7 +1607,7 @@
             "height": 0,
             "originX": 0,
             "originY": -68,
-            "advance": 37
+            "advance": 35
         },
         "ć": {
             "x": 642,
@@ -1616,7 +1616,7 @@
             "height": 0,
             "originX": 0,
             "originY": -68,
-            "advance": 37
+            "advance": 35
         },
         "ð": {
             "x": 536,
@@ -1625,7 +1625,7 @@
             "height": 0,
             "originX": 0,
             "originY": -68,
-            "advance": 37
+            "advance": 35
         },
         "ē": {
             "x": 546,
@@ -1634,7 +1634,16 @@
             "height": 0,
             "originX": 0,
             "originY": -68,
-            "advance": 37
+            "advance": 35
+        },
+        "é": {
+            "x": 956,
+            "y": 132,
+            "width": 34,
+            "height": 53,
+            "originX": -3,
+            "originY": -15,
+            "advance": 38
         },
         "ę": {
             "x": 556,
@@ -1643,6 +1652,24 @@
             "height": 0,
             "originX": 0,
             "originY": -68,
+            "advance": 35
+        },
+        "è": {
+            "x": 960,
+            "y": 195,
+            "width": 34,
+            "height": 53,
+            "originX": -3,
+            "originY": -15,
+            "advance": 37
+        },
+        "ê": {
+            "x": 934,
+            "y": 327,
+            "width": 34,
+            "height": 53,
+            "originX": -3,
+            "originY": -15,
             "advance": 37
         },
         "ğ": {
@@ -1652,7 +1679,7 @@
             "height": 0,
             "originX": 0,
             "originY": -68,
-            "advance": 37
+            "advance": 35
         },
         "ģ": {
             "x": 576,
@@ -1661,16 +1688,16 @@
             "height": 0,
             "originX": 0,
             "originY": -68,
-            "advance": 37
+            "advance": 35
         },
         "î": {
-            "x": 956,
-            "y": 132,
+            "x": 964,
+            "y": 10,
             "width": 18,
             "height": 53,
             "originX": -3,
             "originY": -15,
-            "advance": 24
+            "advance": 22
         },
         "į": {
             "x": 586,
@@ -1679,25 +1706,25 @@
             "height": 0,
             "originX": 0,
             "originY": -68,
-            "advance": 37
+            "advance": 35
         },
         "ì": {
-            "x": 960,
-            "y": 195,
+            "x": 992,
+            "y": 10,
             "width": 10,
             "height": 53,
             "originX": -4,
             "originY": -15,
-            "advance": 16
+            "advance": 14
         },
         "í": {
-            "x": 980,
-            "y": 195,
+            "x": 1000,
+            "y": 73,
             "width": 10,
             "height": 53,
             "originX": -4,
             "originY": -15,
-            "advance": 16
+            "advance": 14
         },
         "ï": {
             "x": 937,
@@ -1706,7 +1733,7 @@
             "height": 50,
             "originX": -4,
             "originY": -18,
-            "advance": 21
+            "advance": 19
         },
         "ī": {
             "x": 596,
@@ -1715,7 +1742,7 @@
             "height": 0,
             "originX": 0,
             "originY": -68,
-            "advance": 37
+            "advance": 35
         },
         "ķ": {
             "x": 606,
@@ -1724,7 +1751,7 @@
             "height": 0,
             "originX": 0,
             "originY": -68,
-            "advance": 37
+            "advance": 35
         },
         "ł": {
             "x": 616,
@@ -1733,25 +1760,25 @@
             "height": 0,
             "originX": 0,
             "originY": -68,
-            "advance": 37
+            "advance": 35
         },
         "ñ": {
-            "x": 934,
-            "y": 327,
+            "x": 1012,
+            "y": 10,
             "width": 41,
             "height": 53,
             "originX": -4,
             "originY": -15,
-            "advance": 47
+            "advance": 45
         },
         "ö": {
-            "x": 962,
-            "y": 10,
+            "x": 943,
+            "y": 390,
             "width": 37,
             "height": 51,
             "originX": -4,
             "originY": -17,
-            "advance": 43
+            "advance": 41
         },
         "ő": {
             "x": 626,
@@ -1760,16 +1787,34 @@
             "height": 0,
             "originX": 0,
             "originY": -68,
-            "advance": 37
+            "advance": 35
+        },
+        "õ": {
+            "x": 978,
+            "y": 327,
+            "width": 37,
+            "height": 53,
+            "originX": -4,
+            "originY": -15,
+            "advance": 41
+        },
+        "ô": {
+            "x": 986,
+            "y": 258,
+            "width": 37,
+            "height": 54,
+            "originX": -4,
+            "originY": -14,
+            "advance": 41
         },
         "ó": {
-            "x": 943,
-            "y": 390,
+            "x": 1004,
+            "y": 136,
             "width": 37,
             "height": 53,
             "originX": -4,
             "originY": -14,
-            "advance": 43
+            "advance": 41
         },
         "ø": {
             "x": 636,
@@ -1778,7 +1823,7 @@
             "height": 0,
             "originX": 0,
             "originY": -68,
-            "advance": 37
+            "advance": 35
         },
         "œ": {
             "x": 646,
@@ -1787,16 +1832,16 @@
             "height": 0,
             "originX": 0,
             "originY": -68,
-            "advance": 37
+            "advance": 35
         },
         "ß": {
-            "x": 964,
-            "y": 71,
+            "x": 943,
+            "y": 451,
             "width": 39,
             "height": 51,
             "originX": -4,
             "originY": -17,
-            "advance": 45
+            "advance": 43
         },
         "ş": {
             "x": 656,
@@ -1805,16 +1850,16 @@
             "height": 0,
             "originX": 0,
             "originY": -68,
-            "advance": 37
+            "advance": 35
         },
         "š": {
-            "x": 986,
-            "y": 258,
+            "x": 992,
+            "y": 390,
             "width": 25,
             "height": 55,
             "originX": -4,
             "originY": -14,
-            "advance": 31
+            "advance": 29
         },
         "ś": {
             "x": 666,
@@ -1823,7 +1868,7 @@
             "height": 0,
             "originX": 0,
             "originY": -68,
-            "advance": 37
+            "advance": 35
         },
         "ţ": {
             "x": 676,
@@ -1832,7 +1877,7 @@
             "height": 0,
             "originX": 0,
             "originY": -68,
-            "advance": 37
+            "advance": 35
         },
         "ū": {
             "x": 686,
@@ -1841,7 +1886,7 @@
             "height": 0,
             "originX": 0,
             "originY": -68,
-            "advance": 37
+            "advance": 35
         },
         "ŭ": {
             "x": 696,
@@ -1850,43 +1895,52 @@
             "height": 0,
             "originX": 0,
             "originY": -68,
-            "advance": 37
+            "advance": 35
         },
         "ú": {
-            "x": 985,
-            "y": 327,
+            "x": 1020,
+            "y": 73,
             "width": 32,
             "height": 53,
             "originX": -4,
             "originY": -14,
-            "advance": 38
+            "advance": 36
         },
         "ù": {
-            "x": 984,
-            "y": 132,
+            "x": 1025,
+            "y": 322,
             "width": 32,
             "height": 53,
             "originX": -4,
             "originY": -14,
-            "advance": 38
+            "advance": 36
         },
         "û": {
-            "x": 1000,
-            "y": 195,
+            "x": 1033,
+            "y": 199,
             "width": 32,
             "height": 53,
             "originX": -4,
             "originY": -14,
-            "advance": 38
+            "advance": 36
+        },
+        "ü": {
+            "x": 1033,
+            "y": 262,
+            "width": 32,
+            "height": 50,
+            "originX": -4,
+            "originY": -17,
+            "advance": 36
         },
         "ž": {
-            "x": 1021,
-            "y": 258,
+            "x": 1051,
+            "y": 136,
             "width": 30,
             "height": 53,
             "originX": -3,
             "originY": -15,
-            "advance": 36
+            "advance": 34
         },
         "ź": {
             "x": 706,
@@ -1895,7 +1949,7 @@
             "height": 0,
             "originX": 0,
             "originY": -68,
-            "advance": 37
+            "advance": 35
         },
         "ż": {
             "x": 716,
@@ -1904,7 +1958,7 @@
             "height": 0,
             "originX": 0,
             "originY": -68,
-            "advance": 37
+            "advance": 35
         },
         "Ā": {
             "x": 716,
@@ -1913,7 +1967,7 @@
             "height": 0,
             "originX": 0,
             "originY": -68,
-            "advance": 37
+            "advance": 35
         },
         "Ă": {
             "x": 726,
@@ -1922,61 +1976,61 @@
             "height": 0,
             "originX": 0,
             "originY": -68,
-            "advance": 37
+            "advance": 35
         },
         "Â": {
-            "x": 1013,
+            "x": 1063,
             "y": 10,
             "width": 37,
             "height": 64,
             "originX": -3,
             "originY": -4,
-            "advance": 43
+            "advance": 41
         },
         "Ã": {
-            "x": 1026,
-            "y": 84,
+            "x": 1027,
+            "y": 385,
             "width": 37,
             "height": 63,
             "originX": -3,
             "originY": -5,
-            "advance": 43
+            "advance": 41
         },
         "À": {
-            "x": 1060,
-            "y": 10,
+            "x": 1074,
+            "y": 322,
             "width": 37,
             "height": 64,
             "originX": -3,
             "originY": -4,
-            "advance": 43
+            "advance": 41
         },
         "Á": {
-            "x": 1042,
-            "y": 157,
+            "x": 1074,
+            "y": 396,
             "width": 37,
             "height": 64,
             "originX": -3,
             "originY": -4,
-            "advance": 43
+            "advance": 41
         },
         "Ä": {
-            "x": 1073,
-            "y": 84,
+            "x": 1075,
+            "y": 199,
             "width": 37,
             "height": 61,
             "originX": -3,
             "originY": -7,
-            "advance": 43
+            "advance": 41
         },
         "Å": {
-            "x": 990,
-            "y": 390,
+            "x": 1091,
+            "y": 84,
             "width": 37,
             "height": 66,
             "originX": -3,
             "originY": -2,
-            "advance": 43
+            "advance": 41
         },
         "Ą": {
             "x": 736,
@@ -1985,25 +2039,25 @@
             "height": 0,
             "originX": 0,
             "originY": -68,
-            "advance": 37
+            "advance": 35
         },
         "Æ": {
-            "x": 1027,
-            "y": 321,
+            "x": 1110,
+            "y": 10,
             "width": 56,
             "height": 51,
             "originX": -3,
             "originY": -17,
-            "advance": 62
+            "advance": 60
         },
         "Ç": {
-            "x": 1061,
-            "y": 231,
+            "x": 1121,
+            "y": 270,
             "width": 31,
             "height": 66,
             "originX": -4,
             "originY": -17,
-            "advance": 37
+            "advance": 35
         },
         "Č": {
             "x": 746,
@@ -2012,7 +2066,7 @@
             "height": 0,
             "originX": 0,
             "originY": -68,
-            "advance": 37
+            "advance": 35
         },
         "Ć": {
             "x": 756,
@@ -2021,16 +2075,16 @@
             "height": 0,
             "originX": 0,
             "originY": -68,
-            "advance": 37
+            "advance": 35
         },
         "Ð": {
-            "x": 1107,
-            "y": 10,
+            "x": 1122,
+            "y": 160,
             "width": 38,
             "height": 51,
             "originX": -4,
             "originY": -17,
-            "advance": 44
+            "advance": 42
         },
         "Ē": {
             "x": 766,
@@ -2039,7 +2093,7 @@
             "height": 0,
             "originX": 0,
             "originY": -68,
-            "advance": 37
+            "advance": 35
         },
         "Ę": {
             "x": 776,
@@ -2048,7 +2102,16 @@
             "height": 0,
             "originX": 0,
             "originY": -68,
-            "advance": 37
+            "advance": 35
+        },
+        "É": {
+            "x": 1138,
+            "y": 71,
+            "width": 29,
+            "height": 64,
+            "originX": -4,
+            "originY": -4,
+            "advance": 33
         },
         "Ğ": {
             "x": 786,
@@ -2057,7 +2120,7 @@
             "height": 0,
             "originX": 0,
             "originY": -68,
-            "advance": 37
+            "advance": 35
         },
         "Ģ": {
             "x": 796,
@@ -2066,16 +2129,16 @@
             "height": 0,
             "originX": 0,
             "originY": -68,
-            "advance": 37
+            "advance": 35
         },
         "Î": {
-            "x": 1089,
-            "y": 155,
+            "x": 1121,
+            "y": 346,
             "width": 18,
             "height": 64,
             "originX": -3,
             "originY": -4,
-            "advance": 24
+            "advance": 22
         },
         "Į": {
             "x": 806,
@@ -2084,34 +2147,34 @@
             "height": 0,
             "originX": 0,
             "originY": -68,
-            "advance": 37
+            "advance": 35
         },
         "Ì": {
-            "x": 1037,
-            "y": 382,
+            "x": 1121,
+            "y": 420,
             "width": 11,
             "height": 64,
             "originX": -4,
             "originY": -4,
-            "advance": 17
+            "advance": 15
         },
         "Í": {
-            "x": 1058,
-            "y": 382,
+            "x": 1142,
+            "y": 420,
             "width": 11,
             "height": 64,
             "originX": -4,
             "originY": -4,
-            "advance": 17
+            "advance": 15
         },
         "Ï": {
-            "x": 1079,
-            "y": 382,
+            "x": 1149,
+            "y": 346,
             "width": 15,
             "height": 61,
             "originX": -4,
             "originY": -7,
-            "advance": 21
+            "advance": 19
         },
         "Ī": {
             "x": 816,
@@ -2120,7 +2183,7 @@
             "height": 0,
             "originX": 0,
             "originY": -68,
-            "advance": 37
+            "advance": 35
         },
         "Ķ": {
             "x": 826,
@@ -2129,7 +2192,7 @@
             "height": 0,
             "originX": 0,
             "originY": -68,
-            "advance": 37
+            "advance": 35
         },
         "Ł": {
             "x": 836,
@@ -2138,25 +2201,25 @@
             "height": 0,
             "originX": 0,
             "originY": -68,
-            "advance": 37
+            "advance": 35
         },
         "Ñ": {
-            "x": 1093,
-            "y": 307,
+            "x": 1163,
+            "y": 417,
             "width": 39,
             "height": 63,
             "originX": -4,
             "originY": -5,
-            "advance": 45
+            "advance": 43
         },
         "Ö": {
-            "x": 1102,
-            "y": 229,
+            "x": 1162,
+            "y": 221,
             "width": 32,
             "height": 66,
             "originX": -4,
             "originY": -2,
-            "advance": 38
+            "advance": 36
         },
         "Ő": {
             "x": 846,
@@ -2165,16 +2228,16 @@
             "height": 0,
             "originX": 0,
             "originY": -68,
-            "advance": 37
+            "advance": 35
         },
         "Ó": {
-            "x": 1104,
-            "y": 380,
+            "x": 1174,
+            "y": 297,
             "width": 32,
             "height": 68,
             "originX": -4,
             "originY": 0,
-            "advance": 37
+            "advance": 35
         },
         "Ø": {
             "x": 856,
@@ -2183,7 +2246,7 @@
             "height": 0,
             "originX": 0,
             "originY": -68,
-            "advance": 37
+            "advance": 35
         },
         "Œ": {
             "x": 866,
@@ -2192,7 +2255,7 @@
             "height": 0,
             "originX": 0,
             "originY": -68,
-            "advance": 37
+            "advance": 35
         },
         "Ş": {
             "x": 876,
@@ -2201,16 +2264,16 @@
             "height": 0,
             "originX": 0,
             "originY": -68,
-            "advance": 37
+            "advance": 35
         },
         "Š": {
-            "x": 1120,
-            "y": 71,
+            "x": 1212,
+            "y": 375,
             "width": 31,
             "height": 67,
             "originX": -4,
             "originY": 0,
-            "advance": 37
+            "advance": 35
         },
         "Ś": {
             "x": 886,
@@ -2219,7 +2282,7 @@
             "height": 0,
             "originX": 0,
             "originY": -68,
-            "advance": 37
+            "advance": 35
         },
         "Ţ": {
             "x": 896,
@@ -2228,7 +2291,7 @@
             "height": 0,
             "originX": 0,
             "originY": -68,
-            "advance": 37
+            "advance": 35
         },
         "Ū": {
             "x": 906,
@@ -2237,7 +2300,7 @@
             "height": 0,
             "originX": 0,
             "originY": -68,
-            "advance": 37
+            "advance": 35
         },
         "Ŭ": {
             "x": 916,
@@ -2246,43 +2309,52 @@
             "height": 0,
             "originX": 0,
             "originY": -68,
-            "advance": 37
+            "advance": 35
         },
         "Ú": {
-            "x": 1117,
-            "y": 155,
+            "x": 1170,
+            "y": 145,
             "width": 33,
             "height": 64,
             "originX": -4,
             "originY": -4,
-            "advance": 38
+            "advance": 36
         },
         "Ù": {
-            "x": 1142,
-            "y": 305,
+            "x": 1204,
+            "y": 219,
             "width": 33,
             "height": 64,
             "originX": -4,
             "originY": -4,
-            "advance": 38
+            "advance": 36
+        },
+        "Ü": {
+            "x": 1216,
+            "y": 293,
+            "width": 33,
+            "height": 61,
+            "originX": -4,
+            "originY": -7,
+            "advance": 36
         },
         "Û": {
-            "x": 1144,
-            "y": 229,
+            "x": 1177,
+            "y": 10,
             "width": 33,
             "height": 64,
             "originX": -4,
             "originY": -4,
-            "advance": 38
+            "advance": 36
         },
         "Ž": {
-            "x": 1160,
-            "y": 148,
+            "x": 1213,
+            "y": 84,
             "width": 31,
             "height": 67,
             "originX": -4,
             "originY": 0,
-            "advance": 37
+            "advance": 35
         },
         "Ź": {
             "x": 926,
@@ -2291,16 +2363,16 @@
             "height": 0,
             "originX": 0,
             "originY": -68,
-            "advance": 37
+            "advance": 35
         },
         "Ż": {
-            "x": 936,
-            "y": 501,
+            "x": 1216,
+            "y": 364,
             "width": 0,
             "height": 0,
             "originX": 0,
             "originY": -68,
-            "advance": 37
+            "advance": 35
         },
         " ": {
             "x": 0,
@@ -2309,7 +2381,7 @@
             "height": 0,
             "originX": 0,
             "originY": -68,
-            "advance": 37
+            "advance": 35
         }
     }
 }

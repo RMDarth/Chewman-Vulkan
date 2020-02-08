@@ -53,4 +53,9 @@ void LocaleManager::load()
         _localeData[element->name.GetString()] = element->value.GetString();
 }
 
+const std::string& LocaleManager::getLanguage() const
+{
+    return _language;
+}
+
 } // namespace Chewman
