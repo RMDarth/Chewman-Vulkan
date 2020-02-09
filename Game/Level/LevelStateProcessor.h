@@ -35,7 +35,6 @@ public:
 private:
     void updateHUD(float deltaTime);
     void updatePowerUps();
-    void updateArrows();
 
 private:
     ProgressManager& _progressManager;
@@ -47,9 +46,14 @@ private:
     float _time = 0.0f;
     float _counterTime = 0.0;
 
-    bool _useOnScreenControl = true;
     bool _reviveUsed = false;
     bool _showFPS = false;
+
+    bool _showJoystick = false;
+    bool _joystickActivated = false;
+    glm::ivec2 _joystickCenter = {};
+    float _joystickRadius = 0;
+    std::shared_ptr<Control> _joystickThumbControl;
 
     // As prev game map could be still in some commands, we need to finish rendering them all before release
     // TODO: Fix this in Engine so it won't destroy until all commands are finished

@@ -35,6 +35,8 @@ private:
 
     bool _playSound = false;
     float _soundDelay = 0.0f;
+
+    void setControllerSettingsValue();
 };
 
 } // namespace Chewman

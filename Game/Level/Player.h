@@ -58,6 +58,9 @@ private:
     bool _followMode = true;
 
     bool _isCameraFollow = true;
+    int _startSlideX = 0;
+    int _startSlideY = 0;
+    bool _isSliding = false;
 
     float _appearTime = 0.0f;
     bool _appearing = false;
@@ -82,6 +85,9 @@ private:
     bool _isDying = false;
 
     MoveDirection _nextMove = MoveDirection::None;
+
+    glm::vec3 _accelBasis = {};
+    bool _basisInitialized = false;
 };
 
 } // namespace Chewman

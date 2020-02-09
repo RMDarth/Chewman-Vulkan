@@ -13,6 +13,10 @@
   "Music": "Música:",
   "NightBrightness": "Brillo nocturno:",
   "OnScreenArrows": "Flechas en pantalla:",
+  "ControlsLabel": "Controles:",
+  "Swipe": "Pasar",
+  "Joystick": "Joystick",
+  "Accelerometer": "Acelerómetro",
   "NeedRestart": "Es necesario reiniciar el juego",
   "Restart": "Reiniciar",
   "GraphicsTitle": "Gráficos",
@@ -51,8 +55,10 @@
   "Tutorial1Line2": "y vidas. Debes recoger todos los tesoros",
   "Tutorial1Line3": "para ganar. Controla el demonio deslizando",
   "Tutorial1Line4": "hacia arriba, abajo, izquierda o derecha.",
+  "Tutorial1Line5": "Los controles se pueden cambiar en la configuración",
   "Tutorial2Line1": "Tus enemigos son el orden sagrado y otros",
   "Tutorial2Line2": "cazadores de tesoros. Evítalos, pues",
   "Tutorial2Line3": "pueden matarte al instante. Usa potenciadores",
-  "Tutorial2Line4": "para debilitar y comer a los enemigos."
+  "Tutorial2Line4": "para debilitar y comer a los enemigos.",
+  "Tutorial2Line5": "Puede consultar el mapa en el menú Pausa."
 }

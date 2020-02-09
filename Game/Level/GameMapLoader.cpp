@@ -171,7 +171,7 @@ std::shared_ptr<GameMap> GameMapLoader::loadMap(const std::string& filename, con
     if (gameMap->name.find("Tutorial") != std::string::npos)
     {
         char tutorialNum = gameMap->name[10];
-        for (auto i = 0; i < 4; ++i)
+        for (auto i = 0; i < 5; ++i)
         {
             std::stringstream ss;
             ss << "Tutorial" << tutorialNum << "Line" << (i+1);

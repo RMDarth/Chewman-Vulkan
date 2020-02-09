@@ -29,10 +29,12 @@ LevelStateProcessor::LevelStateProcessor()
 
     _loadingControl = _document->getControlByName("loading");
 
-    _document->getControlByName("upStick")->setMouseDownHandler(this);
-    _document->getControlByName("downStick")->setMouseDownHandler(this);
-    _document->getControlByName("leftStick")->setMouseDownHandler(this);
-    _document->getControlByName("rightStick")->setMouseDownHandler(this);
+    auto joystickPanel = _document->getControlByName("joystick");
+    joystickPanel->setMouseDownHandler(this);
+    _joystickCenter = joystickPanel->getPosition() + joystickPanel->getSize() / 2;
+    _joystickRadius = joystickPanel->getSize().x * 0.5f;
+    _joystickThumbControl = _document->getControlByName("thumb");
+    _joystickThumbControl->setMouseDownHandler(this);
 
     _document->hide();
 }
@@ -153,6 +155,44 @@ void LevelStateProcessor::processInput(const SDL_Event& event)
         _gameMapProcessor->setState(GameMapState::Pause);
         Game::getInstance()->setState(GameState::Pause);
     }
+
+    if (_showJoystick)
+    {
+        if (event.type == SDL_MOUSEMOTION)
+        {
+            if (_joystickActivated)
+            {
+                glm::ivec2 pos = glm::ivec2(event.motion.x, event.motion.y);
+                glm::vec2 dir = pos - _joystickCenter;
+
+                if (fabs(dir.x) > fabs(dir.y))
+                {
+                    if (dir.x > 0)
+                        _gameMapProcessor->setNextMove(MoveDirection::Up);
+                    else
+                        _gameMapProcessor->setNextMove(MoveDirection::Down);
+                } else {
+                    if (dir.y > 0)
+                        _gameMapProcessor->setNextMove(MoveDirection::Left);
+                    else
+                        _gameMapProcessor->setNextMove(MoveDirection::Right);
+                }
+
+                if (glm::length(dir) > _joystickRadius)
+                {
+                    dir = glm::normalize(dir);
+                    pos = _joystickCenter + glm::ivec2(dir * _joystickRadius);
+                }
+
+                _joystickThumbControl->setPosition(pos - _joystickThumbControl->getSize() / 2);
+            }
+        }
+        if (event.type == SDL_MOUSEBUTTONUP)
+        {
+            _joystickActivated = false;
+            _joystickThumbControl->setPosition(_joystickCenter - _joystickThumbControl->getSize() / 2);
+        }
+    }
 }
 
 void LevelStateProcessor::show()
@@ -194,11 +234,10 @@ void LevelStateProcessor::show()
        << _progressManager.getCurrentLevel() << ": " << _gameMapProcessor->getGameMap()->name;
     _document->getControlByName("level")->setText(ss.str());
 
-    _useOnScreenControl = Game::getInstance()->getGameSettingsManager().getSettings().showOnScreenControls;
-    _document->getControlByName("upStick")->setVisible(_useOnScreenControl);
-    _document->getControlByName("downStick")->setVisible(_useOnScreenControl);
-    _document->getControlByName("leftStick")->setVisible(_useOnScreenControl);
-    _document->getControlByName("rightStick")->setVisible(_useOnScreenControl);
+    _showJoystick = Game::getInstance()->getGameSettingsManager().getSettings().controllerType == ControllerType::Joystick;
+    _document->getControlByName("joystick")->setVisible(_showJoystick);
+    _joystickThumbControl->setVisible(_showJoystick);
+
     _document->getControlByName("FPS")->setVisible(_showFPS);
 
     System::hideAds();
@@ -224,6 +263,8 @@ void LevelStateProcessor::processEvent(Control* control, IEventHandler::EventTyp
             _loadingControl->setVisible(false);
             _counterControl->setVisible(false);
             _document->getControlByName("camera")->setVisible(false);
+            _document->getControlByName("joystick")->setVisible(false);
+            _joystickThumbControl->setVisible(false);
             _gameMapProcessor->setState(GameMapState::Pause);
             Game::getInstance()->setState(GameState::Pause);
         }
@@ -243,21 +284,27 @@ void LevelStateProcessor::processEvent(Control* control, IEventHandler::EventTyp
     }
     if (type == IEventHandler::MouseDown)
     {
-        if (_useOnScreenControl)
+        if (control->getName() == "joystick" || control->getName() == "thumb")
         {
-            if (control->getName() == "leftStick")
+            _joystickActivated = true;
+
+            glm::ivec2 pos = glm::ivec2(x, y);
+            glm::vec2 dir = pos - _joystickCenter;
+
+            if (fabs(dir.x) > fabs(dir.y))
             {
-                _gameMapProcessor->setNextMove(MoveDirection::Down);
-            } else if (control->getName() == "rightStick")
-            {
-                _gameMapProcessor->setNextMove(MoveDirection::Up);
-            } else if (control->getName() == "upStick")
-            {
-                _gameMapProcessor->setNextMove(MoveDirection::Right);
-            } else if (control->getName() == "downStick")
-            {
-                _gameMapProcessor->setNextMove(MoveDirection::Left);
+                if (dir.x > 0)
+                    _gameMapProcessor->setNextMove(MoveDirection::Up);
+                else
+                    _gameMapProcessor->setNextMove(MoveDirection::Down);
+            } else {
+                if (dir.y > 0)
+                    _gameMapProcessor->setNextMove(MoveDirection::Left);
+                else
+                    _gameMapProcessor->setNextMove(MoveDirection::Right);
             }
+
+            _joystickThumbControl->setPosition(pos - _joystickThumbControl->getSize() / 2);
         }
     }
 }
@@ -293,8 +340,6 @@ void LevelStateProcessor::updateHUD(float deltaTime)
     }
 
     updatePowerUps();
-    if (_useOnScreenControl)
-        updateArrows();
 }
 
 void LevelStateProcessor::updatePowerUps()
@@ -337,35 +382,6 @@ void LevelStateProcessor::updatePowerUps()
         std::string controlName = "powerup";
         controlName.push_back('0' + controlId);
         _document->getControlByName(controlName)->setRawMaterial("");
-    }
-}
-
-void LevelStateProcessor::updateArrows()
-{
-    static auto upArrow = _document->getControlByName("upStick");
-    static auto downArrow = _document->getControlByName("downStick");
-    static auto leftArrow = _document->getControlByName("leftStick");
-    static auto rightArrow = _document->getControlByName("rightStick");
-
-    upArrow->setColor(glm::vec4(1));
-    downArrow->setColor(glm::vec4(1));
-    leftArrow->setColor(glm::vec4(1));
-    rightArrow->setColor(glm::vec4(1));
-
-    switch (_gameMapProcessor->getNextMove())
-    {
-        case MoveDirection::Left:
-            downArrow->setColor(glm::vec4(1.0f, 0.5f, 0.0f, 1.0f));
-            break;
-        case MoveDirection::Up:
-            rightArrow->setColor(glm::vec4(1.0f, 0.5f, 0.0f, 1.0f));
-            break;
-        case MoveDirection::Right:
-            upArrow->setColor(glm::vec4(1.0f, 0.5f, 0.0f, 1.0f));
-            break;
-        case MoveDirection::Down:
-            leftArrow->setColor(glm::vec4(1.0f, 0.5f, 0.0f, 1.0f));
-            break;
     }
 }
 

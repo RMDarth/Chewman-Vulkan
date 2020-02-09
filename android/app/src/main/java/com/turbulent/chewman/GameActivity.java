@@ -47,6 +47,7 @@ import org.libsdl.app.SDLActivity;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.Semaphore;
 
 public class GameActivity extends org.libsdl.app.SDLActivity {
@@ -970,15 +971,15 @@ public class GameActivity extends org.libsdl.app.SDLActivity {
     {
         String language = Locale.getDefault().getLanguage();
 
-        if (language.equals("ru"))
+        if ("ru".equals(language))
             return "ru";
-        if (language.equals("de"))
+        if ("de".equals(language))
             return "de";
-        if (language.equals("fr"))
+        if ("fr".equals(language))
             return "fr";
-        if (language.equals("es"))
+        if ("es".equals(language))
             return "es";
-        if (language.equals("pt"))
+        if ("pt".equals(language))
             return "pt";
 
         return "en";

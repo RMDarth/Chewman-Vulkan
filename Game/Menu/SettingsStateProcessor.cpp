@@ -71,14 +71,10 @@ void SettingsStateProcessor::show()
     _document->getControlByName("restart")->setVisible(needRestart);
 
     setGraphicsSettingsValue();
+    setControllerSettingsValue();
 
     auto& gameSettings = Game::getInstance()->getGameSettingsManager().getSettings();
     _document->getControlByName("brightSlider")->setCustomAttribute("progress", std::to_string(gameSettings.brightness));
-
-    _document->getControlByName("gamepadCheckbox")->setDefaultMaterial(
-            gameSettings.showOnScreenControls
-                 ? "buttons/checkbox_checked.png"
-                 : "buttons/checkbox_unchecked.png");
 
     if (Game::getInstance()->getGraphicsManager().getSettings().dynamicLights == LightSettings::Off)
     {
@@ -125,6 +121,7 @@ void SettingsStateProcessor::processEvent(Control* control, IEventHandler::Event
         }
 
         auto& graphicsManager = Game::getInstance()->getGraphicsManager();
+        auto& gameSettingsManager = Game::getInstance()->getGameSettingsManager();
 
         if (control->getName() == "graphicsHigh")
         {
@@ -146,13 +143,24 @@ void SettingsStateProcessor::processEvent(Control* control, IEventHandler::Event
         {
             _playSound = false;
         }
-        else if (control->getName() == "gamepadCheckbox")
+        else if(control->getName() == "controlsSwipe")
         {
-            auto& gameSettingsManager = Game::getInstance()->getGameSettingsManager();
-            gameSettingsManager.getSettings().showOnScreenControls = !gameSettingsManager.getSettings().showOnScreenControls;
-            control->setDefaultMaterial(gameSettingsManager.getSettings().showOnScreenControls
-                                            ? "buttons/checkbox_checked.png"
-                                            : "buttons/checkbox_unchecked.png");
+            gameSettingsManager.getSettings().controllerType = ControllerType::Swipe;
+            gameSettingsManager.store();
+        }
+        else if(control->getName() == "controlsJoystick")
+        {
+            gameSettingsManager.getSettings().controllerType = ControllerType::Joystick;
+            gameSettingsManager.store();
+        }
+        else if(control->getName() == "controlsAccel")
+        {
+            gameSettingsManager.getSettings().controllerType = ControllerType::Accelerometer;
+            if (!System::initAccelerometer())
+            {
+                _document->getControlByName("controls")->setText("@Swipe");
+                gameSettingsManager.getSettings().controllerType = ControllerType::Swipe;
+            }
             gameSettingsManager.store();
         }
 
@@ -213,6 +221,24 @@ void SettingsStateProcessor::setGraphicsSettingsValue()
     else
     {
         graphicsControl->setText("@Custom");
+    }
+}
+
+void SettingsStateProcessor::setControllerSettingsValue()
+{
+    auto controller = _document->getControlByName("controls");
+    auto& gameSettings = Game::getInstance()->getGameSettingsManager().getSettings();
+    switch (gameSettings.controllerType)
+    {
+        case ControllerType::Swipe:
+            controller->setText("@Swipe");
+            break;
+        case ControllerType::Joystick:
+            controller->setText("@Joystick");
+            break;
+        case ControllerType::Accelerometer:
+            controller->setText("@Accelerometer");
+            break;
     }
 }
 

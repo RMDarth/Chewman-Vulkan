@@ -4,7 +4,9 @@
 #include <fstream>
 #include <iostream>
 #include "GameSettings.h"
+#include "SystemApi.h"
 #include "Utils.h"
+
 
 namespace Chewman
 {
@@ -14,6 +16,11 @@ constexpr const char* const GameSettingsFile = "gameSettings.dat";
 GameSettingsManager::GameSettingsManager()
 {
     load();
+    if (_currentSettings.controllerType == ControllerType::Accelerometer)
+    {
+        if (!System::initAccelerometer())
+            _currentSettings.controllerType = ControllerType::Swipe;
+    }
 }
 
 GameSettings& GameSettingsManager::getSettings()
@@ -46,7 +53,10 @@ void GameSettingsManager::load()
     fin.read(reinterpret_cast<char*>(&_currentSettings), sizeof(_currentSettings));
     if (_currentSettings.version != CurrentGameSettingsVersion)
     {
-        _currentSettings = {};
+        if (_currentSettings.version != 4)
+        {
+            _currentSettings = {};
+        }
     }
 
     fin.close();
