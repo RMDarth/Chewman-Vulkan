@@ -743,6 +743,7 @@ void showMoreInfo()
 
 bool initAccelerometer()
 {
+#ifdef __ANDROID__
     static bool accelInitialized = false;
     if (accelInitialized)
         return true;
@@ -761,6 +762,7 @@ bool initAccelerometer()
             }
         }
     }
+#endif
 
     return false;
 }

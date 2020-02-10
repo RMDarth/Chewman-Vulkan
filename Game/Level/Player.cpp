@@ -239,6 +239,7 @@ void Player::processInput(const SDL_Event& event)
 
         if (controllerType == ControllerType::Accelerometer)
         {
+#ifdef __ANDROID__
             if (event.type == SDL_SENSORUPDATE)
             {
                 SDL_Sensor* sensor = SDL_SensorFromInstanceID(event.sensor.which);
@@ -270,6 +271,7 @@ void Player::processInput(const SDL_Event& event)
 
                 tryApplyShift();
             }
+#endif
         }
 
         if (controllerType == ControllerType::Joystick)
