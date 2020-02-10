@@ -6,7 +6,7 @@
 namespace Chewman
 {
 
-constexpr uint8_t CurrentGameSettingsVersion = 4;
+constexpr uint8_t CurrentGameSettingsVersion = 5;
 
 enum class CameraStyle : uint8_t
 {
@@ -15,10 +15,17 @@ enum class CameraStyle : uint8_t
     Vertical
 };
 
+enum class ControllerType : uint8_t
+{
+    Swipe,
+    Joystick,
+    Accelerometer
+};
+
 struct GameSettings
 {
     uint8_t version = CurrentGameSettingsVersion;
-    bool showOnScreenControls = false;
+    ControllerType controllerType = ControllerType::Swipe;
     bool switchLight[36] = {};
     float brightness = 0.5f;
     CameraStyle cameraStyle = CameraStyle::Horizontal;

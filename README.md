@@ -1,6 +1,6 @@
 # Chewman Vulkan
 [![Language](https://img.shields.io/badge/Language%20-C++14-blue.svg?style=flat-square)](https://github.com/RMDarth/Chewman-Vulkan/)
-[![Version](https://img.shields.io/badge/Version%20-1.0.8-blue.svg?style=flat-square)](https://github.com/RMDarth/Chewman-Vulkan/)
+[![Version](https://img.shields.io/badge/Version%20-1.1.0-blue.svg?style=flat-square)](https://github.com/RMDarth/Chewman-Vulkan/)
 [![Build Status](https://img.shields.io/travis/RMDarth/Chewman-Vulkan.svg?logo=travis-ci)](https://travis-ci.org/RMDarth/Chewman-Vulkan)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/a631478818d7470daa422278959e6c99)](https://www.codacy.com/manual/RMDarth/Chewman-Vulkan?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=RMDarth/Chewman-Vulkan&amp;utm_campaign=Badge_Grade)
 [![Coverity](https://scan.coverity.com/projects/19967/badge.svg)](https://scan.coverity.com/projects/rmdarth-chewman-vulkan)
@@ -11,7 +11,7 @@ Main dependencies: SDL2 (windows initialization and controls) and assimp (3D ass
 Desktop build also uses OpenAL and Ogg Vorbis for audio, and cppfs for filesystem functions (Android
 build has all those functions in Android SDK).
 
-Game is currently released on Android Play Store. iOS version is in progress.
+Game is currently released on Android Play Store (ver. 1.1). iOS version is in progress.
 <p align="center">
 <a href="https://play.google.com/store/apps/details?id=com.turbulent.chewman" target="_blank"><img src="https://play.google.com/intl/en_us/badges/images/badge_new.png" title="Get it on Google Play"></a>
 </p>
@@ -21,8 +21,9 @@ Game is currently released on Android Play Store. iOS version is in progress.
 ## Technology
 Game is using Vulkan API/SDK for graphics, SDL for windows creation and controls, 
 Assimp library for 3d models importing and some other small libraries like glm, 
-cppfs, stb, utf8-cpp and rapidjson. Common Vulkan bootstrapping and scene management 
-files are separated in the SVE folder - "Simple Vulkan Engine". 
+cppfs, stb, utf8-cpp and rapidjson. Also it uses Vulkan Memory Allocator to optimize allocations.
+Common Vulkan bootstrapping and scene management files are separated in the SVE folder - 
+"Simple Vulkan Engine". 
 
 SVE is a small game graphics engine, developed with the game. It is used for Vulkan 
 initialization and processing, and some common game features - scene management, resources 

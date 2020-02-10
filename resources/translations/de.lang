@@ -13,6 +13,10 @@
   "Music": "Musik:",
   "NightBrightness": "Nacht-Helligkeit:",
   "OnScreenArrows": "Bildschirmpfeile:",
+  "ControlsLabel": "Steuerungen:",
+  "Swipe": "Streichen",
+  "Joystick": "Joystick",
+  "Accelerometer": "Akzelerometer",
   "NeedRestart": "Starten Sie das Spiel neu",
   "Restart": "Neu starten",
   "GraphicsTitle": "Grafik",
@@ -51,8 +55,10 @@
   "Tutorial1Line2": "sucht. Du musst den gesamten Schatz sammeln,",
   "Tutorial1Line3": "um zu gewinnen. Steuere den Dämon, indem",
   "Tutorial1Line4": "du nach oben, unten, links oder rechts wischst.",
+  "Tutorial1Line5": "Andere steuerungstypen sind in Einstellungen.",
   "Tutorial2Line1": "Deine Feinde sind der Heilige Orden und andere",
   "Tutorial2Line2": "Schatzjäger. Weiche ihnen aus, denn sie",
   "Tutorial2Line3": "können dich sofort töten. Verwende Power-Ups,",
-  "Tutorial2Line4": "um die Feinde zu schwächen und zu essen."
+  "Tutorial2Line4": "um die Feinde zu schwächen und zu essen.",
+  "Tutorial2Line5": " "
 }

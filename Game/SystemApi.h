@@ -94,5 +94,7 @@ void rateApp();
 void openLink(const std::string& link);
 void showMoreInfo();
 
+bool initAccelerometer();
+
 } // namespace System
 } // namespace Chewman

@@ -244,7 +244,7 @@ int SDL_main(int argc, char *argv[]) {
     LOG("started");
     startLogger();
 
-    SDL_Init(SDL_INIT_VIDEO);
+    SDL_Init(SDL_INIT_VIDEO | SDL_INIT_SENSOR);
     SDL_SetHint(SDL_HINT_ORIENTATIONS, "LandscapeLeft LandscapeRight");
 
     window = SDL_CreateWindow("Chewman Vulkan",

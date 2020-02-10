@@ -27,5 +27,5 @@
         <Image name="googleplay" x="0.25" y ="0.83" width="0.06" height="-1" image="buttons/googleplay.png"/>
     </Panel>
     <Button name="back"  x="0.25" y="0.89" width="-1" height="0.12" image="buttons/back.png" hoverimage="buttons/back_hover.png" pressedimage="buttons/back_pressed.png" />
-    <Button name="refresh" x="0.65" y="0.89" width="-1" height="0.12" image="buttons/restart.png" hoverimage="buttons/restart_hover.png" pressedimage="buttons/restart_pressed.png"/>
+    <Button name="refresh" x="0.75" y="0.89" width="-1" height="0.12" image="buttons/restart.png" hoverimage="buttons/restart_hover.png" pressedimage="buttons/restart_pressed.png"/>
 </document>

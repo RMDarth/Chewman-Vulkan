@@ -52,14 +52,15 @@ private:
     void showAppearEffect(bool show);
     void showDisappearEffect(bool show);
     void updateAppearEffect();
+    void tryApplyShift();
 
 private:
     // for debug
     bool _followMode = true;
 
     bool _isCameraFollow = true;
-    int _startSlideX;
-    int _startSlideY;
+    int _startSlideX = 0;
+    int _startSlideY = 0;
     bool _isSliding = false;
 
     float _appearTime = 0.0f;
@@ -85,6 +86,10 @@ private:
     bool _isDying = false;
 
     MoveDirection _nextMove = MoveDirection::None;
+    bool _isDirectionChanged = false;
+
+    glm::vec3 _accelBasis = {};
+    bool _basisInitialized = false;
 };
 
 } // namespace Chewman

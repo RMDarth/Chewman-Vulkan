@@ -741,5 +741,29 @@ void showMoreInfo()
 #endif
 }
 
+bool initAccelerometer()
+{
+    static bool accelInitialized = false;
+    if (accelInitialized)
+        return true;
+
+    for (auto i = 0; i < SDL_NumSensors(); ++i)
+    {
+        if (SDL_SensorGetDeviceType(i) == SDL_SENSOR_ACCEL)
+        {
+            SDL_Sensor *sensor = SDL_SensorOpen(i);
+            if (sensor == nullptr)
+            {
+                return false;
+            } else {
+                accelInitialized = true;
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
 } // namespace System
 } // namespace Chewman

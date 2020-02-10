@@ -13,6 +13,10 @@
   "Music": "Music:",
   "NightBrightness": "Night Brightness:",
   "OnScreenArrows": "On-screen arrows:",
+  "ControlsLabel": "Controls:",
+  "Swipe": "Swipe",
+  "Joystick": "Joystick",
+  "Accelerometer": "Accelerometer",
   "NeedRestart": "Need to restart the game",
   "Restart": "Restart",
   "GraphicsTitle": "Graphics",
@@ -51,8 +55,10 @@
   "Tutorial1Line2": "and lives. You need to collect all",
   "Tutorial1Line3": "treasure to win. Control demon by",
   "Tutorial1Line4": "swiping up, down, left or right.",
+  "Tutorial1Line5": "Controls can be changed in settings.",
   "Tutorial2Line1": "Your enemies are Holy Order and other",
   "Tutorial2Line2": "treasure hunters. Avoid them, as they",
   "Tutorial2Line3": "can kill you instantly. Use red",
-  "Tutorial2Line4": "power-up to weaken and eat the enemies."
+  "Tutorial2Line4": "power-up to weaken and eat the enemies.",
+  "Tutorial2Line5": "You can check map in Pause menu."
 }

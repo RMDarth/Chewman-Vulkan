@@ -13,6 +13,10 @@
   "Music": "Música:",
   "NightBrightness": "Brilho da noite:",
   "OnScreenArrows": "Setas na tela:",
+  "ControlsLabel": "Controlos:",
+  "Swipe": "Deslizar",
+  "Joystick": "Joystick",
+  "Accelerometer": "Acelerômetro",
   "NeedRestart": "O jogo precisa reiniciar",
   "Restart": "Reiniciar",
   "GraphicsTitle": "Gráficos",
@@ -51,8 +55,10 @@
   "Tutorial1Line2": "e vidas. Você precisa coletar todos os",
   "Tutorial1Line3": "tesouros para ganhar. Controle o demônio",
   "Tutorial1Line4": "deslizando para cima, baixo, esquerda ou direita.",
+  "Tutorial1Line5": "Os controles podem ser alterados nas configurações",
   "Tutorial2Line1": "Seus inimigos são da Ordem Sagrada e outros",
   "Tutorial2Line2": "caçadores de tesouros. Evite-os, pois eles",
   "Tutorial2Line3": "pode matar você instantaneamente. Use os poderes",
-  "Tutorial2Line4": "para enfraquecer e comer os inimigos."
+  "Tutorial2Line4": "para enfraquecer e comer os inimigos.",
+  "Tutorial2Line5": "Você pode verificar o mapa no menu Pausa."
 }

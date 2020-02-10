@@ -134,6 +134,19 @@ void Player::update(float deltaTime)
     _rotateNode->setNodeTransformation(glm::rotate(glm::mat4(1), glm::radians(rotateAngle), glm::vec3(0, 1, 0)));
 }
 
+void Player::tryApplyShift()
+{
+    if (_isDirectionChanged)
+        return; // specific direction already applied
+
+    if (!_mapTraveller->isTargetReached() && _mapTraveller->isCloseToTurn()
+        && !isOrthogonalDirection(_nextMove, _mapTraveller->getCurrentDirection())
+        && _mapTraveller->isMovePossible(_nextMove))
+    {
+        _mapTraveller->resetPositionWithShift();
+    }
+}
+
 void Player::processInput(const SDL_Event& event)
 {
     if (event.type == SDL_KEYUP)
@@ -161,69 +174,109 @@ void Player::processInput(const SDL_Event& event)
         if (keystates[SDL_SCANCODE_S])
             _nextMove = MoveDirection::Left;
 
-        if (event.type == SDL_MOUSEBUTTONDOWN)
+        auto controllerType = Game::getInstance()->getGameSettingsManager().getSettings().controllerType;
+
+        if (controllerType == ControllerType::Swipe)
         {
-            _isSliding = true;
-            _startSlideX = event.button.x;
-            _startSlideY = event.button.y;
+            if (event.type == SDL_MOUSEBUTTONDOWN)
+            {
+                _isSliding = true;
+                _startSlideX = event.button.x;
+                _startSlideY = event.button.y;
+            }
+            if (event.type == SDL_MOUSEMOTION && _isSliding)
+            {
+                auto windowSize = SVE::Engine::getInstance()->getRenderWindowSize();
+                if (abs(_startSlideX - event.button.x) < windowSize.x * 0.015
+                    || abs(_startSlideY - event.button.y) < windowSize.y * 0.015)
+                {
+                    return;
+                }
+
+                if (abs(event.motion.x - _startSlideX) > abs(event.motion.y - _startSlideY))
+                {
+                    if (_startSlideX > event.motion.x)
+                        _nextMove = MoveDirection::Down;
+                    else
+                        _nextMove = MoveDirection::Up;
+                } else
+                {
+                    if (_startSlideY > event.motion.y)
+                        _nextMove = MoveDirection::Right;
+                    else
+                        _nextMove = MoveDirection::Left;
+                }
+
+                tryApplyShift();
+            }
+            if (event.type == SDL_MOUSEBUTTONUP)
+            {
+                auto windowSize = SVE::Engine::getInstance()->getRenderWindowSize();
+                _isSliding = false;
+                if (abs(_startSlideX - event.button.x) < windowSize.x * 0.001
+                    || abs(_startSlideY - event.button.y) < windowSize.y * 0.001)
+                {
+                    return;
+                }
+
+                if (abs(event.button.x - _startSlideX) > abs(event.button.y - _startSlideY))
+                {
+                    if (_startSlideX > event.button.x)
+                        _nextMove = MoveDirection::Down;
+                    else
+                        _nextMove = MoveDirection::Up;
+                } else
+                {
+                    if (_startSlideY > event.button.y)
+                        _nextMove = MoveDirection::Right;
+                    else
+                        _nextMove = MoveDirection::Left;
+                }
+
+                tryApplyShift();
+            }
         }
-        if (event.type == SDL_MOUSEMOTION && _isSliding)
+
+        if (controllerType == ControllerType::Accelerometer)
         {
-            auto windowSize = SVE::Engine::getInstance()->getRenderWindowSize();
-            if (abs(_startSlideX - event.button.x) < windowSize.x * 0.015
-                || abs(_startSlideY - event.button.y) < windowSize.y * 0.015)
+            if (event.type == SDL_SENSORUPDATE)
             {
-                return;
-            }
+                SDL_Sensor* sensor = SDL_SensorFromInstanceID(event.sensor.which);
 
-            if (abs(event.motion.x - _startSlideX) > abs(event.motion.y - _startSlideY))
-            {
-                if (_startSlideX > event.motion.x)
-                    _nextMove = MoveDirection::Down;
-                else
-                    _nextMove = MoveDirection::Up;
-            } else {
-                if (_startSlideY > event.motion.y)
-                    _nextMove = MoveDirection::Right;
-                else
-                    _nextMove = MoveDirection::Left;
-            }
+                if (sensor && SDL_SensorGetType(sensor) == SDL_SENSOR_ACCEL)
+                {
+                    if (!_basisInitialized)
+                    {
+                        _basisInitialized = true;
+                        _accelBasis = {event.sensor.data[0], event.sensor.data[1], event.sensor.data[2]};
+                    }
+                    else
+                    {
+                        if (fabs(event.sensor.data[1] - _accelBasis.y) > fabs(event.sensor.data[2] - _accelBasis.z))
+                        {
+                            if (event.sensor.data[1] - _accelBasis.y < -2.0)
+                                _nextMove = MoveDirection::Down;
+                            else if (event.sensor.data[1] - _accelBasis.y > 2.0f)
+                                _nextMove = MoveDirection::Up;
+                        } else
+                        {
+                            if (event.sensor.data[2] - _accelBasis.z < -2.0f)
+                                _nextMove = MoveDirection::Left;
+                            else if (event.sensor.data[2] - _accelBasis.z > 2.0f)
+                                _nextMove = MoveDirection::Right;
+                        }
+                    }
+                }
 
-            if (!_mapTraveller->isTargetReached() && _mapTraveller->isCloseToTurn()
-                && !isOrthogonalDirection(_nextMove, _mapTraveller->getCurrentDirection())
-                && _mapTraveller->isMovePossible(_nextMove))
-            {
-                _mapTraveller->resetPositionWithShift();
+                tryApplyShift();
             }
         }
-        if (event.type == SDL_MOUSEBUTTONUP)
+
+        if (controllerType == ControllerType::Joystick)
         {
-            auto windowSize = SVE::Engine::getInstance()->getRenderWindowSize();
-            _isSliding = false;
-            if (abs(_startSlideX - event.button.x) < windowSize.x * 0.001
-                || abs(_startSlideY - event.button.y) < windowSize.y * 0.001)
+            if (event.type == SDL_MOUSEMOTION)
             {
-                return;
-            }
-
-            if (abs(event.button.x - _startSlideX) > abs(event.button.y - _startSlideY))
-            {
-                if (_startSlideX > event.button.x)
-                    _nextMove = MoveDirection::Down;
-                else
-                    _nextMove = MoveDirection::Up;
-            } else {
-                if (_startSlideY > event.button.y)
-                    _nextMove = MoveDirection::Right;
-                else
-                    _nextMove = MoveDirection::Left;
-            }
-
-            if (!_mapTraveller->isTargetReached() && _mapTraveller->isCloseToTurn()
-                && !isOrthogonalDirection(_nextMove, _mapTraveller->getCurrentDirection())
-                && _mapTraveller->isMovePossible(_nextMove))
-            {
-                _mapTraveller->resetPositionWithShift();
+                tryApplyShift();
             }
         }
     }
@@ -235,11 +288,13 @@ void Player::updateMovement(float deltaTime)
     {
         if (_mapTraveller->isMovePossible(_nextMove))
         {
+            _isDirectionChanged = _nextMove != _mapTraveller->getCurrentDirection();
             _mapTraveller->move(_nextMove);
         } else {
             auto current = _mapTraveller->getCurrentDirection();
             if (_mapTraveller->isMovePossible(current))
                 _mapTraveller->move(current);
+            _isDirectionChanged = false;
         }
     }
     else if (_nextMove != _mapTraveller->getCurrentDirection() && isAntiDirection(_nextMove, _mapTraveller->getCurrentDirection()))
