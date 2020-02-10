@@ -305,7 +305,7 @@ void LevelStateProcessor::processEvent(Control* control, IEventHandler::EventTyp
             gameSettings.store();
         }
     }
-    if (type == IEventHandler::MouseDown || type == IEventHandler::MouseUp)
+    if (type == IEventHandler::MouseDown)
     {
         if (control->getName() == "joystick" || control->getName() == "thumb")
         {
@@ -328,13 +328,6 @@ void LevelStateProcessor::processEvent(Control* control, IEventHandler::EventTyp
             }
 
             _joystickThumbControl->setPosition(pos - _joystickThumbControl->getSize() / 2);
-        }
-    }
-    if (type == IEventHandler::MouseMove)
-    {
-        if (_useOnScreenControl && control->getName() == "stickBackground")
-        {
-            _gameMapProcessor->setNextMove(_lastDirection);
         }
     }
 }
