@@ -134,6 +134,19 @@ void Player::update(float deltaTime)
     _rotateNode->setNodeTransformation(glm::rotate(glm::mat4(1), glm::radians(rotateAngle), glm::vec3(0, 1, 0)));
 }
 
+void Player::tryApplyShift()
+{
+    if (_isDirectionChanged)
+        return; // specific direction already applied
+
+    if (!_mapTraveller->isTargetReached() && _mapTraveller->isCloseToTurn()
+        && !isOrthogonalDirection(_nextMove, _mapTraveller->getCurrentDirection())
+        && _mapTraveller->isMovePossible(_nextMove))
+    {
+        _mapTraveller->resetPositionWithShift();
+    }
+}
+
 void Player::processInput(const SDL_Event& event)
 {
     if (event.type == SDL_KEYUP)
@@ -194,12 +207,7 @@ void Player::processInput(const SDL_Event& event)
                         _nextMove = MoveDirection::Left;
                 }
 
-                if (!_mapTraveller->isTargetReached() && _mapTraveller->isCloseToTurn()
-                    && !isOrthogonalDirection(_nextMove, _mapTraveller->getCurrentDirection())
-                    && _mapTraveller->isMovePossible(_nextMove))
-                {
-                    _mapTraveller->resetPositionWithShift();
-                }
+                tryApplyShift();
             }
             if (event.type == SDL_MOUSEBUTTONUP)
             {
@@ -225,12 +233,7 @@ void Player::processInput(const SDL_Event& event)
                         _nextMove = MoveDirection::Left;
                 }
 
-                if (!_mapTraveller->isTargetReached() && _mapTraveller->isCloseToTurn()
-                    && !isOrthogonalDirection(_nextMove, _mapTraveller->getCurrentDirection())
-                    && _mapTraveller->isMovePossible(_nextMove))
-                {
-                    _mapTraveller->resetPositionWithShift();
-                }
+                tryApplyShift();
             }
         }
 
@@ -265,12 +268,7 @@ void Player::processInput(const SDL_Event& event)
                     }
                 }
 
-                if (!_mapTraveller->isTargetReached() && _mapTraveller->isCloseToTurn()
-                    && !isOrthogonalDirection(_nextMove, _mapTraveller->getCurrentDirection())
-                    && _mapTraveller->isMovePossible(_nextMove))
-                {
-                    _mapTraveller->resetPositionWithShift();
-                }
+                tryApplyShift();
             }
         }
 
@@ -278,12 +276,7 @@ void Player::processInput(const SDL_Event& event)
         {
             if (event.type == SDL_MOUSEMOTION)
             {
-                if (!_mapTraveller->isTargetReached() && _mapTraveller->isCloseToTurn()
-                    && !isOrthogonalDirection(_nextMove, _mapTraveller->getCurrentDirection())
-                    && _mapTraveller->isMovePossible(_nextMove))
-                {
-                    _mapTraveller->resetPositionWithShift();
-                }
+                tryApplyShift();
             }
         }
     }
@@ -295,11 +288,13 @@ void Player::updateMovement(float deltaTime)
     {
         if (_mapTraveller->isMovePossible(_nextMove))
         {
+            _isDirectionChanged = _nextMove != _mapTraveller->getCurrentDirection();
             _mapTraveller->move(_nextMove);
         } else {
             auto current = _mapTraveller->getCurrentDirection();
             if (_mapTraveller->isMovePossible(current))
                 _mapTraveller->move(current);
+            _isDirectionChanged = false;
         }
     }
     else if (_nextMove != _mapTraveller->getCurrentDirection() && isAntiDirection(_nextMove, _mapTraveller->getCurrentDirection()))

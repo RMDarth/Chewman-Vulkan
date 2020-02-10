@@ -52,6 +52,7 @@ private:
     void showAppearEffect(bool show);
     void showDisappearEffect(bool show);
     void updateAppearEffect();
+    void tryApplyShift();
 
 private:
     // for debug
@@ -85,6 +86,7 @@ private:
     bool _isDying = false;
 
     MoveDirection _nextMove = MoveDirection::None;
+    bool _isDirectionChanged = false;
 
     glm::vec3 _accelBasis = {};
     bool _basisInitialized = false;
