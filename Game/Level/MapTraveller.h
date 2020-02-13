@@ -39,6 +39,7 @@ public:
 
     void setPosition(glm::ivec2 position);
     void resetPositionWithShift();
+    void removeAutoShift();
 
     MoveDirection getCurrentDirection() const;
     glm::ivec2 getMapPosition() const;
@@ -75,6 +76,7 @@ private:
     bool _waterAllowed = false;
     bool _wallAllowed = false;
     bool _useShift = false;
+    bool _customShift = false;
 
     glm::vec2 _speed = {};
 

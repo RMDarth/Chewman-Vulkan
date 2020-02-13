@@ -167,14 +167,14 @@ void LevelStateProcessor::processInput(const SDL_Event& event)
 
                 if (fabs(dir.x) > fabs(dir.y))
                 {
-                    if (dir.x > 0)
+                    if (dir.x > _joystickRadius * 0.15)
                         _gameMapProcessor->setNextMove(MoveDirection::Up);
-                    else
+                    else if (dir.x < -_joystickRadius * 0.15)
                         _gameMapProcessor->setNextMove(MoveDirection::Down);
                 } else {
-                    if (dir.y > 0)
+                    if (dir.y > _joystickRadius * 0.15)
                         _gameMapProcessor->setNextMove(MoveDirection::Left);
-                    else
+                    else if (dir.y < -_joystickRadius * 0.15)
                         _gameMapProcessor->setNextMove(MoveDirection::Right);
                 }
 
@@ -293,14 +293,14 @@ void LevelStateProcessor::processEvent(Control* control, IEventHandler::EventTyp
 
             if (fabs(dir.x) > fabs(dir.y))
             {
-                if (dir.x > 0)
+                if (dir.x > _joystickRadius * 0.15)
                     _gameMapProcessor->setNextMove(MoveDirection::Up);
-                else
+                else if (dir.x < -_joystickRadius * 0.15)
                     _gameMapProcessor->setNextMove(MoveDirection::Down);
             } else {
-                if (dir.y > 0)
+                if (dir.y > _joystickRadius * 0.15)
                     _gameMapProcessor->setNextMove(MoveDirection::Left);
-                else
+                else if (dir.y < -_joystickRadius * 0.15)
                     _gameMapProcessor->setNextMove(MoveDirection::Right);
             }
 

@@ -10,7 +10,7 @@
 namespace Chewman
 {
 
-constexpr uint16_t unlockStarCount = 70;
+constexpr uint16_t unlockStarCount = 50;
 
 WorldSelectionStateProcessor::WorldSelectionStateProcessor()
     : _document(std::make_unique<ControlDocument>("resources/game/GUI/worldselectmenu.xml"))

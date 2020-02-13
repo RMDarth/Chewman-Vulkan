@@ -59,7 +59,8 @@ void ChewmanEnemy::update(float deltaTime)
         if (_deathAnimation < 0)
         {
             _isDeathAnimation = false;
-            _rootNode->getParent()->detachSceneNode(_rootNode);
+            if (_rootNode->getParent())
+                _rootNode->getParent()->detachSceneNode(_rootNode);
         }
     }
     DefaultEnemy::update(deltaTime);
