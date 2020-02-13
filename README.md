@@ -18,6 +18,12 @@ Game is currently released on Android Play Store (ver. 1.1). iOS version is in p
 
 [![Screenshot](https://github.com/RMDarth/Chewman-Vulkan/blob/master/Screenshot_20190826.png?raw=true)](https://youtu.be/kNlpxXPu8mA)
 
+[![Screenshot](https://lh3.googleusercontent.com/9Si2wqRFxnX6nFxEN0Iav3QdXm4-BXCboZAvsiI8VVakgS1WXbGk350PeoK1qJ7GT4g=h200-rw)](https://www.youtube.com/watch?v=27MwX5OA7ds)
+![Screenshot](https://lh3.googleusercontent.com/EOXR3Jaex5DBhoFVGPtCC6k5JpDpd7twhQJ-UzG-nqdgWIx92A0A38g_ehoyUd9zSw=h200-rw)
+![Screenshot](https://lh3.googleusercontent.com/kwVd-rGOpHEVEi1w58v1MOJzWnXu0hCHMNHpUKGyfWa5AkH6EZD-8Pyzrys-vHIGFIY=h200-rw)
+
+
+
 ## Technology
 Game is using Vulkan API/SDK for graphics, SDL for windows creation and controls, 
 Assimp library for 3d models importing and some other small libraries like glm, 
@@ -38,7 +44,7 @@ a separate repository after the game is finished.
 -   Shadow maps, cascade shadow maps, point light shadows
 -   Instancing
 -   Particle system based on compute and geometry shaders
--   Overlays and GUI rendering
+-   Overlays, fonts and GUI rendering
 -   Post-effects (like bloom, grayscale)
 
 ## Game description
