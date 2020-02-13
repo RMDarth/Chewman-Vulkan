@@ -78,6 +78,12 @@ void LevelStateProcessor::initMap()
 
         _loadingFinished = true;
         _gameMapProcessor->setVisible(true);
+        _gameMapProcessor->setState(GameMapState::LevelStart);
+
+        if (_gameMapProcessor->getGameMap()->hasTutorial)
+        {
+            Game::getInstance()->setState(GameState::Tutorial);
+        }
     });
 }
 
@@ -218,6 +224,8 @@ void LevelStateProcessor::processInput(const SDL_Event& event)
 
 void LevelStateProcessor::show()
 {
+    _document->show();
+
     if (!_progressManager.isStarted())
     {
         // new level started
@@ -230,26 +238,20 @@ void LevelStateProcessor::show()
         initMap();
         _time = 0.0f;
         _counterTime = 0.01f;
-        _gameMapProcessor->setState(GameMapState::LevelStart);
-
-        if (_gameMapProcessor->getGameMap()->hasTutorial)
-        {
-            Game::getInstance()->setState(GameState::Tutorial);
-        }
     } else {
         if (_gameMapProcessor->getState() != GameMapState::LevelStart)
+        {
             _gameMapProcessor->setState(GameMapState::Game);
+            _loadingControl->setVisible(false);
+            _counterControl->setVisible(false);
+        }
+
+        _gameMapProcessor->setVisible(true);
     }
-    _gameMapProcessor->setVisible(true);
-    _document->show();
+
     if (!_countToRemove)
     {
         _loadingControl->setVisible(false);
-    }
-    if (_gameMapProcessor->getState() != GameMapState::LevelStart)
-    {
-        _loadingControl->setVisible(false);
-        _counterControl->setVisible(false);
     }
 
     std::stringstream ss;
