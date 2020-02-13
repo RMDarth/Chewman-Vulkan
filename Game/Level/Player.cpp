@@ -250,9 +250,26 @@ void Player::processInput(const SDL_Event& event)
                     {
                         _basisInitialized = true;
                         _accelBasis = {event.sensor.data[0], event.sensor.data[1], event.sensor.data[2]};
+                        _accelPrev = _accelBasis;
                     }
                     else
                     {
+                        auto curNext = _nextMove;
+                        if (fabs(event.sensor.data[1] - _accelBasis.y) > 2.0 && fabs(event.sensor.data[2] - _accelBasis.z) > 2.0)
+                        {
+                            if (fabs(event.sensor.data[1] - _accelPrev.y) > fabs(event.sensor.data[2] - _accelPrev.z))
+                            {
+                                if (event.sensor.data[1] - _accelBasis.y < -2.0)
+                                    _nextMove = MoveDirection::Down;
+                                else if (event.sensor.data[1] - _accelBasis.y > 2.0f)
+                                    _nextMove = MoveDirection::Up;
+                            } else {
+                                if (event.sensor.data[2] - _accelBasis.z < -2.0f)
+                                    _nextMove = MoveDirection::Left;
+                                else if (event.sensor.data[2] - _accelBasis.z > 2.0f)
+                                    _nextMove = MoveDirection::Right;
+                            }
+                        }
                         if (fabs(event.sensor.data[1] - _accelBasis.y) > fabs(event.sensor.data[2] - _accelBasis.z))
                         {
                             if (event.sensor.data[1] - _accelBasis.y < -2.0)
@@ -265,6 +282,11 @@ void Player::processInput(const SDL_Event& event)
                                 _nextMove = MoveDirection::Left;
                             else if (event.sensor.data[2] - _accelBasis.z > 2.0f)
                                 _nextMove = MoveDirection::Right;
+                        }
+
+                        if (curNext != _nextMove)
+                        {
+                            _accelPrev = {event.sensor.data[0], event.sensor.data[1], event.sensor.data[2]};
                         }
                     }
                 }
@@ -291,6 +313,8 @@ void Player::updateMovement(float deltaTime)
         if (_mapTraveller->isMovePossible(_nextMove))
         {
             _isDirectionChanged = _nextMove != _mapTraveller->getCurrentDirection();
+            if (_isDirectionChanged)
+                _mapTraveller->removeAutoShift();
             _mapTraveller->move(_nextMove);
         } else {
             auto current = _mapTraveller->getCurrentDirection();

@@ -165,7 +165,8 @@ PowerUpType PowerUp::getType() const
 void PowerUp::eat()
 {
     _isEaten = true;
-    _rootNode->getParent()->detachSceneNode(_rootNode);
+    if (_rootNode->getParent())
+        _rootNode->getParent()->detachSceneNode(_rootNode);
 }
 
 } // namespace Chewman

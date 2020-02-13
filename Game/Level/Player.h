@@ -89,6 +89,7 @@ private:
     bool _isDirectionChanged = false;
 
     glm::vec3 _accelBasis = {};
+    glm::vec3 _accelPrev = {};
     bool _basisInitialized = false;
 };
 

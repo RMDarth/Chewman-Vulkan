@@ -10,7 +10,7 @@ namespace Chewman
 namespace
 {
 
-constexpr float TurnDistance = CellSize / 2.5f;
+constexpr float TurnDistance = CellSize / 3.2f;
 
 void moveTo(MoveDirection dir, glm::ivec2& mapPosition)
 {
@@ -95,6 +95,7 @@ bool MapTraveller::isMovePossible(MoveDirection dir)
 void MapTraveller::update(float deltaTime)
 {
     _position += _speed * deltaTime;
+
     if (_useShift)
     {
         int zeroed = 0;
@@ -116,12 +117,22 @@ void MapTraveller::update(float deltaTime)
         }
 
         if (zeroed == 2)
+        {
             _useShift = false;
+            _customShift = false;
+        }
     }
     auto distance = _target - _position;
-    if (glm::dot(distance, _speed) <= 0)
+    if (!_targetReached && glm::dot(distance, _speed) <= 0)
     {
+        if (_direction != MoveDirection::None && isMovePossible(_direction))
+        {
+            _shift = getRealPosition() - _target;
+            _useShift = true;
+            //_customShift = false;
+        }
         _position = _target;
+
         _speed = { 0, 0 };
         _targetReached = true;
     }
@@ -232,10 +243,21 @@ void MapTraveller::setPosition(glm::ivec2 position)
 
 void MapTraveller::resetPositionWithShift()
 {
-    _shift = _position - _lastTarget;
+    _shift = getRealPosition() - _lastTarget;
     _position = _lastTarget;
     _useShift = true;
     _targetReached = true;
+    _customShift = true;
+    _speed = {0, 0};
+}
+
+void MapTraveller::removeAutoShift()
+{
+    if (!_customShift)
+    {
+        _useShift = false;
+        _shift = {0, 0};
+    }
 }
 
 bool MapTraveller::isCloseToAffect(glm::vec2 pos) const
