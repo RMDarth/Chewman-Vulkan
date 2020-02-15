@@ -3,6 +3,8 @@
 // Licensed under the MIT License
 #include "SystemApi.h"
 #include <SDL2/SDL.h>
+#include <iostream>
+
 #ifdef __ANDROID__
 #include <jni.h>
 #endif
@@ -568,8 +570,15 @@ std::string getLanguage()
 
         return "en";
     }
-#endif
+#elif __linux__
+    std::string locale = setlocale(LC_CTYPE, "");
+    if (locale == "C")
+        return "en";
+
+    return locale.substr(0, 2);
+#else
     return "en";
+#endif
 }
 
 std::vector<std::pair<std::string, int>> getTimes(bool weekly)
@@ -719,7 +728,11 @@ void openLink(const std::string& link)
 #else
         "open ";
 #endif
-    system((openCommand + link).c_str());
+    auto result = system((openCommand + link).c_str());
+    if (result != 0)
+    {
+        std::cerr << "Can't open link" << std::endl;
+    }
 #endif
 }
 

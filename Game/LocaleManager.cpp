@@ -38,6 +38,7 @@ void LocaleManager::load()
     if (!langFile->exist())
     {
         langFile = fileSystem->getEntity("resources/translations/en.lang");
+        _language = "en";
         if (!langFile->exist())
         {
             throw SVE::VulkanException("Can't load localization files");

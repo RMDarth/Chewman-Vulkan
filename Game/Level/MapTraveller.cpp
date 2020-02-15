@@ -10,7 +10,7 @@ namespace Chewman
 namespace
 {
 
-constexpr float TurnDistance = CellSize / 3.2f;
+constexpr float TurnDistance = CellSize / 3.6f;
 
 void moveTo(MoveDirection dir, glm::ivec2& mapPosition)
 {
