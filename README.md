@@ -18,9 +18,9 @@ Game is currently released on Android Play Store (ver. 1.1). iOS version is in p
 
 [![Screenshot](https://github.com/RMDarth/Chewman-Vulkan/blob/master/Screenshot_20190826.png?raw=true)](https://youtu.be/kNlpxXPu8mA)
 
-[![Screenshot](https://lh3.googleusercontent.com/9Si2wqRFxnX6nFxEN0Iav3QdXm4-BXCboZAvsiI8VVakgS1WXbGk350PeoK1qJ7GT4g=h180-rw)](https://www.youtube.com/watch?v=27MwX5OA7ds)
-[![Screenshot](https://lh3.googleusercontent.com/EOXR3Jaex5DBhoFVGPtCC6k5JpDpd7twhQJ-UzG-nqdgWIx92A0A38g_ehoyUd9zSw=h180-rw)](https://lh3.googleusercontent.com/EOXR3Jaex5DBhoFVGPtCC6k5JpDpd7twhQJ-UzG-nqdgWIx92A0A38g_ehoyUd9zSw=h1024-rw)
-![Screenshot](https://lh3.googleusercontent.com/kwVd-rGOpHEVEi1w58v1MOJzWnXu0hCHMNHpUKGyfWa5AkH6EZD-8Pyzrys-vHIGFIY=h180-rw)
+[![Screenshot](https://lh3.googleusercontent.com/9Si2wqRFxnX6nFxEN0Iav3QdXm4-BXCboZAvsiI8VVakgS1WXbGk350PeoK1qJ7GT4g=h170-rw)](https://www.youtube.com/watch?v=27MwX5OA7ds)
+[![Screenshot](https://lh3.googleusercontent.com/EOXR3Jaex5DBhoFVGPtCC6k5JpDpd7twhQJ-UzG-nqdgWIx92A0A38g_ehoyUd9zSw=h170-rw)](https://lh3.googleusercontent.com/EOXR3Jaex5DBhoFVGPtCC6k5JpDpd7twhQJ-UzG-nqdgWIx92A0A38g_ehoyUd9zSw=h1024-rw)
+![Screenshot](https://lh3.googleusercontent.com/kwVd-rGOpHEVEi1w58v1MOJzWnXu0hCHMNHpUKGyfWa5AkH6EZD-8Pyzrys-vHIGFIY=h170-rw)
 
 
 
